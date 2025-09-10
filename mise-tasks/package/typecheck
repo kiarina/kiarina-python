@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#MISE description="Type check <package>"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+
+set -euo pipefail
+
+package="$usage_package"
+
+# Package name validation
+if [ ! -d "packages/$package" ]; then
+    echo "❌ Package not found: $package"
+    exit 1
+fi
+
+echo "🔍 Running type checking for $package..."
+
+uv run --group dev mypy "packages/$package/src/"

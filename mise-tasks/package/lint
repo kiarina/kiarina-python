@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#MISE description="Lint <package>"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+
+set -euo pipefail
+
+package="$usage_package"
+
+# Package name validation
+if [ ! -d "packages/$package" ]; then
+    echo "❌ Package not found: $package"
+    exit 1
+fi
+
+echo "⚙️ Running linting for $package..."
+
+# Check if src and tests directories exist
+paths=()
+if [ -d "packages/$package/src" ]; then
+    paths+=("packages/$package/src/")
+fi
+
+if [ -d "packages/$package/tests" ]; then
+    paths+=("packages/$package/tests/")
+fi
+
+if [ ${#paths[@]} -eq 0 ]; then
+    echo "⚠️  No src or tests directories found for $package"
+    exit 0
+fi
+
+status=0
+
+# Run ruff check
+echo "🔧 Running ruff check..."
+uv run --group dev ruff check "${paths[@]}" || status=1
+
+# Run ruff format check
+echo "🔧 Running ruff format check..."
+uv run --group dev ruff format --check "${paths[@]}" || status=1
+
+if [ $status -ne 0 ]; then
+    echo "❌ Linting failed for $package"
+    exit $status
+fi

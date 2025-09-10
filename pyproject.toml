@@ -1,0 +1,135 @@
+[project]
+name = "kiarina-python"
+version = "1.0.0"
+description = "A comprehensive namespace package monorepo providing essential utilities for modern Python development"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "kiarina", email = "kiarinadawa@gmail.com" }
+]
+maintainers = [
+    { name = "kiarina", email = "kiarinadawa@gmail.com" }
+]
+keywords = [
+    "utilities",
+    "namespace-package",
+    "monorepo",
+    "file-io",
+    "llm",
+    "redis",
+    "falkordb",
+    "redisearch",
+    "async",
+    "pydantic"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+requires-python = ">=3.12"
+dependencies = [
+    "kiarina-lib-falkordb",
+    "kiarina-lib-redis",
+    "kiarina-lib-redisearch",
+    "kiarina-llm",
+    "kiarina-utils-common",
+    "kiarina-utils-file",
+]
+
+[project.urls]
+Homepage = "https://github.com/kiarina/kiarina-python"
+Repository = "https://github.com/kiarina/kiarina-python.git"
+Issues = "https://github.com/kiarina/kiarina-python/issues"
+Changelog = "https://github.com/kiarina/kiarina-python/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/kiarina/kiarina-python#readme"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.0",
+    "mypy>=1.17.0",
+    "pytest>=8.4.0",
+    "pytest-cov>=6.2.0",
+    "pytest-asyncio>=1.1.0",
+    "pytest-mock>=3.14.0",
+    "pre-commit>=4.3.0",
+    "types-aiofiles>=24.1.0.20250809",
+    "types-pyyaml>=6.0.12.20250809",
+]
+test = [
+    "pytest>=8.4.0",
+    "pytest-cov>=6.2.0",
+    "pytest-asyncio>=1.1.0",
+    "pytest-mock>=3.14.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "packages/kiarina-lib-falkordb",
+    "packages/kiarina-lib-redis",
+    "packages/kiarina-lib-redisearch",
+    "packages/kiarina-llm",
+    "packages/kiarina-utils-common",
+    "packages/kiarina-utils-file",
+]
+
+[tool.uv.sources]
+kiarina-lib-falkordb = { workspace = true }
+kiarina-lib-redis = { workspace = true }
+kiarina-lib-redisearch = { workspace = true }
+kiarina-llm = { workspace = true }
+kiarina-utils-common = { workspace = true }
+kiarina-utils-file = { workspace = true }
+
+[tool.mypy]
+mypy_path = [
+    "packages/kiarina-lib-falkordb/src",
+    "packages/kiarina-lib-redis/src",
+    "packages/kiarina-lib-redisearch/src",
+    "packages/kiarina-llm/src",
+    "packages/kiarina-utils-common/src",
+    "packages/kiarina-utils-file/src",
+]
+namespace_packages = true
+explicit_package_bases = true
+show_error_codes = true
+strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_test_loop_scope = "session"
+asyncio_default_fixture_loop_scope = "session"
+
+[tool.coverage.run]
+source = [
+    "packages/kiarina-lib-falkordb/src",
+    "packages/kiarina-lib-redis/src", 
+    "packages/kiarina-lib-redisearch/src",
+    "packages/kiarina-llm/src",
+    "packages/kiarina-utils-common/src",
+    "packages/kiarina-utils-file/src",
+]
+parallel = false
+data_file = ".coverage"
+
+[tool.coverage.paths]
+source = [
+    "packages/*/src/kiarina/",
+    "*/site-packages/kiarina/",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+precision = 2
+
+[tool.coverage.xml]
+output = "coverage.xml"

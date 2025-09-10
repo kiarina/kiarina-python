@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Format *"
+
+set -euo pipefail
+
+for package in packages/*/; do
+    mise run package:format $(basename "$package")
+done

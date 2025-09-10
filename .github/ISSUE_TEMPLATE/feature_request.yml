@@ -1,0 +1,74 @@
+name: Feature Request
+description: Suggest an idea for this project
+title: "[Feature] "
+labels: ["enhancement", "triage"]
+assignees:
+  - kiarina
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature!
+        
+        Please note: This is a personal OSS project. While issues and PRs are welcome, 
+        I don't actively seek contributions and work on this at my own pace.
+        Feature requests will be considered based on my personal needs and interests.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Which package would this feature affect?
+      options:
+        - kiarina-utils-common
+        - kiarina-utils-file
+        - kiarina-llm
+        - kiarina-lib-falkordb
+        - kiarina-lib-redis
+        - kiarina-lib-redisearch
+        - Multiple packages
+        - New package
+        - Other/Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Description
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: "I'm always frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like
+      placeholder: "I would like to see..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered
+      placeholder: "I've also considered..."
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case
+      description: Describe your specific use case for this feature
+      placeholder: "I need this feature because..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, mockups, or examples about the feature request here.

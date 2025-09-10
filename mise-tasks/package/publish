@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#MISE description="Publish <package> to PyPI"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+#USAGE flag "-t --test" help="Publish to Test PyPI instead of PyPI"
+
+set -euo pipefail
+
+package="$usage_package"
+test_pypi="${usage_test:-false}"
+
+# Package name validation
+if [ ! -d "packages/$package" ]; then
+    echo "❌ Package not found: $package"
+    exit 1
+fi
+
+echo "📦 Publishing $package..."
+
+# Navigate to the package directory
+cd "packages/$package"
+
+# Publish command
+if [ "$test_pypi" = "true" ]; then
+    echo "🧪 Publishing to Test PyPI..."
+    uv publish --repository testpypi
+    echo "✅ $package published to Test PyPI successfully!"
+    echo "🔗 Check your package at: https://test.pypi.org/project/$package/"
+else
+    echo "🚀 Publishing to PyPI..."
+    uv publish
+    echo "✅ $package published to PyPI successfully!"
+    echo "🔗 Check your package at: https://pypi.org/project/$package/"
+fi
+
+cd - > /dev/null

@@ -1,0 +1,8 @@
+[tools]
+python = "3.13"
+uv = "latest"
+
+[env]
+# Test configuration
+KIARINA_LIB_REDIS_URL = "redis://localhost:6379"
+KIARINA_LIB_FALKORDB_URL = "falkor://localhost:6380"

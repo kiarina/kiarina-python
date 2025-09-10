@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#MISE description="Format code for a specific package"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+
+set -euo pipefail
+
+package="$usage_package"
+
+# Package name validation
+if [ ! -d "packages/$package" ]; then
+    echo "❌ Package not found: $package"
+    exit 1
+fi
+
+echo "⚙️ Formatting $package..."
+
+# Check if src and tests directories exist
+if [ -d "packages/$package/src" ]; then
+    uv run --group dev ruff format "packages/$package/src/"
+fi
+
+if [ -d "packages/$package/tests" ]; then
+    uv run --group dev ruff format "packages/$package/tests/"
+fi

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Lint auto-fix *"
+
+set -euo pipefail
+
+for package in packages/*/; do
+    mise run package:lint-fix $(basename "$package")
+done

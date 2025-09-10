@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#MISE description="Run CI checks (setup, format, lint, typecheck, test, build) for all packages"
+#USAGE flag "--no-setup" help="Skip setup step (useful when environment is already prepared)"
+#USAGE flag "--no-docker" help="Skip Docker Compose up/down during testing"
+
+set -euo pipefail
+
+no_setup="${usage_no_setup:-false}"
+no_docker="${usage_no_docker:-false}"
+
+echo "🚀 Running CI checks for all packages..."
+
+if [ "$no_setup" = "false" ]; then
+    echo ""
+    echo "🔧 Step 1/6: Setup environment..."
+    mise run setup
+    step_prefix="Step"
+else
+    echo ""
+    echo "⏭️  Skipping setup step..."
+    step_prefix="Step"
+fi
+
+echo ""
+echo "📝 Step 2/6: Format check..."
+mise run format
+
+echo ""
+echo "🔍 Step 3/6: Lint check..."
+mise run lint
+
+echo ""
+echo "🔍 Step 4/6: Type check..."
+mise run typecheck
+
+echo ""
+echo "🧪 Step 5/6: Test..."
+if [ "$no_docker" = "true" ]; then
+    mise run test --coverage --no-docker
+else
+    mise run test --coverage
+fi
+
+echo ""
+echo "🏗️  Step 6/6: Build check..."
+mise run build
+
+echo ""
+echo "✅ All CI checks passed!"

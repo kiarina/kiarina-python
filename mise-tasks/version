@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#MISE description="Update version in root and all packages"
+#USAGE arg "<version>" help="New version (e.g. '1.2.0', '1.2.0-alpha.1')"
+
+set -euo pipefail
+
+new_version="$usage_version"
+
+# Validate version format (basic semver check)
+if ! [[ "$new_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
+    echo "❌ Invalid version format: $new_version"
+    echo "   Expected format: X.Y.Z or X.Y.Z-suffix (e.g., 1.2.0, 1.2.0-alpha.1)"
+    exit 1
+fi
+
+echo "🔄 Updating version to $new_version..."
+
+# Update root pyproject.toml
+echo "📝 Updating root pyproject.toml..."
+if [ -f "pyproject.toml" ]; then
+    # Use sed to replace the version line
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS sed
+        sed -i '' "s/^version = \".*\"/version = \"$new_version\"/" pyproject.toml
+    else
+        # Linux sed
+        sed -i "s/^version = \".*\"/version = \"$new_version\"/" pyproject.toml
+    fi
+    echo "  ✅ Root version updated"
+else
+    echo "  ⚠️  Root pyproject.toml not found"
+fi
+
+# Update all package pyproject.toml files
+echo ""
+echo "📦 Updating package versions..."
+updated_packages=()
+failed_packages=()
+
+for package_dir in packages/*/; do
+    if [ -d "$package_dir" ]; then
+        package_name=$(basename "$package_dir")
+        pyproject_file="$package_dir/pyproject.toml"
+        
+        if [ -f "$pyproject_file" ]; then
+            # Use sed to replace the version line
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+                # macOS sed
+                sed -i '' "s/^version = \".*\"/version = \"$new_version\"/" "$pyproject_file"
+            else
+                # Linux sed
+                sed -i "s/^version = \".*\"/version = \"$new_version\"/" "$pyproject_file"
+            fi
+            echo "  ✅ $package_name"
+            updated_packages+=("$package_name")
+        else
+            echo "  ❌ $package_name (pyproject.toml not found)"
+            failed_packages+=("$package_name")
+        fi
+    fi
+done
+
+echo ""
+echo "📊 Summary:"
+echo "  🎯 Target version: $new_version"
+echo "  ✅ Updated packages: ${#updated_packages[@]}"
+if [ ${#updated_packages[@]} -gt 0 ]; then
+    printf "     - %s\n" "${updated_packages[@]}"
+fi
+
+if [ ${#failed_packages[@]} -gt 0 ]; then
+    echo "  ❌ Failed packages: ${#failed_packages[@]}"
+    printf "     - %s\n" "${failed_packages[@]}"
+fi
+
+echo ""
+echo "💡 Next steps:"
+echo "   1. Review changes: git diff"
+echo "   2. Test the changes: mise run ci"
+echo "   3. Commit and tag: git add . && git commit -m 'chore: bump version to $new_version' && git tag v$new_version"
+echo "   4. Push with tags: git push origin main --tags"
+
+echo ""
+echo "✅ Version update completed!"

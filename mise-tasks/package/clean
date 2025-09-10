@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#MISE description="Clean <package>"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+
+set -euo pipefail
+
+package="$usage_package"
+
+# Package name validation
+if [ ! -d "packages/$package" ]; then
+    echo "❌ Package not found: $package"
+    exit 1
+fi
+
+echo "🧹 Cleaning artifacts for $package..."
+
+package_dir="packages/$package"
+
+# Remove build directories
+for dir in "$package_dir/build/" "$package_dir/dist/" "$package_dir"/*.egg-info/ "$package_dir/src/"*.egg-info/; do
+    if [ -d "$dir" ]; then
+        echo "  📦 Removing $(basename "$dir")"
+        rm -rf "$dir"
+    fi
+done
+
+# Clean Python cache files in package directory
+echo "🐍 Removing Python cache files..."
+find "$package_dir" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+find "$package_dir" -type f -name "*.pyc" -delete 2>/dev/null || true
+find "$package_dir" -type f -name "*.pyo" -delete 2>/dev/null || true
+
+# Clean ruff cache
+if [ -d "$package_dir/.ruff_cache" ]; then
+    echo "🔧 Removing .ruff_cache/"
+    rm -rf "$package_dir/.ruff_cache"
+fi
+
+# Clean mypy cache
+if [ -d "$package_dir/.mypy_cache" ]; then
+    echo "🔍 Removing .mypy_cache/"
+    rm -rf "$package_dir/.mypy_cache"
+fi
+
+# Clean pytest cache
+if [ -d "$package_dir/.pytest_cache" ]; then
+    echo "🧪 Removing .pytest_cache/"
+    rm -rf "$package_dir/.pytest_cache"
+fi

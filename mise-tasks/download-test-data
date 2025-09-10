@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#MISE description="Download test data to tests/data/large/"
+
+set -euo pipefail
+
+echo "📥 Downloading test data..."
+
+# If the directory `tests/data/large` exists, delete it.
+if [ -d "tests/data/large" ]; then
+    echo "🗑️  Removing existing tests/data/large directory..."
+    rm -rf tests/data/large
+fi
+
+# Create the directory
+echo "📁 Creating tests/data/large directory..."
+mkdir -p tests/data/large
+
+# Download test data from GitHub Releases
+echo "⬇️  Downloading kiarina-python-dataset-v1.0.tar.zst from kiarina/test-data..."
+gh release download --repo kiarina/test-data v2025.09 -p kiarina-python-dataset-v1.0.tar.zst --dir tests/data/large
+
+# Extract the archive
+echo "📦 Extracting archive..."
+tar --use-compress-program=unzstd -xvf tests/data/large/kiarina-python-dataset-v1.0.tar.zst -C tests/data/large
+
+# Remove the archive file
+echo "🗑️  Cleaning up archive file..."
+rm tests/data/large/kiarina-python-dataset-v1.0.tar.zst
+
+echo "✅ Test data downloaded successfully to tests/data/large/"

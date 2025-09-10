@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#MISE description="Run format, lint-fix, typecheck"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+
+set -euo pipefail
+
+package="$usage_package"
+
+mise run package:lint-fix $(basename "$package")
+mise run package:format $(basename "$package")
+mise run package:typecheck $(basename "$package")
+mise run package:test $(basename "$package")

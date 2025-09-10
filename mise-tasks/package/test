@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#MISE description="Test <package>"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+#USAGE flag "-v --verbose" help="Verbose output"
+#USAGE flag "-c --coverage" help="Run with coverage"
+
+set -euo pipefail
+
+package="$usage_package"
+
+# Default values for optional flags
+verbose="${usage_verbose:-false}"
+coverage="${usage_coverage:-false}"
+
+# Package name validation
+if [ ! -d "packages/$package" ]; then
+    echo "❌ Package not found: $package"
+    exit 1
+fi
+
+echo "🧪 Testing $package..."
+
+# Test command construction
+test_cmd="uv run --group test pytest packages/$package/tests/"
+
+if [ "$verbose" = "true" ]; then
+    test_cmd="$test_cmd -v"
+fi
+
+if [ "$coverage" = "true" ]; then
+    echo "🔍 Running with coverage..."
+    module="${package//-/.}"
+    test_cmd="$test_cmd --cov=$module --cov-append"
+fi
+
+# Test execution
+eval "$test_cmd"

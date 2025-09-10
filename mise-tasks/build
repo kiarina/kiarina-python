@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Build *"
+
+set -euo pipefail
+
+for package in packages/*/; do
+    mise run package:build $(basename "$package")
+done

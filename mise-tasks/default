@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#MISE description="Run format, lint-fix, typecheck *"
+
+set -euo pipefail
+
+for package in packages/*/; do
+    mise run package:lint-fix $(basename "$package")
+    mise run package:format $(basename "$package")
+    mise run package:typecheck $(basename "$package")
+done

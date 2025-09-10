@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "Taro Yamada",
+    "age": 25,
+    "email": "taro.yamada@example.com",
+    "phone": "090-1234-5678",
+    "address": "Tokyo, Japan",
+    "occupation": "Engineer",
+    "is_active": true
+  },
+  {
+    "id": 2,
+    "name": "Hanako Suzuki",
+    "age": 30,
+    "email": "hanako.suzuki@example.com",
+    "phone": "090-2345-6789",
+    "address": "Osaka, Japan",
+    "occupation": "Designer",
+    "is_active": true
+  },
+  {
+    "id": 3,
+    "name": "Jiro Tanaka",
+    "age": 28,
+    "email": "jiro.tanaka@example.com",
+    "phone": "090-3456-7890",
+    "address": "Nagoya, Japan",
+    "occupation": "Teacher",
+    "is_active": false
+  },
+  {
+    "id": 4,
+    "name": "Sachiko Sato",
+    "age": 22,
+    "email": "sachiko.sato@example.com",
+    "phone": "090-4567-8901",
+    "address": "Sapporo, Japan",
+    "occupation": "Student",
+    "is_active": true
+  },
+  {
+    "id": 5,
+    "name": "Kenta Kobayashi",
+    "age": 35,
+    "email": "kenta.kobayashi@example.com",
+    "phone": "090-5678-9012",
+    "address": "Fukuoka, Japan",
+    "occupation": "Manager",
+    "is_active": false
+  }
+]

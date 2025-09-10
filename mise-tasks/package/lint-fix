@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#MISE description="Lint auto-fix <package>"
+#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+
+set -euo pipefail
+
+package="$usage_package"
+
+# Package name validation
+if [ ! -d "packages/$package" ]; then
+    echo "❌ Package not found: $package"
+    exit 1
+fi
+
+echo "⚙️ Auto-fixing lint issues for $package..."
+
+# Check if src and tests directories exist
+paths=()
+if [ -d "packages/$package/src" ]; then
+    paths+=("packages/$package/src/")
+fi
+
+if [ -d "packages/$package/tests" ]; then
+    paths+=("packages/$package/tests/")
+fi
+
+if [ ${#paths[@]} -eq 0 ]; then
+    echo "⚠️  No src or tests directories found for $package"
+    exit 0
+fi
+
+# Run ruff check with --fix
+uv run --group dev ruff check "${paths[@]}" --fix
