@@ -3,6 +3,6 @@
 
 set -euo pipefail
 
-for package in packages/*/; do
-    mise run package:build $(basename "$package")
-done
+while IFS= read -r package; do
+    mise run package:build "$package"
+done < <(mise run get-packages --all)

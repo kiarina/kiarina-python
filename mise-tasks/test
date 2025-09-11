@@ -20,13 +20,13 @@ if [ "$coverage" = "true" ]; then
     rm -f .coverage .coverage.*
 fi
 
-for package in packages/*/; do
+while IFS= read -r package; do
     if [ "$coverage" = "true" ]; then
-        mise run package:test $(basename "$package") --coverage
+        mise run package:test "$package" --coverage
     else
-        mise run package:test $(basename "$package")
+        mise run package:test "$package"
     fi
-done
+done < <(mise run get-packages)
 
 # Generate coverage reports
 if [ "$coverage" = "true" ]; then
