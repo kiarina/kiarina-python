@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed file permission preservation issue in `write_binary()` operations
+  - Existing file permissions (mode, uid, gid) are now properly preserved when updating files
+  - Added `_preserve_permissions()` function to maintain original file access controls
+  - Implemented permission preservation for both sync and async write operations
+  - Added comprehensive tests for permission preservation functionality
+  - Improved security by preventing unintended permission changes during file updates
+
 ## [1.0.0] - 2025-09-09
 
 ### Added

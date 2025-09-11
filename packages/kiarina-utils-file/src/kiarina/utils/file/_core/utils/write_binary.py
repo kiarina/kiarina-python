@@ -58,6 +58,21 @@ def write_binary(
             except Exception:
                 pass
 
+    # Function to preserve file permissions
+    def _preserve_permissions() -> None:
+        if os.path.exists(file_path):
+            try:
+                original_stat = os.stat(file_path)
+                os.chmod(temp_file_path, original_stat.st_mode)
+
+                try:
+                    os.chown(temp_file_path, original_stat.st_uid, original_stat.st_gid)
+                except (OSError, PermissionError):
+                    pass
+
+            except (OSError, FileNotFoundError):
+                pass
+
     # Synchronous version of the function
     def _sync() -> None:
         lock = FileLock(lock_file_path)
@@ -69,6 +84,9 @@ def write_binary(
                     temp_file.write(raw_data)
                     temp_file.flush()
                     os.fsync(temp_file.fileno())
+
+                # Preserve original file permissions
+                _preserve_permissions()
 
                 # Atomic replace
                 os.replace(temp_file_path, file_path)
@@ -88,6 +106,9 @@ def write_binary(
                     await temp_file.write(raw_data)
                     await temp_file.flush()
                     await asyncio.to_thread(os.fsync, temp_file.fileno())
+
+                # Preserve original file permissions
+                _preserve_permissions()
 
                 # Atomic replace
                 os.replace(temp_file_path, file_path)
