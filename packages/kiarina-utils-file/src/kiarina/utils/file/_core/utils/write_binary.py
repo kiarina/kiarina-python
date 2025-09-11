@@ -68,12 +68,17 @@ def write_binary(
                 original_stat = os.stat(file_path)
                 os.chmod(temp_file_path, original_stat.st_mode)
 
-                try:
-                    os.chown(temp_file_path, original_stat.st_uid, original_stat.st_gid)
-                except (OSError, PermissionError) as e:
-                    logger.debug(
-                        f"Failed to preserve file ownership for {file_path}: {e}"
-                    )
+                # Windows does not support os.chown
+                # On Windows, consider using pywin32's ReplaceFile for atomic replacement.
+                if hasattr(os, "chown"):
+                    try:
+                        os.chown(
+                            temp_file_path, original_stat.st_uid, original_stat.st_gid
+                        )
+                    except (OSError, PermissionError) as e:
+                        logger.debug(
+                            f"Failed to preserve file ownership for {file_path}: {e}"
+                        )
 
             except (OSError, FileNotFoundError):
                 pass
