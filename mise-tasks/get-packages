@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#MISE description="Get list of packages to process (excludes meta-packages)"
+#USAGE flag "--all" help="Include all packages (including meta-packages)"
+
+set -euo pipefail
+
+include_all="${usage_all:-false}"
+
+# Meta-packages to exclude by default
+meta_packages=("kiarina")
+
+for package_dir in packages/*/; do
+    if [ -d "$package_dir" ]; then
+        package_name=$(basename "$package_dir")
+        
+        # Check if this is a meta-package
+        is_meta=false
+        if [ "$include_all" = "false" ]; then
+            for meta in "${meta_packages[@]}"; do
+                if [ "$package_name" = "$meta" ]; then
+                    is_meta=true
+                    break
+                fi
+            done
+        fi
+        
+        # Output package name if not a meta-package (or if --all is specified)
+        if [ "$is_meta" = "false" ]; then
+            echo "$package_name"
+        fi
+    fi
+done

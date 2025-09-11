@@ -3,9 +3,9 @@
 
 set -euo pipefail
 
-for package in packages/*/; do
-    mise run package:clean $(basename "$package")
-done
+while IFS= read -r package; do
+    mise run package:clean "$package"
+done < <(mise run get-packages --all)
 
 # Clean root-level mypy cache
 if [ -d ".mypy_cache" ]; then
