@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+#MISE description="Update CHANGELOG.md files for all packages with version entry"
+#USAGE arg "<version>" help="Version to add (e.g. '1.1.1')"
+
+set -euo pipefail
+
+version="$usage_version"
+
+# Validate version format (basic semver check)
+if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
+    echo "❌ Invalid version format: $version"
+    echo "   Expected format: X.Y.Z or X.Y.Z-suffix (e.g., 1.1.1, 1.2.0-alpha.1)"
+    exit 1
+fi
+
+echo "📝 Updating CHANGELOG.md files for version $version..."
+
+# Get current date in YYYY-MM-DD format
+current_date=$(date +%Y-%m-%d)
+
+updated_packages=()
+skipped_packages=()
+failed_packages=()
+
+# Process all packages
+while IFS= read -r package; do
+    changelog_file="packages/$package/CHANGELOG.md"
+    
+    if [ ! -f "$changelog_file" ]; then
+        echo "  ❌ $package (CHANGELOG.md not found)"
+        failed_packages+=("$package")
+        continue
+    fi
+    
+    # Check if version entry already exists
+    if grep -q "^## \[$version\]" "$changelog_file"; then
+        echo "  ⏭️  $package (version $version already exists)"
+        skipped_packages+=("$package")
+        continue
+    fi
+    
+    # Check if Unreleased section exists
+    if ! grep -q "^## \[Unreleased\]" "$changelog_file"; then
+        echo "  ⚠️  $package (no Unreleased section found, skipping)"
+        skipped_packages+=("$package")
+        continue
+    fi
+    
+    # Create temporary file for the updated changelog
+    temp_file=$(mktemp)
+    
+    # Process the changelog with awk
+    awk -v version="$version" -v date="$current_date" '
+    BEGIN { 
+        in_unreleased = 0
+        unreleased_content = ""
+        found_unreleased = 0
+        processed = 0
+    }
+    
+    # Found Unreleased section
+    /^## \[Unreleased\]/ {
+        found_unreleased = 1
+        in_unreleased = 1
+        next
+    }
+    
+    # Found next version section while in unreleased
+    /^## \[/ && in_unreleased {
+        in_unreleased = 0
+        processed = 1
+        
+        # Add new Unreleased section
+        print "## [Unreleased]"
+        print ""
+        
+        # Check if unreleased_content has meaningful content
+        if (length(unreleased_content) > 0 && unreleased_content !~ /^[[:space:]]*$/) {
+            # Has content - convert Unreleased to version
+            print "## [" version "] - " date
+            print unreleased_content
+        } else {
+            # No content - add "No changes"
+            print "## [" version "] - " date
+            print ""
+            print "### Changed"
+            print "- No changes"
+            print ""
+        }
+        
+        # Print current line (next version section)
+        print
+        next
+    }
+    
+    # Collect content in unreleased section
+    in_unreleased {
+        unreleased_content = unreleased_content $0 "\n"
+        next
+    }
+    
+    # Handle case where Unreleased is the last section
+    END {
+        if (found_unreleased && !processed) {
+            # Add new Unreleased section
+            print "## [Unreleased]"
+            print ""
+            
+            # Check if unreleased_content has meaningful content
+            if (length(unreleased_content) > 0 && unreleased_content !~ /^[[:space:]]*$/) {
+                # Has content - convert Unreleased to version
+                print "## [" version "] - " date
+                print unreleased_content
+            } else {
+                # No content - add "No changes"
+                print "## [" version "] - " date
+                print ""
+                print "### Changed"
+                print "- No changes"
+            }
+        }
+    }
+    
+    # Print all other lines
+    !in_unreleased && !/^## \[Unreleased\]/ {
+        print
+    }
+    ' "$changelog_file" > "$temp_file"
+    
+    # Replace the original file
+    if mv "$temp_file" "$changelog_file"; then
+        echo "  ✅ $package"
+        updated_packages+=("$package")
+    else
+        echo "  ❌ $package (failed to update file)"
+        failed_packages+=("$package")
+        rm -f "$temp_file"
+    fi
+    
+done < <(mise run get-packages --all)
+
+echo ""
+echo "📊 Summary:"
+echo "  🎯 Target version: $version"
+echo "  📅 Date: $current_date"
+echo "  ✅ Updated packages: ${#updated_packages[@]}"
+if [ ${#updated_packages[@]} -gt 0 ]; then
+    printf "     - %s\n" "${updated_packages[@]}"
+fi
+
+if [ ${#skipped_packages[@]} -gt 0 ]; then
+    echo "  ⏭️  Skipped packages: ${#skipped_packages[@]} (already have version entry or no Unreleased section)"
+    printf "     - %s\n" "${skipped_packages[@]}"
+fi
+
+if [ ${#failed_packages[@]} -gt 0 ]; then
+    echo "  ❌ Failed packages: ${#failed_packages[@]}"
+    printf "     - %s\n" "${failed_packages[@]}"
+    exit 1
+fi
+
+echo ""
+echo "💡 Next steps:"
+echo "   1. Review changes: git diff"
+echo "   2. Edit specific package CHANGELOGs if they have actual changes"
+echo "   3. Test the changes: mise run ci"
+echo "   4. Commit: git add . && git commit -m 'docs: update CHANGELOG.md for v$version'"
+
+echo ""
+echo "✅ CHANGELOG update completed!"
