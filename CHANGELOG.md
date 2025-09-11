@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-utils-file**: Fixed file permission preservation in `write_binary()` operations
+
 ## [1.0.0] - 2025-09-09
 
 ### Added

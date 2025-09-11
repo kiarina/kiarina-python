@@ -1,4 +1,5 @@
 import os
+import stat
 import tempfile
 
 import kiarina.utils.file as kf
@@ -151,3 +152,15 @@ def test_main():
         assert replaced_multiple_blob.file_path == "multiple.txt"
         assert replaced_multiple_blob.mime_blob.mime_type == "application/json"
         assert replaced_multiple_blob.mime_blob.raw_text == '{"key": "value"}'
+
+        # Check preservation of original file permissions
+        file_path = os.path.join(tmp_dir, "test_permissions.bin")
+        kf.write_binary(file_path, b"initial content")
+
+        os.chmod(file_path, stat.S_IRUSR | stat.S_IWUSR)  # 0o600
+        original_mode = os.stat(file_path).st_mode
+
+        kf.write_binary(file_path, b"updated content")
+        updated_mode = os.stat(file_path).st_mode
+
+        assert stat.S_IMODE(original_mode) == stat.S_IMODE(updated_mode)
