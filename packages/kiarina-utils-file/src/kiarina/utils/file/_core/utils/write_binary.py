@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import tempfile
 from typing import Awaitable, Literal, overload
@@ -7,6 +8,8 @@ import aiofiles
 from filelock import AsyncFileLock, FileLock
 
 from .get_lock_file_path import get_lock_file_path
+
+logger = logging.getLogger(__name__)
 
 
 @overload
@@ -67,8 +70,10 @@ def write_binary(
 
                 try:
                     os.chown(temp_file_path, original_stat.st_uid, original_stat.st_gid)
-                except (OSError, PermissionError):
-                    pass
+                except (OSError, PermissionError) as e:
+                    logger.debug(
+                        f"Failed to preserve file ownership for {file_path}: {e}"
+                    )
 
             except (OSError, FileNotFoundError):
                 pass
