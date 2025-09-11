@@ -166,15 +166,6 @@ wheels = [
 ]
 
 [[package]]
-name = "falkordb"
-version = "1.2.0"
-source = { git = "https://github.com/kiarina/falkordb-py.git?rev=develop#999bb18e7d87ab47ebf1b7716f8785ef944f0be5" }
-dependencies = [
-    { name = "python-dateutil" },
-    { name = "redis" },
-]
-
-[[package]]
 name = "filelock"
 version = "3.19.1"
 source = { registry = "https://pypi.org/simple" }
@@ -203,7 +194,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-lib-falkordb" },
@@ -225,11 +216,24 @@ requires-dist = [
 ]
 
 [[package]]
+name = "kiarina-falkordb"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "python-dateutil" },
+    { name = "redis" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/aa/95/ab21b7b93ed771bc1358dd23122a1417dd1e35a62b38ecbba35a5bc1f88e/kiarina_falkordb-1.2.0.tar.gz", hash = "sha256:d0346c0519263393a7a4879441b81f57eaa743f15645f26450e4ae2fc53ab4e2", size = 29431, upload-time = "2025-09-11T13:19:12.437Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/73/36/df7659b5835ebc697803d66d2a83c230c0027f29dd14fde9f894ad68551f/kiarina_falkordb-1.2.0-py3-none-any.whl", hash = "sha256:e539f3dab365c98bf674fb9d16e789c8675326f8799d21708ba7c433eb25a0b8", size = 35317, upload-time = "2025-09-11T13:19:11.171Z" },
+]
+
+[[package]]
 name = "kiarina-lib-falkordb"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "packages/kiarina-lib-falkordb" }
 dependencies = [
-    { name = "falkordb" },
+    { name = "kiarina-falkordb" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
     { name = "redis" },
@@ -237,7 +241,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "falkordb", git = "https://github.com/kiarina/falkordb-py.git?rev=develop" },
+    { name = "kiarina-falkordb", specifier = ">=1.2.0" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
     { name = "redis", specifier = ">=6.4.0" },
@@ -245,7 +249,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-redis"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "packages/kiarina-lib-redis" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -262,7 +266,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-redisearch"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "packages/kiarina-lib-redisearch" }
 dependencies = [
     { name = "numpy" },
@@ -283,7 +287,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-llm"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "packages/kiarina-llm" }
 dependencies = [
     { name = "pydantic" },
@@ -300,7 +304,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-python"
-version = "1.0.1"
+version = "1.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "kiarina" },
@@ -363,12 +367,12 @@ test = [
 
 [[package]]
 name = "kiarina-utils-common"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "packages/kiarina-utils-common" }
 
 [[package]]
 name = "kiarina-utils-file"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "packages/kiarina-utils-file" }
 dependencies = [
     { name = "aiofiles" },

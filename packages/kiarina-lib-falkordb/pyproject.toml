@@ -25,14 +25,11 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "falkordb",
+    "kiarina-falkordb>=1.2.0",
     "pydantic-settings>=2.10.1",
     "pydantic-settings-manager>=2.1.0",
     "redis>=6.4.0",
 ]
-
-[tool.uv.sources]
-falkordb = { git = "https://github.com/kiarina/falkordb-py.git", rev = "develop" }
 
 [project.urls]
 Homepage = "https://github.com/kiarina/kiarina-python"
