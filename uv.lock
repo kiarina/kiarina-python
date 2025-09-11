@@ -4,6 +4,7 @@ requires-python = ">=3.12"
 
 [manifest]
 members = [
+    "kiarina",
     "kiarina-lib-falkordb",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
@@ -201,6 +202,29 @@ wheels = [
 ]
 
 [[package]]
+name = "kiarina"
+version = "1.0.1"
+source = { editable = "packages/kiarina" }
+dependencies = [
+    { name = "kiarina-lib-falkordb" },
+    { name = "kiarina-lib-redis" },
+    { name = "kiarina-lib-redisearch" },
+    { name = "kiarina-llm" },
+    { name = "kiarina-utils-common" },
+    { name = "kiarina-utils-file" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
+    { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
+    { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
+    { name = "kiarina-llm", editable = "packages/kiarina-llm" },
+    { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
+    { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
+]
+
+[[package]]
 name = "kiarina-lib-falkordb"
 version = "1.0.1"
 source = { editable = "packages/kiarina-lib-falkordb" }
@@ -279,6 +303,7 @@ name = "kiarina-python"
 version = "1.0.1"
 source = { virtual = "." }
 dependencies = [
+    { name = "kiarina" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
@@ -308,6 +333,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
+    { name = "kiarina", editable = "packages/kiarina" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
