@@ -2,8 +2,8 @@ name: Dependency Update
 
 on:
   schedule:
-    # Run every Monday at 9:00 AM UTC (6:00 PM JST in standard time, 7:00 PM JST in daylight saving time)
-    - cron: '0 9 * * 1'
+    # Run every day at 9:00 PM UTC (6:00 AM JST)
+    - cron: '0 21 * * *'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
