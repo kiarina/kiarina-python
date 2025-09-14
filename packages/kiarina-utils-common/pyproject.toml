@@ -3,7 +3,7 @@ name = "kiarina-utils-common"
 version = "1.1.1"
 description = "Common utility functions for the kiarina namespace packages"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
     { name = "kiarina", email = "kiarinadawa@gmail.com" }
 ]
@@ -14,7 +14,6 @@ keywords = ["utilities", "config", "parser", "common"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",

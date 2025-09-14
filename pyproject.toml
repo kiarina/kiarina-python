@@ -3,7 +3,7 @@ name = "kiarina-python"
 version = "1.1.1"
 description = "A comprehensive namespace package monorepo providing essential utilities for modern Python development"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
     { name = "kiarina", email = "kiarinadawa@gmail.com" }
 ]
@@ -25,7 +25,6 @@ keywords = [
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
@@ -114,7 +113,7 @@ asyncio_default_fixture_loop_scope = "session"
 [tool.coverage.run]
 source = [
     "packages/kiarina-lib-falkordb/src",
-    "packages/kiarina-lib-redis/src", 
+    "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
     "packages/kiarina-llm/src",
     "packages/kiarina-utils-common/src",

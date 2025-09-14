@@ -3,7 +3,7 @@ name = "kiarina"
 version = "1.1.1"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
     { name = "kiarina", email = "kiarinadawa@gmail.com" }
 ]
@@ -24,7 +24,6 @@ keywords = [
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
