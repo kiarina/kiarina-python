@@ -4,6 +4,7 @@
 [![uv](https://img.shields.io/badge/uv-latest-green.svg)](https://github.com/astral-sh/uv)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/kiarina/kiarina-python/workflows/CI/badge.svg)](https://github.com/kiarina/kiarina-python/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/kiarina/kiarina-python/graph/badge.svg?token=NS6QHOXDC0)](https://codecov.io/gh/kiarina/kiarina-python)
 
 > 🐍 **kiarina's Python utility collection** - A comprehensive namespace package monorepo providing essential utilities for modern Python development.
 
