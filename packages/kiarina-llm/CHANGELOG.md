@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-09-25
+
+### Added
+- **Content measurement utilities**: Comprehensive utilities for measuring and managing LLM-handled content
+  - `ContentMetrics`: Tracks token count, file sizes, file counts by type, and media durations
+  - `ContentLimits`: Defines limits for different content types with feature flags
+  - `ContentScale`: Enum for content scale categories (SMALL, MEDIUM, LARGE, EXTRA_LARGE)
+  - `calculate_overflow`: Calculates overflow amounts when content exceeds defined limits
+- **Type safety**: Full type hints and Pydantic validation for all content models
+- **Feature flags**: Enable/disable specific input types (image, audio, video)
+- **Lazy loading**: Efficient module loading using `__getattr__`
+
 ## [1.1.1] - 2025-09-11
 
 ### Changed
