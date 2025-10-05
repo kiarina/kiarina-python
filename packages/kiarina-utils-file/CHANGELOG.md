@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-10-05
+
 ### Changed
 - **BREAKING**: Changed MIME type detection strategy to prioritize file extensions over content analysis
   - `detect_mime_type()` now prioritizes extension-based detection (custom dictionary → mimetypes) before falling back to content analysis (puremagic)
