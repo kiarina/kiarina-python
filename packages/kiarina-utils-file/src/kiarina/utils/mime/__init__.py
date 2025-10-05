@@ -60,6 +60,7 @@ if TYPE_CHECKING:
     from ._helpers.create_mime_blob import create_mime_blob
     from ._helpers.detect_mime_type import detect_mime_type
     from ._models.mime_blob import MIMEBlob
+    from ._types.mime_detection_options import MimeDetectionOptions
     from .settings import settings_manager
 
 __version__ = "1.0.0"
@@ -73,6 +74,8 @@ __all__ = [
     "MIMEBlob",
     # .settings
     "settings_manager",
+    # .types
+    "MimeDetectionOptions",
 ]
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -91,6 +94,8 @@ def __getattr__(name: str) -> object:
         "MIMEBlob": "._models.mime_blob",
         # .settings
         "settings_manager": ".settings",
+        # .types
+        "MimeDetectionOptions": "._types.mime_detection_options",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)

@@ -5,6 +5,7 @@ from typing import BinaryIO, overload
 from .._operations.detect_with_dictionary import detect_with_dictionary
 from .._operations.detect_with_mimetypes import detect_with_mimetypes
 from .._operations.detect_with_puremagic import detect_with_puremagic
+from .._types.mime_detection_options import MimeDetectionOptions
 from .apply_mime_alias import apply_mime_alias
 
 logger = logging.getLogger(__name__)
@@ -16,14 +17,7 @@ def detect_mime_type(
     raw_data: bytes | None = None,
     stream: BinaryIO | None = None,
     file_name_hint: str | os.PathLike[str] | None = None,
-    # normalize_mime_alias options
-    mime_aliases: dict[str, str] | None = None,
-    # detect_with_dictionary options
-    custom_mime_types: dict[str, str] | None = None,
-    multi_extensions: set[str] | None = None,
-    archive_extensions: set[str] | None = None,
-    compression_extensions: set[str] | None = None,
-    encryption_extensions: set[str] | None = None,
+    options: MimeDetectionOptions | None = None,
 ) -> str | None: ...
 
 
@@ -33,14 +27,7 @@ def detect_mime_type(
     raw_data: bytes | None = None,
     stream: BinaryIO | None = None,
     file_name_hint: str | os.PathLike[str] | None = None,
-    # normalize_mime_alias options
-    mime_aliases: dict[str, str] | None = None,
-    # detect_with_dictionary options
-    custom_mime_types: dict[str, str] | None = None,
-    multi_extensions: set[str] | None = None,
-    archive_extensions: set[str] | None = None,
-    compression_extensions: set[str] | None = None,
-    encryption_extensions: set[str] | None = None,
+    options: MimeDetectionOptions | None = None,
     default: str,
 ) -> str: ...
 
@@ -50,14 +37,7 @@ def detect_mime_type(
     raw_data: bytes | None = None,
     stream: BinaryIO | None = None,
     file_name_hint: str | os.PathLike[str] | None = None,
-    # normalize_mime_alias options
-    mime_aliases: dict[str, str] | None = None,
-    # detect_with_dictionary options
-    custom_mime_types: dict[str, str] | None = None,
-    multi_extensions: set[str] | None = None,
-    archive_extensions: set[str] | None = None,
-    compression_extensions: set[str] | None = None,
-    encryption_extensions: set[str] | None = None,
+    options: MimeDetectionOptions | None = None,
     default: str | None = None,
 ) -> str | None:
     """
@@ -82,22 +62,9 @@ def detect_mime_type(
         stream (BinaryIO | None): Binary file stream to analyze. Used when raw_data is None.
         file_name_hint (str | os.PathLike[str] | None): File name or path used as a hint
             for extension-based detection. Required when raw_data and stream are None.
-
-        mime_aliases (dict[str, str] | None): Custom MIME type aliases for normalization.
-            Merged with default settings, with custom values taking precedence.
-            Example: {"application/x-yaml": "application/yaml"}
-
-        custom_mime_types (dict[str, str] | None): Custom extension to MIME type mapping.
-            Example: {".myext": "application/x-custom"}
-        multi_extensions (set[str] | None): Multi-part extensions to recognize.
-            See `kiarina.utils.ext.extract_extension` for details.
-        archive_extensions (set[str] | None): Archive-related extensions.
-            See `kiarina.utils.ext.extract_extension` for details.
-        compression_extensions (set[str] | None): Compression-related extensions.
-            See `kiarina.utils.ext.extract_extension` for details.
-        encryption_extensions (set[str] | None): Encryption-related extensions.
-            See `kiarina.utils.ext.extract_extension` for details.
-
+        options (MimeDetectionOptions | None): Optional configuration for detection behavior.
+            All fields are optional and will be merged with default settings.
+            See `MimeDetectionOptions` for available options.
         default (str | None): Default MIME type to return if detection fails. Default is None.
 
     Returns:
@@ -106,7 +73,30 @@ def detect_mime_type(
     Note:
         At least one of raw_data, stream, or file_name_hint must be provided.
         Content-based detection (raw_data/stream) is more reliable than extension-based detection.
+
+    Examples:
+        >>> # Basic usage
+        >>> detect_mime_type(raw_data=b"\\x89PNG\\r\\n\\x1a\\n")
+        "image/png"
+
+        >>> # With custom options
+        >>> options = {"mime_aliases": {"application/x-yaml": "application/yaml"}}
+        >>> detect_mime_type(file_name_hint="config.yaml", options=options)
+        "application/yaml"
+
+        >>> # With default value
+        >>> detect_mime_type(file_name_hint="unknown.xyz", default="application/octet-stream")
+        "application/octet-stream"
     """
+    # Extract options
+    options = options or {}
+    mime_aliases = options.get("mime_aliases")
+    custom_mime_types = options.get("custom_mime_types")
+    multi_extensions = options.get("multi_extensions")
+    archive_extensions = options.get("archive_extensions")
+    compression_extensions = options.get("compression_extensions")
+    encryption_extensions = options.get("encryption_extensions")
+
     # Try to detect MIME type using puremagic
     if raw_data is not None or stream is not None:
         if mime_type := detect_with_puremagic(

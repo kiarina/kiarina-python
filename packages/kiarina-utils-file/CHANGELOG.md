@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improved `detect_mime_type()` API to reduce cognitive load
+  - Introduced `MimeDetectionOptions` TypedDict to group optional parameters
+  - Replaced multiple individual parameters with a single `options` parameter
+  - All detection options (mime_aliases, custom_mime_types, multi_extensions, etc.) are now passed through the `options` dictionary
+  - Maintains backward compatibility through optional parameter design
+  - Added comprehensive docstring examples for the new API
+
 ### Fixed
 - Fixed symbolic link handling in `read_binary()` and `write_binary()` operations
   - Symlinks are now properly resolved to their target files using `os.path.realpath()`
