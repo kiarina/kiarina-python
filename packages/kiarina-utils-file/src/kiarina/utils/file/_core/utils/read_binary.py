@@ -45,8 +45,13 @@ def read_binary(
     raises:
         IsADirectoryError: If the file is a directory
     """
-    # Normalize the file path
+    # Normalize the file path and resolve symlinks
     file_path = os.path.expanduser(os.path.expandvars(os.fspath(file_path)))
+
+    # Resolve symlinks to get the actual file path
+    # This ensures that locks are taken on the real file, not the symlink
+    if os.path.lexists(file_path):  # Check if path exists (including broken symlinks)
+        file_path = os.path.realpath(file_path)
 
     # Define the lock file path
     lock_file_path = get_lock_file_path(file_path)

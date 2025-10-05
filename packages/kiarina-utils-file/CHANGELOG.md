@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed symbolic link handling in `read_binary()` and `write_binary()` operations
+  - Symlinks are now properly resolved to their target files using `os.path.realpath()`
+  - Write operations through symlinks no longer replace the symlink with a regular file
+  - File locks are now correctly applied to the actual target file, not the symlink itself
+  - Added comprehensive tests for symlink operations including broken symlinks
+
 ## [1.2.0] - 2025-09-25
 
 ### Changed
