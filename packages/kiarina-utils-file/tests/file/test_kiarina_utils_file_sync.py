@@ -164,3 +164,130 @@ def test_main():
         updated_mode = os.stat(file_path).st_mode
 
         assert stat.S_IMODE(original_mode) == stat.S_IMODE(updated_mode)
+
+
+def test_symlink_operations():
+    """Test read/write operations with symbolic links"""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        # Create a real file
+        real_file = os.path.join(tmp_dir, "real_file.txt")
+        original_content = b"original content"
+        kf.write_binary(real_file, original_content)
+
+        # Create a symlink to the real file
+        symlink_file = os.path.join(tmp_dir, "symlink_file.txt")
+        try:
+            os.symlink(real_file, symlink_file)
+        except OSError:
+            # Skip test if symlinks are not supported (e.g., Windows without admin)
+            import pytest
+
+            pytest.skip("Symlinks not supported on this system")
+
+        # Test 1: Read through symlink
+        read_content = kf.read_binary(symlink_file)
+        assert read_content == original_content
+
+        # Test 2: Write through symlink
+        new_content = b"updated content via symlink"
+        kf.write_binary(symlink_file, new_content)
+
+        # Verify symlink still exists
+        assert os.path.islink(symlink_file)
+
+        # Verify real file was updated
+        assert kf.read_binary(real_file) == new_content
+
+        # Verify reading through symlink returns updated content
+        assert kf.read_binary(symlink_file) == new_content
+
+        # Test 3: Multiple symlinks to the same file
+        symlink_file2 = os.path.join(tmp_dir, "symlink_file2.txt")
+        os.symlink(real_file, symlink_file2)
+
+        # Write through second symlink
+        content_via_symlink2 = b"content via symlink2"
+        kf.write_binary(symlink_file2, content_via_symlink2)
+
+        # All paths should return the same content
+        assert kf.read_binary(real_file) == content_via_symlink2
+        assert kf.read_binary(symlink_file) == content_via_symlink2
+        assert kf.read_binary(symlink_file2) == content_via_symlink2
+
+        # Both symlinks should still exist
+        assert os.path.islink(symlink_file)
+        assert os.path.islink(symlink_file2)
+
+        # Test 4: Text operations through symlink
+        text_content = "Hello through symlink! 日本語"
+        kf.write_text(symlink_file, text_content)
+        assert kf.read_text(real_file) == text_content
+        assert kf.read_text(symlink_file) == text_content
+
+        # Test 5: JSON operations through symlink
+        json_data = {"key": "value", "number": 42}
+        kf.write_json_dict(symlink_file, json_data)
+        assert kf.read_json_dict(real_file) == json_data
+        assert kf.read_json_dict(symlink_file) == json_data
+
+
+def test_broken_symlink_operations():
+    """Test read/write operations with broken symbolic links"""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        # Create a real file
+        real_file = os.path.join(tmp_dir, "real_file.txt")
+        kf.write_binary(real_file, b"original content")
+
+        # Create a symlink to the real file
+        symlink_file = os.path.join(tmp_dir, "symlink_file.txt")
+        try:
+            os.symlink(real_file, symlink_file)
+        except OSError:
+            # Skip test if symlinks are not supported (e.g., Windows without admin)
+            import pytest
+
+            pytest.skip("Symlinks not supported on this system")
+
+        # Delete the real file (making the symlink broken)
+        os.remove(real_file)
+
+        # Verify the symlink is broken
+        assert os.path.islink(symlink_file)  # Symlink still exists
+        assert not os.path.exists(symlink_file)  # But target doesn't exist
+
+        # Test 1: Read from broken symlink returns None
+        read_content = kf.read_binary(symlink_file)
+        assert read_content is None
+
+        # Test 2: Read with default value
+        default_content = b"default value"
+        read_with_default = kf.read_binary(symlink_file, default=default_content)
+        assert read_with_default == default_content
+
+        # Test 3: Write through broken symlink creates the target file
+        new_content = b"recreated content"
+        kf.write_binary(symlink_file, new_content)
+
+        # Verify the target file was created
+        assert os.path.exists(real_file)
+        assert kf.read_binary(real_file) == new_content
+
+        # Verify the symlink still exists and works
+        assert os.path.islink(symlink_file)
+        assert kf.read_binary(symlink_file) == new_content
+
+        # Test 4: Text operations with broken symlink
+        os.remove(real_file)  # Break the symlink again
+        assert not os.path.exists(symlink_file)
+
+        text_content = "Recreated through broken symlink"
+        kf.write_text(symlink_file, text_content)
+        assert kf.read_text(real_file) == text_content
+        assert kf.read_text(symlink_file) == text_content
+
+        # Test 5: JSON operations with broken symlink
+        os.remove(real_file)  # Break the symlink again
+        json_data = {"status": "recreated", "count": 123}
+        kf.write_json_dict(symlink_file, json_data)
+        assert kf.read_json_dict(real_file) == json_data
+        assert kf.read_json_dict(symlink_file) == json_data
