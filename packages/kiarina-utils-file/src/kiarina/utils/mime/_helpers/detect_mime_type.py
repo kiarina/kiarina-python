@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 @overload
 def detect_mime_type(
     *,
+    file_name_hint: str | os.PathLike[str] | None = None,
     raw_data: bytes | None = None,
     stream: BinaryIO | None = None,
-    file_name_hint: str | os.PathLike[str] | None = None,
     options: MimeDetectionOptions | None = None,
 ) -> str | None: ...
 
@@ -24,9 +24,9 @@ def detect_mime_type(
 @overload
 def detect_mime_type(
     *,
+    file_name_hint: str | os.PathLike[str] | None = None,
     raw_data: bytes | None = None,
     stream: BinaryIO | None = None,
-    file_name_hint: str | os.PathLike[str] | None = None,
     options: MimeDetectionOptions | None = None,
     default: str,
 ) -> str: ...
@@ -34,34 +34,38 @@ def detect_mime_type(
 
 def detect_mime_type(
     *,
+    file_name_hint: str | os.PathLike[str] | None = None,
     raw_data: bytes | None = None,
     stream: BinaryIO | None = None,
-    file_name_hint: str | os.PathLike[str] | None = None,
     options: MimeDetectionOptions | None = None,
     default: str | None = None,
 ) -> str | None:
     """
-    Detect the MIME type of a file or data stream using multiple detection methods.
+    Detect the MIME type from file name and/or content.
 
-    This function employs a multi-stage approach to determine the MIME type with high accuracy:
+    This function employs a pragmatic detection strategy that prioritizes
+    explicit intent (file extension) over content analysis:
 
     Detection Strategy:
-        1. **Content-based detection**: Uses `puremagic` to analyze raw data or file streams
-           by examining file headers and magic bytes for precise identification.
-        2. **Custom dictionary lookup**: Matches file extensions against a configurable
-           mapping that handles complex cases like multi-part extensions (.tar.gz).
-        3. **Standard library fallback**: Uses Python's built-in `mimetypes` module
-           for standard file extension to MIME type mapping.
+        1. **Extension-based detection** (if file_name_hint provided):
+           - Custom dictionary lookup for complex extensions (.tar.gz, etc.)
+           - Standard library mimetypes for common extensions
+        2. **Content-based detection** (fallback):
+           - puremagic analysis when extension is unavailable or unrecognized
 
-    All detected MIME types are automatically normalized using configurable aliases
-    to ensure consistency with modern standards (e.g., "application/x-yaml" → "application/yaml").
+    Philosophy:
+        File extensions represent explicit user intent and should be trusted.
+        Content analysis is used as a fallback when extension information is
+        unavailable or insufficient. If you need to detect mismatches between
+        extension and content, use a dedicated validation function.
 
     Args:
-        raw_data (bytes | None): Raw binary data to analyze. Takes precedence over stream
-            if both are provided.
-        stream (BinaryIO | None): Binary file stream to analyze. Used when raw_data is None.
-        file_name_hint (str | os.PathLike[str] | None): File name or path used as a hint
-            for extension-based detection. Required when raw_data and stream are None.
+        file_name_hint (str | os.PathLike[str] | None): File name or path used for
+            extension-based detection. This is prioritized over content analysis.
+        raw_data (bytes | None): Raw binary data to analyze. Used as fallback when
+            extension-based detection fails or file_name_hint is not provided.
+        stream (BinaryIO | None): Binary file stream to analyze. Used as fallback
+            when raw_data is None.
         options (MimeDetectionOptions | None): Optional configuration for detection behavior.
             All fields are optional and will be merged with default settings.
             See `MimeDetectionOptions` for available options.
@@ -71,13 +75,24 @@ def detect_mime_type(
         (str | None): The detected and normalized MIME type, or default if detection fails.
 
     Note:
-        At least one of raw_data, stream, or file_name_hint must be provided.
-        Content-based detection (raw_data/stream) is more reliable than extension-based detection.
+        At least one of file_name_hint, raw_data, or stream should be provided for
+        meaningful detection.
 
     Examples:
-        >>> # Basic usage
+        >>> # Extension-based detection (prioritized)
+        >>> detect_mime_type(file_name_hint="document.md")
+        "text/markdown"
+
+        >>> # Content-based fallback
         >>> detect_mime_type(raw_data=b"\\x89PNG\\r\\n\\x1a\\n")
         "image/png"
+
+        >>> # Extension takes precedence
+        >>> detect_mime_type(
+        ...     file_name_hint="document.md",  # Named .md
+        ...     raw_data=png_bytes  # Actually PNG
+        ... )
+        "text/markdown"  # Trusts the extension
 
         >>> # With custom options
         >>> options = {"mime_aliases": {"application/x-yaml": "application/yaml"}}
@@ -97,15 +112,9 @@ def detect_mime_type(
     compression_extensions = options.get("compression_extensions")
     encryption_extensions = options.get("encryption_extensions")
 
-    # Try to detect MIME type using puremagic
-    if raw_data is not None or stream is not None:
-        if mime_type := detect_with_puremagic(
-            raw_data=raw_data, stream=stream, file_name_hint=file_name_hint
-        ):
-            return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
-
-    # Try to detect MIME type using a dictionary based on file name hint
+    # STEP 1: Extension-based detection (prioritized)
     if file_name_hint is not None:
+        # Try custom dictionary (handles complex extensions)
         if mime_type := detect_with_dictionary(
             file_name_hint,
             custom_mime_types=custom_mime_types,
@@ -116,9 +125,17 @@ def detect_mime_type(
         ):
             return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
 
-    # Try to detect MIME type using the mimetypes module
-    if file_name_hint is not None:
+        # Try standard mimetypes library
         if mime_type := detect_with_mimetypes(file_name_hint):
+            return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
+
+    # STEP 2: Content-based detection (fallback)
+    if raw_data is not None or stream is not None:
+        if mime_type := detect_with_puremagic(
+            raw_data=raw_data,
+            stream=stream,
+            file_name_hint=file_name_hint,
+        ):
             return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
 
     # If no MIME type is found, return default

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **BREAKING**: Changed MIME type detection strategy to prioritize file extensions over content analysis
+  - `detect_mime_type()` now prioritizes extension-based detection (custom dictionary → mimetypes) before falling back to content analysis (puremagic)
+  - **Philosophy**: File extensions represent explicit user intent and should be trusted
+  - **Rationale**: More intuitive behavior for applications - `.md` files are treated as Markdown even if content looks like plain text
+  - **Migration**: If your code relies on content-based detection taking precedence, you may need to adjust expectations
+  - Reordered function arguments: `file_name_hint` is now the first parameter (before `raw_data` and `stream`)
+  - Updated all docstrings and module documentation to reflect the new detection strategy
 - Improved `detect_mime_type()` API to reduce cognitive load
   - Introduced `MimeDetectionOptions` TypedDict to group optional parameters
   - Replaced multiple individual parameters with a single `options` parameter
