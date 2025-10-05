@@ -52,8 +52,8 @@ def read_file(
             return default
 
         mime_type = detect_mime_type(
-            raw_data=raw_data,
             file_name_hint=file_path,
+            raw_data=raw_data,
             default=fallback_mime_type,
         )
 

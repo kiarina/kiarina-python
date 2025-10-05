@@ -105,7 +105,7 @@ async def process_files():
     # All operations have async equivalents
     text = await kfa.read_text("large_file.txt")
     await kfa.write_json_dict("result.json", {"processed": True})
-    
+
     # FileBlob operations
     blob = await kfa.read_file("document.pdf")
     if blob:
@@ -118,11 +118,15 @@ async def process_files():
 import kiarina.utils.mime as km
 import kiarina.utils.ext as ke
 
-# MIME type detection from content and filename
+# MIME type detection - extension takes precedence
 mime_type = km.detect_mime_type(
+    file_name_hint="document.md",  # Extension is prioritized
     raw_data=file_data,
-    file_name_hint="document.pdf"
 )
+# Returns "text/markdown" even if content looks like plain text
+
+# Content-based detection (fallback when no extension)
+mime_type = km.detect_mime_type(raw_data=jpeg_data)  # "image/jpeg"
 
 # Extension detection from MIME type
 extension = ke.detect_extension("application/json")  # ".json"
@@ -249,7 +253,7 @@ All synchronous functions have async equivalents with the same signatures, but t
 ```python
 class FileBlob:
     def __init__(self, file_path, mime_blob=None, *, mime_type=None, raw_data=None, raw_text=None)
-    
+
     # Properties
     file_path: str
     mime_blob: MIMEBlob
@@ -261,7 +265,7 @@ class FileBlob:
     hash_string: str
     ext: str
     hashed_file_name: str
-    
+
     # Methods
     def is_binary() -> bool
     def is_text() -> bool
@@ -273,7 +277,7 @@ class FileBlob:
 ```python
 class MIMEBlob:
     def __init__(self, mime_type, raw_data=None, *, raw_text=None)
-    
+
     # Properties
     mime_type: str
     raw_data: bytes
@@ -283,7 +287,7 @@ class MIMEBlob:
     hash_string: str
     ext: str
     hashed_file_name: str
-    
+
     # Methods
     def is_binary() -> bool
     def is_text() -> bool
@@ -336,7 +340,7 @@ class MIMEBlob:
 ## Requirements
 
 - **Python**: 3.12 or higher
-- **Core dependencies**: 
+- **Core dependencies**:
   - `aiofiles>=24.1.0` - Async file operations
   - `charset-normalizer>=3.4.3` - Encoding detection
   - `filelock>=3.19.1` - File locking

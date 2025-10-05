@@ -2,33 +2,47 @@
 MIME type detection and processing utilities.
 
 This module provides comprehensive functionality for:
-- Detecting MIME types from binary data, file streams, and file names
+- Detecting MIME types from file names and binary data
 - Creating MIME-typed data containers (MIMEBlob)
 - Normalizing MIME types using configurable aliases
-- Multi-stage detection using content analysis and extension mapping
+- Multi-stage detection using extension mapping and content analysis
 
 Key Features:
-    - **Content-based detection**: Uses puremagic to analyze file headers and magic bytes
-    - **Extension-based detection**: Supports complex multi-part extensions (.tar.gz, .tar.gz.gpg)
+    - **Extension-based detection**: Prioritizes file extensions as explicit user intent
+    - **Content-based detection**: Uses puremagic as fallback for unknown extensions
+    - **Complex extensions**: Supports multi-part extensions (.tar.gz, .tar.gz.gpg)
     - **MIME type normalization**: Applies configurable aliases for consistency
     - **Data container**: MIMEBlob class for handling MIME-typed binary data
 
 Detection Strategy:
-    1. Content analysis using puremagic (most reliable)
-    2. Custom dictionary lookup for complex extensions
-    3. Standard library mimetypes fallback
-    4. Automatic MIME type alias normalization
+    1. Extension-based detection (prioritized):
+       - Custom dictionary lookup for complex extensions
+       - Standard library mimetypes for common extensions
+    2. Content analysis using puremagic (fallback)
+    3. Automatic MIME type alias normalization
+
+Philosophy:
+    File extensions represent explicit user intent and should be trusted.
+    Content analysis is used as a fallback when extension information is
+    unavailable or insufficient.
 
 Examples:
     >>> import kiarina.utils.mime as km
     >>>
-    >>> # Detect MIME type from binary data
+    >>> # Detect MIME type from file name (prioritized)
+    >>> mime_type = km.detect_mime_type(file_name_hint="document.md")
+    >>> print(mime_type)  # "text/markdown"
+    >>>
+    >>> # Detect from binary data (fallback)
     >>> mime_type = km.detect_mime_type(raw_data=jpeg_bytes)
     >>> print(mime_type)  # "image/jpeg"
     >>>
-    >>> # Detect from file name
-    >>> mime_type = km.detect_mime_type(file_name_hint="document.tar.gz")
-    >>> print(mime_type)  # "application/gzip"
+    >>> # Extension takes precedence
+    >>> mime_type = km.detect_mime_type(
+    ...     file_name_hint="document.md",
+    ...     raw_data=png_bytes  # Actually PNG
+    ... )
+    >>> print(mime_type)  # "text/markdown" (trusts the extension)
     >>>
     >>> # Create MIMEBlob from data
     >>> blob = km.create_mime_blob(jpeg_bytes)
