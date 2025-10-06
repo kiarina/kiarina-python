@@ -19,10 +19,6 @@ htmlcov/
 .venv/
 .env
 
-# IDE
-.vscode/
-*.code-workspace
-
 # OS
 .DS_Store
 
