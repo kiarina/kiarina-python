@@ -41,7 +41,7 @@ dependencies = [
     "kiarina",
     "kiarina-lib-cloudflare",
     "kiarina-lib-falkordb",
-    "kiarina-lib-google",
+    "kiarina-lib-google-auth",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-llm",
@@ -80,7 +80,7 @@ members = [
     "packages/kiarina",
     "packages/kiarina-lib-cloudflare",
     "packages/kiarina-lib-falkordb",
-    "packages/kiarina-lib-google",
+    "packages/kiarina-lib-google-auth",
     "packages/kiarina-lib-redis",
     "packages/kiarina-lib-redisearch",
     "packages/kiarina-llm",
@@ -92,7 +92,7 @@ members = [
 kiarina = { workspace = true }
 kiarina-lib-cloudflare = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
-kiarina-lib-google = { workspace = true }
+kiarina-lib-google-auth = { workspace = true }
 kiarina-lib-redis = { workspace = true }
 kiarina-lib-redisearch = { workspace = true }
 kiarina-llm = { workspace = true }
@@ -103,7 +103,7 @@ kiarina-utils-file = { workspace = true }
 mypy_path = [
     "packages/kiarina-lib-cloudflare/src",
     "packages/kiarina-lib-falkordb/src",
-    "packages/kiarina-lib-google/src",
+    "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
     "packages/kiarina-llm/src",
@@ -124,7 +124,7 @@ asyncio_default_fixture_loop_scope = "session"
 source = [
     "packages/kiarina-lib-cloudflare/src",
     "packages/kiarina-lib-falkordb/src",
-    "packages/kiarina-lib-google/src",
+    "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
     "packages/kiarina-llm/src",

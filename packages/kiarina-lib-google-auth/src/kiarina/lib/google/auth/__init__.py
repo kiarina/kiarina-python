@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._hello import hello
 
-__version__ = version("kiarina-lib-google")
+__version__ = version("kiarina-lib-google-auth")
 
 __all__ = ["hello"]
 

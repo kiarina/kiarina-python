@@ -11,7 +11,7 @@ A Python client library for Google Cloud services with configuration management.
 ## Installation
 
 ```bash
-pip install kiarina-lib-google
+pip install kiarina-lib-google-auth
 ```
 
 ## Quick Start
@@ -19,7 +19,7 @@ pip install kiarina-lib-google
 ```python
 from kiarina.lib.google import __version__
 
-print(f"kiarina-lib-google version: {__version__}")
+print(f"kiarina-lib-google-auth version: {__version__}")
 ```
 
 ## Development
@@ -43,10 +43,10 @@ mise run setup
 
 ```bash
 # Run format, lint, type checks and tests
-mise run package kiarina-lib-google
+mise run package kiarina-lib-google-auth
 
 # Coverage report
-mise run package:test kiarina-lib-google --coverage
+mise run package:test kiarina-lib-google-auth --coverage
 ```
 
 ## Dependencies

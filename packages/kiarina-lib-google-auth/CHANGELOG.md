@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial release of kiarina-lib-google
+- Initial release of kiarina-lib-google-auth
 - Google Cloud client library with configuration management using pydantic-settings-manager
 - Type safety with full type hints and Pydantic validation
 - Environment variable configuration support
