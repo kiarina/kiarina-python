@@ -56,7 +56,26 @@ mypy_path = [
 ]
 ```
 
-### 3. Sync the environment
+#### Add to coverage.run source
+```toml
+[tool.coverage.run]
+source = [
+    "packages/existing-package/src",
+    "packages/new-package-name/src",  # Add this
+]
+```
+
+### 3. Add to meta package (if applicable)
+If you have a meta package that aggregates multiple packages, add the new package to its dependencies.
+```toml
+[project]
+dependencies = [
+    "existing-package>=1.0.0",
+    "new-package-name>=1.1.0",  # Add this
+]
+```
+
+### 4. Sync the environment
 ```sh
 uv sync --all-packages --all-extras --all-groups
 ```

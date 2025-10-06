@@ -20,7 +20,9 @@ keywords = [
     "falkordb",
     "redisearch",
     "async",
-    "pydantic"
+    "pydantic",
+    "google",
+    "cloudflare"
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -37,7 +39,9 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "kiarina",
+    "kiarina-lib-cloudflare",
     "kiarina-lib-falkordb",
+    "kiarina-lib-google",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-llm",
@@ -74,7 +78,9 @@ test = [
 [tool.uv.workspace]
 members = [
     "packages/kiarina",
+    "packages/kiarina-lib-cloudflare",
     "packages/kiarina-lib-falkordb",
+    "packages/kiarina-lib-google",
     "packages/kiarina-lib-redis",
     "packages/kiarina-lib-redisearch",
     "packages/kiarina-llm",
@@ -84,7 +90,9 @@ members = [
 
 [tool.uv.sources]
 kiarina = { workspace = true }
+kiarina-lib-cloudflare = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
+kiarina-lib-google = { workspace = true }
 kiarina-lib-redis = { workspace = true }
 kiarina-lib-redisearch = { workspace = true }
 kiarina-llm = { workspace = true }
@@ -93,7 +101,9 @@ kiarina-utils-file = { workspace = true }
 
 [tool.mypy]
 mypy_path = [
+    "packages/kiarina-lib-cloudflare/src",
     "packages/kiarina-lib-falkordb/src",
+    "packages/kiarina-lib-google/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
     "packages/kiarina-llm/src",
@@ -112,7 +122,9 @@ asyncio_default_fixture_loop_scope = "session"
 
 [tool.coverage.run]
 source = [
+    "packages/kiarina-lib-cloudflare/src",
     "packages/kiarina-lib-falkordb/src",
+    "packages/kiarina-lib-google/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
     "packages/kiarina-llm/src",
