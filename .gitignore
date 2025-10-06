@@ -29,7 +29,6 @@ htmlcov/
 # Project specific
 *.log
 tmp/
-ai.yaml
 
 # Test data
 tests/data/large/

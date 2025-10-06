@@ -14,10 +14,28 @@ description: >-
 ## Procedure
 
 ### 1. Create package directory
+
+#### Create package directory and initialize with `uv init`
 ```sh
 mkdir packages/new-package-name
 cd packages/new-package-name
 uv init
+```
+
+#### Add pytest configuration to VSCode
+```sh
+mkdir packages/new-package-name/.vscode
+```
+
+Add the following to `packages/new-package-name/.vscode/settings.json`.
+```json
+{
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+}
 ```
 
 ### 2. Update root pyproject.toml
