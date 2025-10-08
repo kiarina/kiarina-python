@@ -35,6 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`CredentialsCache`**: Protocol for implementing custom credentials caching strategies
 - **`Credentials`**: Type alias for all supported credential types
 
+### Security
+- **Enhanced credential protection**: Changed `service_account_data`, `client_secret_data`, and `authorized_user_data` fields to use `SecretStr`
+  - Credentials are now masked in string representations and logs (displayed as `**********`)
+  - Prevents accidental exposure of sensitive data in debug output
+  - Access secret values explicitly via `.get_secret_value()` method
+  - Minimal breaking change: only affects direct field access (use `get_*_data()` methods instead)
+
 ### Configuration Options
 - `type`: Authentication type (default, service_account, user_account)
 - `service_account_file`: Path to service account key file

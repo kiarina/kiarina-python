@@ -2,7 +2,7 @@ import json
 import os
 from typing import Any, Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
@@ -21,7 +21,7 @@ class GoogleAuthSettings(BaseSettings):
     service_account_file: str | None = None
     """Path to the service account key file"""
 
-    service_account_data: str | None = None
+    service_account_data: SecretStr | None = None
     """Service account key data in JSON format"""
 
     # --------------------------------------------------
@@ -33,13 +33,13 @@ class GoogleAuthSettings(BaseSettings):
     client_secret_file: str | None = None
     """Path to the client secret file"""
 
-    client_secret_data: str | None = None
+    client_secret_data: SecretStr | None = None
     """Client secret data in JSON format"""
 
     authorized_user_file: str | None = None
     """Path to the authorized user file"""
 
-    authorized_user_data: str | None = None
+    authorized_user_data: SecretStr | None = None
     """
     Authorized user data in JSON format
 
@@ -98,19 +98,19 @@ class GoogleAuthSettings(BaseSettings):
         if not self.service_account_data:
             return None
 
-        return json.loads(self.service_account_data)  # type: ignore[no-any-return]
+        return json.loads(self.service_account_data.get_secret_value())  # type: ignore[no-any-return]
 
     def get_client_secret_data(self) -> dict[str, Any] | None:
         if not self.client_secret_data:
             return None
 
-        return json.loads(self.client_secret_data)  # type: ignore[no-any-return]
+        return json.loads(self.client_secret_data.get_secret_value())  # type: ignore[no-any-return]
 
     def get_authorized_user_data(self) -> dict[str, Any] | None:
         if not self.authorized_user_data:
             return None
 
-        return json.loads(self.authorized_user_data)  # type: ignore[no-any-return]
+        return json.loads(self.authorized_user_data.get_secret_value())  # type: ignore[no-any-return]
 
 
 settings_manager = SettingsManager(GoogleAuthSettings, multi=True)

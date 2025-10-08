@@ -31,3 +31,10 @@ description: >-
 
 If there are changes to existing knowledge, update the content.
 Delete knowledge that is no longer needed.
+
+## Notes on Creating Knowledge
+
+- Only document project-specific knowledge that cannot be understood without this document
+- Avoid documenting general content or content that can be inferred from other contexts
+- Avoid documenting content that duplicates other documents
+- If duplication is unavoidable, consider merging multiple documents
