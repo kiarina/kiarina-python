@@ -6,7 +6,7 @@ from ..settings import GoogleAuthSettings
 
 
 def get_self_signed_jwt(
-    config_key: str,
+    config_key: str | None = None,
     *,
     settings: GoogleAuthSettings | None = None,
     audience: str,
