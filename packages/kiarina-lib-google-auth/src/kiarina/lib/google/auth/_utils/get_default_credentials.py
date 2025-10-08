@@ -21,7 +21,7 @@ def get_default_credentials() -> (
     - `google.auth.compute_engine.credentials.Credentials`
         - When running on GCP and the metadata server is available
     """
-    credentials, _ = default()
+    credentials, _ = default()  # type: ignore[no-untyped-call]
 
     assert isinstance(
         credentials,

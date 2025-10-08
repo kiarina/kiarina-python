@@ -10,7 +10,7 @@ from kiarina.lib.google.auth._utils.get_default_credentials import (
 
 
 @pytest.mark.xfail(
-    os.path.exists(
+    not os.path.exists(
         os.path.expanduser("~/.config/gcloud/application_default_credentials.json")
     ),
     reason="ADC file not set",

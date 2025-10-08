@@ -25,6 +25,13 @@ def get_credentials(
     if settings is None:
         settings = settings_manager.get_settings_by_key(config_key)
 
+    credentials: (
+        google.auth.compute_engine.credentials.Credentials
+        | google.oauth2.service_account.Credentials
+        | google.oauth2.credentials.Credentials
+        | impersonated_credentials.Credentials
+    )
+
     if settings.type == "default":
         credentials = get_default_credentials()
 
@@ -46,7 +53,7 @@ def get_credentials(
         raise ValueError(f"Unsupported credentials type: {settings.type}")
 
     if settings.impersonate_service_account:
-        credentials = impersonated_credentials.Credentials(
+        credentials = impersonated_credentials.Credentials(  # type: ignore[no-untyped-call]
             source_credentials=credentials,
             target_principal=settings.impersonate_service_account,
             target_scopes=scopes or settings.scopes,
