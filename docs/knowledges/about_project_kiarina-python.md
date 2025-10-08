@@ -16,6 +16,7 @@ Packages under the `kiarina` namespace will be published to PyPI as kiarina-* pa
 
 - kiarina: Meta package for the `kiarina` namespace
 - kiarina-lib-falkordb: `kiarina.lib.falkordb` package. FalkorDB utilities
+- kiarina-lib-google-auth: `kiarina.lib.google.auth` package. Google Cloud authentication utilities
 - kiarina-lib-redis: `kiarina.lib.redis` package. Redis utilities
 - kiarina-lib-redisearch: `kiarina.lib.redisearch` package. Advanced Redisearch wrapper
 - kiarina-llm: `kiarina.llm` package. LLM utilities
