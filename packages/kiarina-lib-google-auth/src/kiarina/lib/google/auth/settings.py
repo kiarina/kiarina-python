@@ -129,21 +129,21 @@ class GoogleAuthSettings(BaseSettings):
     # Methods
     # --------------------------------------------------
 
-    def get_service_account_data(self) -> dict[str, Any]:
+    def get_service_account_data(self) -> dict[str, Any] | None:
         if not self.service_account_data:
-            raise ValueError("service_account_data is not set")
+            return None
 
         return json.loads(self.service_account_data)  # type: ignore[no-any-return]
 
-    def get_client_secret_data(self) -> dict[str, Any]:
+    def get_client_secret_data(self) -> dict[str, Any] | None:
         if not self.client_secret_data:
-            raise ValueError("client_secret_data is not set")
+            return None
 
         return json.loads(self.client_secret_data)  # type: ignore[no-any-return]
 
-    def get_authorized_user_data(self) -> dict[str, Any]:
+    def get_authorized_user_data(self) -> dict[str, Any] | None:
         if not self.authorized_user_data:
-            raise ValueError("authorized_user_data is not set")
+            return None
 
         return json.loads(self.authorized_user_data)  # type: ignore[no-any-return]
 

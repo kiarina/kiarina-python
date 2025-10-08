@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.get_credentials import get_credentials
+    from ._helpers.get_self_signed_jwt import get_self_signed_jwt
     from ._types.credentials_cache import CredentialsCache
     from ._utils.get_default_credentials import get_default_credentials
     from ._utils.get_service_account_credentials import get_service_account_credentials
@@ -16,6 +17,7 @@ __version__ = version("kiarina-lib-google-auth")
 __all__ = [
     # ._helpers
     "get_credentials",
+    "get_self_signed_jwt",
     # ._types
     "CredentialsCache",
     # ._utils
@@ -36,7 +38,8 @@ def __getattr__(name: str) -> object:
 
     module_map = {
         # ._helpers
-        "get_google_credentials": "._helpers.get_google_credentials",
+        "get_credentials": "._helpers.get_credentials",
+        "get_self_signed_jwt": "._helpers.get_self_signed_jwt",
         # ._types
         "CredentialsCache": "._types.credentials_cache",
         # ._utils
