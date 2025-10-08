@@ -1,0 +1,151 @@
+import hashlib
+import json
+import os
+from typing import Any, Literal
+
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings_manager import SettingsManager
+
+
+class GoogleAuthSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_GOOGLE_AUTH_")
+
+    type: Literal["default", "service_account", "user_account"] = "default"
+
+    # --------------------------------------------------
+    # Fields (service_account)
+    # --------------------------------------------------
+
+    service_account_email: str | None = None
+
+    service_account_file: str | None = None
+    """Path to the service account key file"""
+
+    service_account_data: str | None = None
+    """Service account key data in JSON format"""
+
+    # --------------------------------------------------
+    # Fields (user_account)
+    # --------------------------------------------------
+
+    user_account_email: str | None = None
+
+    client_secret_file: str | None = None
+    """Path to the client secret file"""
+
+    client_secret_data: str | None = None
+    """Client secret data in JSON format"""
+
+    authorized_user_file: str | None = None
+    """Path to the authorized user file"""
+
+    authorized_user_data: str | None = None
+    """
+    Authorized user data in JSON format
+
+    If expired, retrieve from cache.
+    If cache is not available, use for refresh.
+    Refreshed credentials will be cached.
+    """
+
+    # --------------------------------------------------
+    # Fields (common)
+    # --------------------------------------------------
+
+    impersonate_service_account: str | None = None
+    """
+    Email address of the service account to impersonate
+
+    The source principal requires the roles/iam.serviceAccountTokenCreator role.
+    Note that this required permission is not included in the roles/owner role.
+    """
+
+    scopes: list[str] = Field(
+        default_factory=lambda: [
+            "https://www.googleapis.com/auth/cloud-platform",  # All GCP resources
+            "https://www.googleapis.com/auth/drive",  # Google Drive resources
+            "https://www.googleapis.com/auth/spreadsheets",  # Google Sheets resources
+        ]
+    )
+    """
+    List of scopes to request during the authentication
+
+    Specify the scopes required for impersonation authentication.
+    Specify the scopes required for user account authentication.
+    """
+
+    project_id: str | None = None
+
+    # --------------------------------------------------
+    # Validators
+    # --------------------------------------------------
+
+    @field_validator(
+        "service_account_file",
+        "client_secret_file",
+        "authorized_user_file",
+        mode="before",
+    )
+    @classmethod
+    def expand_user(cls, v: str | None) -> str | None:
+        return os.path.expanduser(v) if isinstance(v, str) else v
+
+    # --------------------------------------------------
+    # Properties
+    # --------------------------------------------------
+
+    @property
+    def cache_key(self) -> str:
+        """Generate a stable cache key based on all settings.
+
+        Uses SHA-256 hash of the JSON representation to ensure:
+        - Deterministic: same settings always produce the same key
+        - Persistent: works across process restarts
+        - Collision-resistant: SHA-256 provides strong uniqueness
+
+        Returns:
+            A 16-character hexadecimal string (first 64 bits of SHA-256)
+        """
+        if self.type in ("default", "service_account"):
+            raise ValueError("Cache key is only applicable for user_account type.")
+
+        json_str = self.model_dump_json(
+            include={
+                "type",
+                "user_account_email",
+                "client_secret_file",
+                "client_secret_data",
+                "authorized_user_file",
+                "authorized_user_data",
+                "impersonate_service_account",
+                "scopes",
+            }
+        )
+
+        return hashlib.sha256(json_str.encode()).hexdigest()[:16]
+
+    # --------------------------------------------------
+    # Methods
+    # --------------------------------------------------
+
+    def get_service_account_data(self) -> dict[str, Any]:
+        if not self.service_account_data:
+            raise ValueError("service_account_data is not set")
+
+        return json.loads(self.service_account_data)
+
+    def get_client_secret_data(self) -> dict[str, Any]:
+        if not self.client_secret_data:
+            raise ValueError("client_secret_data is not set")
+
+        return json.loads(self.client_secret_data)
+
+    def get_authorized_user_data(self) -> dict[str, Any]:
+        if not self.authorized_user_data:
+            raise ValueError("authorized_user_data is not set")
+
+        return json.loads(self.authorized_user_data)
+
+
+settings_manager = SettingsManager(GoogleAuthSettings, multi=True)

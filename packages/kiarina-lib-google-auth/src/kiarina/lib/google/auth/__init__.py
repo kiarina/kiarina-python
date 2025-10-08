@@ -4,11 +4,28 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._hello import hello
+    from ._helpers.get_credentials import get_credentials
+    from ._types.credentials_cache import CredentialsCache
+    from ._utils.get_default_credentials import get_default_credentials
+    from ._utils.get_service_account_credentials import get_service_account_credentials
+    from ._utils.get_user_account_credentials import get_user_account_credentials
+    from .settings import GoogleAuthSettings, settings_manager
 
 __version__ = version("kiarina-lib-google-auth")
 
-__all__ = ["hello"]
+__all__ = [
+    # ._helpers
+    "get_credentials",
+    # ._types
+    "CredentialsCache",
+    # ._utils
+    "get_default_credentials",
+    "get_service_account_credentials",
+    "get_user_account_credentials",
+    # .settings
+    "GoogleAuthSettings",
+    "settings_manager",
+]
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -18,7 +35,17 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        "hello": "._hello",
+        # ._helpers
+        "get_google_credentials": "._helpers.get_google_credentials",
+        # ._types
+        "CredentialsCache": "._types.credentials_cache",
+        # ._utils
+        "get_default_credentials": "._utils.get_default_credentials",
+        "get_service_account_credentials": "._utils.get_service_account_credentials",
+        "get_user_account_credentials": "._utils.get_user_account_credentials",
+        # .settings
+        "GoogleAuthSettings": ".settings",
+        "settings_manager": ".settings",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)
