@@ -1,4 +1,3 @@
-import hashlib
 import json
 import os
 from typing import Any, Literal
@@ -90,40 +89,6 @@ class GoogleAuthSettings(BaseSettings):
     @classmethod
     def expand_user(cls, v: str | None) -> str | None:
         return os.path.expanduser(v) if isinstance(v, str) else v
-
-    # --------------------------------------------------
-    # Properties
-    # --------------------------------------------------
-
-    @property
-    def cache_key(self) -> str:
-        """Generate a stable cache key based on all settings.
-
-        Uses SHA-256 hash of the JSON representation to ensure:
-        - Deterministic: same settings always produce the same key
-        - Persistent: works across process restarts
-        - Collision-resistant: SHA-256 provides strong uniqueness
-
-        Returns:
-            A 16-character hexadecimal string (first 64 bits of SHA-256)
-        """
-        if self.type in ("default", "service_account"):
-            raise ValueError("Cache key is only applicable for user_account type.")
-
-        json_str = self.model_dump_json(
-            include={
-                "type",
-                "user_account_email",
-                "client_secret_file",
-                "client_secret_data",
-                "authorized_user_file",
-                "authorized_user_data",
-                "impersonate_service_account",
-                "scopes",
-            }
-        )
-
-        return hashlib.sha256(json_str.encode()).hexdigest()[:16]
 
     # --------------------------------------------------
     # Methods

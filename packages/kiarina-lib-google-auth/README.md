@@ -292,7 +292,6 @@ Pydantic settings model for Google Cloud authentication.
 - `project_id` (str | None): GCP project ID
 
 **Methods:**
-- `cache_key` (property): Generate stable cache key for user account credentials
 - `get_service_account_data()`: Parse service_account_data JSON string
 - `get_client_secret_data()`: Parse client_secret_data JSON string
 - `get_authorized_user_data()`: Parse authorized_user_data JSON string
