@@ -57,7 +57,7 @@ def get_redis(
     settings = settings_manager.get_settings_by_key(config_key)
 
     if url is None:
-        url = settings.url
+        url = settings.url.get_secret_value()
 
     if use_retry is None:
         use_retry = settings.use_retry
