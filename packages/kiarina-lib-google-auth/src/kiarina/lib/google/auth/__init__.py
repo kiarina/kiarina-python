@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._helpers.get_credentials import get_credentials
     from ._helpers.get_self_signed_jwt import get_self_signed_jwt
+    from ._types.credentials import Credentials
     from ._types.credentials_cache import CredentialsCache
     from ._utils.get_default_credentials import get_default_credentials
     from ._utils.get_service_account_credentials import get_service_account_credentials
@@ -19,6 +20,7 @@ __all__ = [
     "get_credentials",
     "get_self_signed_jwt",
     # ._types
+    "Credentials",
     "CredentialsCache",
     # ._utils
     "get_default_credentials",
@@ -41,6 +43,7 @@ def __getattr__(name: str) -> object:
         "get_credentials": "._helpers.get_credentials",
         "get_self_signed_jwt": "._helpers.get_self_signed_jwt",
         # ._types
+        "Credentials": "._types.credentials",
         "CredentialsCache": "._types.credentials_cache",
         # ._utils
         "get_default_credentials": "._utils.get_default_credentials",

@@ -3,6 +3,7 @@ import google.oauth2.credentials
 import google.oauth2.service_account
 from google.auth import impersonated_credentials
 
+from .._types.credentials import Credentials
 from .._types.credentials_cache import CredentialsCache
 from .._utils.get_default_credentials import get_default_credentials
 from .._utils.get_service_account_credentials import get_service_account_credentials
@@ -16,21 +17,11 @@ def get_credentials(
     settings: GoogleAuthSettings | None = None,
     scopes: list[str] | None = None,
     cache: CredentialsCache | None = None,
-) -> (
-    google.auth.compute_engine.credentials.Credentials
-    | google.oauth2.service_account.Credentials
-    | google.oauth2.credentials.Credentials
-    | impersonated_credentials.Credentials
-):
+) -> Credentials:
     if settings is None:
         settings = settings_manager.get_settings_by_key(config_key)
 
-    credentials: (
-        google.auth.compute_engine.credentials.Credentials
-        | google.oauth2.service_account.Credentials
-        | google.oauth2.credentials.Credentials
-        | impersonated_credentials.Credentials
-    )
+    credentials: Credentials
 
     if settings.type == "default":
         credentials = get_default_credentials()
