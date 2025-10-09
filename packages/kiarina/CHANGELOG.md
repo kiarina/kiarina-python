@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-lib-google-cloud-storage**: Initial release with Google Cloud Storage client library
+
 ## [1.4.0] - 2025-10-09
 
 ### Added
