@@ -44,6 +44,17 @@ this project provides robust, well-tested utilities for common development tasks
   - Search schema management and query builders
   - Full-text search utilities for Redis
 
+### ☁️ Cloud Services
+
+- **[kiarina-lib-cloudflare-auth](packages/kiarina-lib-cloudflare-auth/)** - Cloudflare authentication
+  - Secure credential management with SecretStr
+  - Multi-configuration support for different accounts
+  - Environment variable configuration
+- **[kiarina-lib-google-auth](packages/kiarina-lib-google-auth/)** - Google Cloud authentication
+  - Multiple authentication methods (service account, user account, default credentials)
+  - Service account impersonation support
+  - Credentials caching and self-signed JWT generation
+
 ## 🚀 Quick Start
 
 ### Installation

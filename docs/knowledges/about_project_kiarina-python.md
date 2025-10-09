@@ -15,6 +15,7 @@ Packages under the `kiarina` namespace will be published to PyPI as kiarina-* pa
 ## Provided Packages
 
 - kiarina: Meta package for the `kiarina` namespace
+- kiarina-lib-cloudflare-auth: `kiarina.lib.cloudflare.auth` package. Cloudflare authentication utilities
 - kiarina-lib-falkordb: `kiarina.lib.falkordb` package. FalkorDB utilities
 - kiarina-lib-google-auth: `kiarina.lib.google.auth` package. Google Cloud authentication utilities
 - kiarina-lib-redis: `kiarina.lib.redis` package. Redis utilities
