@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-10-09
+
 ### Added
 - add project knowledge, playbooks, and runbooks for kiarina-python
 - **kiarina-lib-cloudflare-auth**: Initial release with Cloudflare authentication library

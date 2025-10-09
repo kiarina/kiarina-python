@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-10-09
+
 ### Changed
 - **BREAKING**: Changed `url` field to use `SecretStr` for enhanced security
   - Redis connection URLs (which may contain passwords) are now masked in string representations and logs

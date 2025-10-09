@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2025-10-09
+
 ### Added
 - **Markdown file support with YAML front matter parsing**
   - `read_markdown()` function for reading Markdown files with optional YAML front matter
