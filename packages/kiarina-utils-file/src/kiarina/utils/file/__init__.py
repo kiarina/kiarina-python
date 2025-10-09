@@ -67,7 +67,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._core.models.file_blob import FileBlob
+    from ._core.types.markdown_content import MarkdownContent
     from ._sync.helpers.read_file import read_file
+    from ._sync.helpers.read_markdown import read_markdown
     from ._sync.helpers.write_file import write_file
     from ._sync.utils.read_binary import read_binary
     from ._sync.utils.read_json_dict import read_json_dict
@@ -88,8 +90,11 @@ __version__ = version("kiarina-utils-file")
 __all__ = [
     # ._core.models
     "FileBlob",
+    # ._core.types
+    "MarkdownContent",
     # ._sync.helpers
     "read_file",
+    "read_markdown",
     "write_file",
     # ._sync.utils
     "read_binary",
@@ -117,8 +122,11 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._core.models
         "FileBlob": "._core.models.file_blob",
+        # ._core.types
+        "MarkdownContent": "._core.types.markdown_content",
         # ._sync.helpers
         "read_file": "._sync.helpers.read_file",
+        "read_markdown": "._sync.helpers.read_markdown",
         "write_file": "._sync.helpers.write_file",
         # ._sync.utils
         "read_binary": "._sync.utils.read_binary",

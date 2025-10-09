@@ -70,6 +70,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._async.helpers.read_file import read_file
+    from ._async.helpers.read_markdown import read_markdown
     from ._async.helpers.write_file import write_file
     from ._async.utils.read_binary import read_binary
     from ._async.utils.read_json_dict import read_json_dict
@@ -85,10 +86,12 @@ if TYPE_CHECKING:
     from ._async.utils.write_yaml_dict import write_yaml_dict
     from ._async.utils.write_yaml_list import write_yaml_list
     from ._core.models.file_blob import FileBlob
+    from ._core.types.markdown_content import MarkdownContent
 
 __all__ = [
     # ._async.helpers
     "read_file",
+    "read_markdown",
     "write_file",
     # ._async.utils
     "read_binary",
@@ -106,6 +109,8 @@ __all__ = [
     "write_yaml_list",
     # ._core.models
     "FileBlob",
+    # ._core.types
+    "MarkdownContent",
 ]
 
 
@@ -116,6 +121,7 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._async.helpers
         "read_file": "._async.helpers.read_file",
+        "read_markdown": "._async.helpers.read_markdown",
         "write_file": "._async.helpers.write_file",
         # ._async.utils
         "read_binary": "._async.utils.read_binary",
@@ -133,6 +139,8 @@ def __getattr__(name: str) -> object:
         "write_yaml_list": "._async.utils.write_yaml_list",
         # ._core.models
         "FileBlob": "._core.models.file_blob",
+        # ._core.types
+        "MarkdownContent": "._core.types.markdown_content",
     }
 
     parent = __name__.rsplit(".", 1)[0]

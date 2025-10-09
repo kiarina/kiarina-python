@@ -1,0 +1,44 @@
+{
+  "folders": [
+    {
+      "path": "packages/kiarina"
+    },
+    {
+      "path": "packages/kiarina-lib-cloudflare-auth"
+    },
+    {
+      "path": "packages/kiarina-lib-falkordb"
+    },
+    {
+      "path": "packages/kiarina-lib-google-auth"
+    },
+    {
+      "path": "packages/kiarina-lib-redis"
+    },
+    {
+      "path": "packages/kiarina-lib-redisearch"
+    },
+    {
+      "path": "packages/kiarina-llm"
+    },
+    {
+      "path": "packages/kiarina-utils-common"
+    },
+    {
+      "path": "packages/kiarina-utils-file"
+    },
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.egg-info": true,
+      "**/.mypy_cache": true,
+      "**/.pytest_cache": true,
+      "**/.ruff_cache": true,
+      "**/.coverage": true
+    }
+  }
+}

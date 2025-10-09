@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-lib-cloudflare-auth**: Initial release with Cloudflare authentication library
+- **kiarina-lib-google-auth**: Initial release with Google Cloud authentication library
+- **kiarina-utils-file**: Markdown file support with YAML front matter parsing (`read_markdown()` function and `MarkdownContent` type)
+
+### Changed
+- **kiarina-lib-cloudflare-auth**: API tokens use `SecretStr` for enhanced credential protection
+- **kiarina-lib-falkordb**: **BREAKING** - Changed `url` field to use `SecretStr` for enhanced security
+- **kiarina-lib-google-auth**: Credential data fields use `SecretStr` for enhanced protection
+- **kiarina-lib-redis**: **BREAKING** - Changed `url` field to use `SecretStr` for enhanced security
+
 ## [1.3.0] - 2025-10-05
 
 ### Changed
