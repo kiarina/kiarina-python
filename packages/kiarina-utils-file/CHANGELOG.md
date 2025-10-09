@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Markdown file support with YAML front matter parsing**
+  - `read_markdown()` function for reading Markdown files with optional YAML front matter
+  - `MarkdownContent` NamedTuple for structured Markdown content and metadata
+  - Automatic extraction and parsing of YAML front matter (enclosed by `---` markers)
+  - Support for complex nested metadata structures (lists, dicts, nested objects)
+  - Graceful handling of invalid YAML (treated as regular content)
+  - Available in both sync (`kiarina.utils.file`) and async (`kiarina.utils.file.asyncio`) modules
+  - Comprehensive test coverage with 20 test cases covering various edge cases
+
 ## [1.3.0] - 2025-10-05
 
 ### Changed
