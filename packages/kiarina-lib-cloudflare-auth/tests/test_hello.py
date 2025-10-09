@@ -1,4 +1,4 @@
-from kiarina.lib.cloudflare import hello
+from kiarina.lib.cloudflare.auth import hello
 
 
 def test_hello():
