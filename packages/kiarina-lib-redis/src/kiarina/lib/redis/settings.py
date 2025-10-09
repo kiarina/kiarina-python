@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
@@ -12,13 +12,15 @@ class RedisSettings(BaseSettings):
 
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_REDIS_")
 
-    url: str = "redis://localhost:6379"
+    url: SecretStr = SecretStr("redis://localhost:6379")
     """
     Redis URL
 
     Example:
     - redis://[[username]:[password]]@localhost:6379
     - rediss://[[username]:[password]]@localhost:6379
+    
+    Note: This field uses SecretStr to prevent accidental exposure of credentials in logs.
     """
 
     initialize_params: dict[str, Any] = Field(default_factory=dict)

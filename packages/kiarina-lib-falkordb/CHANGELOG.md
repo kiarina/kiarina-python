@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: Changed `url` field to use `SecretStr` for enhanced security
+  - FalkorDB connection URLs (which may contain passwords) are now masked in string representations and logs
+  - Prevents accidental exposure of credentials in debug output
+  - Access URL value via `.get_secret_value()` method when needed
+  - Internal usage automatically handles secret extraction
+
+### Security
+- **Enhanced credential protection**: FalkorDB URLs with embedded credentials are now protected from accidental exposure
+  - URLs are displayed as `**********` in logs and string representations
+  - Follows the project-wide security policy for sensitive data
+
 ## [1.3.0] - 2025-10-05
 
 ### Changed
