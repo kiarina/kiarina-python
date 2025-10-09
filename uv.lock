@@ -12,6 +12,7 @@ members = [
     "kiarina-lib-cloudflare-auth",
     "kiarina-lib-falkordb",
     "kiarina-lib-google-auth",
+    "kiarina-lib-google-cloud-storage",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-llm",
@@ -326,6 +327,7 @@ dependencies = [
     { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
     { name = "kiarina-llm" },
@@ -338,6 +340,7 @@ requires-dist = [
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
     { name = "kiarina-llm", editable = "packages/kiarina-llm" },
@@ -410,6 +413,11 @@ requires-dist = [
 ]
 
 [[package]]
+name = "kiarina-lib-google-cloud-storage"
+version = "0.1.0"
+source = { editable = "packages/kiarina-lib-google-cloud-storage" }
+
+[[package]]
 name = "kiarina-lib-redis"
 version = "1.4.0"
 source = { editable = "packages/kiarina-lib-redis" }
@@ -473,6 +481,7 @@ dependencies = [
     { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
     { name = "kiarina-llm" },
@@ -505,6 +514,7 @@ requires-dist = [
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
     { name = "kiarina-llm", editable = "packages/kiarina-llm" },

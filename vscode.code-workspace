@@ -13,6 +13,9 @@
       "path": "packages/kiarina-lib-google-auth"
     },
     {
+      "path": "packages/kiarina-lib-google-cloud-storage"
+    },
+    {
       "path": "packages/kiarina-lib-redis"
     },
     {
