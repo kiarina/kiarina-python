@@ -1,12 +1,13 @@
-from google.cloud import storage
+from typing import Any
+
+from google.cloud import storage  # type: ignore[import-untyped]
 
 from ._get_bucket import get_bucket
-
 from .settings import settings_manager
 
 
 def get_blob(
-    config_key: str | None = None, blob_name: str | None = None, **kwargs
+    config_key: str | None = None, blob_name: str | None = None, **kwargs: Any
 ) -> storage.Blob:
     settings = settings_manager.get_settings_by_key(config_key)
 

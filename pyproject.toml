@@ -82,12 +82,12 @@ members = [
     "packages/kiarina-lib-cloudflare-auth",
     "packages/kiarina-lib-falkordb",
     "packages/kiarina-lib-google-auth",
+    "packages/kiarina-lib-google-cloud-storage",
     "packages/kiarina-lib-redis",
     "packages/kiarina-lib-redisearch",
     "packages/kiarina-llm",
     "packages/kiarina-utils-common",
     "packages/kiarina-utils-file",
-    "packages/kiarina-lib-google-cloud-storage",
 ]
 
 [tool.uv.sources]
