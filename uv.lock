@@ -9,7 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "kiarina",
-    "kiarina-lib-cloudflare",
+    "kiarina-lib-cloudflare-auth",
     "kiarina-lib-falkordb",
     "kiarina-lib-google-auth",
     "kiarina-lib-redis",
@@ -323,7 +323,7 @@ name = "kiarina"
 version = "1.3.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
-    { name = "kiarina-lib-cloudflare" },
+    { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth" },
     { name = "kiarina-lib-redis" },
@@ -335,7 +335,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "kiarina-lib-cloudflare", editable = "packages/kiarina-lib-cloudflare" },
+    { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
@@ -359,9 +359,9 @@ wheels = [
 ]
 
 [[package]]
-name = "kiarina-lib-cloudflare"
+name = "kiarina-lib-cloudflare-auth"
 version = "1.3.0"
-source = { editable = "packages/kiarina-lib-cloudflare" }
+source = { editable = "packages/kiarina-lib-cloudflare-auth" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -470,7 +470,7 @@ version = "1.3.0"
 source = { virtual = "." }
 dependencies = [
     { name = "kiarina" },
-    { name = "kiarina-lib-cloudflare" },
+    { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth" },
     { name = "kiarina-lib-redis" },
@@ -502,7 +502,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "kiarina", editable = "packages/kiarina" },
-    { name = "kiarina-lib-cloudflare", editable = "packages/kiarina-lib-cloudflare" },
+    { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },

@@ -35,7 +35,7 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "kiarina-lib-cloudflare>=1.3.0",
+    "kiarina-lib-cloudflare-auth>=1.3.0",
     "kiarina-lib-falkordb>=1.0.1",
     "kiarina-lib-google-auth>=1.3.0",
     "kiarina-lib-redis>=1.0.1",

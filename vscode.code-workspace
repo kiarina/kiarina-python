@@ -4,7 +4,7 @@
       "path": "packages/kiarina"
     },
     {
-      "path": "packages/kiarina-lib-cloudflare"
+      "path": "packages/kiarina-lib-cloudflare-auth"
     },
     {
       "path": "packages/kiarina-lib-falkordb"

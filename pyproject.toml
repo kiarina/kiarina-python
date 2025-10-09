@@ -39,7 +39,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "kiarina",
-    "kiarina-lib-cloudflare",
+    "kiarina-lib-cloudflare-auth",
     "kiarina-lib-falkordb",
     "kiarina-lib-google-auth",
     "kiarina-lib-redis",
@@ -78,7 +78,7 @@ test = [
 [tool.uv.workspace]
 members = [
     "packages/kiarina",
-    "packages/kiarina-lib-cloudflare",
+    "packages/kiarina-lib-cloudflare-auth",
     "packages/kiarina-lib-falkordb",
     "packages/kiarina-lib-google-auth",
     "packages/kiarina-lib-redis",
@@ -90,7 +90,7 @@ members = [
 
 [tool.uv.sources]
 kiarina = { workspace = true }
-kiarina-lib-cloudflare = { workspace = true }
+kiarina-lib-cloudflare-auth = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
 kiarina-lib-google-auth = { workspace = true }
 kiarina-lib-redis = { workspace = true }
@@ -101,7 +101,7 @@ kiarina-utils-file = { workspace = true }
 
 [tool.mypy]
 mypy_path = [
-    "packages/kiarina-lib-cloudflare/src",
+    "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-redis/src",
@@ -122,7 +122,7 @@ asyncio_default_fixture_loop_scope = "session"
 
 [tool.coverage.run]
 source = [
-    "packages/kiarina-lib-cloudflare/src",
+    "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-redis/src",

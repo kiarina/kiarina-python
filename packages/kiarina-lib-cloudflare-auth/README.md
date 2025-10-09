@@ -1,4 +1,4 @@
-# kiarina-lib-cloudflare
+# kiarina-lib-cloudflare-auth
 
 A Python client library for Cloudflare services with configuration management.
 
@@ -11,7 +11,7 @@ A Python client library for Cloudflare services with configuration management.
 ## Installation
 
 ```bash
-pip install kiarina-lib-cloudflare
+pip install kiarina-lib-cloudflare-auth
 ```
 
 ## Quick Start
@@ -19,7 +19,7 @@ pip install kiarina-lib-cloudflare
 ```python
 from kiarina.lib.cloudflare import __version__
 
-print(f"kiarina-lib-cloudflare version: {__version__}")
+print(f"kiarina-lib-cloudflare-auth version: {__version__}")
 ```
 
 ## Development
@@ -43,10 +43,10 @@ mise run setup
 
 ```bash
 # Run format, lint, type checks and tests
-mise run package kiarina-lib-cloudflare
+mise run package kiarina-lib-cloudflare-auth
 
 # Coverage report
-mise run package:test kiarina-lib-cloudflare --coverage
+mise run package:test kiarina-lib-cloudflare-auth --coverage
 ```
 
 ## Dependencies
