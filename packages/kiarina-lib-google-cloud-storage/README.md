@@ -4,7 +4,7 @@ A Python client library for Google Cloud Storage that separates infrastructure c
 
 ## Design Philosophy
 
-This library follows the principle of **separating infrastructure concerns from application logic**.
+This library follows the principle of **separating infrastructure concerns from application logic**, with special emphasis on **security rule alignment** and **path structure management**.
 
 ### The Problem
 
@@ -30,17 +30,22 @@ blob = bucket.blob("v2/users/data.json")  # Hard-coded path structure
 - Hard to support multiple environments (dev, staging, production)
 - Challenging to implement multi-tenancy
 - Credentials management is error-prone
+- **Path structures are coupled with application code, making security rule changes difficult**
 
-### The Solution
+### The Solution: Blob Name Patterns
 
-This library externalizes all infrastructure configuration:
+This library externalizes all infrastructure configuration, including path structures:
 
 ```python
-# ✅ Application code only knows logical names
+# ✅ Application code only provides variables
 from kiarina.lib.google.cloud_storage import get_blob
 
-# All infrastructure details are managed externally
-blob = get_blob(blob_name="user_data.json")
+# Path structure is managed in configuration
+blob = get_blob(placeholders={
+    "user_id": user_id,
+    "agent_id": agent_id,
+    "basename": file_name
+})
 blob.upload_from_string(json.dumps(data))
 ```
 
@@ -50,6 +55,122 @@ blob.upload_from_string(json.dumps(data))
 - **Multi-tenant ready**: Different configurations for different tenants
 - **Secure**: Credentials managed through kiarina-lib-google-auth
 - **Maintainable**: Infrastructure changes don't require code changes
+- **Security-aligned**: Path structures match GCS security rules, managed together
+
+### Why Blob Name Patterns Matter
+
+**The Core Problem**: GCS security rules define path structures, and application code must align with them.
+
+#### Without Blob Name Patterns (Tight Coupling)
+
+```python
+# Application code constructs paths
+blob_name = f"users/{user_id}/files/{file_name}"
+blob = get_blob(blob_name=blob_name)
+```
+
+**GCS Security Rules:**
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{user_id}/files/{basename} {
+      allow read, write: if request.auth.uid == user_id;
+    }
+  }
+}
+```
+
+**What happens when security requirements change?**
+
+New requirement: Add agent-level isolation for multi-tenancy.
+
+**Updated Security Rules:**
+```javascript
+match /web/{user_id}/{agent_id}/files/{basename} {
+  allow read, write: if request.auth.uid == user_id 
+                     && request.auth.token.agent_id == agent_id;
+}
+```
+
+**Problem**: You must now update **every place** in your application code that constructs these paths:
+```python
+# Must change all of these
+blob_name = f"web/{user_id}/{agent_id}/files/{file_name}"  # Changed!
+blob_name = f"web/{user_id}/{agent_id}/thumbnails/{file_name}"  # Changed!
+blob_name = f"web/{user_id}/{agent_id}/exports/{file_name}"  # Changed!
+# ... and many more
+```
+
+#### With Blob Name Patterns (Loose Coupling)
+
+**Configuration (Infrastructure Concern):**
+```yaml
+# config/production.yaml
+google_cloud_storage:
+  default:
+    bucket_name: "my-app-data"
+    blob_name_pattern: "web/{user_id}/{agent_id}/files/{basename}"
+```
+
+**GCS Security Rules (Infrastructure Concern):**
+```javascript
+match /web/{user_id}/{agent_id}/files/{basename} {
+  allow read, write: if request.auth.uid == user_id 
+                     && request.auth.token.agent_id == agent_id;
+}
+```
+
+**Application Code (Business Logic):**
+```python
+# Application only provides variables - no path knowledge
+blob = get_blob(placeholders={
+    "user_id": current_user.id,
+    "agent_id": current_agent.id,
+    "basename": uploaded_file.name
+})
+blob.upload_from_string(file_content)
+```
+
+**When security rules change**: Only update the configuration file. Application code remains unchanged.
+
+#### Real-World Example: Multi-Environment Security
+
+Different environments often have different security requirements:
+
+**Production** (strict isolation):
+```yaml
+blob_name_pattern: "v2/production/{tenant_id}/{user_id}/{agent_id}/files/{basename}"
+```
+
+**Staging** (relaxed for testing):
+```yaml
+blob_name_pattern: "v2/staging/{user_id}/files/{basename}"
+```
+
+**Development** (flat structure):
+```yaml
+blob_name_pattern: "dev/{basename}"
+```
+
+**Application code** (same for all environments):
+```python
+blob = get_blob(placeholders={
+    "tenant_id": tenant.id,
+    "user_id": user.id,
+    "agent_id": agent.id,
+    "basename": file.name
+})
+```
+
+Missing placeholders are simply ignored if not present in the pattern.
+
+### Design Principles
+
+1. **Infrastructure defines "where"**: Path structures, bucket names, security rules
+2. **Application defines "what"**: Data content, business logic, variables
+3. **Configuration is the contract**: Placeholders define the interface between infrastructure and application
+4. **Security rules and path patterns are managed together**: Both are infrastructure concerns
 
 ## Features
 
@@ -78,13 +199,16 @@ from kiarina.lib.google.cloud_storage import get_blob, settings_manager
 settings_manager.user_config = {
     "default": {
         "bucket_name": "my-app-data",
-        "blob_name_prefix": "production/v1"
+        "blob_name_pattern": "production/v1/{basename}"
     }
 }
 
 # Application code - clean and simple
-blob = get_blob(blob_name="user_data.json")
+blob = get_blob(placeholders={"basename": "user_data.json"})
 # Actual path: gs://my-app-data/production/v1/user_data.json
+
+# Or use direct blob name (full path)
+blob = get_blob(blob_name="production/v1/user_data.json")
 
 # Use native google-cloud-storage API
 blob.upload_from_string("Hello, World!")
@@ -311,8 +435,7 @@ This library uses [pydantic-settings-manager](https://github.com/kiarina/pydanti
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `bucket_name` | `str \| None` | Yes* | Google Cloud Storage bucket name |
-| `blob_name_prefix` | `str \| None` | No | Prefix for blob names (e.g., "production/v1") |
-| `blob_name` | `str \| None` | No | Default blob name (rarely used) |
+| `blob_name_pattern` | `str \| None` | No | Blob name pattern with placeholders (e.g., "users/{user_id}/files/{basename}") |
 
 *Required when using `get_bucket()` or `get_blob()`
 
@@ -473,6 +596,7 @@ Get a Google Cloud Storage blob.
 def get_blob(
     blob_name: str | None = None,
     *,
+    placeholders: dict[str, Any] | None = None,
     config_key: str | None = None,
     auth_config_key: str | None = None,
     **kwargs: Any
@@ -480,7 +604,8 @@ def get_blob(
 ```
 
 **Parameters:**
-- `blob_name`: Blob name (default: None uses settings.blob_name)
+- `blob_name`: Full blob name (path). If provided, this takes precedence.
+- `placeholders`: Placeholders for blob_name_pattern formatting.
 - `config_key`: Configuration key for storage settings (default: None uses active key)
 - `auth_config_key`: Configuration key for authentication (default: None uses active key)
 - `**kwargs`: Additional arguments passed to `get_bucket()`
@@ -489,21 +614,40 @@ def get_blob(
 - `storage.Blob`: Google Cloud Storage blob
 
 **Raises:**
-- `ValueError`: If `blob_name` is not provided and not set in settings
+- `ValueError`: If blob_name cannot be determined or pattern formatting fails
+
+**Priority:**
+1. Explicit `blob_name` parameter (full path)
+2. `blob_name_pattern` with `placeholders`
+3. `blob_name_pattern` without placeholders (fixed name)
 
 **Example:**
 ```python
-# Basic usage
-blob = get_blob(blob_name="data.json")
+# Direct blob name (full path)
+blob = get_blob(blob_name="production/v1/data.json")
 
-# With blob_name_prefix in settings
-# If blob_name_prefix="production/v1" and blob_name="data.json"
-# Actual blob name will be "production/v1/data.json"
-blob = get_blob(blob_name="data.json")
+# Using pattern with placeholders
+# If blob_name_pattern="users/{user_id}/files/{basename}"
+blob = get_blob(placeholders={"user_id": "123", "basename": "profile.json"})
+# Actual: gs://bucket/users/123/files/profile.json
+
+# Using fixed pattern from settings
+# If blob_name_pattern="data/fixed.json"
+blob = get_blob()
+# Actual: gs://bucket/data/fixed.json
+
+# Complex pattern
+# If blob_name_pattern="web/{user_id}/{agent_id}/files/{basename}"
+blob = get_blob(placeholders={
+    "user_id": "user123",
+    "agent_id": "agent456",
+    "basename": "document.pdf"
+})
+# Actual: gs://bucket/web/user123/agent456/files/document.pdf
 
 # With custom configurations
 blob = get_blob(
-    blob_name="data.json",
+    placeholders={"basename": "data.json"},
     config_key="production",
     auth_config_key="prod_auth"
 )

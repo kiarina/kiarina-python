@@ -5,19 +5,63 @@ import pytest
 from kiarina.lib.google.cloud_storage import get_blob, settings_manager
 
 
-def test_get_blob():
-    # Setup settings
+def test_get_blob_with_blob_name():
+    """Test get_blob with explicit blob_name parameter."""
     settings_manager.user_config = {
         "default": {
             "bucket_name": "test-bucket",
-            "blob_name": "test-blob.txt",
         }
     }
 
-    # Mock get_bucket and blob
     mock_bucket = MagicMock()
     mock_blob = MagicMock()
-    mock_blob.name = "test-blob.txt"
+    mock_blob.name = "data/file.json"
+    mock_bucket.blob.return_value = mock_blob
+
+    with patch(
+        "kiarina.lib.google.cloud_storage._get_blob.get_bucket",
+        return_value=mock_bucket,
+    ):
+        blob = get_blob(blob_name="data/file.json")
+        assert blob.name == "data/file.json"
+        mock_bucket.blob.assert_called_once_with("data/file.json")
+
+
+def test_get_blob_with_pattern_and_placeholders():
+    """Test get_blob with blob_name_pattern and placeholders."""
+    settings_manager.user_config = {
+        "default": {
+            "bucket_name": "test-bucket",
+            "blob_name_pattern": "users/{user_id}/files/{basename}",
+        }
+    }
+
+    mock_bucket = MagicMock()
+    mock_blob = MagicMock()
+    mock_blob.name = "users/123/files/profile.json"
+    mock_bucket.blob.return_value = mock_blob
+
+    with patch(
+        "kiarina.lib.google.cloud_storage._get_blob.get_bucket",
+        return_value=mock_bucket,
+    ):
+        blob = get_blob(placeholders={"user_id": "123", "basename": "profile.json"})
+        assert blob.name == "users/123/files/profile.json"
+        mock_bucket.blob.assert_called_once_with("users/123/files/profile.json")
+
+
+def test_get_blob_with_fixed_pattern():
+    """Test get_blob with fixed blob_name_pattern (no placeholders)."""
+    settings_manager.user_config = {
+        "default": {
+            "bucket_name": "test-bucket",
+            "blob_name_pattern": "data/fixed.json",
+        }
+    }
+
+    mock_bucket = MagicMock()
+    mock_blob = MagicMock()
+    mock_blob.name = "data/fixed.json"
     mock_bucket.blob.return_value = mock_blob
 
     with patch(
@@ -25,92 +69,55 @@ def test_get_blob():
         return_value=mock_bucket,
     ):
         blob = get_blob()
-        assert blob.name == "test-blob.txt"
-
-        # Verify blob was called with correct blob name
-        mock_bucket.blob.assert_called_once_with("test-blob.txt")
+        assert blob.name == "data/fixed.json"
+        mock_bucket.blob.assert_called_once_with("data/fixed.json")
 
 
-def test_get_blob_with_blob_name_parameter():
-    # Setup settings
+def test_get_blob_priority_blob_name_over_placeholders():
+    """Test that blob_name takes precedence over placeholders."""
     settings_manager.user_config = {
         "default": {
             "bucket_name": "test-bucket",
+            "blob_name_pattern": "users/{user_id}/files/{basename}",
         }
     }
 
-    # Mock get_bucket and blob
     mock_bucket = MagicMock()
     mock_blob = MagicMock()
-    mock_blob.name = "custom-blob.txt"
+    mock_blob.name = "direct/path.json"
     mock_bucket.blob.return_value = mock_blob
 
     with patch(
         "kiarina.lib.google.cloud_storage._get_blob.get_bucket",
         return_value=mock_bucket,
     ):
-        blob = get_blob(blob_name="custom-blob.txt")
-        assert blob.name == "custom-blob.txt"
+        blob = get_blob(
+            blob_name="direct/path.json",
+            placeholders={"user_id": "123", "basename": "ignored.json"},
+        )
+        assert blob.name == "direct/path.json"
+        mock_bucket.blob.assert_called_once_with("direct/path.json")
 
-        # Verify blob was called with custom blob name
-        mock_bucket.blob.assert_called_once_with("custom-blob.txt")
 
-
-def test_get_blob_with_blob_name_prefix():
-    # Setup settings with blob_name_prefix
+def test_get_blob_with_missing_placeholder():
+    """Test error when placeholder is missing."""
     settings_manager.user_config = {
         "default": {
             "bucket_name": "test-bucket",
-            "blob_name_prefix": "prefix",
-            "blob_name": "test-blob.txt",
+            "blob_name_pattern": "users/{user_id}/files/{basename}",
         }
     }
 
-    # Mock get_bucket and blob
-    mock_bucket = MagicMock()
-    mock_blob = MagicMock()
-    mock_blob.name = "prefix/test-blob.txt"
-    mock_bucket.blob.return_value = mock_blob
-
-    with patch(
-        "kiarina.lib.google.cloud_storage._get_blob.get_bucket",
-        return_value=mock_bucket,
+    with pytest.raises(
+        ValueError,
+        match=r"Missing placeholder 'basename' in blob_name_pattern: "
+        r"users/\{user_id\}/files/\{basename\}",
     ):
-        blob = get_blob()
-        assert blob.name == "prefix/test-blob.txt"
-
-        # Verify blob was called with prefixed blob name
-        mock_bucket.blob.assert_called_once_with("prefix/test-blob.txt")
+        get_blob(placeholders={"user_id": "123"})
 
 
-def test_get_blob_with_blob_name_prefix_and_parameter():
-    # Setup settings with blob_name_prefix
-    settings_manager.user_config = {
-        "default": {
-            "bucket_name": "test-bucket",
-            "blob_name_prefix": "prefix",
-        }
-    }
-
-    # Mock get_bucket and blob
-    mock_bucket = MagicMock()
-    mock_blob = MagicMock()
-    mock_blob.name = "prefix/custom-blob.txt"
-    mock_bucket.blob.return_value = mock_blob
-
-    with patch(
-        "kiarina.lib.google.cloud_storage._get_blob.get_bucket",
-        return_value=mock_bucket,
-    ):
-        blob = get_blob(blob_name="custom-blob.txt")
-        assert blob.name == "prefix/custom-blob.txt"
-
-        # Verify blob was called with prefixed custom blob name
-        mock_bucket.blob.assert_called_once_with("prefix/custom-blob.txt")
-
-
-def test_get_blob_without_blob_name():
-    # Setup settings without blob_name
+def test_get_blob_without_blob_name_and_pattern():
+    """Test error when neither blob_name nor blob_name_pattern is provided."""
     settings_manager.user_config = {
         "default": {
             "bucket_name": "test-bucket",
@@ -118,24 +125,40 @@ def test_get_blob_without_blob_name():
     }
 
     with pytest.raises(
-        ValueError, match="blob_name is not set in the settings and not provided"
+        ValueError,
+        match="blob_name is not provided, placeholders are not provided, "
+        "and blob_name_pattern is not set in settings",
     ):
         get_blob()
 
 
-def test_get_blob_with_custom_config_key():
-    # Setup settings with custom config key
+def test_get_blob_with_placeholders_but_no_pattern():
+    """Test error when placeholders are provided but pattern is not set."""
     settings_manager.user_config = {
-        "custom": {
-            "bucket_name": "custom-bucket",
-            "blob_name": "custom-blob.txt",
+        "default": {
+            "bucket_name": "test-bucket",
         }
     }
 
-    # Mock get_bucket and blob
+    with pytest.raises(
+        ValueError,
+        match="placeholders provided but blob_name_pattern is not set in settings",
+    ):
+        get_blob(placeholders={"user_id": "123"})
+
+
+def test_get_blob_with_custom_config_key():
+    """Test get_blob with custom config_key."""
+    settings_manager.user_config = {
+        "custom": {
+            "bucket_name": "custom-bucket",
+            "blob_name_pattern": "custom/path.json",
+        }
+    }
+
     mock_bucket = MagicMock()
     mock_blob = MagicMock()
-    mock_blob.name = "custom-blob.txt"
+    mock_blob.name = "custom/path.json"
     mock_bucket.blob.return_value = mock_blob
 
     with patch(
@@ -143,25 +166,22 @@ def test_get_blob_with_custom_config_key():
         return_value=mock_bucket,
     ) as mock_get_bucket:
         blob = get_blob(config_key="custom")
-        assert blob.name == "custom-blob.txt"
-
-        # Verify get_bucket was called with custom config key and no auth_config_key
+        assert blob.name == "custom/path.json"
         mock_get_bucket.assert_called_once_with("custom", auth_config_key=None)
 
 
 def test_get_blob_with_auth_config_key():
-    # Setup settings
+    """Test get_blob with custom auth_config_key."""
     settings_manager.user_config = {
         "default": {
             "bucket_name": "test-bucket",
-            "blob_name": "test-blob.txt",
+            "blob_name_pattern": "data.json",
         }
     }
 
-    # Mock get_bucket and blob
     mock_bucket = MagicMock()
     mock_blob = MagicMock()
-    mock_blob.name = "test-blob.txt"
+    mock_blob.name = "data.json"
     mock_bucket.blob.return_value = mock_blob
 
     with patch(
@@ -169,7 +189,36 @@ def test_get_blob_with_auth_config_key():
         return_value=mock_bucket,
     ) as mock_get_bucket:
         blob = get_blob(auth_config_key="custom_auth")
-        assert blob.name == "test-blob.txt"
-
-        # Verify get_bucket was called with custom auth config key
+        assert blob.name == "data.json"
         mock_get_bucket.assert_called_once_with(None, auth_config_key="custom_auth")
+
+
+def test_get_blob_with_complex_pattern():
+    """Test get_blob with complex multi-level pattern."""
+    settings_manager.user_config = {
+        "default": {
+            "bucket_name": "test-bucket",
+            "blob_name_pattern": "web/{user_id}/{agent_id}/files/{basename}",
+        }
+    }
+
+    mock_bucket = MagicMock()
+    mock_blob = MagicMock()
+    mock_blob.name = "web/user123/agent456/files/document.pdf"
+    mock_bucket.blob.return_value = mock_blob
+
+    with patch(
+        "kiarina.lib.google.cloud_storage._get_blob.get_bucket",
+        return_value=mock_bucket,
+    ):
+        blob = get_blob(
+            placeholders={
+                "user_id": "user123",
+                "agent_id": "agent456",
+                "basename": "document.pdf",
+            }
+        )
+        assert blob.name == "web/user123/agent456/files/document.pdf"
+        mock_bucket.blob.assert_called_once_with(
+            "web/user123/agent456/files/document.pdf"
+        )
