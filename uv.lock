@@ -439,6 +439,7 @@ version = "1.6.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage" },
@@ -452,6 +453,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
