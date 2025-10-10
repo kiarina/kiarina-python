@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.1] - 2025-10-10
+
 ### Changed
 - **kiarina**: Added `kiarina-lib-cloudflare-d1>=1.6.0` to dependencies
 
