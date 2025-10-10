@@ -4,7 +4,6 @@ from .query_result import QueryResult
 
 
 class Result(BaseModel):
-
     model_config = ConfigDict(extra="allow")
 
     success: bool

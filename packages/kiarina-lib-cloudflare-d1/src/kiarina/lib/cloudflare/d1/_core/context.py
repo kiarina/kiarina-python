@@ -7,7 +7,6 @@ from ..settings import D1Settings
 
 @dataclass
 class D1Context:
-
     settings: D1Settings
 
     auth_settings: CloudflareAuthSettings
@@ -22,6 +21,6 @@ class D1Context:
     @property
     def headers(self) -> dict[str, str]:
         return {
-            "Authorization": f"Bearer {self.auth_settings.api_token}",
+            "Authorization": f"Bearer {self.auth_settings.api_token.get_secret_value()}",
             "Content-Type": "application/json",
         }

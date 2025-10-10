@@ -39,13 +39,13 @@ def query(
     }
 
     def _sync() -> Result:
-        with httpx.Client(headers=ctx.headers, http2=True) as client:
+        with httpx.Client(headers=ctx.headers) as client:
             response = client.post(ctx.query_api_url, json=request_params)
             response.raise_for_status()
             return Result(**response.json())
 
     async def _async() -> Result:
-        async with httpx.AsyncClient(headers=ctx.headers, http2=True) as client:
+        async with httpx.AsyncClient(headers=ctx.headers) as client:
             response = await client.post(ctx.query_api_url, json=request_params)
             response.raise_for_status()
             return Result(**response.json())

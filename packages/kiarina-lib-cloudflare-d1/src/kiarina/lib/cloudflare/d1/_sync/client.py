@@ -9,17 +9,13 @@ from ..settings import D1Settings
 
 
 class D1Client:
-
     def __init__(
-        self,
-        settings: D1Settings,
-        *,
-        auth_settings: CloudflareAuthSettings
+        self, settings: D1Settings, *, auth_settings: CloudflareAuthSettings
     ) -> None:
         self.ctx: D1Context = D1Context(
             settings=settings,
             auth_settings=auth_settings,
         )
 
-    def query(self, sql: str, params: list[Any]) -> Result:
+    def query(self, sql: str, params: list[Any] | None = None) -> Result:
         return query("sync", self.ctx, sql, params)
