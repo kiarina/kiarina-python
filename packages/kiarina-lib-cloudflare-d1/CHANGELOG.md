@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2025-10-10
+
 ### Added
 - Initial release of kiarina-lib-cloudflare-d1
 - Cloudflare D1 client library with configuration management using pydantic-settings-manager

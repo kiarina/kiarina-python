@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2025-10-10
+
+### Added
+- **kiarina-lib-cloudflare-d1**: Initial release with Cloudflare D1 client library
+
+### Changed
+- **kiarina-lib-google-cloud-storage**: **BREAKING** - Separated authentication configuration from storage configuration
+
 ## [1.5.0] - 2025-10-10
 
 ### Added
