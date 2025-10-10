@@ -3,8 +3,6 @@ from pydantic_settings_manager import SettingsManager
 
 
 class GoogleCloudStorageSettings(BaseSettings):
-    google_auth_config_key: str | None = None
-
     bucket_name: str | None = None
 
     blob_name_prefix: str | None = None

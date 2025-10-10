@@ -9,7 +9,6 @@ def test_get_blob():
     # Setup settings
     settings_manager.user_config = {
         "default": {
-            "google_auth_config_key": "test_auth",
             "bucket_name": "test-bucket",
             "blob_name": "test-blob.txt",
         }
@@ -36,7 +35,6 @@ def test_get_blob_with_blob_name_parameter():
     # Setup settings
     settings_manager.user_config = {
         "default": {
-            "google_auth_config_key": "test_auth",
             "bucket_name": "test-bucket",
         }
     }
@@ -62,7 +60,6 @@ def test_get_blob_with_blob_name_prefix():
     # Setup settings with blob_name_prefix
     settings_manager.user_config = {
         "default": {
-            "google_auth_config_key": "test_auth",
             "bucket_name": "test-bucket",
             "blob_name_prefix": "prefix",
             "blob_name": "test-blob.txt",
@@ -90,7 +87,6 @@ def test_get_blob_with_blob_name_prefix_and_parameter():
     # Setup settings with blob_name_prefix
     settings_manager.user_config = {
         "default": {
-            "google_auth_config_key": "test_auth",
             "bucket_name": "test-bucket",
             "blob_name_prefix": "prefix",
         }
@@ -117,7 +113,6 @@ def test_get_blob_without_blob_name():
     # Setup settings without blob_name
     settings_manager.user_config = {
         "default": {
-            "google_auth_config_key": "test_auth",
             "bucket_name": "test-bucket",
         }
     }
@@ -132,7 +127,6 @@ def test_get_blob_with_custom_config_key():
     # Setup settings with custom config key
     settings_manager.user_config = {
         "custom": {
-            "google_auth_config_key": "custom_auth",
             "bucket_name": "custom-bucket",
             "blob_name": "custom-blob.txt",
         }
@@ -151,5 +145,31 @@ def test_get_blob_with_custom_config_key():
         blob = get_blob(config_key="custom")
         assert blob.name == "custom-blob.txt"
 
-        # Verify get_bucket was called with custom config key
-        mock_get_bucket.assert_called_once_with("custom")
+        # Verify get_bucket was called with custom config key and no auth_config_key
+        mock_get_bucket.assert_called_once_with("custom", auth_config_key=None)
+
+
+def test_get_blob_with_auth_config_key():
+    # Setup settings
+    settings_manager.user_config = {
+        "default": {
+            "bucket_name": "test-bucket",
+            "blob_name": "test-blob.txt",
+        }
+    }
+
+    # Mock get_bucket and blob
+    mock_bucket = MagicMock()
+    mock_blob = MagicMock()
+    mock_blob.name = "test-blob.txt"
+    mock_bucket.blob.return_value = mock_blob
+
+    with patch(
+        "kiarina.lib.google.cloud_storage._get_blob.get_bucket",
+        return_value=mock_bucket,
+    ) as mock_get_bucket:
+        blob = get_blob(auth_config_key="custom_auth")
+        assert blob.name == "test-blob.txt"
+
+        # Verify get_bucket was called with custom auth config key
+        mock_get_bucket.assert_called_once_with(None, auth_config_key="custom_auth")

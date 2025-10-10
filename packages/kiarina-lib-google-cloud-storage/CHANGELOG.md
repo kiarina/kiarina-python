@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: Separated authentication configuration from storage configuration
+  - Removed `google_auth_config_key` field from `GoogleCloudStorageSettings`
+  - Added `auth_config_key` parameter to `get_storage_client()`, `get_bucket()`, and `get_blob()`
+  - Authentication is now configured separately through kiarina-lib-google-auth
+  - **Migration**: Replace `google_auth_config_key` in settings with `auth_config_key` parameter in function calls
+  - **Rationale**: Clear separation of concerns - storage settings define "where", authentication defines "who"
+  - **Benefits**: More flexible configuration, easier to reuse authentication across different storage configurations
+
 ## [1.5.0] - 2025-10-10
 
 ### Added
