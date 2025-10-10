@@ -77,7 +77,6 @@ from kiarina.lib.google.cloud_storage import get_blob, settings_manager
 # Configure once (typically in your app initialization)
 settings_manager.user_config = {
     "default": {
-        "google_auth_config_key": "default",
         "bucket_name": "my-app-data",
         "blob_name_prefix": "production/v1"
     }
@@ -98,7 +97,6 @@ content = blob.download_as_text()
 # Set once in your deployment environment
 export KIARINA_LIB_GOOGLE_CLOUD_STORAGE_BUCKET_NAME="my-app-data"
 export KIARINA_LIB_GOOGLE_CLOUD_STORAGE_BLOB_NAME_PREFIX="production/v1"
-export KIARINA_LIB_GOOGLE_CLOUD_STORAGE_GOOGLE_AUTH_CONFIG_KEY="default"
 ```
 
 ```python
@@ -117,23 +115,35 @@ Deploy the same application code to different environments with different config
 
 ```yaml
 # config/production.yaml
+google_auth:
+  default:
+    type: "service_account"
+    service_account_file: "/secrets/prod-sa-key.json"
+
 google_cloud_storage:
   default:
-    google_auth_config_key: "production"
     bucket_name: "prod-us-west1-app-data"
     blob_name_prefix: "v2/production"
 
 # config/staging.yaml
+google_auth:
+  default:
+    type: "service_account"
+    service_account_file: "/secrets/staging-sa-key.json"
+
 google_cloud_storage:
   default:
-    google_auth_config_key: "staging"
     bucket_name: "staging-app-data"
     blob_name_prefix: "v2/staging"
 
 # config/development.yaml
+google_auth:
+  default:
+    type: "user_account"
+    authorized_user_file: "~/.config/gcloud/application_default_credentials.json"
+
 google_cloud_storage:
   default:
-    google_auth_config_key: "development"
     bucket_name: "dev-local-data"
     blob_name_prefix: "v2/dev"
 ```
@@ -165,15 +175,28 @@ Support multiple tenants with isolated storage, without changing application cod
 ```python
 from kiarina.lib.google.cloud_storage import settings_manager, get_blob
 
-# Configure tenant-specific storage
+# Configure tenant-specific storage and authentication
+from kiarina.lib.google.auth import settings_manager as auth_settings_manager
+
+# Authentication configuration (separate from storage)
+auth_settings_manager.user_config = {
+    "tenant_acme": {
+        "type": "service_account",
+        "service_account_file": "/secrets/acme-sa-key.json"
+    },
+    "tenant_globex": {
+        "type": "service_account",
+        "service_account_file": "/secrets/globex-sa-key.json"
+    }
+}
+
+# Storage configuration (separate from authentication)
 settings_manager.user_config = {
     "tenant_acme": {
-        "google_auth_config_key": "tenant_acme",
         "bucket_name": "acme-corp-data",
         "blob_name_prefix": "app-data"
     },
     "tenant_globex": {
-        "google_auth_config_key": "tenant_globex",
         "bucket_name": "globex-data",
         "blob_name_prefix": "app-data"
     }
@@ -183,7 +206,11 @@ settings_manager.user_config = {
 def save_document(tenant_id: str, doc_id: str, content: bytes):
     """Save document for any tenant"""
     config_key = f"tenant_{tenant_id}"
-    blob = get_blob(config_key=config_key, blob_name=f"documents/{doc_id}.pdf")
+    blob = get_blob(
+        blob_name=f"documents/{doc_id}.pdf",
+        config_key=config_key,
+        auth_config_key=config_key
+    )
     blob.upload_from_string(content)
 
 def list_documents(tenant_id: str) -> list[str]:
@@ -191,7 +218,7 @@ def list_documents(tenant_id: str) -> list[str]:
     from kiarina.lib.google.cloud_storage import get_bucket
     
     config_key = f"tenant_{tenant_id}"
-    bucket = get_bucket(config_key=config_key)
+    bucket = get_bucket(config_key=config_key, auth_config_key=config_key)
     
     # Get prefix from settings
     settings = settings_manager.get_settings_by_key(config_key)
@@ -219,7 +246,6 @@ def mock_storage_config():
     """Configure test storage"""
     settings_manager.user_config = {
         "test": {
-            "google_auth_config_key": "test",
             "bucket_name": "test-bucket",
             "blob_name_prefix": f"test-run-{datetime.now().isoformat()}"
         }
@@ -284,12 +310,13 @@ This library uses [pydantic-settings-manager](https://github.com/kiarina/pydanti
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `google_auth_config_key` | `str \| None` | No | Configuration key for kiarina-lib-google-auth |
 | `bucket_name` | `str \| None` | Yes* | Google Cloud Storage bucket name |
 | `blob_name_prefix` | `str \| None` | No | Prefix for blob names (e.g., "production/v1") |
 | `blob_name` | `str \| None` | No | Default blob name (rarely used) |
 
 *Required when using `get_bucket()` or `get_blob()`
+
+**Note:** Authentication is configured separately through `auth_config_key` parameters in the API functions, which reference configurations in [kiarina-lib-google-auth](../kiarina-lib-google-auth/).
 
 ### Configuration Methods
 
@@ -300,7 +327,6 @@ from kiarina.lib.google.cloud_storage import settings_manager
 
 settings_manager.user_config = {
     "default": {
-        "google_auth_config_key": "default",
         "bucket_name": "my-bucket",
         "blob_name_prefix": "app-data"
     }
@@ -312,10 +338,11 @@ settings_manager.user_config = {
 All settings can be configured via environment variables with the `KIARINA_LIB_GOOGLE_CLOUD_STORAGE_` prefix:
 
 ```bash
-export KIARINA_LIB_GOOGLE_CLOUD_STORAGE_GOOGLE_AUTH_CONFIG_KEY="default"
 export KIARINA_LIB_GOOGLE_CLOUD_STORAGE_BUCKET_NAME="my-bucket"
 export KIARINA_LIB_GOOGLE_CLOUD_STORAGE_BLOB_NAME_PREFIX="app-data"
 ```
+
+**Note:** Authentication is configured separately via `KIARINA_LIB_GOOGLE_AUTH_*` environment variables. See [kiarina-lib-google-auth](../kiarina-lib-google-auth/) for details.
 
 #### 3. Configuration Files (with YAML)
 
@@ -332,32 +359,49 @@ settings_manager.user_config = config["google_cloud_storage"]
 
 ### Integration with kiarina-lib-google-auth
 
-This library integrates seamlessly with [kiarina-lib-google-auth](../kiarina-lib-google-auth/) for authentication:
+This library integrates seamlessly with [kiarina-lib-google-auth](../kiarina-lib-google-auth/) for authentication.
+
+**Key Design:** Authentication and storage configurations are **completely separate**, allowing flexible combinations.
 
 ```python
 from kiarina.lib.google.auth import settings_manager as auth_settings_manager
 from kiarina.lib.google.cloud_storage import settings_manager as storage_settings_manager
 
-# Configure authentication
+# Configure authentication (separate)
 auth_settings_manager.user_config = {
     "default": {
         "type": "service_account",
         "service_account_file": "~/service-account-key.json"
+    },
+    "user_auth": {
+        "type": "user_account",
+        "authorized_user_file": "~/.config/gcloud/application_default_credentials.json"
     }
 }
 
-# Configure storage (references auth config)
+# Configure storage (separate)
 storage_settings_manager.user_config = {
     "default": {
-        "google_auth_config_key": "default",  # References auth config above
         "bucket_name": "my-bucket"
+    },
+    "backup": {
+        "bucket_name": "my-backup-bucket"
     }
 }
 
-# Use authenticated storage
+# Use with default authentication
 from kiarina.lib.google.cloud_storage import get_bucket
-bucket = get_bucket()  # Automatically authenticated
+bucket = get_bucket()  # Uses default auth + default storage
+
+# Mix and match configurations
+bucket = get_bucket(config_key="backup", auth_config_key="user_auth")
+# Uses user_auth authentication + backup storage configuration
 ```
+
+**Benefits of Separation:**
+- **Flexibility**: Use same auth with multiple buckets, or multiple auths with same bucket
+- **Clarity**: Clear distinction between "who" (auth) and "where" (storage)
+- **Reusability**: Share authentication across different storage configurations
 
 ## API Reference
 
@@ -367,13 +411,13 @@ Get a Google Cloud Storage client with credentials from kiarina-lib-google-auth.
 
 ```python
 def get_storage_client(
-    config_key: str | None = None,
+    auth_config_key: str | None = None,
     **kwargs: Any
 ) -> storage.Client
 ```
 
 **Parameters:**
-- `config_key`: Configuration key to use (default: None uses active key)
+- `auth_config_key`: Configuration key for kiarina-lib-google-auth (default: None uses active key)
 - `**kwargs`: Additional arguments passed to `storage.Client()`
 
 **Returns:**
@@ -382,7 +426,7 @@ def get_storage_client(
 **Example:**
 ```python
 client = get_storage_client()
-client = get_storage_client(config_key="production")
+client = get_storage_client(auth_config_key="production")
 client = get_storage_client(project="my-project")  # Override project
 ```
 
@@ -393,12 +437,15 @@ Get a Google Cloud Storage bucket.
 ```python
 def get_bucket(
     config_key: str | None = None,
+    *,
+    auth_config_key: str | None = None,
     **kwargs: Any
 ) -> storage.Bucket
 ```
 
 **Parameters:**
-- `config_key`: Configuration key to use (default: None uses active key)
+- `config_key`: Configuration key for storage settings (default: None uses active key)
+- `auth_config_key`: Configuration key for authentication (default: None uses active key)
 - `**kwargs`: Additional arguments passed to `get_storage_client()`
 
 **Returns:**
@@ -411,6 +458,7 @@ def get_bucket(
 ```python
 bucket = get_bucket()
 bucket = get_bucket(config_key="production")
+bucket = get_bucket(config_key="production", auth_config_key="prod_auth")
 
 # Use native google-cloud-storage API
 for blob in bucket.list_blobs(prefix="users/"):
@@ -423,15 +471,18 @@ Get a Google Cloud Storage blob.
 
 ```python
 def get_blob(
-    config_key: str | None = None,
     blob_name: str | None = None,
+    *,
+    config_key: str | None = None,
+    auth_config_key: str | None = None,
     **kwargs: Any
 ) -> storage.Blob
 ```
 
 **Parameters:**
-- `config_key`: Configuration key to use (default: None uses active key)
 - `blob_name`: Blob name (default: None uses settings.blob_name)
+- `config_key`: Configuration key for storage settings (default: None uses active key)
+- `auth_config_key`: Configuration key for authentication (default: None uses active key)
 - `**kwargs`: Additional arguments passed to `get_bucket()`
 
 **Returns:**
@@ -449,6 +500,13 @@ blob = get_blob(blob_name="data.json")
 # If blob_name_prefix="production/v1" and blob_name="data.json"
 # Actual blob name will be "production/v1/data.json"
 blob = get_blob(blob_name="data.json")
+
+# With custom configurations
+blob = get_blob(
+    blob_name="data.json",
+    config_key="production",
+    auth_config_key="prod_auth"
+)
 
 # Use native google-cloud-storage API
 blob.upload_from_string("content")

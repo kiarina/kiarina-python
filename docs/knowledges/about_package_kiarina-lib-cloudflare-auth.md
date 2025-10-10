@@ -6,3 +6,4 @@ description: >-
 ---
 
 kiarina-lib-cloudflare-auth provides a simple and secure way to manage Cloudflare authentication credentials using pydantic-settings-manager.
+This library enables the implementation of Cloudflare-related functionality by separating and managing authentication credentials from the application.

@@ -3,6 +3,7 @@ title: README.md of pydantic-settings-manager
 description: >-
   In kiarina-python, settings are managed by pydantic-settings and pydantic-settings-manager.
   This file is a copy of the README.md from pydantic-settings-manager.
+  The creator of pydantic-settings-manager is kiarina.
 ---
 
 # pydantic-settings-manager

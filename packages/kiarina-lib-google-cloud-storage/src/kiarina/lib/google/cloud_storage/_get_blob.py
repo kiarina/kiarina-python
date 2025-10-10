@@ -7,7 +7,11 @@ from .settings import settings_manager
 
 
 def get_blob(
-    config_key: str | None = None, blob_name: str | None = None, **kwargs: Any
+    blob_name: str | None = None,
+    *,
+    config_key: str | None = None,
+    auth_config_key: str | None = None,
+    **kwargs: Any,
 ) -> storage.Blob:
     settings = settings_manager.get_settings_by_key(config_key)
 
@@ -20,5 +24,5 @@ def get_blob(
     if settings.blob_name_prefix:
         blob_name = f"{settings.blob_name_prefix}/{blob_name}"
 
-    bucket = get_bucket(config_key, **kwargs)
+    bucket = get_bucket(config_key, auth_config_key=auth_config_key, **kwargs)
     return bucket.blob(blob_name)
