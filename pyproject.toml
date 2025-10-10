@@ -40,6 +40,7 @@ requires-python = ">=3.12"
 dependencies = [
     "kiarina",
     "kiarina-lib-cloudflare-auth",
+    "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
     "kiarina-lib-google-auth",
     "kiarina-lib-google-cloud-storage",
@@ -80,6 +81,7 @@ test = [
 members = [
     "packages/kiarina",
     "packages/kiarina-lib-cloudflare-auth",
+    "packages/kiarina-lib-cloudflare-d1",
     "packages/kiarina-lib-falkordb",
     "packages/kiarina-lib-google-auth",
     "packages/kiarina-lib-google-cloud-storage",
@@ -93,6 +95,7 @@ members = [
 [tool.uv.sources]
 kiarina = { workspace = true }
 kiarina-lib-cloudflare-auth = { workspace = true }
+kiarina-lib-cloudflare-d1 = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
 kiarina-lib-google-auth = { workspace = true }
 kiarina-lib-google-cloud-storage = { workspace = true }
@@ -105,6 +108,7 @@ kiarina-utils-file = { workspace = true }
 [tool.mypy]
 mypy_path = [
     "packages/kiarina-lib-cloudflare-auth/src",
+    "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-google-cloud-storage/src",
@@ -127,6 +131,7 @@ asyncio_default_fixture_loop_scope = "session"
 [tool.coverage.run]
 source = [
     "packages/kiarina-lib-cloudflare-auth/src",
+    "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-google-cloud-storage/src",
