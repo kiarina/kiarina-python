@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.2] - 2025-10-10
+
 ### Changed
 - **Improved blob name handling**: Replaced `blob_name_prefix` and `blob_name` with `blob_name_pattern`
   - `blob_name_pattern` supports both fixed names and template patterns with placeholders
