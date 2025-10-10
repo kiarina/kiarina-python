@@ -5,7 +5,7 @@ description: Tasks are defined as mise File Tasks.
 
 Tasks are defined as mise File Tasks under `mise-tasks/`.
 
-現在のタスクのリストは `mise tasks` で確認できます。
+You can check the current list of tasks with `mise tasks`.
 
 ```sh
 > mise tasks
