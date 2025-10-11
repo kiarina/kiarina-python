@@ -25,6 +25,7 @@ htmlcov/
 # Project specific
 *.log
 tmp/
+packages/*/test_settings.yaml
 
 # Test data
 tests/data/large/

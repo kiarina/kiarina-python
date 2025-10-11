@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improved test configuration approach using YAML-based settings file instead of individual environment variables
+- Tests now use `pydantic-settings-manager` with multiple named configurations for different authentication scenarios
+- Added `test_settings.sample.yaml` as a template for test configuration
+- Added `.env.sample` to document required environment variables
+- Reorganized `GoogleAuthSettings` field order for better readability (common fields first)
+- Enhanced test coverage with more comprehensive authentication method tests
+- Simplified test fixtures using session-scoped `load_settings` fixture
+
 ## [1.6.2] - 2025-10-10
 
 ### Changed

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-lib-google-auth**: Improved test configuration using YAML-based settings file with pydantic-settings-manager
+
 ## [1.6.2] - 2025-10-10
 
 ### Changed

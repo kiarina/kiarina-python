@@ -434,26 +434,53 @@ mise run package:test kiarina-lib-google-auth --coverage
 
 ### Test Configuration
 
-Some tests require actual GCP credentials. Set the following environment variables:
+Some tests require actual GCP credentials. Create a test settings file and set the environment variable to point to it:
 
 ```bash
-# Service account key file
-export KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_FILE="~/path/to/sa-key.json"
+# Create test settings file from sample
+cp packages/kiarina-lib-google-auth/test_settings.sample.yaml \
+   packages/kiarina-lib-google-auth/test_settings.yaml
 
-# Service account key data (JSON string)
-export KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_DATA='{"type": "service_account", ...}'
-
-# Authorized user file
-export KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_AUTHORIZED_USER_FILE="~/.config/gcloud/application_default_credentials.json"
-
-# Authorized user data (JSON string)
-export KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_AUTHORIZED_USER_DATA='{"type": "authorized_user", ...}'
-
-# Target service account for impersonation tests
-export KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_IMPERSONATE_SA="target-sa@project.iam.gserviceaccount.com"
+# Edit the file with your actual credentials
+# Then set the environment variable
+export KIARINA_LIB_GOOGLE_AUTH_TEST_SETTINGS_FILE="packages/kiarina-lib-google-auth/test_settings.yaml"
 ```
 
-Tests will be skipped (xfail) if these environment variables are not set.
+The test settings file should contain multiple named configurations for different authentication scenarios:
+
+```yaml
+kiarina.lib.google.auth:
+  default:
+    type: default
+  service_account_file:
+    type: service_account
+    project_id: your-project-id
+    service_account_email: your-service-account@your-project.iam.gserviceaccount.com
+    service_account_file: ~/.gcp/service-account/your-project/your-service-account/key.json
+  service_account_data:
+    type: service_account
+    project_id: your-project-id
+    service_account_email: your-service-account@your-project.iam.gserviceaccount.com
+    service_account_data: '{"type":"service_account","project_id":"...","private_key":"...","client_email":"..."}'
+  service_account_impersonate:
+    type: service_account
+    project_id: your-project-id
+    service_account_email: your-service-account@your-project.iam.gserviceaccount.com
+    service_account_file: ~/.gcp/service-account/your-project/your-service-account/key.json
+    impersonate_service_account: impersonated-account@your-project.iam.gserviceaccount.com
+  user_account_file:
+    type: user_account
+    project_id: your-project-id
+    user_account_email: your-email@example.com
+    authorized_user_file: ~/.gcp/oauth2/your-project/authorized_user.json
+  user_account_data:
+    type: user_account
+    project_id: your-project-id
+    user_account_email: your-email@example.com
+    authorized_user_data: '{"type":"authorized_user","client_id":"...","client_secret":"...","refresh_token":"..."}'
+```
+
+**Note**: The `test_settings.yaml` file is gitignored to prevent accidental credential exposure.
 
 ## Dependencies
 

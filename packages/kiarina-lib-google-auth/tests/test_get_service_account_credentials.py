@@ -1,19 +1,13 @@
-import json
-import os
-
 import google.oauth2.service_account
 import pytest
 
-from kiarina.lib.google.auth import get_service_account_credentials
+from kiarina.lib.google.auth import settings_manager, get_service_account_credentials
 
 
-@pytest.mark.xfail(
-    "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_FILE" not in os.environ,
-    reason="GCP SA key file not set",
-)
-def test_file():
+def test_file(load_settings):
+    settings = settings_manager.get_settings_by_key("service_account_file")
     credentials = get_service_account_credentials(
-        service_account_file=os.environ["KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_FILE"]
+        service_account_file=settings.service_account_file
     )
     assert isinstance(credentials, google.oauth2.service_account.Credentials)
 
@@ -25,14 +19,9 @@ def test_nonexistent_file():
         )
 
 
-@pytest.mark.xfail(
-    "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_DATA" not in os.environ,
-    reason="GCP SA key data not set",
-)
-def test_data():
+def test_data(load_settings):
+    settings = settings_manager.get_settings_by_key("service_account_data")
     credentials = get_service_account_credentials(
-        service_account_data=json.loads(
-            os.environ["KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_DATA"]
-        )
+        service_account_data=settings.get_service_account_data()
     )
     assert isinstance(credentials, google.oauth2.service_account.Credentials)

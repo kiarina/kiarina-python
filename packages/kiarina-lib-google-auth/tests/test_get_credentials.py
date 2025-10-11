@@ -6,7 +6,7 @@ import google.oauth2.service_account
 from google.auth import impersonated_credentials
 import pytest
 
-from kiarina.lib.google.auth import GoogleAuthSettings, get_credentials
+from kiarina.lib.google.auth import get_credentials
 
 
 @pytest.mark.xfail(
@@ -15,8 +15,8 @@ from kiarina.lib.google.auth import GoogleAuthSettings, get_credentials
     ),
     reason="ADC file not set",
 )
-def test_default():
-    credentials = get_credentials(settings=GoogleAuthSettings())
+def test_default(load_settings):
+    credentials = get_credentials("default")
     assert isinstance(
         credentials,
         (
@@ -27,57 +27,26 @@ def test_default():
     )
 
 
-@pytest.mark.xfail(
-    "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_FILE" not in os.environ,
-    reason="GCP SA key file not set",
-)
-def test_service_account():
-    credentials = get_credentials(
-        settings=GoogleAuthSettings(
-            type="service_account",
-            service_account_file=os.environ[
-                "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_FILE"
-            ],
-        )
-    )
+def test_service_account_file(load_settings):
+    credentials = get_credentials("service_account_file")
     assert isinstance(credentials, google.oauth2.service_account.Credentials)
 
 
-@pytest.mark.xfail(
-    "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_AUTHORIZED_USER_FILE" not in os.environ,
-    reason="GCP authorized user file not set",
-)
-def test_user_account():
-    credentials = get_credentials(
-        settings=GoogleAuthSettings(
-            type="user_account",
-            authorized_user_file=os.environ[
-                "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_AUTHORIZED_USER_FILE"
-            ],
-            scopes=["https://www.googleapis.com/auth/devstorage.read_only"],
-        )
-    )
+def test_service_account_data(load_settings):
+    credentials = get_credentials("service_account_data")
+    assert isinstance(credentials, google.oauth2.service_account.Credentials)
+
+
+def test_impersonate_service_account(load_settings):
+    credentials = get_credentials("service_account_impersonate")
+    assert isinstance(credentials, impersonated_credentials.Credentials)
+
+
+def test_user_account_file(load_settings):
+    credentials = get_credentials("user_account_file")
     assert isinstance(credentials, google.oauth2.credentials.Credentials)
 
 
-@pytest.mark.xfail(
-    (
-        "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_FILE" not in os.environ
-        or "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_IMPERSONATE_SA" not in os.environ
-    ),
-    reason="GCP SA key file not set",
-)
-def test_impersonate_service_account():
-    credentials = get_credentials(
-        settings=GoogleAuthSettings(
-            type="service_account",
-            service_account_file=os.environ[
-                "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_SA_KEY_FILE"
-            ],
-            impersonate_service_account=os.environ[
-                "KIARINA_LIB_GOOGLE_AUTH_TEST_GCP_IMPERSONATE_SA"
-            ],
-            scopes=["https://www.googleapis.com/auth/devstorage.read_only"],
-        )
-    )
-    assert isinstance(credentials, impersonated_credentials.Credentials)
+def test_user_account_data(load_settings):
+    credentials = get_credentials("user_account_data")
+    assert isinstance(credentials, google.oauth2.credentials.Credentials)
