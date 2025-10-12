@@ -172,6 +172,10 @@ mise run download-test-data
 
 # Setup development environment from scratch
 mise run setup
+
+# Upgrade dependencies
+mise run upgrade          # Update uv.lock only
+mise run upgrade --sync   # Update and sync environment
 ```
 
 ### Project Structure

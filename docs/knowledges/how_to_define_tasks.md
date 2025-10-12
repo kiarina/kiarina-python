@@ -33,5 +33,6 @@ setup               Setup development environment (install tools and sync depend
 test                Test *
 typecheck           Type check *
 update-changelog    Update CHANGELOG.md files for all packages with version entry
+upgrade             Upgrade dependencies
 version             Update version in root and all packages
 ```
