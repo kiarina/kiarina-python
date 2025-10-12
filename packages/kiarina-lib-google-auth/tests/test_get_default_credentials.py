@@ -24,7 +24,7 @@ def test_adc():
 
 def test_service_account(load_settings, monkeypatch):
     if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
-        settings = settings_manager.get_settings_by_key("service_account_file")
+        settings = settings_manager.get_settings("service_account_file")
         monkeypatch.setenv(
             "GOOGLE_APPLICATION_CREDENTIALS", settings.service_account_file
         )

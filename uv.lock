@@ -56,11 +56,11 @@ wheels = [
 
 [[package]]
 name = "cachetools"
-version = "6.2.0"
+version = "6.2.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9d/61/e4fad8155db4a04bfb4734c7c8ff0882f078f24294d42798b3568eb63bff/cachetools-6.2.0.tar.gz", hash = "sha256:38b328c0889450f05f5e120f56ab68c8abaf424e1275522b138ffc93253f7e32", size = 30988, upload-time = "2025-08-25T18:57:30.924Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/7e/b975b5814bd36faf009faebe22c1072a1fa1168db34d285ef0ba071ad78c/cachetools-6.2.1.tar.gz", hash = "sha256:3f391e4bd8f8bf0931169baf7456cc822705f4e2a31f840d218f445b9a854201", size = 31325, upload-time = "2025-10-12T14:55:30.139Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/56/3124f61d37a7a4e7cc96afc5492c78ba0cb551151e530b54669ddd1436ef/cachetools-6.2.0-py3-none-any.whl", hash = "sha256:1c76a8960c0041fcc21097e357f882197c79da0dbff766e7317890a65d7d8ba6", size = 11276, upload-time = "2025-08-25T18:57:29.684Z" },
+    { url = "https://files.pythonhosted.org/packages/96/c5/1e741d26306c42e2bf6ab740b2202872727e0f606033c9dd713f8b93f5a8/cachetools-6.2.1-py3-none-any.whl", hash = "sha256:09868944b6dde876dfd44e1d47e18484541eaf12f26f29b7af91b26cc892d701", size = 11280, upload-time = "2025-10-12T14:55:28.382Z" },
 ]
 
 [[package]]
@@ -417,11 +417,11 @@ wheels = [
 
 [[package]]
 name = "idna"
-version = "3.10"
+version = "3.11"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9", size = 190490, upload-time = "2024-09-15T18:07:39.745Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/6d/0703ccc57f3a7233505399edb88de3cbd678da106337b9fcde432b65ed60/idna-3.11.tar.gz", hash = "sha256:795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902", size = 194582, upload-time = "2025-10-12T14:55:20.501Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3", size = 70442, upload-time = "2024-09-15T18:07:37.964Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/61/66938bbb5fc52dbdf84594873d5b51fb1f7c7794e9c0f5bd885f30bc507b/idna-3.11-py3-none-any.whl", hash = "sha256:771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea", size = 71008, upload-time = "2025-10-12T14:55:18.883Z" },
 ]
 
 [[package]]
@@ -489,7 +489,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
 
 [[package]]
@@ -508,7 +508,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
 
 [[package]]
@@ -526,7 +526,7 @@ dependencies = [
 requires-dist = [
     { name = "kiarina-falkordb", specifier = ">=1.2.0" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
     { name = "redis", specifier = ">=6.4.0" },
 ]
 
@@ -544,7 +544,7 @@ dependencies = [
 requires-dist = [
     { name = "google-api-python-client", specifier = ">=2.184.0" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
 
 [[package]]
@@ -563,7 +563,7 @@ requires-dist = [
     { name = "google-cloud-storage", specifier = ">=2.19.0" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
 
 [[package]]
@@ -579,7 +579,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
     { name = "redis", specifier = ">=6.4.0" },
 ]
 
@@ -600,7 +600,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.3.2" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
     { name = "redis", specifier = ">=6.4.0" },
 ]
 
@@ -618,7 +618,7 @@ dependencies = [
 requires-dist = [
     { name = "pydantic", specifier = ">=2.10.1" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
 
 [[package]]
@@ -723,7 +723,7 @@ requires-dist = [
     { name = "filelock", specifier = ">=3.19.1" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.1.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
 ]
 
@@ -1045,15 +1045,15 @@ wheels = [
 
 [[package]]
 name = "pydantic-settings-manager"
-version = "2.2.0"
+version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/00/30/8e148e77f1254cf6b5154ca9a739029cf396329bcc8ed423fa72f9e4e695/pydantic_settings_manager-2.2.0.tar.gz", hash = "sha256:cbfcad157d87cc302996fb192419f2e7258e251c55e08763472a90f2f291c8f7", size = 51728, upload-time = "2025-09-08T07:28:41.83Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ca/df/9b7e5419f58fd08733470da7aacd0b002904f888e9f1cf91a3d3a5b753b5/pydantic_settings_manager-2.3.0.tar.gz", hash = "sha256:0d9807169ba25fba973e04fc1f889afef745bdb266808d9c89e6cf2618ba7419", size = 65921, upload-time = "2025-10-12T16:01:23.491Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0d/14/c9ad2d200517b654bd2ee1b71da01913cce12494d0d5a1a1297b6ef2881f/pydantic_settings_manager-2.2.0-py3-none-any.whl", hash = "sha256:a5fb7bc63c87a7b3a7b4e71daf96c2e826ffd1ed253a0cef8782bf0304171178", size = 10618, upload-time = "2025-09-08T07:28:40.874Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/b9/b4aa0af3c318907d4e0a805c3d6774605f5694c4d0f482b23bb6ae34940b/pydantic_settings_manager-2.3.0-py3-none-any.whl", hash = "sha256:374ba08847f0648a443347e2ccec236837aceb5d5c8e6466ceb216da092f1b9c", size = 13389, upload-time = "2025-10-12T16:01:22.569Z" },
 ]
 
 [[package]]
@@ -1278,11 +1278,11 @@ wheels = [
 
 [[package]]
 name = "types-aiofiles"
-version = "24.1.0.20250822"
+version = "25.1.0.20251011"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/19/48/c64471adac9206cc844afb33ed311ac5a65d2f59df3d861e0f2d0cad7414/types_aiofiles-24.1.0.20250822.tar.gz", hash = "sha256:9ab90d8e0c307fe97a7cf09338301e3f01a163e39f3b529ace82466355c84a7b", size = 14484, upload-time = "2025-08-22T03:02:23.039Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/6c/6d23908a8217e36704aa9c79d99a620f2fdd388b66a4b7f72fbc6b6ff6c6/types_aiofiles-25.1.0.20251011.tar.gz", hash = "sha256:1c2b8ab260cb3cd40c15f9d10efdc05a6e1e6b02899304d80dfa0410e028d3ff", size = 14535, upload-time = "2025-10-11T02:44:51.237Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bc/8e/5e6d2215e1d8f7c2a94c6e9d0059ae8109ce0f5681956d11bb0a228cef04/types_aiofiles-24.1.0.20250822-py3-none-any.whl", hash = "sha256:0ec8f8909e1a85a5a79aed0573af7901f53120dd2a29771dd0b3ef48e12328b0", size = 14322, upload-time = "2025-08-22T03:02:21.918Z" },
+    { url = "https://files.pythonhosted.org/packages/71/0f/76917bab27e270bb6c32addd5968d69e558e5b6f7fb4ac4cbfa282996a96/types_aiofiles-25.1.0.20251011-py3-none-any.whl", hash = "sha256:8ff8de7f9d42739d8f0dadcceeb781ce27cd8d8c4152d4a7c52f6b20edb8149c", size = 14338, upload-time = "2025-10-11T02:44:50.054Z" },
 ]
 
 [[package]]
@@ -1335,14 +1335,14 @@ wheels = [
 
 [[package]]
 name = "virtualenv"
-version = "20.35.1"
+version = "20.35.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "distlib" },
     { name = "filelock" },
     { name = "platformdirs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b4/55/a15050669ab087762c2c63010ef54643032ac1b32b5e15cc4ba75897806b/virtualenv-20.35.1.tar.gz", hash = "sha256:041dac43b6899858a91838b616599e80000e545dee01a21172a6a46746472cb2", size = 6005687, upload-time = "2025-10-09T22:21:16.139Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a4/d5/b0ccd381d55c8f45d46f77df6ae59fbc23d19e901e2d523395598e5f4c93/virtualenv-20.35.3.tar.gz", hash = "sha256:4f1a845d131133bdff10590489610c98c168ff99dc75d6c96853801f7f67af44", size = 6002907, upload-time = "2025-10-10T21:23:33.178Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/37/32/8ab08a0cf98bdc8e9fd7522111327e33089da79c7d6b05542626be34cbb8/virtualenv-20.35.1-py3-none-any.whl", hash = "sha256:1d9d93cd01d35b785476e2fa7af711a98d40d227a078941695bbae394f8737e2", size = 5984643, upload-time = "2025-10-09T22:21:13.739Z" },
+    { url = "https://files.pythonhosted.org/packages/27/73/d9a94da0e9d470a543c1b9d3ccbceb0f59455983088e727b8a1824ed90fb/virtualenv-20.35.3-py3-none-any.whl", hash = "sha256:63d106565078d8c8d0b206d48080f938a8b25361e19432d2c9db40d2899c810a", size = 5981061, upload-time = "2025-10-10T21:23:30.433Z" },
 ]

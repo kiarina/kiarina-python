@@ -188,16 +188,7 @@ settings_manager: SettingsManager[CloudflareAuthSettings]
 ```
 
 Global settings manager instance for Cloudflare authentication.
-
-**Properties:**
-- `settings`: Get the current active settings
-- `user_config`: Get/set user configuration
-- `cli_args`: Get/set CLI arguments for runtime overrides
-- `active_key`: Get/set active configuration key (for multi-config mode)
-
-**Methods:**
-- `clear()`: Clear cached settings
-- `get_settings_by_key(key: str)`: Get settings by specific key
+See: [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager)
 
 ## Development
 

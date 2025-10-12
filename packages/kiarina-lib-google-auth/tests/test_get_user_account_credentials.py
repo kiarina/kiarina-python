@@ -9,7 +9,7 @@ from kiarina.lib.google.auth import (
 
 
 def test_file(load_settings):
-    settings = settings_manager.get_settings_by_key("user_account_file")
+    settings = settings_manager.get_settings("user_account_file")
     credentials = get_user_account_credentials(
         authorized_user_file=settings.authorized_user_file,
         scopes=settings.scopes,
@@ -26,7 +26,7 @@ def test_nonexistent_file():
 
 
 def test_data(load_settings):
-    settings = settings_manager.get_settings_by_key("user_account_data")
+    settings = settings_manager.get_settings("user_account_data")
     credentials = get_user_account_credentials(
         authorized_user_data=settings.get_authorized_user_data(),
         scopes=settings.scopes,
@@ -52,7 +52,7 @@ def test_cache(load_settings):
 
     cache = InMemoryCache()
 
-    settings = settings_manager.get_settings_by_key("user_account_data")
+    settings = settings_manager.get_settings("user_account_data")
     credentials = get_user_account_credentials(
         authorized_user_data=settings.get_authorized_user_data(),
         scopes=settings.scopes,

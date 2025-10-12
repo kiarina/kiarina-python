@@ -88,7 +88,7 @@ New requirement: Add agent-level isolation for multi-tenancy.
 **Updated Security Rules:**
 ```javascript
 match /web/{user_id}/{agent_id}/files/{basename} {
-  allow read, write: if request.auth.uid == user_id 
+  allow read, write: if request.auth.uid == user_id
                      && request.auth.token.agent_id == agent_id;
 }
 ```
@@ -116,7 +116,7 @@ google_cloud_storage:
 **GCS Security Rules (Infrastructure Concern):**
 ```javascript
 match /web/{user_id}/{agent_id}/files/{basename} {
-  allow read, write: if request.auth.uid == user_id 
+  allow read, write: if request.auth.uid == user_id
                      && request.auth.token.agent_id == agent_id;
 }
 ```
@@ -340,14 +340,14 @@ def save_document(tenant_id: str, doc_id: str, content: bytes):
 def list_documents(tenant_id: str) -> list[str]:
     """List documents for any tenant"""
     from kiarina.lib.google.cloud_storage import get_bucket
-    
+
     config_key = f"tenant_{tenant_id}"
     bucket = get_bucket(config_key=config_key, auth_config_key=config_key)
-    
+
     # Get prefix from settings
-    settings = settings_manager.get_settings_by_key(config_key)
+    settings = settings_manager.get_settings(config_key)
     prefix = f"{settings.blob_name_prefix}/documents/" if settings.blob_name_prefix else "documents/"
-    
+
     blobs = bucket.list_blobs(prefix=prefix)
     return [blob.name for blob in blobs]
 ```
@@ -381,10 +381,10 @@ def mock_storage_config():
 def test_save_user_profile(mock_storage_config):
     """Test user profile saving"""
     from myapp.services import save_user_profile
-    
+
     # Application code uses test configuration automatically
     save_user_profile("user123", {"name": "Alice"})
-    
+
     # Verify using the same configuration
     from kiarina.lib.google.cloud_storage import get_blob
     blob = get_blob(blob_name="users/user123/profile.json")
@@ -400,20 +400,20 @@ from kiarina.lib.google.cloud_storage import settings_manager
 
 def debug_storage_config(config_key: str | None = None):
     """Show actual storage paths for debugging"""
-    settings = settings_manager.get_settings_by_key(config_key)
-    
+    settings = settings_manager.get_settings(config_key)
+
     print(f"Configuration: {config_key or 'default'}")
     print(f"  Bucket: {settings.bucket_name}")
     print(f"  Prefix: {settings.blob_name_prefix or '(none)'}")
     print(f"  Auth: {settings.google_auth_config_key}")
-    
+
     # Example paths
     example_blob = "users/123/profile.json"
     if settings.blob_name_prefix:
         full_path = f"{settings.blob_name_prefix}/{example_blob}"
     else:
         full_path = example_blob
-    
+
     print(f"  Example: gs://{settings.bucket_name}/{full_path}")
 
 # Usage
@@ -672,7 +672,7 @@ settings_manager: SettingsManager[GoogleCloudStorageSettings]
 - `active_key`: Get/set active configuration key
 
 **Methods:**
-- `get_settings_by_key(key: str)`: Get settings by specific key
+- `get_settings(key: str)`: Get settings by specific key
 - `clear()`: Clear cached settings
 
 ## Common Operations

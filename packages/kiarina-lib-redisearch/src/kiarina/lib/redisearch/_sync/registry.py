@@ -12,5 +12,5 @@ def create_redisearch_client(
     """
     Create a Redisearch client.
     """
-    settings = settings_manager.get_settings_by_key(config_key)
+    settings = settings_manager.get_settings(config_key)
     return RedisearchClient(settings, redis=redis)

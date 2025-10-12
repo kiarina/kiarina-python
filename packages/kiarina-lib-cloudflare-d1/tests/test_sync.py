@@ -28,8 +28,8 @@ def test_sync() -> None:
             "kiarina.lib.cloudflare.d1._sync.registry.auth_settings_manager"
         ) as mock_auth_settings_manager,
     ):
-        mock_settings_manager.get_settings_by_key.return_value = settings
-        mock_auth_settings_manager.get_settings_by_key.return_value = auth_settings
+        mock_settings_manager.get_settings.return_value = settings
+        mock_auth_settings_manager.get_settings.return_value = auth_settings
 
         client = create_d1_client()
         result = client.query("SELECT 1")

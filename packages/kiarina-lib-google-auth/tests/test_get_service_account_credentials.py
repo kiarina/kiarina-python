@@ -5,7 +5,7 @@ from kiarina.lib.google.auth import settings_manager, get_service_account_creden
 
 
 def test_file(load_settings):
-    settings = settings_manager.get_settings_by_key("service_account_file")
+    settings = settings_manager.get_settings("service_account_file")
     credentials = get_service_account_credentials(
         service_account_file=settings.service_account_file
     )
@@ -20,7 +20,7 @@ def test_nonexistent_file():
 
 
 def test_data(load_settings):
-    settings = settings_manager.get_settings_by_key("service_account_data")
+    settings = settings_manager.get_settings("service_account_data")
     credentials = get_service_account_credentials(
         service_account_data=settings.get_service_account_data()
     )

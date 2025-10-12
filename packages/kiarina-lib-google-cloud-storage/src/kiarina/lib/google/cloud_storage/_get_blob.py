@@ -41,7 +41,7 @@ def get_blob(
         # Using default pattern from settings
         blob = get_blob()  # Uses settings.blob_name_pattern without placeholders
     """
-    settings = settings_manager.get_settings_by_key(config_key)
+    settings = settings_manager.get_settings(config_key)
 
     # Priority 1: Explicit blob_name
     if blob_name is not None:

@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "pydantic-settings>=2.10.1",
-    "pydantic-settings-manager>=2.1.0",
+    "pydantic-settings-manager>=2.3.0",
 ]
 
 [project.urls]

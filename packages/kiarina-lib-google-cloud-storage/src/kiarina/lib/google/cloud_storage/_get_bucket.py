@@ -12,7 +12,7 @@ def get_bucket(
     auth_config_key: str | None = None,
     **kwargs: Any,
 ) -> storage.Bucket:
-    settings = settings_manager.get_settings_by_key(config_key)
+    settings = settings_manager.get_settings(config_key)
 
     if settings.bucket_name is None:
         raise ValueError("bucket_name is not set in the settings")

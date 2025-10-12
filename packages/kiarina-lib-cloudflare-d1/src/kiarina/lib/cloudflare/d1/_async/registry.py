@@ -12,6 +12,6 @@ def create_d1_client(
     """
     Create a D1 client.
     """
-    settings = settings_manager.get_settings_by_key(config_key)
-    auth_settings = auth_settings_manager.get_settings_by_key(auth_config_key)
+    settings = settings_manager.get_settings(config_key)
+    auth_settings = auth_settings_manager.get_settings(auth_config_key)
     return D1Client(settings, auth_settings=auth_settings)

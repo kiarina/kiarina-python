@@ -19,7 +19,7 @@ def get_credentials(
     cache: CredentialsCache | None = None,
 ) -> Credentials:
     if settings is None:
-        settings = settings_manager.get_settings_by_key(config_key)
+        settings = settings_manager.get_settings(config_key)
 
     credentials: Credentials
 

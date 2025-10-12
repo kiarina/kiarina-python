@@ -26,7 +26,7 @@ dependencies = [
     "httpx>=0.28.1",
     "kiarina-lib-cloudflare-auth>=1.5.0",
     "pydantic-settings>=2.10.1",
-    "pydantic-settings-manager>=2.1.0",
+    "pydantic-settings-manager>=2.3.0",
 ]
 
 [project.urls]
