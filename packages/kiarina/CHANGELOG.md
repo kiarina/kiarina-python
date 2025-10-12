@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Project**: Added coverage support to package test tasks with `--coverage` flag
+
+### Changed
+- **kiarina-lib-cloudflare-d1**: Improved D1 tests with better error handling and added sample environment files
+- **Project**: Improved package test tasks with smarter module detection
+
 ## [1.6.3] - 2025-10-13
 
 ### Added

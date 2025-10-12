@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added `.env.sample` file for environment variable configuration examples
+- Added `test_settings.sample.yaml` file for test configuration examples
+
+### Changed
+- Improved test coverage with better error handling in async and sync tests
+- Enhanced error handling in query operations and response views
+- Updated test configuration setup in `conftest.py`
+
 ## [1.6.3] - 2025-10-13
 
 ### Changed
