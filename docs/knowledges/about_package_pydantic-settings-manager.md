@@ -12,6 +12,7 @@ A modern, thread-safe library for managing Pydantic settings with support for mu
 
 ## Features
 
+- **Bootstrap Pattern**: Centralized configuration loading for multi-module applications
 - **Unified API**: Single `SettingsManager` class handles both simple and complex configurations
 - **Thread-safe**: Built-in thread safety for concurrent applications
 - **Type-safe**: Full type hints and Pydantic validation
@@ -27,7 +28,7 @@ pip install pydantic-settings-manager
 
 ## Quick Start
 
-### Basic Usage
+### Single Module (Simple Projects)
 
 ```python
 from pydantic_settings import BaseSettings
@@ -42,22 +43,14 @@ class AppSettings(BaseSettings):
 # 2. Create a settings manager
 manager = SettingsManager(AppSettings)
 
-# 3. Use your settings
-settings = manager.settings
-print(f"App: {settings.app_name}, Debug: {settings.debug}")
-# Output: App: MyApp, Debug: False
-```
-
-### Loading from Configuration
-
-```python
-# Load from a dictionary (JSON, YAML, etc.)
+# 3. Load configuration
 manager.user_config = {
     "app_name": "ProductionApp",
     "debug": False,
     "max_connections": 500
 }
 
+# 4. Use your settings
 settings = manager.settings
 print(f"App: {settings.app_name}")  # Output: App: ProductionApp
 ```
@@ -71,6 +64,238 @@ manager.cli_args = {"debug": True, "max_connections": 50}
 settings = manager.settings
 print(f"Debug: {settings.debug}")  # Output: Debug: True
 print(f"Connections: {settings.max_connections}")  # Output: Connections: 50
+```
+
+## Bootstrap Pattern (Recommended for Production)
+
+**For multi-module applications, use the bootstrap pattern with `load_user_configs()`.** This is the recommended approach for production applications.
+
+### Why Bootstrap Pattern?
+
+- **Centralized Configuration**: Load all module settings from a single configuration file
+- **Automatic Discovery**: No need to manually import and configure each module
+- **Environment Management**: Easy switching between development, staging, and production
+- **Clean Separation**: Configuration files separate from application code
+
+### Project Structure
+
+```
+your_project/
+├── settings/
+│   ├── __init__.py
+│   └── app.py                    # app_settings_manager
+├── modules/
+│   ├── auth/
+│   │   ├── __init__.py
+│   │   ├── settings.py           # auth_settings_manager
+│   │   └── service.py
+│   └── billing/
+│       ├── __init__.py
+│       ├── settings.py           # billing_settings_manager
+│       └── service.py
+├── config/
+│   ├── base.yaml                 # Shared configuration
+│   ├── development.yaml          # Dev overrides
+│   └── production.yaml           # Prod overrides
+├── bootstrap.py                  # Bootstrap logic
+└── main.py                       # Application entry point
+```
+
+### Quick Example
+
+```python
+# 1. Define settings in each module
+# settings/app.py
+from pydantic_settings import BaseSettings
+from pydantic_settings_manager import SettingsManager
+
+class AppSettings(BaseSettings):
+    name: str = "MyApp"
+    debug: bool = False
+    secret_key: str = "dev-secret"
+
+settings_manager = SettingsManager(AppSettings)
+
+# modules/auth/settings.py
+class AuthSettings(BaseSettings):
+    jwt_secret: str = "jwt-secret"
+    token_expiry: int = 3600
+
+settings_manager = SettingsManager(AuthSettings)
+
+# modules/billing/settings.py
+class BillingSettings(BaseSettings):
+    currency: str = "USD"
+    stripe_api_key: str = ""
+
+settings_manager = SettingsManager(BillingSettings)
+```
+
+```yaml
+# config/base.yaml (shared across all environments)
+settings.app:
+  name: "MyApp"
+
+modules.auth.settings:
+  token_expiry: 3600
+
+modules.billing.settings:
+  currency: "USD"
+
+# config/production.yaml (prod-specific overrides)
+settings.app:
+  debug: false
+  secret_key: "${SECRET_KEY}"
+
+modules.auth.settings:
+  jwt_secret: "${JWT_SECRET}"
+
+modules.billing.settings:
+  stripe_api_key: "${STRIPE_API_KEY}"
+```
+
+```python
+# bootstrap.py - RECOMMENDED IMPLEMENTATION
+import os
+import yaml
+from pathlib import Path
+from pydantic_settings_manager import load_user_configs, update_dict
+
+def bootstrap(environment: str | None = None) -> None:
+    """
+    Bootstrap all settings managers with environment-specific configuration.
+
+    Args:
+        environment: Environment name (e.g., "development", "production").
+                    If None, uses ENVIRONMENT env var or defaults to "development".
+    """
+    if environment is None:
+        environment = os.getenv("ENVIRONMENT", "development")
+
+    config_dir = Path("config")
+
+    # Load base configuration (optional)
+    base_file = config_dir / "base.yaml"
+    if base_file.exists():
+        with open(base_file) as f:
+            config = yaml.safe_load(f) or {}
+    else:
+        config = {}
+
+    # Load environment-specific configuration
+    env_file = config_dir / f"{environment}.yaml"
+    if env_file.exists():
+        with open(env_file) as f:
+            env_config = yaml.safe_load(f) or {}
+            # Deep merge configurations (environment overrides base)
+            config = update_dict(config, env_config)
+
+    # This single line configures ALL your settings managers!
+    load_user_configs(config)
+
+    print(f"✓ Loaded configuration for '{environment}' environment")
+
+# main.py
+from bootstrap import bootstrap
+from settings.app import settings_manager as app_settings_manager
+from modules.auth.settings import settings_manager as auth_settings_manager
+from modules.billing.settings import settings_manager as billing_settings_manager
+
+def main():
+    # Bootstrap all settings with one line
+    bootstrap("production")
+
+    # All settings are now configured and ready to use!
+    app = app_settings_manager.settings
+    auth = auth_settings_manager.settings
+    billing = billing_settings_manager.settings
+
+    print(f"App: {app.name}, Debug: {app.debug}")
+    print(f"JWT Expiry: {auth.token_expiry}")
+    print(f"Currency: {billing.currency}")
+
+if __name__ == "__main__":
+    main()
+```
+
+### Configuration File Structure
+
+The configuration file structure maps directly to your module structure:
+
+```yaml
+# Key = module path (e.g., "settings.app" → settings/app.py)
+# Value = configuration for that module's settings manager
+
+settings.app:
+  name: "MyApp-Production"
+  debug: false
+  secret_key: "${SECRET_KEY}"  # Pydantic will read from environment
+
+modules.auth.settings:
+  jwt_secret: "${JWT_SECRET}"
+  token_expiry: 3600
+
+modules.billing.settings:
+  currency: "USD"
+  stripe_api_key: "${STRIPE_API_KEY}"
+```
+
+### Custom Manager Names
+
+By default, `load_user_configs()` looks for `settings_manager` in each module. You can customize this:
+
+```python
+# settings/app.py
+app_manager = SettingsManager(AppSettings)  # Custom name
+
+# bootstrap.py
+load_user_configs(config, manager_name="app_manager")
+```
+
+### Frequently Asked Questions
+
+**Q: Do I need `multi=True` for bootstrap pattern?**
+
+A: No! Bootstrap pattern works with both single and multi mode:
+- **Single mode** (recommended): One configuration per module
+- **Multi mode**: Multiple configurations per module (e.g., dev/staging/prod in same manager)
+
+```python
+# Single mode (simpler, recommended for most cases)
+settings_manager = SettingsManager(AppSettings)
+
+# Multi mode (when you need multiple configs per module)
+settings_manager = SettingsManager(AppSettings, multi=True)
+```
+
+**Q: How are environment variables like `${SECRET_KEY}` handled?**
+
+A: Pydantic Settings automatically reads from environment variables. The `${VAR}` syntax in YAML is just documentation - you can use any value:
+
+```yaml
+# config/production.yaml
+settings.app:
+  secret_key: "placeholder"  # Will be overridden by SECRET_KEY env var
+```
+
+Pydantic will automatically use `os.getenv("SECRET_KEY")` if the environment variable is set.
+
+**Q: When should I use manual configuration instead of `load_user_configs`?**
+
+A: Only when you need module-specific logic:
+- Custom validation per module
+- Conditional configuration based on module state
+- Dynamic module discovery
+
+For 99% of cases, use `load_user_configs()`.
+
+**Q: Can I use bootstrap pattern with a single module?**
+
+A: Yes, but it's overkill. For single-module projects, just use:
+
+```python
+manager = SettingsManager(AppSettings)
+manager.user_config = yaml.safe_load(open("config.yaml"))
 ```
 
 ## Multiple Configurations
@@ -165,239 +390,8 @@ manager.set_cli_args("nested.value", "test")  # Supports nested keys
 manager.cli_args = {"debug": False, "max_connections": 200}
 
 # Get specific settings by key (multi mode)
-dev_settings = manager.get_settings_by_key("development")
-prod_settings = manager.get_settings_by_key("production")
-```
-
-### Complex Settings with Nested Configuration
-
-```python
-from typing import Dict, List
-from pydantic import Field
-
-class DatabaseSettings(BaseSettings):
-    host: str = "localhost"
-    port: int = 5432
-    username: str = "user"
-    password: str = "password"
-
-class APISettings(BaseSettings):
-    base_url: str = "https://api.example.com"
-    timeout: int = 30
-    retries: int = 3
-
-class AppSettings(BaseSettings):
-    app_name: str = "MyApp"
-    debug: bool = False
-    database: DatabaseSettings = Field(default_factory=DatabaseSettings)
-    api: APISettings = Field(default_factory=APISettings)
-    features: List[str] = Field(default_factory=list)
-    metadata: Dict[str, str] = Field(default_factory=dict)
-
-manager = SettingsManager(AppSettings, multi=True)
-manager.user_config = {
-    "development": {
-        "app_name": "MyApp-Dev",
-        "debug": True,
-        "database": {
-            "host": "dev-db.example.com",
-            "port": 5433
-        },
-        "api": {
-            "base_url": "https://dev-api.example.com",
-            "timeout": 10
-        },
-        "features": ["debug_toolbar", "hot_reload"],
-        "metadata": {"environment": "dev", "version": "1.0.0-dev"}
-    },
-    "production": {
-        "app_name": "MyApp-Prod",
-        "debug": False,
-        "database": {
-            "host": "prod-db.example.com",
-            "port": 5432,
-            "username": "prod_user"
-        },
-        "api": {
-            "base_url": "https://api.example.com",
-            "timeout": 30,
-            "retries": 5
-        },
-        "features": ["monitoring", "caching"],
-        "metadata": {"environment": "prod", "version": "1.0.0"}
-    }
-}
-
-# Use nested configuration
-manager.active_key = "development"
-settings = manager.settings
-print(f"DB Host: {settings.database.host}")
-print(f"API URL: {settings.api.base_url}")
-print(f"Features: {settings.features}")
-```
-
-## Project Structure for Large Applications
-
-For complex applications with multiple modules:
-
-```
-your_project/
-├── settings/
-│   ├── __init__.py
-│   ├── app.py
-│   ├── database.py
-│   └── api.py
-├── modules/
-│   ├── auth/
-│   │   ├── __init__.py
-│   │   ├── settings.py
-│   │   └── service.py
-│   └── billing/
-│       ├── __init__.py
-│       ├── settings.py
-│       └── service.py
-├── config/
-│   ├── base.yaml
-│   ├── development.yaml
-│   └── production.yaml
-├── bootstrap.py
-└── main.py
-```
-
-### Module-based Settings
-
-```python
-# settings/app.py
-from pydantic_settings import BaseSettings
-from pydantic_settings_manager import SettingsManager
-
-class AppSettings(BaseSettings):
-    name: str = "MyApp"
-    debug: bool = False
-    secret_key: str = "dev-secret"
-
-app_settings_manager = SettingsManager(AppSettings, multi=True)
-
-# modules/auth/settings.py
-from pydantic_settings import BaseSettings
-from pydantic_settings_manager import SettingsManager
-
-class AuthSettings(BaseSettings):
-    jwt_secret: str = "jwt-secret"
-    token_expiry: int = 3600
-    max_login_attempts: int = 5
-
-auth_settings_manager = SettingsManager(AuthSettings, multi=True)
-```
-
-### Bootstrap Configuration
-
-```python
-# bootstrap.py
-import yaml
-import importlib
-from pathlib import Path
-from pydantic_settings_manager import SettingsManager
-
-def load_config(config_path: str) -> dict:
-    """Load configuration from YAML file"""
-    with open(config_path) as f:
-        return yaml.safe_load(f)
-
-def bootstrap_settings(environment: str = "development"):
-    """Bootstrap all settings managers with configuration"""
-
-    # Load base configuration
-    base_config = load_config("config/base.yaml")
-    env_config = load_config(f"config/{environment}.yaml")
-
-    # Merge configurations (env overrides base)
-    config = {**base_config, **env_config}
-
-    # Configure each module's settings manager
-    settings_managers = [
-        ("settings.app", "app_settings_manager"),
-        ("modules.auth.settings", "auth_settings_manager"),
-        ("modules.billing.settings", "billing_settings_manager"),
-    ]
-
-    for module_name, manager_name in settings_managers:
-        try:
-            module = importlib.import_module(module_name)
-            manager = getattr(module, manager_name, None)
-
-            if isinstance(manager, SettingsManager):
-                # Set configuration for this module
-                if module_name.split('.')[-1] in config:
-                    manager.user_config = config[module_name.split('.')[-1]]
-                    manager.active_key = environment
-
-        except ImportError:
-            print(f"Warning: Could not import {module_name}")
-
-# main.py
-from bootstrap import bootstrap_settings
-from settings.app import app_settings_manager
-from modules.auth.settings import auth_settings_manager
-
-def main():
-    # Bootstrap all settings
-    bootstrap_settings("production")
-
-    # Use settings throughout the application
-    app_settings = app_settings_manager.settings
-    auth_settings = auth_settings_manager.settings
-
-    print(f"App: {app_settings.name}")
-    print(f"JWT Expiry: {auth_settings.token_expiry}")
-
-if __name__ == "__main__":
-    main()
-```
-
-### Configuration Files
-
-```yaml
-# config/base.yaml
-app:
-  name: "MyApp"
-  debug: false
-
-auth:
-  token_expiry: 3600
-  max_login_attempts: 5
-
-billing:
-  currency: "USD"
-  tax_rate: 0.08
-```
-
-```yaml
-# config/development.yaml
-app:
-  debug: true
-  secret_key: "dev-secret-key"
-
-auth:
-  jwt_secret: "dev-jwt-secret"
-  token_expiry: 7200  # Longer expiry for development
-
-billing:
-  mock_payments: true
-```
-
-```yaml
-# config/production.yaml
-app:
-  secret_key: "${SECRET_KEY}"  # From environment variable
-
-auth:
-  jwt_secret: "${JWT_SECRET}"
-  max_login_attempts: 3  # Stricter in production
-
-billing:
-  mock_payments: false
-  stripe_api_key: "${STRIPE_API_KEY}"
+dev_settings = manager.get_settings("development")
+prod_settings = manager.get_settings("production")
 ```
 
 ## CLI Integration
@@ -502,52 +496,67 @@ settings_manager.user_config = config
 
 ## Development
 
-This project uses modern Python development tools:
+This project uses [mise](https://mise.jdx.dev/) for development environment management.
 
-- **uv**: Fast Python package manager with PEP 735 dependency groups support
-- **ruff**: Fast linter and formatter (replaces black, isort, and flake8)
-- **mypy**: Static type checking
-- **pytest**: Testing framework with coverage reporting
-
-### Setup
+### Quick Start
 
 ```bash
-# Install all development dependencies
-uv sync --group dev
+# Install mise (macOS)
+brew install mise
 
-# Or install specific dependency groups
-uv sync --group test    # Testing tools only
-uv sync --group lint    # Linting tools only
+# Clone and setup
+git clone https://github.com/kiarina/pydantic-settings-manager.git
+cd pydantic-settings-manager
+mise run setup
 
-# Format code
-uv run ruff check --fix .
+# Verify everything works
+mise run ci
+```
 
-# Run linting
-uv run ruff check .
-uv run mypy .
+### Common Tasks
+
+```bash
+# Daily development (auto-fix + test)
+mise run
+
+# Before committing (full CI checks)
+mise run ci
 
 # Run tests
-uv run pytest --cov=pydantic_settings_manager tests/
+mise run test
+mise run test -v          # verbose
+mise run test -c          # with coverage
 
-# Build and test everything
-make build
+# Code quality
+mise run format           # format code
+mise run lint             # check issues
+mise run lint-fix         # auto-fix issues
+mise run typecheck        # type check
+
+# Dependencies
+mise run upgrade          # upgrade dependencies
+mise run upgrade --sync   # upgrade and sync
+
+# Release (see docs/runbooks/how_to_release.md for details)
+mise run version 2.3.0
+mise run update-changelog 2.3.0
+mise run ci
+git add . && git commit -m "chore: release v2.3.0"
+git tag v2.3.0 && git push origin main --tags
 ```
 
-### Development Workflow
+### Technology Stack
 
-```bash
-# Quick setup for testing
-uv sync --group test
-make test
+- **[mise](https://mise.jdx.dev/)**: Development environment and task runner
+- **[uv](https://github.com/astral-sh/uv)**: Fast Python package manager
+- **[ruff](https://github.com/astral-sh/ruff)**: Fast linter and formatter
+- **[mypy](https://mypy-lang.org/)**: Static type checking
+- **[pytest](https://pytest.org/)**: Testing framework
 
-# Quick setup for linting
-uv sync --group lint
-make lint
-
-# Full development environment
-uv sync --group dev
-make build
-```
+For detailed documentation, see:
+- Available tasks: `mise tasks`
+- Release process: `docs/runbooks/how_to_release.md`
+- Project info: `docs/knowledges/about_this_project.md`
 
 ## API Reference
 
@@ -572,9 +581,10 @@ class SettingsManager(Generic[T]):
 - `active_key: str | None` - Get/set active key (multi mode only)
 
 #### Methods
+- `get_settings(key: str | None = None) -> T` - Get settings by key or current active settings
 - `clear() -> None` - Clear cached settings
-- `get_settings_by_key(key: str) -> T` - Get settings by specific key
 - `set_cli_args(target: str, value: Any) -> None` - Set individual CLI argument
+- `get_settings_by_key(key: str | None) -> T` - **[Deprecated]** Use `get_settings()` instead (will be removed in v3.0.0)
 
 ## License
 
