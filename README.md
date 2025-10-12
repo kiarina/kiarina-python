@@ -16,6 +16,12 @@ this project provides robust, well-tested utilities for common development tasks
 
 ## 📦 Packages
 
+### 📦 Meta Package
+
+- **[kiarina](packages/kiarina/)** - Meta package for convenient installation
+  - Install all kiarina packages with a single command: `pip install kiarina`
+  - Aggregates all utilities and libraries in one package
+
 ### 🔧 Utilities
 
 - **[kiarina-utils-common](packages/kiarina-utils-common/)** - Common utilities and helper functions
@@ -24,6 +30,7 @@ this project provides robust, well-tested utilities for common development tasks
 - **[kiarina-utils-file](packages/kiarina-utils-file/)** - Advanced file I/O operations
   - Smart encoding detection with nkf support
   - MIME type detection and FileBlob containers
+  - Markdown file support with YAML front matter parsing
   - Sync & async API support with atomic operations
 
 ### 🤖 AI & LLM
@@ -31,6 +38,7 @@ this project provides robust, well-tested utilities for common development tasks
 - **[kiarina-llm](packages/kiarina-llm/)** - LLM integration utilities
   - LLM client abstractions and prompt management
   - Response processing helpers
+  - Content measurement utilities for LLM-handled content
 
 ### 🗄️ Database Libraries
 
@@ -46,20 +54,44 @@ this project provides robust, well-tested utilities for common development tasks
 
 ### ☁️ Cloud Services
 
+#### Cloudflare
+
 - **[kiarina-lib-cloudflare-auth](packages/kiarina-lib-cloudflare-auth/)** - Cloudflare authentication
   - Secure credential management with SecretStr
   - Multi-configuration support for different accounts
   - Environment variable configuration
+- **[kiarina-lib-cloudflare-d1](packages/kiarina-lib-cloudflare-d1/)** - Cloudflare D1 database
+  - Configuration-based D1 client setup
+  - Thin wrapper for Cloudflare D1 operations
+  - Separation of authentication and resource configuration
+
+#### Google Cloud
+
 - **[kiarina-lib-google-auth](packages/kiarina-lib-google-auth/)** - Google Cloud authentication
   - Multiple authentication methods (service account, user account, default credentials)
   - Service account impersonation support
   - Credentials caching and self-signed JWT generation
+- **[kiarina-lib-google-cloud-storage](packages/kiarina-lib-google-cloud-storage/)** - Google Cloud Storage
+  - Configuration-based GCS client setup
+  - Blob name pattern support with template placeholders
+  - Multi-tenancy patterns for integration testing
+  - Separation of authentication and storage configuration
 
 ## 🚀 Quick Start
 
 ### Installation
 
-Install individual packages as needed:
+Install all packages at once with the meta package:
+
+```bash
+# Install everything
+pip install kiarina
+
+# Or with uv
+uv add kiarina
+```
+
+Or install individual packages as needed:
 
 ```bash
 # Core utilities
@@ -70,6 +102,12 @@ pip install kiarina-llm
 
 # Database libraries
 pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
+
+# Cloud services - Cloudflare
+pip install kiarina-lib-cloudflare-auth kiarina-lib-cloudflare-d1
+
+# Cloud services - Google Cloud
+pip install kiarina-lib-google-auth kiarina-lib-google-cloud-storage
 
 # Or with uv
 uv add kiarina-utils-common kiarina-utils-file
@@ -183,14 +221,20 @@ mise run upgrade --sync   # Update and sync environment
 ```
 kiarina-python/
 ├── .github/                    # GitHub Actions workflows
+├── docs/                       # Documentation (knowledges, playbooks, runbooks)
 ├── mise-tasks/                 # Development task definitions
 ├── packages/                   # Individual packages
-│   ├── kiarina-utils-common/
-│   ├── kiarina-utils-file/
-│   ├── kiarina-llm/
-│   ├── kiarina-lib-falkordb/
-│   ├── kiarina-lib-redis/
-│   └── kiarina-lib-redisearch/
+│   ├── kiarina/                      # Meta package
+│   ├── kiarina-utils-common/         # Common utilities
+│   ├── kiarina-utils-file/           # File operations
+│   ├── kiarina-llm/                  # LLM utilities
+│   ├── kiarina-lib-falkordb/         # FalkorDB integration
+│   ├── kiarina-lib-redis/            # Redis integration
+│   ├── kiarina-lib-redisearch/       # RediSearch integration
+│   ├── kiarina-lib-cloudflare-auth/  # Cloudflare authentication
+│   ├── kiarina-lib-cloudflare-d1/    # Cloudflare D1 database
+│   ├── kiarina-lib-google-auth/      # Google Cloud authentication
+│   └── kiarina-lib-google-cloud-storage/  # Google Cloud Storage
 ├── pyproject.toml             # Workspace configuration
 ├── uv.lock                    # Dependency lock file
 ├── docker-compose.yml         # Test services (Redis, FalkorDB)
