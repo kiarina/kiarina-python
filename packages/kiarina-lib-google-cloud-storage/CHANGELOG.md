@@ -8,7 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Converted tests from mock-based to real integration tests with multi-tenancy patterns
+- Simplified test settings loading using `load_user_configs` from pydantic-settings-manager
 - Updated `pydantic-settings-manager` dependency from `>=2.1.0` to `>=2.3.0`
+- Refactored to use `settings_manager.get_settings` instead of deprecated `get_settings_by_key`
+
+### Added
+- Added `.env.sample` and `test_settings.sample.yaml` for easier test setup
 
 ## [1.6.2] - 2025-10-10
 

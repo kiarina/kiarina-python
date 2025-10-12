@@ -7,9 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Project**: Added `upgrade` task for dependency management with optional sync
+
 ### Changed
 - **kiarina-lib-google-auth**: Improved test configuration using YAML-based settings file with pydantic-settings-manager
+- **kiarina-lib-google-cloud-storage**: Converted tests from mock-based to real integration tests with multi-tenancy patterns
+- **kiarina-lib-google-cloud-storage**: Simplified test settings loading using `load_user_configs`
 - **All packages**: Updated `pydantic-settings-manager` dependency from `>=2.1.0` to `>=2.3.0`
+- **All packages**: Refactored to use `settings_manager.get_settings` instead of deprecated `get_settings_by_key`
+- **Documentation**: Improved bootstrap pattern documentation and updated development workflow with mise
+- **Documentation**: Added documentation management flow playbook
+- **Documentation**: Translated task list instruction to English
+
+### Fixed
+- **kiarina-lib-google-cloud-storage**: Added sample env and test settings files for easier setup
 
 ## [1.6.2] - 2025-10-10
 
