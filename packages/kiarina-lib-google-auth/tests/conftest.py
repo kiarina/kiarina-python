@@ -1,8 +1,7 @@
 import os
-from importlib import import_module
 
 import pytest
-from pydantic_settings_manager import SettingsManager
+from pydantic_settings_manager import load_user_configs
 
 import kiarina.utils.file as kf
 
@@ -25,22 +24,4 @@ def load_settings():
     if not user_configs:
         raise ValueError(f"Settings file is empty or invalid: {test_settings_file}")
 
-    for module_name, user_config in user_configs.items():
-        try:
-            module = import_module(module_name)
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(f"Module not found: {module_name}") from e
-
-        settings_manager = getattr(module, "settings_manager", None)
-
-        if not settings_manager:
-            raise AttributeError(
-                f"Module {module_name} does not have a settings_manager attribute"
-            )
-
-        if not isinstance(settings_manager, SettingsManager):
-            raise TypeError(
-                f"settings_manager in module {module_name} is not an instance of SettingsManager"
-            )
-
-        settings_manager.user_config = user_config
+    load_user_configs(user_configs)
