@@ -1045,15 +1045,15 @@ wheels = [
 
 [[package]]
 name = "pydantic-settings-manager"
-version = "2.3.0"
+version = "2.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ca/df/9b7e5419f58fd08733470da7aacd0b002904f888e9f1cf91a3d3a5b753b5/pydantic_settings_manager-2.3.0.tar.gz", hash = "sha256:0d9807169ba25fba973e04fc1f889afef745bdb266808d9c89e6cf2618ba7419", size = 65921, upload-time = "2025-10-12T16:01:23.491Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e4/70/ddc65a5c5fb07968039fe52860a8c8f4b05402a9c0d666b6fea9d662c905/pydantic_settings_manager-2.3.1.tar.gz", hash = "sha256:2e2e587dd493ba2466e8c633b6bd83d9db39f8f8d94b3f7736b30431bd515dd5", size = 64257, upload-time = "2025-10-12T18:33:43.768Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/b9/b4aa0af3c318907d4e0a805c3d6774605f5694c4d0f482b23bb6ae34940b/pydantic_settings_manager-2.3.0-py3-none-any.whl", hash = "sha256:374ba08847f0648a443347e2ccec236837aceb5d5c8e6466ceb216da092f1b9c", size = 13389, upload-time = "2025-10-12T16:01:22.569Z" },
+    { url = "https://files.pythonhosted.org/packages/07/8e/4f57da6567cf5827b181fa318b1be16d0806b09fc238234c3f7d7aa6af15/pydantic_settings_manager-2.3.1-py3-none-any.whl", hash = "sha256:6b744ccc01e3e3c97adf46dad3d3a4b3f3df17b309d2f5fd3bbf529c50fa6fe0", size = 13386, upload-time = "2025-10-12T18:33:42.555Z" },
 ]
 
 [[package]]
