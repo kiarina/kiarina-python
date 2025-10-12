@@ -22,7 +22,7 @@ fi
 
 while IFS= read -r package; do
     if [ "$coverage" = "true" ]; then
-        mise run package:test "$package" --coverage
+        mise run package:test "$package" --coverage --no-clean
     else
         mise run package:test "$package"
     fi

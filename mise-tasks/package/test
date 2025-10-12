@@ -3,6 +3,7 @@
 #USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
 #USAGE flag "-v --verbose" help="Verbose output"
 #USAGE flag "-c --coverage" help="Run with coverage"
+#USAGE flag "--no-clean" help="Skip cleaning previous coverage data (for CI)"
 
 set -euo pipefail
 
@@ -11,6 +12,7 @@ package="$usage_package"
 # Default values for optional flags
 verbose="${usage_verbose:-false}"
 coverage="${usage_coverage:-false}"
+no_clean="${usage_no_clean:-false}"
 
 # Package name validation
 if [ ! -d "packages/$package" ]; then
@@ -19,6 +21,12 @@ if [ ! -d "packages/$package" ]; then
 fi
 
 echo "🧪 Testing $package..."
+
+# Clean previous coverage data (unless --no-clean is specified)
+if [ "$coverage" = "true" ] && [ "$no_clean" = "false" ]; then
+    echo "🧹 Cleaning previous coverage data..."
+    rm -f .coverage .coverage.*
+fi
 
 # Test command construction
 test_cmd="uv run --group test pytest packages/$package/tests/"
@@ -29,8 +37,25 @@ fi
 
 if [ "$coverage" = "true" ]; then
     echo "🔍 Running with coverage..."
-    module="${package//-/.}"
-    test_cmd="$test_cmd --cov=$module --cov-append"
+    
+    # Detect all module paths by finding py.typed files
+    # This handles packages with multiple modules (e.g., kiarina-utils-file has file, ext, encoding, mime)
+    module_paths=$(find "packages/$package/src" -name "py.typed" -exec dirname {} \; | sed "s|packages/$package/src/||" | tr '/' '.')
+    
+    if [ -z "$module_paths" ]; then
+        echo "❌ Could not detect module paths for $package (no py.typed found)"
+        exit 1
+    fi
+    
+    # Add --cov for each module
+    while IFS= read -r module; do
+        test_cmd="$test_cmd --cov=$module"
+    done <<< "$module_paths"
+    
+    # Append to existing coverage data when --no-clean is used
+    if [ "$no_clean" = "true" ]; then
+        test_cmd="$test_cmd --cov-append"
+    fi
 fi
 
 # Test execution
