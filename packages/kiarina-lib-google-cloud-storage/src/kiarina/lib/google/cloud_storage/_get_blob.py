@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 from google.cloud import storage  # type: ignore[import-untyped]
@@ -38,8 +39,8 @@ def get_blob(
         blob = get_blob(placeholders={"user_id": "123", "basename": "profile.json"})
         # With pattern "users/{user_id}/{basename}" -> "users/123/profile.json"
 
-        # Using default pattern from settings
-        blob = get_blob()  # Uses settings.blob_name_pattern without placeholders
+        # Using fixed pattern from settings (no placeholders)
+        blob = get_blob()  # Uses settings.blob_name_pattern if it has no placeholders
     """
     settings = settings_manager.get_settings(config_key)
 
@@ -65,7 +66,6 @@ def get_blob(
 
     # Priority 3: Default pattern from settings
     elif settings.blob_name_pattern is not None:
-        # Pattern without placeholders (fixed name)
         final_blob_name = settings.blob_name_pattern
 
     else:
@@ -74,5 +74,17 @@ def get_blob(
             "and blob_name_pattern is not set in settings"
         )
 
+    # Safety check: Ensure no unresolved placeholders remain
+    if _has_placeholders(final_blob_name):
+        raise ValueError(
+            f"Unresolved placeholders found in blob name: {final_blob_name}. "
+            f"Please provide placeholders argument to resolve them."
+        )
+
     bucket = get_bucket(config_key, auth_config_key=auth_config_key, **kwargs)
     return bucket.blob(final_blob_name)
+
+
+def _has_placeholders(pattern: str) -> bool:
+    """Check if a pattern contains placeholders like {key}."""
+    return bool(re.search(r"\{[^}]+\}", pattern))

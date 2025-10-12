@@ -87,18 +87,18 @@ New requirement: Add agent-level isolation for multi-tenancy.
 
 **Updated Security Rules:**
 ```javascript
-match /web/{user_id}/{agent_id}/files/{basename} {
+match /my-service/{tenant_id}/users/{user_id}/files/{basename} {
   allow read, write: if request.auth.uid == user_id
-                     && request.auth.token.agent_id == agent_id;
+                     && request.auth.token.tenant_id == tenant_id;
 }
 ```
 
 **Problem**: You must now update **every place** in your application code that constructs these paths:
 ```python
 # Must change all of these
-blob_name = f"web/{user_id}/{agent_id}/files/{file_name}"  # Changed!
-blob_name = f"web/{user_id}/{agent_id}/thumbnails/{file_name}"  # Changed!
-blob_name = f"web/{user_id}/{agent_id}/exports/{file_name}"  # Changed!
+blob_name = f"my-service/{tenant_id}/users/{user_id}/files/{file_name}"  # Changed!
+blob_name = f"my-service/{tenant_id}/users/{user_id}/thumbnails/{file_name}"  # Changed!
+blob_name = f"my-service/{tenant_id}/users/{user_id}/exports/{file_name}"  # Changed!
 # ... and many more
 ```
 
@@ -110,14 +110,14 @@ blob_name = f"web/{user_id}/{agent_id}/exports/{file_name}"  # Changed!
 google_cloud_storage:
   default:
     bucket_name: "my-app-data"
-    blob_name_pattern: "web/{user_id}/{agent_id}/files/{basename}"
+    blob_name_pattern: "my-service/{tenant_id}/users/{user_id}/files/{basename}"
 ```
 
 **GCS Security Rules (Infrastructure Concern):**
 ```javascript
-match /web/{user_id}/{agent_id}/files/{basename} {
+match /my-service/{tenant_id}/users/{user_id}/files/{basename} {
   allow read, write: if request.auth.uid == user_id
-                     && request.auth.token.agent_id == agent_id;
+                     && request.auth.token.tenant_id == tenant_id;
 }
 ```
 
@@ -637,13 +637,14 @@ blob = get_blob()
 # Actual: gs://bucket/data/fixed.json
 
 # Complex pattern
-# If blob_name_pattern="web/{user_id}/{agent_id}/files/{basename}"
+# If blob_name_pattern="my-service/{tenant_id}/users/{user_id}/files/{basename}"
 blob = get_blob(placeholders={
+    "tenant_id": "tenant123",
     "user_id": "user123",
     "agent_id": "agent456",
     "basename": "document.pdf"
 })
-# Actual: gs://bucket/web/user123/agent456/files/document.pdf
+# Actual: gs://bucket/my-service/tenant123/users/user123/files/document.pdf
 
 # With custom configurations
 blob = get_blob(

@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `blob_name_pattern` supports both fixed names and template patterns with placeholders
   - `get_blob()` now accepts `placeholders` parameter for pattern formatting
   - `blob_name` parameter in `get_blob()` now always represents the full blob path
-  - Pattern examples: `"data.json"` (fixed), `"files/{basename}"` (single placeholder), `"web/{user_id}/{agent_id}/files/{basename}"` (multiple placeholders)
+  - Pattern examples: `"data.json"` (fixed), `"files/{basename}"` (single placeholder), `"my-service/{tenant_id}/users/{user_id}/files/{basename}"` (multiple placeholders)
   - Priority: explicit `blob_name` → `blob_name_pattern` with `placeholders` → `blob_name_pattern` without placeholders
   - Enhanced error messages for missing placeholders
 

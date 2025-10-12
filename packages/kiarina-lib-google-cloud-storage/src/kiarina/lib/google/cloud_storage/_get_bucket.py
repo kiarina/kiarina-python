@@ -13,9 +13,5 @@ def get_bucket(
     **kwargs: Any,
 ) -> storage.Bucket:
     settings = settings_manager.get_settings(config_key)
-
-    if settings.bucket_name is None:
-        raise ValueError("bucket_name is not set in the settings")
-
     client = get_storage_client(auth_config_key, **kwargs)
     return client.bucket(settings.bucket_name)

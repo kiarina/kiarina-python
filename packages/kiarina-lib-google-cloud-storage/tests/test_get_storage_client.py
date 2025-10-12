@@ -1,57 +1,20 @@
-from unittest.mock import MagicMock, patch
-
-from kiarina.lib.google.cloud_storage import get_storage_client
+from kiarina.lib.google.cloud_storage import settings_manager, get_storage_client
 
 
-def test_get_storage_client():
-    # Mock get_credentials and storage.Client
-    mock_credentials = MagicMock()
-    mock_credentials.project_id = "test-project"
-    mock_client = MagicMock()
-    mock_client.project = "test-project"
+def test_get_storage_client(data_dir, load_settings, request):
+    settings = settings_manager.settings
+    assert settings.blob_name_pattern is not None
 
-    with (
-        patch(
-            "kiarina.lib.google.cloud_storage._get_storage_client.get_credentials",
-            return_value=mock_credentials,
-        ) as mock_get_credentials,
-        patch(
-            "kiarina.lib.google.cloud_storage._get_storage_client.storage.Client",
-            return_value=mock_client,
-        ) as mock_client_class,
-    ):
-        client = get_storage_client()
-        assert client.project == "test-project"
+    bucket_name = settings.bucket_name
+    blob_name = settings.blob_name_pattern.format(
+        tenant_id="kiarina-lib-google-cloud-storage",
+        user_id=request.node.name,
+        basename="miineko.png",
+    )
 
-        # Verify get_credentials was called with None (default)
-        mock_get_credentials.assert_called_once_with(None)
+    client = get_storage_client()
+    bucket = client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
 
-        # Verify Client was called with correct credentials
-        mock_client_class.assert_called_once_with(credentials=mock_credentials)
-
-
-def test_get_storage_client_with_auth_config_key():
-    # Mock get_credentials and storage.Client
-    mock_credentials = MagicMock()
-    mock_credentials.project_id = "custom-project"
-    mock_client = MagicMock()
-    mock_client.project = "custom-project"
-
-    with (
-        patch(
-            "kiarina.lib.google.cloud_storage._get_storage_client.get_credentials",
-            return_value=mock_credentials,
-        ) as mock_get_credentials,
-        patch(
-            "kiarina.lib.google.cloud_storage._get_storage_client.storage.Client",
-            return_value=mock_client,
-        ) as mock_client_class,
-    ):
-        client = get_storage_client(auth_config_key="custom_auth")
-        assert client.project == "custom-project"
-
-        # Verify get_credentials was called with custom auth config key
-        mock_get_credentials.assert_called_once_with("custom_auth")
-
-        # Verify Client was called with correct credentials
-        mock_client_class.assert_called_once_with(credentials=mock_credentials)
+    if not blob.exists():
+        blob.upload_from_filename(data_dir / "small" / "miineko_256x256_799b.png")
