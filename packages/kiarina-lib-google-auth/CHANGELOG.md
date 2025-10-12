@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.3] - 2025-10-13
+
 ### Changed
 - Updated `pydantic-settings-manager` dependency from `>=2.1.0` to `>=2.3.0`
 - Improved test configuration approach using YAML-based settings file instead of individual environment variables

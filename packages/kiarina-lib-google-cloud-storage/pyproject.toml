@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-google-cloud-storage"
-version = "1.6.2"
+version = "1.6.3"
 description = "Google Cloud Storage client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"

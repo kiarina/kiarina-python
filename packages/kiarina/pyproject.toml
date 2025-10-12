@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "1.6.2"
+version = "1.6.3"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"

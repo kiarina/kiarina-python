@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-redis"
-version = "1.6.2"
+version = "1.6.3"
 description = "Redis client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"
