@@ -38,17 +38,18 @@ def query(
         "params": params,
     }
 
+    def _parse_response(response: httpx.Response) -> Result:
+        return Result(**response.json())
+
     def _sync() -> Result:
         with httpx.Client(headers=ctx.headers) as client:
             response = client.post(ctx.query_api_url, json=request_params)
-            response.raise_for_status()
-            return Result(**response.json())
+            return _parse_response(response)
 
     async def _async() -> Result:
         async with httpx.AsyncClient(headers=ctx.headers) as client:
             response = await client.post(ctx.query_api_url, json=request_params)
-            response.raise_for_status()
-            return Result(**response.json())
+            return _parse_response(response)
 
     if mode == "sync":
         return _sync()
