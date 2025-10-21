@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added TypeScript MIME type mapping (`video/mp2t`) for `.ts` extension
+
 ## [1.6.3] - 2025-10-13
 
 ### Changed

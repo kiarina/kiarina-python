@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Project**: Added coverage support to package test tasks with `--coverage` flag
+- **kiarina-utils-file**: Added TypeScript MIME type mapping for `.ts` extension
 
 ### Changed
 - **kiarina-lib-google-auth**: Simplified credentials retrieval and caching logic in user account credentials handling
