@@ -11,8 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Project**: Added coverage support to package test tasks with `--coverage` flag
 
 ### Changed
+- **kiarina-lib-google-auth**: Simplified credentials retrieval and caching logic in user account credentials handling
 - **kiarina-lib-cloudflare-d1**: Improved D1 tests with better error handling and added sample environment files
 - **Project**: Improved package test tasks with smarter module detection
+- **Dependencies**: Updated project dependencies
 
 ## [1.6.3] - 2025-10-13
 
