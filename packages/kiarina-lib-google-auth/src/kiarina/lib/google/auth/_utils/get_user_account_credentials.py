@@ -14,16 +14,18 @@ def get_user_account_credentials(
     scopes: list[str],
     cache: CredentialsCache | None = None,
 ) -> Credentials:
-    if authorized_user_data:
+    cached_credentials = _get_cached_credentials(
+        cache,
+        scopes=scopes,
+    )
+
+    if cached_credentials:
+        credentials = cached_credentials
+
+    elif authorized_user_data:
         credentials = Credentials.from_authorized_user_info(  # type: ignore[no-untyped-call]
             authorized_user_data,
             scopes=scopes,
-        )
-
-        return _check_and_refresh_credentials(
-            credentials,
-            scopes=scopes,
-            cache=cache,
         )
 
     elif authorized_user_file:
@@ -41,36 +43,14 @@ def get_user_account_credentials(
             scopes=scopes,
         )
 
-        return _check_and_refresh_credentials(
-            credentials,
-            scopes=scopes,
-            cache=cache,
-        )
-
     else:
         raise ValueError("No valid user account credentials found.")
 
-
-def _check_and_refresh_credentials(
-    credentials: Credentials,
-    *,
-    scopes: list[str],
-    cache: CredentialsCache | None = None,
-) -> Credentials:
     if credentials.valid:
+        if cache and not cached_credentials:
+            cache.set(credentials.to_json())  # type: ignore[no-untyped-call]
+
         return credentials
-
-    if cache:
-        if cached_json_str := cache.get():
-            cached_credentials = Credentials.from_authorized_user_info(  # type: ignore[no-untyped-call]
-                json.loads(cached_json_str),
-                scopes=scopes,
-            )
-
-            if cached_credentials.valid:
-                return cached_credentials  # type: ignore[no-any-return]
-
-            credentials = cached_credentials
 
     if credentials.expired and credentials.refresh_token:
         credentials.refresh(Request())  # type: ignore[no-untyped-call]
@@ -79,3 +59,23 @@ def _check_and_refresh_credentials(
             cache.set(credentials.to_json())  # type: ignore[no-untyped-call]
 
     return credentials
+
+
+def _get_cached_credentials(
+    cache: CredentialsCache | None,
+    scopes: list[str],
+) -> Credentials | None:
+    if not cache:
+        return None
+
+    cached_json_str = cache.get()
+
+    if not cached_json_str:
+        return None
+
+    cached_credentials = Credentials.from_authorized_user_info(  # type: ignore[no-untyped-call]
+        json.loads(cached_json_str),
+        scopes=scopes,
+    )
+
+    return cached_credentials  # type: ignore[no-any-return]
