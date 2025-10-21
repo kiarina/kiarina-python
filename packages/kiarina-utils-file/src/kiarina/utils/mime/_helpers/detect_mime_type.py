@@ -5,9 +5,7 @@ from typing import BinaryIO, overload
 from .._operations.detect_with_dictionary import detect_with_dictionary
 from .._operations.detect_with_mimetypes import detect_with_mimetypes
 from .._operations.detect_with_puremagic import detect_with_puremagic
-from .._operations.should_skip_extension_detection import (
-    should_skip_extension_detection,
-)
+from .._operations.is_ambiguous_extension import is_ambiguous_extension
 from .._types.mime_detection_options import MimeDetectionOptions
 from .apply_mime_alias import apply_mime_alias
 
@@ -114,14 +112,14 @@ def detect_mime_type(
     archive_extensions = options.get("archive_extensions")
     compression_extensions = options.get("compression_extensions")
     encryption_extensions = options.get("encryption_extensions")
-    skip_extension_detection_suffixes = options.get("skip_extension_detection_suffixes")
+    ambiguous_extensions = options.get("ambiguous_extensions")
 
     # STEP 1: Extension-based detection (prioritized)
     if file_name_hint is not None:
-        # Skip extension-based detection for ambiguous suffixes
-        if not should_skip_extension_detection(
+        # Check if extension is ambiguous (requires content-based detection)
+        if not is_ambiguous_extension(
             file_name_hint,
-            skip_extension_detection_suffixes=skip_extension_detection_suffixes,
+            ambiguous_extensions=ambiguous_extensions,
         ):
             # Try custom dictionary (handles complex extensions)
             if mime_type := detect_with_dictionary(

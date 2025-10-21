@@ -45,18 +45,19 @@ class MIMESettings(BaseSettings):
     hash_algorithm: str = "sha256"
     """Hash algorithm"""
 
-    skip_extension_detection_suffixes: set[str] = Field(
+    ambiguous_extensions: set[str] = Field(
         default_factory=lambda: {
             ".ts",  # TypeScript vs MPEG-2 Transport Stream
         }
     )
     """
-    File suffixes to skip extension-based MIME type detection.
+    File extensions that are ambiguous and require content-based detection.
 
-    For ambiguous extensions that could represent multiple MIME types,
-    skip extension-based detection and rely on content-based detection instead.
+    Ambiguous extensions cannot be reliably identified by extension alone
+    and require content analysis to determine the correct MIME type.
 
-    - Key: File suffix (e.g., ".ts")
+    Examples:
+        - .ts: TypeScript source code vs MPEG-2 Transport Stream video
     """
 
 

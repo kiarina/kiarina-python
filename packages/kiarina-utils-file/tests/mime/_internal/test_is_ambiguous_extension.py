@@ -1,13 +1,13 @@
 import pytest
 
-from kiarina.utils.mime._operations.should_skip_extension_detection import (
-    should_skip_extension_detection,
+from kiarina.utils.mime._operations.is_ambiguous_extension import (
+    is_ambiguous_extension,
 )
 
 
 # fmt: off
 @pytest.mark.parametrize(
-    "file_name_hint,skip_suffixes,expected",
+    "file_name_hint,ambiguous_exts,expected",
     [
         # Basic matching
         ("app.ts", {".ts"}, True),
@@ -19,7 +19,7 @@ from kiarina.utils.mime._operations.should_skip_extension_detection import (
         ("APP.TS", {".ts"}, True),
         ("app.ts", {".TS"}, True),
         
-        # Multiple suffixes
+        # Multiple extensions
         ("app.ts", {".ts", ".js"}, True),
         ("app.js", {".ts", ".js"}, True),
         ("app.py", {".ts", ".js"}, False),
@@ -46,34 +46,34 @@ from kiarina.utils.mime._operations.should_skip_extension_detection import (
     ],
 )
 # fmt: on
-def test_should_skip_extension_detection(file_name_hint, skip_suffixes, expected):
-    result = should_skip_extension_detection(
+def test_is_ambiguous_extension(file_name_hint, ambiguous_exts, expected):
+    result = is_ambiguous_extension(
         file_name_hint,
-        skip_extension_detection_suffixes=skip_suffixes,
+        ambiguous_extensions=ambiguous_exts,
     )
     assert result == expected
 
 
 def test_default_settings():
-    """Test that default settings are used when no suffixes provided"""
+    """Test that default settings are used when no extensions provided"""
     # .ts is in default settings
-    assert should_skip_extension_detection("app.ts") is True
-    assert should_skip_extension_detection("App.TS") is True
+    assert is_ambiguous_extension("app.ts") is True
+    assert is_ambiguous_extension("App.TS") is True
     
     # .js is not in default settings
-    assert should_skip_extension_detection("app.js") is False
+    assert is_ambiguous_extension("app.js") is False
 
 
-def test_empty_skip_suffixes():
-    """Test that empty skip_suffixes still uses default settings"""
+def test_empty_ambiguous_extensions():
+    """Test that empty ambiguous_extensions still uses default settings"""
     # Empty set is merged with defaults, so .ts should still be detected
     assert (
-        should_skip_extension_detection("app.ts", skip_extension_detection_suffixes=set())
+        is_ambiguous_extension("app.ts", ambiguous_extensions=set())
         is True
     )
     # .js is not in defaults
     assert (
-        should_skip_extension_detection("app.js", skip_extension_detection_suffixes=set())
+        is_ambiguous_extension("app.js", ambiguous_extensions=set())
         is False
     )
 
@@ -83,8 +83,8 @@ def test_pathlike_object():
     from pathlib import Path
 
     path = Path("app.ts")
-    result = should_skip_extension_detection(
+    result = is_ambiguous_extension(
         path,
-        skip_extension_detection_suffixes={".ts"},
+        ambiguous_extensions={".ts"},
     )
     assert result is True
