@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-cloudflare-auth"
-version = "1.6.3"
+version = "1.7.0"
 description = "Cloudflare client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"
