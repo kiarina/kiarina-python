@@ -14,6 +14,7 @@ class MIMESettings(BaseSettings):
         default_factory=lambda: {
             ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            ".ts": "application/typescript",
             ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             ".yaml": "application/yaml",
             ".yml": "application/yaml",

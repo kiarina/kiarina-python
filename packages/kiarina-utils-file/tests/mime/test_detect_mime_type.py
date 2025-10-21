@@ -17,8 +17,9 @@ import kiarina.utils.mime as km
         (b"key: value", "settings.yaml", "application/yaml"),
         (b"unknown content", "unknown.unknownext", None),
         (b"", "empty.txt", "text/plain"),
+        (b"console.log('Hello, TypeScript');", "script.ts", "application/typescript"),
     ],
-    ids=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    ids=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 )
 # fmt: on
 def test_detect_mime_type(raw_data, file_name_hint, expected_mime_type):
