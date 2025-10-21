@@ -172,6 +172,34 @@ export KIARINA_UTILS_FILE_LOCK_CLEANUP_ENABLED=true
 
 # MIME type detection
 export KIARINA_UTILS_MIME_HASH_ALGORITHM=sha256
+export KIARINA_UTILS_MIME_SKIP_EXTENSION_DETECTION_SUFFIXES='.ts,.custom'
+```
+
+### Handling Ambiguous File Extensions
+
+Some file extensions can represent multiple MIME types. For example, `.ts` could be:
+- TypeScript source code (`application/x-typescript`)
+- MPEG-2 Transport Stream video (`video/mp2t`)
+
+By default, extension-based detection is skipped for `.ts` files, and content-based detection is used instead:
+
+```python
+import kiarina.utils.mime as km
+
+# TypeScript file - detected by content
+typescript_code = b"interface User { name: string; }"
+mime_type = km.detect_mime_type(
+    file_name_hint="app.ts",
+    raw_data=typescript_code
+)
+print(mime_type)  # "application/x-typescript"
+
+# Add custom ambiguous extensions
+mime_type = km.detect_mime_type(
+    file_name_hint="data.custom",
+    raw_data=custom_data,
+    options={"skip_extension_detection_suffixes": {".custom"}}
+)
 ```
 
 ### Error Handling

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **MIME type detection**: Added `skip_extension_detection_suffixes` setting to skip extension-based detection for ambiguous file extensions
+  - Useful for extensions like `.ts` that could represent multiple MIME types (TypeScript vs MPEG-2 Transport Stream)
+  - When a file suffix matches the skip list, extension-based detection is bypassed and content-based detection is used instead
+  - Default skip list includes `.ts`
+  - Can be customized via `KIARINA_UTILS_MIME_SKIP_EXTENSION_DETECTION_SUFFIXES` environment variable or `options` parameter in `detect_mime_type()`
+  - Added `should_skip_extension_detection()` operation function in `_operations` module for better code organization and testability
+  - Settings merge logic is encapsulated within `should_skip_extension_detection()` for cleaner API
+
 ## [1.6.3] - 2025-10-13
 
 ### Changed

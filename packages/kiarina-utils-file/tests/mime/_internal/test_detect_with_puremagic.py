@@ -14,6 +14,7 @@ from kiarina.utils.mime._operations.detect_with_puremagic import detect_with_pur
         (b"<html></html>", "index.html", "text/html"),
         (b"\x89PNG\r\n\x1a\n", "image.png", "image/png"),
         (b"unknown", "unknown.unknownext", None),
+        (b"interface User { name: string; }", "types.ts", "application/x-typescript"),
     ],
 )
 # fmt: on

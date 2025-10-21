@@ -45,6 +45,20 @@ class MIMESettings(BaseSettings):
     hash_algorithm: str = "sha256"
     """Hash algorithm"""
 
+    skip_extension_detection_suffixes: set[str] = Field(
+        default_factory=lambda: {
+            ".ts",  # TypeScript vs MPEG-2 Transport Stream
+        }
+    )
+    """
+    File suffixes to skip extension-based MIME type detection.
+
+    For ambiguous extensions that could represent multiple MIME types,
+    skip extension-based detection and rely on content-based detection instead.
+
+    - Key: File suffix (e.g., ".ts")
+    """
+
 
 settings_manager = SettingsManager(MIMESettings)
 """MIME settings manager"""

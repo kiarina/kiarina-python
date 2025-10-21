@@ -16,6 +16,8 @@ class MimeDetectionOptions(TypedDict, total=False):
         archive_extensions: Archive-related extensions (e.g., {".tar"}).
         compression_extensions: Compression-related extensions (e.g., {".gz", ".bz2"}).
         encryption_extensions: Encryption-related extensions (e.g., {".gpg"}).
+        skip_extension_detection_suffixes: File suffixes to skip extension-based detection.
+            Example: {".ts"} for ambiguous extensions like TypeScript vs MPEG-2 TS
     """
 
     mime_aliases: NotRequired[dict[str, str]]
@@ -24,3 +26,4 @@ class MimeDetectionOptions(TypedDict, total=False):
     archive_extensions: NotRequired[set[str]]
     compression_extensions: NotRequired[set[str]]
     encryption_extensions: NotRequired[set[str]]
+    skip_extension_detection_suffixes: NotRequired[set[str]]

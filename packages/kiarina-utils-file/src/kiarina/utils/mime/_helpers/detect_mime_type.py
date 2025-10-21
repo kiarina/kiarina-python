@@ -5,6 +5,9 @@ from typing import BinaryIO, overload
 from .._operations.detect_with_dictionary import detect_with_dictionary
 from .._operations.detect_with_mimetypes import detect_with_mimetypes
 from .._operations.detect_with_puremagic import detect_with_puremagic
+from .._operations.should_skip_extension_detection import (
+    should_skip_extension_detection,
+)
 from .._types.mime_detection_options import MimeDetectionOptions
 from .apply_mime_alias import apply_mime_alias
 
@@ -111,23 +114,29 @@ def detect_mime_type(
     archive_extensions = options.get("archive_extensions")
     compression_extensions = options.get("compression_extensions")
     encryption_extensions = options.get("encryption_extensions")
+    skip_extension_detection_suffixes = options.get("skip_extension_detection_suffixes")
 
     # STEP 1: Extension-based detection (prioritized)
     if file_name_hint is not None:
-        # Try custom dictionary (handles complex extensions)
-        if mime_type := detect_with_dictionary(
+        # Skip extension-based detection for ambiguous suffixes
+        if not should_skip_extension_detection(
             file_name_hint,
-            custom_mime_types=custom_mime_types,
-            multi_extensions=multi_extensions,
-            archive_extensions=archive_extensions,
-            compression_extensions=compression_extensions,
-            encryption_extensions=encryption_extensions,
+            skip_extension_detection_suffixes=skip_extension_detection_suffixes,
         ):
-            return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
+            # Try custom dictionary (handles complex extensions)
+            if mime_type := detect_with_dictionary(
+                file_name_hint,
+                custom_mime_types=custom_mime_types,
+                multi_extensions=multi_extensions,
+                archive_extensions=archive_extensions,
+                compression_extensions=compression_extensions,
+                encryption_extensions=encryption_extensions,
+            ):
+                return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
 
-        # Try standard mimetypes library
-        if mime_type := detect_with_mimetypes(file_name_hint):
-            return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
+            # Try standard mimetypes library
+            if mime_type := detect_with_mimetypes(file_name_hint):
+                return apply_mime_alias(mime_type, mime_aliases=mime_aliases)
 
     # STEP 2: Content-based detection (fallback)
     if raw_data is not None or stream is not None:
