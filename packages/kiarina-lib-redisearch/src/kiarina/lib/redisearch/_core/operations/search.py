@@ -102,7 +102,7 @@ def search(
 
     async def _async() -> SearchResult:
         query = _build_query(limit or (await count("async", ctx, filter)).total)
-        result = await ctx.redis_async.ft(ctx.settings.index_name).search(query, params)  # type: ignore
+        result = await ctx.redis_async.ft(ctx.settings.index_name).search(query, params)
         return _parse_search_result(result)
 
     if mode == "sync":
