@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.0] - 2025-11-26
+
 ### Changed
 - **kiarina-lib-redisearch**: **BREAKING** - Separated schema from settings configuration (schema now passed directly to create_redisearch_client)
 - **kiarina-lib-redisearch**: Improved internal code organization by restructuring modules and removing redundant code
