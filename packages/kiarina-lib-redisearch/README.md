@@ -210,45 +210,6 @@ settings_manager.user_config = {
 
 # Switch configurations
 settings_manager.active_key = "production"
-
-# Schema is defined in your application code, not in settings
-dev_schema = [
-    {"type": "text", "name": "title"},
-    {"type": "numeric", "name": "price", "sortable": True}
-]
-
-prod_schema = [
-    {"type": "text", "name": "title"},
-    {"type": "numeric", "name": "price", "sortable": True},
-    {"type": "vector", "name": "embedding", "algorithm": "HNSW", "dims": 1536}
-]
-```
-
-### Design Philosophy: Schema vs Settings
-
-**Schema belongs in code, not configuration:**
-- Schema defines your data structure and is tightly coupled to your application logic
-- Schema changes typically require code changes (e.g., how you generate embeddings)
-- Keeping schema in code ensures type safety and IDE support
-- Settings (key_prefix, index_name) are infrastructure concerns that vary by environment
-
-```python
-# ❌ Bad: Schema in config (old way)
-settings_manager.user_config = {
-    "default": {
-        "index_schema": [...]  # Don't put schema in config
-    }
-}
-
-# ✅ Good: Schema in code (new way)
-schema = [
-    {"type": "tag", "name": "category"},
-    {"type": "text", "name": "title"},
-]
-client = create_redisearch_client(
-    field_dicts=schema,  # Schema is part of your code
-    redis=redis_client
-)
 ```
 
 ## Advanced Filtering
@@ -887,8 +848,6 @@ mise run package:test kiarina-lib-redisearch --coverage
 | `key_prefix` | `KIARINA_LIB_REDISEARCH_KEY_PREFIX` | `""` | Redis key prefix for documents (e.g., "myapp:") |
 | `index_name` | `KIARINA_LIB_REDISEARCH_INDEX_NAME` | `"default"` | RediSearch index name (alphanumeric, underscore, hyphen, period) |
 | `protect_index_deletion` | `KIARINA_LIB_REDISEARCH_PROTECT_INDEX_DELETION` | `false` | Prevent accidental index deletion in production |
-
-**Note:** Schema is not part of settings. It is passed directly to `create_redisearch_client()` as part of your application code.
 
 ## Dependencies
 
