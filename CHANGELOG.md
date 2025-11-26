@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-lib-redisearch**: Improved code organization by moving `Document` to `schemas/` and `parse_search_result` to `operations/`
+
 ## [1.8.0] - 2025-10-24
 
 ### Changed

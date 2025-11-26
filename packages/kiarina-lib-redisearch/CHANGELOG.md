@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improved code organization by moving `Document` class from `_core/views/` to `_core/schemas/` and `parse_search_result` function from `_core/utils/` to `_core/operations/`
+
 ## [1.8.0] - 2025-10-24
 
 ### Changed
