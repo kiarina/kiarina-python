@@ -7,7 +7,7 @@ from ...filter import (
     RedisearchFilterConditions,
     create_redisearch_filter,
 )
-from ..context import RedisearchContext
+from ..schemas.redisearch_context import RedisearchContext
 from ..views.search_result import SearchResult
 
 

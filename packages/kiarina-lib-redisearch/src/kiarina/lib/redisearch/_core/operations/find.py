@@ -8,7 +8,7 @@ from ...filter import (
     RedisearchFilterConditions,
     create_redisearch_filter,
 )
-from ..context import RedisearchContext
+from ..schemas.redisearch_context import RedisearchContext
 from .parse_search_result import parse_search_result
 from ..views.search_result import SearchResult
 from .count import count

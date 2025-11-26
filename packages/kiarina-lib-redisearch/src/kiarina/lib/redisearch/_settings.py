@@ -5,10 +5,6 @@ from pydantic_settings_manager import SettingsManager
 
 
 class RedisearchSettings(BaseSettings):
-    """
-    Redisearch settings
-    """
-
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_REDISEARCH_")
 
     key_prefix: str = ""

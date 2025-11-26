@@ -2,7 +2,7 @@ import logging
 from typing import Any, Awaitable, Literal, overload
 
 from ...schema import RedisearchSchema
-from ..context import RedisearchContext
+from ..schemas.redisearch_context import RedisearchContext
 from .create_index import create_index
 from .drop_index import drop_index
 from .exists_index import exists_index

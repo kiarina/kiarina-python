@@ -1,13 +1,13 @@
-import redis.asyncio
+import redis
 
-from ..settings import settings_manager
-from .client import RedisearchClient
+from ..._settings import settings_manager
+from ..models.redisearch_client import RedisearchClient
 
 
 def create_redisearch_client(
     config_key: str | None = None,
     *,
-    redis: redis.asyncio.Redis,
+    redis: redis.Redis,
 ) -> RedisearchClient:
     """
     Create a Redisearch client.

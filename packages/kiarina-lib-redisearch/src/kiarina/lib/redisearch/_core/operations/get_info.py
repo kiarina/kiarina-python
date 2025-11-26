@@ -1,7 +1,7 @@
 from typing import Any, Awaitable, Literal, overload
 
 from ...schema import RedisearchSchema
-from ..context import RedisearchContext
+from ..schemas.redisearch_context import RedisearchContext
 from ..views.info_result import InfoResult
 
 

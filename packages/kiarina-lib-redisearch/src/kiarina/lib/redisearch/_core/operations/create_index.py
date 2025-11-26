@@ -2,7 +2,7 @@ from typing import Awaitable, Literal, overload
 
 from redis.commands.search.index_definition import IndexDefinition, IndexType
 
-from ..context import RedisearchContext
+from ..schemas.redisearch_context import RedisearchContext
 
 
 @overload

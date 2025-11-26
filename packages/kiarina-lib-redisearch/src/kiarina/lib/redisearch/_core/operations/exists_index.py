@@ -1,6 +1,6 @@
 from typing import Awaitable, Literal, overload
 
-from ..context import RedisearchContext
+from ..schemas.redisearch_context import RedisearchContext
 from .get_info import get_info
 
 

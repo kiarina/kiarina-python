@@ -3,13 +3,16 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._async.client import RedisearchClient
-    from ._async.registry import create_redisearch_client
-    from .settings import RedisearchSettings, settings_manager
+    from ._async.helpers.create_redisearch_client import create_redisearch_client
+    from ._async.models.redisearch_client import RedisearchClient
+    from ._settings import RedisearchSettings, settings_manager
 
 __all__ = [
+    # ._async.helpers
     "create_redisearch_client",
+    # ._async.models
     "RedisearchClient",
+    # ._settings
     "RedisearchSettings",
     "settings_manager",
 ]
@@ -22,10 +25,13 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        "create_redisearch_client": "._async.registry",
-        "RedisearchClient": "._async.client",
-        "RedisearchSettings": ".settings",
-        "settings_manager": ".settings",
+        # ._async.helpers
+        "create_redisearch_client": "._async.helpers.create_redisearch_client",
+        # ._async.models
+        "RedisearchClient": "._async.models.redisearch_client",
+        # ._settings
+        "RedisearchSettings": "._settings",
+        "settings_manager": "._settings",
     }
 
     parent = __name__.rsplit(".", 1)[0]

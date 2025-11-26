@@ -2,41 +2,34 @@ from typing import Any
 
 from redis.asyncio import Redis
 
-from .._core.context import RedisearchContext
-from .._core.operations.count import count
-from .._core.operations.create_index import create_index
-from .._core.operations.delete import delete
-from .._core.operations.drop_index import drop_index
-from .._core.operations.exists_index import exists_index
-from .._core.operations.find import find
-from .._core.operations.get import get
-from .._core.operations.get_info import get_info
-from .._core.operations.get_key import get_key
-from .._core.operations.migrate_index import migrate_index
-from .._core.operations.reset_index import reset_index
-from .._core.operations.search import search
-from .._core.operations.set import set
-from .._core.schemas.document import Document
-from .._core.views.info_result import InfoResult
-from .._core.views.search_result import SearchResult
-from ..filter import RedisearchFilter, RedisearchFilterConditions
-from ..settings import RedisearchSettings
+from ..._core.schemas.redisearch_context import RedisearchContext
+from ..._core.operations.count import count
+from ..._core.operations.create_index import create_index
+from ..._core.operations.delete import delete
+from ..._core.operations.drop_index import drop_index
+from ..._core.operations.exists_index import exists_index
+from ..._core.operations.find import find
+from ..._core.operations.get import get
+from ..._core.operations.get_info import get_info
+from ..._core.operations.get_key import get_key
+from ..._core.operations.migrate_index import migrate_index
+from ..._core.operations.reset_index import reset_index
+from ..._core.operations.search import search
+from ..._core.operations.set import set
+from ..._core.schemas.document import Document
+from ..._core.views.info_result import InfoResult
+from ..._core.views.search_result import SearchResult
+from ...filter import RedisearchFilter, RedisearchFilterConditions
+from ..._settings import RedisearchSettings
 
 
 class RedisearchClient:
-    """
-    Redisearch client
-    """
-
     def __init__(
         self,
         settings: RedisearchSettings,
         *,
         redis: Redis,
     ) -> None:
-        """
-        Initialize the Redisearch client.
-        """
         if redis.get_encoder().decode_responses:  # type: ignore[no-untyped-call]
             # As the vector field in Redisearch is expected to be handled as bytes in redis-py,
             raise ValueError("Redis client must have decode_responses=False")
@@ -44,7 +37,6 @@ class RedisearchClient:
         self.ctx: RedisearchContext = RedisearchContext(
             settings=settings, _redis_async=redis
         )
-        """Redisearch context"""
 
     # --------------------------------------------------
     # Index operations

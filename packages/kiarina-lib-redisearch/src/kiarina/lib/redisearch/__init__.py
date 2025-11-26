@@ -4,15 +4,18 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._sync.client import RedisearchClient
-    from ._sync.registry import create_redisearch_client
-    from .settings import RedisearchSettings, settings_manager
+    from ._sync.helpers.create_redisearch_client import create_redisearch_client
+    from ._sync.models.redisearch_client import RedisearchClient
+    from ._settings import RedisearchSettings, settings_manager
 
 __version__ = version("kiarina-lib-redisearch")
 
 __all__ = [
+    # ._sync.helpers
     "create_redisearch_client",
+    # ._sync.models
     "RedisearchClient",
+    # ._settings
     "RedisearchSettings",
     "settings_manager",
 ]
@@ -25,10 +28,13 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        "create_redisearch_client": "._sync.registry",
-        "RedisearchClient": "._sync.client",
-        "RedisearchSettings": ".settings",
-        "settings_manager": ".settings",
+        # ._sync.helpers
+        "create_redisearch_client": "._sync.helpers.create_redisearch_client",
+        # ._sync.models
+        "RedisearchClient": "._sync.models.redisearch_client",
+        # ._settings
+        "RedisearchSettings": "._settings",
+        "settings_manager": "._settings",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)

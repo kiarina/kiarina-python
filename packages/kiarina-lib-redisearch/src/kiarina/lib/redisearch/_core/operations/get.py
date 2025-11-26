@@ -1,6 +1,6 @@
 from typing import Awaitable, Literal, overload
 
-from ..context import RedisearchContext
+from ..schemas.redisearch_context import RedisearchContext
 from ..utils.unmarshal_mappings import unmarshal_mappings
 from ..schemas.document import Document
 from .get_key import get_key

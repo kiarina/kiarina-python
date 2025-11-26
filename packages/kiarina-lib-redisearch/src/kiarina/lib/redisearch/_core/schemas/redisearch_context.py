@@ -3,16 +3,12 @@ from dataclasses import dataclass
 from redis import Redis
 from redis.asyncio import Redis as AsyncRedis
 
-from ..schema import RedisearchSchema
-from ..settings import RedisearchSettings
+from ...schema import RedisearchSchema
+from ..._settings import RedisearchSettings
 
 
 @dataclass
 class RedisearchContext:
-    """
-    Redisearch context
-    """
-
     settings: RedisearchSettings
 
     _schema: RedisearchSchema | None = None
@@ -42,8 +38,6 @@ class RedisearchContext:
     def schema(self, value: RedisearchSchema) -> None:
         self._schema = value
 
-    # --------------------------------------------------
-
     @property
     def redis(self) -> Redis:
         if self._redis is None:
@@ -54,8 +48,6 @@ class RedisearchContext:
     @redis.setter
     def redis(self, value: Redis) -> None:
         self._redis = value
-
-    # --------------------------------------------------
 
     @property
     def redis_async(self) -> AsyncRedis:
