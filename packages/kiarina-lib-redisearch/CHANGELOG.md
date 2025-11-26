@@ -8,7 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Improved code organization by moving `Document` class from `_core/views/` to `_core/schemas/` and `parse_search_result` function from `_core/utils/` to `_core/operations/`
+- Improved code organization by restructuring internal modules:
+  - Moved `Document` class from `_core/views/` to `_core/schemas/`
+  - Moved `parse_search_result` function from `_core/utils/` to `_core/operations/`
+  - Renamed `settings.py` to `_settings.py` for consistency
+  - Renamed `_core/context.py` to `_core/schemas/redisearch_context.py`
+  - Reorganized client modules into `helpers/` and `models/` subdirectories
+  - Removed redundant docstrings and comments for cleaner code
 
 ## [1.8.0] - 2025-10-24
 
