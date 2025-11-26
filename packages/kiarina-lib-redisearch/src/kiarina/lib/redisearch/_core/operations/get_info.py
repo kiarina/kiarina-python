@@ -1,6 +1,7 @@
 from typing import Any, Awaitable, Literal, overload
 
-from ...schema import RedisearchSchema
+from kiarina.lib.redisearch_schema import RedisearchSchema
+
 from ..schemas.redisearch_context import RedisearchContext
 from ..views.info_result import InfoResult
 

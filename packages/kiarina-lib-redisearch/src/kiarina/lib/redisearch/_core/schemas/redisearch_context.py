@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from redis import Redis
 from redis.asyncio import Redis as AsyncRedis
 
-from ...schema import RedisearchSchema
+from kiarina.lib.redisearch_schema import RedisearchSchema
+
 from ..._settings import RedisearchSettings
 
 

@@ -2,6 +2,8 @@ from typing import Any
 
 from redis.asyncio import Redis
 
+from kiarina.lib.redisearch_filter import RedisearchFilter, RedisearchFilterConditions
+
 from ..._core.schemas.redisearch_context import RedisearchContext
 from ..._core.operations.count import count
 from ..._core.operations.create_index import create_index
@@ -19,7 +21,6 @@ from ..._core.operations.set import set
 from ..._core.schemas.document import Document
 from ..._core.views.info_result import InfoResult
 from ..._core.views.search_result import SearchResult
-from ...filter import RedisearchFilter, RedisearchFilterConditions
 from ..._settings import RedisearchSettings
 
 

@@ -1,9 +1,10 @@
 from redis.commands.search.result import Result
 
-from ...schema import RedisearchSchema
+from kiarina.lib.redisearch_schema import RedisearchSchema
+
 from ..schemas.document import Document
-from ..views.search_result import SearchResult
 from ..utils.calc_score import calc_score
+from ..views.search_result import SearchResult
 
 
 def parse_search_result(

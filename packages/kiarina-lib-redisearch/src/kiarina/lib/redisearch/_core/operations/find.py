@@ -3,15 +3,16 @@ from typing import Any, Awaitable, Literal, overload
 from redis.commands.search.query import Query
 from redis.commands.search.result import Result
 
-from ...filter import (
+from kiarina.lib.redisearch_filter import (
     RedisearchFilter,
     RedisearchFilterConditions,
     create_redisearch_filter,
 )
+
 from ..schemas.redisearch_context import RedisearchContext
-from .parse_search_result import parse_search_result
 from ..views.search_result import SearchResult
 from .count import count
+from .parse_search_result import parse_search_result
 
 
 @overload

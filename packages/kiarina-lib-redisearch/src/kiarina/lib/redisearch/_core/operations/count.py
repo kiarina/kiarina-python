@@ -2,11 +2,12 @@ from typing import Awaitable, Literal, overload
 
 from redis.commands.search.query import Query
 
-from ...filter import (
+from kiarina.lib.redisearch_filter import (
     RedisearchFilter,
     RedisearchFilterConditions,
     create_redisearch_filter,
 )
+
 from ..schemas.redisearch_context import RedisearchContext
 from ..views.search_result import SearchResult
 

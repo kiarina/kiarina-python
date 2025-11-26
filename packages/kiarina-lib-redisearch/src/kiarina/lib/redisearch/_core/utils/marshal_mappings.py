@@ -2,7 +2,7 @@ from typing import Any
 
 import numpy as np
 
-from ...schema import RedisearchSchema
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
 def marshal_mappings(

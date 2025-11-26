@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from ...schema import RedisearchSchema
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
 class InfoResult(BaseModel):
