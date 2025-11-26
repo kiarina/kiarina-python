@@ -58,6 +58,8 @@ jobs:
 
     - name: Run CI pipeline
       run: mise run ci --no-docker
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Upload coverage reports
       if: matrix.python-version == '3.13'

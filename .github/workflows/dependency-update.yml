@@ -49,6 +49,8 @@ jobs:
 
     - name: Setup development environment
       run: mise run setup
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Update dependencies
       id: update
@@ -68,6 +70,8 @@ jobs:
     - name: Run comprehensive CI checks
       if: steps.update.outputs.has_changes == 'true'
       run: mise run ci --no-setup --no-docker
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: Create Pull Request
       if: steps.update.outputs.has_changes == 'true'
