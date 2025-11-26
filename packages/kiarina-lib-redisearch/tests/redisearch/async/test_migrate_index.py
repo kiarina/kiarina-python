@@ -1,4 +1,5 @@
 from kiarina.lib.redisearch.asyncio import RedisearchClient, RedisearchSettings
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
 async def test_migrate(key_prefix, index_name, redis):
@@ -9,8 +10,8 @@ async def test_migrate(key_prefix, index_name, redis):
             RedisearchSettings(
                 key_prefix=key_prefix,
                 index_name=index_name,
-                index_schema=fields,
             ),
+            schema=RedisearchSchema.from_field_dicts(fields),
             redis=redis,
         )
 

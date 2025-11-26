@@ -1,5 +1,3 @@
-from typing import Any
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
@@ -21,14 +19,6 @@ class RedisearchSettings(BaseSettings):
 
     Only alphanumeric characters, underscores, hyphens, and periods.
     The beginning consists solely of letters.
-    """
-
-    index_schema: list[dict[str, Any]] | None = None
-    """
-    Redisearch index schema
-
-    RedisearchSchema.from_field_dicts can be used to
-    create the schema from a list of field dictionaries.
     """
 
     protect_index_deletion: bool = False

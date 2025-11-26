@@ -11,33 +11,13 @@ from ..._settings import RedisearchSettings
 @dataclass
 class RedisearchContext:
     settings: RedisearchSettings
-
-    _schema: RedisearchSchema | None = None
-
+    schema: RedisearchSchema
     _redis: Redis | None = None
-
     _redis_async: AsyncRedis | None = None
 
     # --------------------------------------------------
     # Properties
     # --------------------------------------------------
-
-    @property
-    def schema(self) -> RedisearchSchema:
-        """
-        Redisearch index schema
-        """
-        if self._schema is None:
-            if not self.settings.index_schema:
-                raise ValueError("Index schema is not set in RedisearchSettings")
-
-            self._schema = RedisearchSchema.from_field_dicts(self.settings.index_schema)
-
-        return self._schema
-
-    @schema.setter
-    def schema(self, value: RedisearchSchema) -> None:
-        self._schema = value
 
     @property
     def redis(self) -> Redis:

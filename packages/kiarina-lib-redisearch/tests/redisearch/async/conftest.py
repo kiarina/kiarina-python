@@ -2,6 +2,7 @@ import pytest
 
 from kiarina.lib.redis.asyncio import get_redis
 from kiarina.lib.redisearch.asyncio import RedisearchClient, RedisearchSettings
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
 @pytest.fixture
@@ -15,7 +16,7 @@ def client(key_prefix, index_name, redis, fields):
         RedisearchSettings(
             key_prefix=key_prefix,
             index_name=index_name,
-            index_schema=fields,
         ),
+        schema=RedisearchSchema.from_field_dicts(fields),
         redis=redis,
     )

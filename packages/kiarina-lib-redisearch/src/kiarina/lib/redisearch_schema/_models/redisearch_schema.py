@@ -7,6 +7,7 @@ from redis.commands.search.field import Field as RedisearchField
 from .._schemas.flat_vector_field_schema import FlatVectorFieldSchema
 from .._schemas.hnsw_vector_field_schema import HNSWVectorFieldSchema
 from .._types.field_schema import FieldSchema
+from .._types.redisearch_field_dicts import RedisearchFieldDicts
 
 
 class RedisearchSchema(BaseModel):
@@ -85,14 +86,5 @@ class RedisearchSchema(BaseModel):
     # --------------------------------------------------
 
     @classmethod
-    def from_field_dicts(cls, field_dicts: list[dict[str, Any]]) -> Self:
-        """
-        Create a schema model from a list of field dictionaries
-
-        Args:
-            field_dicts (list[dict[str, Any]]): List of field dictionaries
-
-        Returns:
-            RedisearchSchema: The schema model
-        """
+    def from_field_dicts(cls, field_dicts: RedisearchFieldDicts) -> Self:
         return cls.model_validate({"fields": field_dicts})

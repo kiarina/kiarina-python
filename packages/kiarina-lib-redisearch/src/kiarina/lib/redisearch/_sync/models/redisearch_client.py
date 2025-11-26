@@ -3,6 +3,7 @@ from typing import Any
 from redis import Redis
 
 from kiarina.lib.redisearch_filter import RedisearchFilter, RedisearchFilterConditions
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 from ..._core.schemas.redisearch_context import RedisearchContext
 from ..._core.operations.count import count
@@ -33,17 +34,18 @@ class RedisearchClient:
         self,
         settings: RedisearchSettings,
         *,
+        schema: RedisearchSchema,
         redis: Redis,
     ) -> None:
-        """
-        Initialize the Redisearch client.
-        """
         if redis.get_encoder().decode_responses:
             # As the vector field in Redisearch is expected to be handled as bytes in redis-py,
             raise ValueError("Redis client must have decode_responses=False")
 
-        self.ctx: RedisearchContext = RedisearchContext(settings=settings, _redis=redis)
-        """Redisearch context"""
+        self.ctx: RedisearchContext = RedisearchContext(
+            settings=settings,
+            schema=schema,
+            _redis=redis,
+        )
 
     # --------------------------------------------------
     # Index operations

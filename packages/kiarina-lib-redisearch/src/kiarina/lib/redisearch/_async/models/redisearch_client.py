@@ -3,6 +3,7 @@ from typing import Any
 from redis.asyncio import Redis
 
 from kiarina.lib.redisearch_filter import RedisearchFilter, RedisearchFilterConditions
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 from ..._core.schemas.redisearch_context import RedisearchContext
 from ..._core.operations.count import count
@@ -29,6 +30,7 @@ class RedisearchClient:
         self,
         settings: RedisearchSettings,
         *,
+        schema: RedisearchSchema,
         redis: Redis,
     ) -> None:
         if redis.get_encoder().decode_responses:  # type: ignore[no-untyped-call]
@@ -36,7 +38,9 @@ class RedisearchClient:
             raise ValueError("Redis client must have decode_responses=False")
 
         self.ctx: RedisearchContext = RedisearchContext(
-            settings=settings, _redis_async=redis
+            settings=settings,
+            schema=schema,
+            _redis_async=redis,
         )
 
     # --------------------------------------------------

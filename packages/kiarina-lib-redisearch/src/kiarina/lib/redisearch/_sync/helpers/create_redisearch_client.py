@@ -1,5 +1,7 @@
 import redis
 
+from kiarina.lib.redisearch_schema import RedisearchSchema, RedisearchFieldDicts
+
 from ..._settings import settings_manager
 from ..models.redisearch_client import RedisearchClient
 
@@ -7,10 +9,9 @@ from ..models.redisearch_client import RedisearchClient
 def create_redisearch_client(
     config_key: str | None = None,
     *,
+    field_dicts: RedisearchFieldDicts,
     redis: redis.Redis,
 ) -> RedisearchClient:
-    """
-    Create a Redisearch client.
-    """
     settings = settings_manager.get_settings(config_key)
-    return RedisearchClient(settings, redis=redis)
+    schema = RedisearchSchema.from_field_dicts(field_dicts)
+    return RedisearchClient(settings, schema=schema, redis=redis)
