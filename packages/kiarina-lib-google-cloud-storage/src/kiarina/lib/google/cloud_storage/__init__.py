@@ -1,4 +1,3 @@
-# __init__.py
 import logging
 from importlib import import_module
 from importlib.metadata import version
