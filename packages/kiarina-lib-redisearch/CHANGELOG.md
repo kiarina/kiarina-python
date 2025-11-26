@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **BREAKING**: Separated schema from settings configuration
+  - Removed `index_schema` field from `RedisearchSettings`
+  - Schema is now passed directly to `create_redisearch_client()` via `field_dicts` parameter
+  - Schema is treated as part of application code, not infrastructure configuration
+  - This improves code-schema consistency and eliminates the need to maintain schema in both code and config files
+  - Migration: Pass schema directly when creating client instead of including it in settings
 - **Internal refactoring**: Improved code organization by restructuring internal modules
   - Separated `filter` module into independent `kiarina.lib.redisearch_filter` package
   - Separated `schema` module into independent `kiarina.lib.redisearch_schema` package

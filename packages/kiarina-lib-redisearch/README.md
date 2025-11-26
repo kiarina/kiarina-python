@@ -25,9 +25,9 @@ pip install kiarina-lib-redisearch
 
 ```python
 import redis
-from kiarina.lib.redisearch import create_redisearch_client, RedisearchSettings
+from kiarina.lib.redisearch import create_redisearch_client, settings_manager
 
-# Configure your schema
+# Define your schema (part of your application code)
 schema = [
     {"type": "tag", "name": "category"},
     {"type": "text", "name": "title"},
@@ -35,24 +35,23 @@ schema = [
     {"type": "vector", "name": "embedding", "algorithm": "FLAT", "dims": 1536}
 ]
 
-# Create Redis connection (decode_responses=False is required)
-redis_client = redis.Redis(host="localhost", port=6379, decode_responses=False)
-
-# Create RediSearch client
-client = create_redisearch_client(
-    redis=redis_client,
-    config_key="default"  # Optional: use specific configuration
-)
-
-# Configure settings
-from kiarina.lib.redisearch import settings_manager
+# Configure settings (infrastructure configuration)
 settings_manager.user_config = {
     "default": {
         "key_prefix": "products:",
-        "index_name": "products_index",
-        "index_schema": schema
+        "index_name": "products_index"
     }
 }
+
+# Create Redis connection (decode_responses=False is required)
+redis_client = redis.Redis(host="localhost", port=6379, decode_responses=False)
+
+# Create RediSearch client with schema
+client = create_redisearch_client(
+    field_dicts=schema,  # Schema is passed directly, not in settings
+    redis=redis_client,
+    config_key="default"  # Optional: use specific configuration
+)
 
 # Create index
 client.create_index()
@@ -84,16 +83,25 @@ results = client.search(
 import redis.asyncio
 from kiarina.lib.redisearch.asyncio import create_redisearch_client
 
+# Define schema
+schema = [
+    {"type": "text", "name": "title"},
+    {"type": "numeric", "name": "price", "sortable": True}
+]
+
 async def main():
     # Create async Redis connection
     redis_client = redis.asyncio.Redis(host="localhost", port=6379, decode_responses=False)
 
-    # Create async RediSearch client
-    client = create_redisearch_client(redis=redis_client)
+    # Create async RediSearch client with schema
+    client = create_redisearch_client(
+        field_dicts=schema,
+        redis=redis_client
+    )
 
     # All operations are awaitable
     await client.create_index()
-    await client.set({"title": "Example"}, id="doc_1")
+    await client.set({"title": "Example", "price": 99.99}, id="doc_1")
     results = await client.find()
 ```
 
@@ -186,24 +194,61 @@ export KIARINA_LIB_REDISEARCH_PROTECT_INDEX_DELETION="true"
 ```python
 from kiarina.lib.redisearch import settings_manager
 
-# Configure multiple environments
+# Configure multiple environments (infrastructure settings only)
 settings_manager.user_config = {
     "development": {
         "key_prefix": "dev:",
         "index_name": "dev_index",
-        "index_schema": dev_schema,
         "protect_index_deletion": False
     },
     "production": {
         "key_prefix": "prod:",
         "index_name": "prod_index",
-        "index_schema": prod_schema,
         "protect_index_deletion": True
     }
 }
 
 # Switch configurations
 settings_manager.active_key = "production"
+
+# Schema is defined in your application code, not in settings
+dev_schema = [
+    {"type": "text", "name": "title"},
+    {"type": "numeric", "name": "price", "sortable": True}
+]
+
+prod_schema = [
+    {"type": "text", "name": "title"},
+    {"type": "numeric", "name": "price", "sortable": True},
+    {"type": "vector", "name": "embedding", "algorithm": "HNSW", "dims": 1536}
+]
+```
+
+### Design Philosophy: Schema vs Settings
+
+**Schema belongs in code, not configuration:**
+- Schema defines your data structure and is tightly coupled to your application logic
+- Schema changes typically require code changes (e.g., how you generate embeddings)
+- Keeping schema in code ensures type safety and IDE support
+- Settings (key_prefix, index_name) are infrastructure concerns that vary by environment
+
+```python
+# ❌ Bad: Schema in config (old way)
+settings_manager.user_config = {
+    "default": {
+        "index_schema": [...]  # Don't put schema in config
+    }
+}
+
+# ✅ Good: Schema in code (new way)
+schema = [
+    {"type": "tag", "name": "category"},
+    {"type": "text", "name": "title"},
+]
+client = create_redisearch_client(
+    field_dicts=schema,  # Schema is part of your code
+    redis=redis_client
+)
 ```
 
 ## Advanced Filtering
@@ -623,7 +668,7 @@ client.drop_index(delete_documents=True)
 Automatically migrate your index when schema changes:
 
 ```python
-# Update your schema
+# Update your schema in code
 new_schema = [
     {"type": "tag", "name": "category"},
     {"type": "text", "name": "title"},
@@ -632,12 +677,25 @@ new_schema = [
     {"type": "vector", "name": "embedding", "algorithm": "HNSW", "dims": 1536}  # Changed algorithm
 ]
 
-# Update configuration
-settings_manager.user_config["production"]["index_schema"] = new_schema
+# Create new client with updated schema
+client = create_redisearch_client(
+    field_dicts=new_schema,
+    redis=redis_client,
+    config_key="production"
+)
 
 # Migrate (automatically detects changes and recreates index)
 client.migrate_index()
 ```
+
+**Migration Process:**
+1. Update schema definition in your code
+2. Create client with new schema
+3. Call `migrate_index()` - it will:
+   - Compare current index schema with new schema
+   - If changes detected, drop old index and create new one
+   - Preserve existing documents (they will be re-indexed)
+   - If no changes, do nothing
 
 ## Document Operations
 
@@ -822,12 +880,15 @@ mise run package:test kiarina-lib-redisearch --coverage
 
 ## Configuration Reference
 
+### RedisearchSettings
+
 | Setting | Environment Variable | Default | Description |
 |---------|---------------------|---------|-------------|
-| `key_prefix` | `KIARINA_LIB_REDISEARCH_KEY_PREFIX` | `""` | Redis key prefix for documents |
-| `index_name` | `KIARINA_LIB_REDISEARCH_INDEX_NAME` | `"default"` | RediSearch index name |
-| `index_schema` | - | `None` | Index schema definition (list of field dicts) |
-| `protect_index_deletion` | `KIARINA_LIB_REDISEARCH_PROTECT_INDEX_DELETION` | `false` | Prevent accidental index deletion |
+| `key_prefix` | `KIARINA_LIB_REDISEARCH_KEY_PREFIX` | `""` | Redis key prefix for documents (e.g., "myapp:") |
+| `index_name` | `KIARINA_LIB_REDISEARCH_INDEX_NAME` | `"default"` | RediSearch index name (alphanumeric, underscore, hyphen, period) |
+| `protect_index_deletion` | `KIARINA_LIB_REDISEARCH_PROTECT_INDEX_DELETION` | `false` | Prevent accidental index deletion in production |
+
+**Note:** Schema is not part of settings. It is passed directly to `create_redisearch_client()` as part of your application code.
 
 ## Dependencies
 
