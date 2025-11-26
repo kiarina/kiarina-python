@@ -8,13 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Improved code organization by restructuring internal modules:
-  - Moved `Document` class from `_core/views/` to `_core/schemas/`
-  - Moved `parse_search_result` function from `_core/utils/` to `_core/operations/`
-  - Renamed `settings.py` to `_settings.py` for consistency
-  - Renamed `_core/context.py` to `_core/schemas/redisearch_context.py`
-  - Reorganized client modules into `helpers/` and `models/` subdirectories
+- **Internal refactoring**: Improved code organization by restructuring internal modules
+  - Separated `filter` module into independent `kiarina.lib.redisearch_filter` package
+  - Separated `schema` module into independent `kiarina.lib.redisearch_schema` package
+  - Reorganized filter module structure:
+    - `_field/` → `_models/` (renamed for clarity)
+    - `_decorators.py` → `_decorators/check_operator_misuse.py`
+    - `_enums.py` → `_enums/redisearch_filter_operator.py`
+    - `_utils.py` → `_utils/escape_token.py`
+    - `_registry.py` → `_helpers/create_redisearch_filter.py`
+    - `_types.py` → `_types/redisearch_filter_conditions.py`
+    - Renamed `RedisearchFieldFilter` → `BaseFieldFilter`
+  - Reorganized schema module structure:
+    - `_field/` → `_schemas/` (renamed for clarity)
+    - `_model.py` → `_models/redisearch_schema.py`
+    - `_types.py` → `_types/field_schema.py`
+    - Renamed `VectorFieldSchema` → `BaseVectorFieldSchema`
+  - Reorganized test directory structure:
+    - `tests/async/` → `tests/redisearch/async/`
+    - `tests/sync/` → `tests/redisearch/sync/`
+    - Added `tests/redisearch_filter/` and `tests/redisearch_schema/`
+  - Updated all internal imports to use new package structure
   - Removed redundant docstrings and comments for cleaner code
+  - Added `py.typed` files for better type checking support
+
+**Note**: This is an internal refactoring. Public API remains unchanged.
 
 ## [1.8.0] - 2025-10-24
 
