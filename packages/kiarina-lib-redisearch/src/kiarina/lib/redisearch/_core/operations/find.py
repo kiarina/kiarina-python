@@ -9,7 +9,7 @@ from ...filter import (
     create_redisearch_filter,
 )
 from ..context import RedisearchContext
-from ..utils.parse_search_result import parse_search_result
+from .parse_search_result import parse_search_result
 from ..views.search_result import SearchResult
 from .count import count
 

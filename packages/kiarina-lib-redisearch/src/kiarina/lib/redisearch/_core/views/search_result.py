@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from .document import Document
+from ..schemas.document import Document
 
 
 class SearchResult(BaseModel):

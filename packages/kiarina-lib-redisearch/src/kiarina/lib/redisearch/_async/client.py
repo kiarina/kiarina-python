@@ -16,7 +16,7 @@ from .._core.operations.migrate_index import migrate_index
 from .._core.operations.reset_index import reset_index
 from .._core.operations.search import search
 from .._core.operations.set import set
-from .._core.views.document import Document
+from .._core.schemas.document import Document
 from .._core.views.info_result import InfoResult
 from .._core.views.search_result import SearchResult
 from ..filter import RedisearchFilter, RedisearchFilterConditions

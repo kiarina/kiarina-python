@@ -1,9 +1,9 @@
 from redis.commands.search.result import Result
 
 from ...schema import RedisearchSchema
-from ..views.document import Document
+from ..schemas.document import Document
 from ..views.search_result import SearchResult
-from .calc_score import calc_score
+from ..utils.calc_score import calc_score
 
 
 def parse_search_result(
