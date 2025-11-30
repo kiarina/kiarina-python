@@ -14,6 +14,26 @@ pip install kiarina-utils-common
 
 ## Features
 
+### Dynamic Object Import
+
+Import objects (classes, functions, constants) dynamically from import paths. Useful for plugin systems and dynamic loading scenarios.
+
+```python
+from kiarina.utils.common import import_object
+
+# Import a function
+parse_fn = import_object("kiarina.utils.common:parse_config_string")
+result = parse_fn("key:value")
+
+# Import a class
+MyClass = import_object("myapp.plugins:MyPlugin")
+instance = MyClass()
+
+# Import with type hints for better IDE support
+from typing import Callable
+parser: Callable = import_object("kiarina.utils.common:parse_config_string")
+```
+
 ### Configuration String Parser
 
 Parse configuration strings into nested dictionaries with automatic type conversion.
@@ -70,6 +90,38 @@ config = parse_config_string("users.0.name:Alice,users.0.age:30,users.1.name:Bob
 ```
 
 ## API Reference
+
+### `import_object(import_path)`
+
+Import and return an object from an import path.
+
+**Parameters:**
+- `import_path` (str): Import path in the format `'module_name:object_name'`
+  - Example: `'kiarina.utils.common:parse_config_string'`
+
+**Returns:**
+- The imported object (class, function, or any other object)
+
+**Raises:**
+- `ValueError`: If import_path format is invalid
+- `ImportError`: If the module cannot be imported
+- `AttributeError`: If the object doesn't exist in the module
+
+**Examples:**
+
+```python
+# Import a function
+parse_fn = import_object('kiarina.utils.common:parse_config_string')
+result = parse_fn('key:value')
+
+# Import a class
+MyClass = import_object('myapp.plugins:MyPlugin')
+instance = MyClass()
+
+# Use with type hints
+from typing import Callable
+parser: Callable = import_object('kiarina.utils.common:parse_config_string')
+```
 
 ### `parse_config_string(config_str, *, separator=",", key_value_separator=":", nested_separator=".")`
 
