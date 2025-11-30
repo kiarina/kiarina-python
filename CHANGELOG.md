@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-utils-common**: `import_object` function for dynamic object importing from import paths (useful for plugin systems)
+
 ## [1.9.0] - 2025-11-26
 
 ### Changed
