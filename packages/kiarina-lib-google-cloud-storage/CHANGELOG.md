@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.0] - 2025-12-01
+
 ### Changed
 - Add environment variable prefix `KIARINA_LIB_GOOGLE_CLOUD_STORAGE_` to `GoogleCloudStorageSettings` for better configuration management
 

@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-utils-file"
-version = "1.10.0"
+version = "1.11.0"
 description = "Comprehensive Python library for file I/O operations with automatic encoding detection, MIME type detection, and support for various file formats"
 readme = "README.md"
 license = "MIT"

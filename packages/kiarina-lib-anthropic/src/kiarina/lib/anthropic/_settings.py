@@ -4,7 +4,6 @@ from pydantic_settings_manager import SettingsManager
 
 
 class AnthropicSettings(BaseSettings):
-
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_ANTHROPIC_")
 
     api_key: SecretStr

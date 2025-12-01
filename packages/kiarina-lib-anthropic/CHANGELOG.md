@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.0] - 2025-12-01
+
 ### Added
 - Initial release with Anthropic API configuration management
 - `AnthropicSettings` class with API key and base URL support
