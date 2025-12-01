@@ -1,8 +1,10 @@
 from typing import Any
 
+from .._types.config_str import ConfigStr
+
 
 def parse_config_string(
-    config_str: str,
+    config_str: ConfigStr,
     *,
     separator: str = ",",
     key_value_separator: str = ":",
