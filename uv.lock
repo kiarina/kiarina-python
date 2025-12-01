@@ -14,6 +14,7 @@ members = [
     "kiarina-lib-falkordb",
     "kiarina-lib-google-auth",
     "kiarina-lib-google-cloud-storage",
+    "kiarina-lib-openai",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-llm",
@@ -457,6 +458,7 @@ dependencies = [
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage" },
+    { name = "kiarina-lib-openai" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
     { name = "kiarina-llm" },
@@ -471,6 +473,7 @@ requires-dist = [
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
+    { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
     { name = "kiarina-llm", editable = "packages/kiarina-llm" },
@@ -581,6 +584,21 @@ requires-dist = [
 ]
 
 [[package]]
+name = "kiarina-lib-openai"
+version = "1.11.0"
+source = { editable = "packages/kiarina-lib-openai" }
+dependencies = [
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic-settings", specifier = ">=2.10.1" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
+]
+
+[[package]]
 name = "kiarina-lib-redis"
 version = "1.10.0"
 source = { editable = "packages/kiarina-lib-redis" }
@@ -646,6 +664,7 @@ dependencies = [
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage" },
+    { name = "kiarina-lib-openai" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
     { name = "kiarina-llm" },
@@ -680,6 +699,7 @@ requires-dist = [
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
+    { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
     { name = "kiarina-llm", editable = "packages/kiarina-llm" },

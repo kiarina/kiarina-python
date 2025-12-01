@@ -44,6 +44,7 @@ dependencies = [
     "kiarina-lib-falkordb",
     "kiarina-lib-google-auth",
     "kiarina-lib-google-cloud-storage",
+    "kiarina-lib-openai",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-llm",
@@ -90,6 +91,7 @@ members = [
     "packages/kiarina-llm",
     "packages/kiarina-utils-common",
     "packages/kiarina-utils-file",
+    "packages/kiarina-lib-openai",
 ]
 
 [tool.uv.sources]
@@ -99,6 +101,7 @@ kiarina-lib-cloudflare-d1 = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
 kiarina-lib-google-auth = { workspace = true }
 kiarina-lib-google-cloud-storage = { workspace = true }
+kiarina-lib-openai = { workspace = true }
 kiarina-lib-redis = { workspace = true }
 kiarina-lib-redisearch = { workspace = true }
 kiarina-llm = { workspace = true }
@@ -112,6 +115,7 @@ mypy_path = [
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-google-cloud-storage/src",
+    "packages/kiarina-lib-openai/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
     "packages/kiarina-llm/src",
@@ -135,6 +139,7 @@ source = [
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-google-auth/src",
     "packages/kiarina-lib-google-cloud-storage/src",
+    "packages/kiarina-lib-openai/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
     "packages/kiarina-llm/src",

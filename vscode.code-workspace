@@ -19,6 +19,9 @@
       "path": "packages/kiarina-lib-google-cloud-storage"
     },
     {
+      "path": "packages/kiarina-lib-openai"
+    },
+    {
       "path": "packages/kiarina-lib-redis"
     },
     {

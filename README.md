@@ -77,6 +77,14 @@ this project provides robust, well-tested utilities for common development tasks
   - Multi-tenancy patterns for integration testing
   - Separation of authentication and storage configuration
 
+#### OpenAI
+
+- **[kiarina-lib-openai](packages/kiarina-lib-openai/)** - OpenAI API integration
+  - Secure API key management with SecretStr
+  - Multi-configuration support for different projects/environments
+  - Custom base URL support for OpenAI-compatible APIs
+  - Environment variable configuration
+
 ## 🚀 Quick Start
 
 ### Installation
@@ -108,6 +116,9 @@ pip install kiarina-lib-cloudflare-auth kiarina-lib-cloudflare-d1
 
 # Cloud services - Google Cloud
 pip install kiarina-lib-google-auth kiarina-lib-google-cloud-storage
+
+# Cloud services - OpenAI
+pip install kiarina-lib-openai
 
 # Or with uv
 uv add kiarina-utils-common kiarina-utils-file
