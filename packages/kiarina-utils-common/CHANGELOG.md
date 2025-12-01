@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.11.2] - 2025-12-02
+
 ### Added
 - `ConfigStr` type alias for configuration string format documentation
 
