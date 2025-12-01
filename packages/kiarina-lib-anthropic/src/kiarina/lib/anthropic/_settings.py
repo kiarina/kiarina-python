@@ -1,9 +1,12 @@
 from pydantic import SecretStr
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
 
 class AnthropicSettings(BaseSettings):
+
+    model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_ANTHROPIC_")
+
     api_key: SecretStr
     """Anthropic API key"""
 

@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-lib-anthropic**: New package for Anthropic API integration with secure API key management and multi-configuration support
 - **kiarina-lib-openai**: New package for OpenAI API integration with secure API key management and multi-configuration support
 
+### Changed
+- **kiarina-lib-anthropic**: Add environment variable prefix `KIARINA_LIB_ANTHROPIC_` for settings
+- **kiarina-lib-cloudflare-auth**: Add environment variable prefix `KIARINA_LIB_CLOUDFLARE_AUTH_` for settings
+- **kiarina-lib-cloudflare-d1**: Add environment variable prefix `KIARINA_LIB_CLOUDFLARE_D1_` for settings
+- **kiarina-lib-google-cloud-storage**: Add environment variable prefix `KIARINA_LIB_GOOGLE_CLOUD_STORAGE_` for settings
+- **kiarina-lib-openai**: Add environment variable prefix `KIARINA_LIB_OPENAI_` for settings
+
 ## [1.10.0] - 2025-12-01
 
 ### Added

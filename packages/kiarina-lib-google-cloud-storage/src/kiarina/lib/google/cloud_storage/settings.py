@@ -1,8 +1,10 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
 
 class GoogleCloudStorageSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_GOOGLE_CLOUD_STORAGE_")
+
     bucket_name: str
 
     blob_name_pattern: str | None = None

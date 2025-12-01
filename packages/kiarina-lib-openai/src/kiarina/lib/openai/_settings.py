@@ -1,9 +1,11 @@
 from pydantic import SecretStr
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
 
 class OpenAISettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_OPENAI_")
+
     api_key: SecretStr
     """OpenAI API key"""
 
