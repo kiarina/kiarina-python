@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-lib-anthropic**: Made `api_key` field optional to support environment variable configuration
+- **kiarina-lib-openai**: Made `api_key` field optional to support environment variable configuration
+
 ## [1.11.0] - 2025-12-01
 
 ### Added
