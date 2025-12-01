@@ -39,6 +39,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "kiarina",
+    "kiarina-lib-anthropic",
     "kiarina-lib-cloudflare-auth",
     "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
@@ -81,6 +82,7 @@ test = [
 [tool.uv.workspace]
 members = [
     "packages/kiarina",
+    "packages/kiarina-lib-anthropic",
     "packages/kiarina-lib-cloudflare-auth",
     "packages/kiarina-lib-cloudflare-d1",
     "packages/kiarina-lib-falkordb",
@@ -96,6 +98,7 @@ members = [
 
 [tool.uv.sources]
 kiarina = { workspace = true }
+kiarina-lib-anthropic = { workspace = true }
 kiarina-lib-cloudflare-auth = { workspace = true }
 kiarina-lib-cloudflare-d1 = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
@@ -110,6 +113,7 @@ kiarina-utils-file = { workspace = true }
 
 [tool.mypy]
 mypy_path = [
+    "packages/kiarina-lib-anthropic/src",
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
@@ -134,6 +138,7 @@ asyncio_default_fixture_loop_scope = "session"
 
 [tool.coverage.run]
 source = [
+    "packages/kiarina-lib-anthropic/src",
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **kiarina-lib-anthropic**: New package for Anthropic API integration with secure API key management and multi-configuration support
 - **kiarina-lib-openai**: New package for OpenAI API integration with secure API key management and multi-configuration support
 
 ## [1.10.0] - 2025-12-01

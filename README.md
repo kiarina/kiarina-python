@@ -77,8 +77,13 @@ this project provides robust, well-tested utilities for common development tasks
   - Multi-tenancy patterns for integration testing
   - Separation of authentication and storage configuration
 
-#### OpenAI
+#### AI Services
 
+- **[kiarina-lib-anthropic](packages/kiarina-lib-anthropic/)** - Anthropic API integration
+  - Secure API key management with SecretStr
+  - Multi-configuration support for different projects/environments
+  - Custom base URL support for Anthropic-compatible APIs
+  - Environment variable configuration
 - **[kiarina-lib-openai](packages/kiarina-lib-openai/)** - OpenAI API integration
   - Secure API key management with SecretStr
   - Multi-configuration support for different projects/environments

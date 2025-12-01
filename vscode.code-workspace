@@ -4,6 +4,9 @@
       "path": "packages/kiarina"
     },
     {
+      "path": "packages/kiarina-lib-anthropic"
+    },
+    {
       "path": "packages/kiarina-lib-cloudflare-auth"
     },
     {

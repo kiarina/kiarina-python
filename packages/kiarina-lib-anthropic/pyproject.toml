@@ -1,7 +1,7 @@
 [project]
-name = "kiarina-lib-openai"
+name = "kiarina-lib-anthropic"
 version = "1.10.0"
-description = "OpenAI API client library for kiarina namespace"
+description = "Anthropic API client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"
 authors = [
@@ -10,7 +10,7 @@ authors = [
 maintainers = [
     { name = "kiarina", email = "kiarinadawa@gmail.com" }
 ]
-keywords = ["openai", "api", "client", "pydantic", "settings", "llm", "ai"]
+keywords = ["anthropic", "claude", "api", "client", "pydantic", "settings", "llm", "ai"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -31,8 +31,8 @@ dependencies = [
 Homepage = "https://github.com/kiarina/kiarina-python"
 Repository = "https://github.com/kiarina/kiarina-python"
 Issues = "https://github.com/kiarina/kiarina-python/issues"
-Changelog = "https://github.com/kiarina/kiarina-python/blob/main/packages/kiarina-lib-openai/CHANGELOG.md"
-Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-openai#readme"
+Changelog = "https://github.com/kiarina/kiarina-python/blob/main/packages/kiarina-lib-anthropic/CHANGELOG.md"
+Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-anthropic#readme"
 
 [build-system]
 requires = ["hatchling"]
