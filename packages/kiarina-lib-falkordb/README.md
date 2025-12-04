@@ -4,8 +4,8 @@ A Python client library for [FalkorDB](https://falkordb.com/) with configuration
 
 ## Features
 
-- **Configuration Management**: Use `pydantic-settings-manager` for flexible configuration
-- **Connection Pooling**: Automatic connection caching and reuse
+- **Configuration Management**: Flexible settings with `pydantic-settings-manager`
+- **Connection Pooling**: Automatic caching and reuse
 - **Retry Support**: Built-in retry mechanism for connection failures
 - **Sync & Async**: Support for both synchronous and asynchronous operations
 - **Type Safety**: Full type hints and Pydantic validation
@@ -18,18 +18,26 @@ pip install kiarina-lib-falkordb
 
 ## Quick Start
 
-### Basic Usage (Sync)
+### Basic Usage
 
 ```python
 from kiarina.lib.falkordb import get_falkordb
 
-# Get a FalkorDB client with default settings
+# Get a FalkorDB client
 db = get_falkordb()
 
-# Select a graph and run a query
+# Run a query
 graph = db.select_graph("social")
 result = graph.query("CREATE (p:Person {name: 'Alice', age: 30}) RETURN p")
 print(result.result_set)
+
+# Connections are cached by default
+db2 = get_falkordb()
+assert db is db2
+
+# Use different cache keys for separate connections
+db3 = get_falkordb(cache_key="secondary")
+assert db is not db3
 ```
 
 ### Async Usage
@@ -38,69 +46,15 @@ print(result.result_set)
 from kiarina.lib.falkordb.asyncio import get_falkordb
 
 async def main():
-    # Get an async FalkorDB client
     db = get_falkordb()
-
-    # Select a graph and run a query
     graph = db.select_graph("social")
     result = await graph.query("CREATE (p:Person {name: 'Bob', age: 25}) RETURN p")
     print(result.result_set)
 ```
 
-## Configuration
-
-This library uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) for flexible configuration management.
-
-### Environment Variables
-
-Configure the FalkorDB connection using environment variables:
-
-```bash
-# FalkorDB connection URL
-export KIARINA_LIB_FALKORDB_URL="falkor://localhost:6379"
-
-# Enable retry mechanism
-export KIARINA_LIB_FALKORDB_USE_RETRY="true"
-
-# Timeout settings
-export KIARINA_LIB_FALKORDB_SOCKET_TIMEOUT="6.0"
-export KIARINA_LIB_FALKORDB_SOCKET_CONNECT_TIMEOUT="3.0"
-
-# Retry settings
-export KIARINA_LIB_FALKORDB_RETRY_ATTEMPTS="3"
-export KIARINA_LIB_FALKORDB_RETRY_DELAY="1.0"
-```
-
-### Programmatic Configuration
-
-```python
-from kiarina.lib.falkordb import settings_manager
-
-# Configure for multiple environments
-settings_manager.user_config = {
-    "development": {
-        "url": "falkor://localhost:6379",
-        "use_retry": True,
-        "retry_attempts": 3
-    },
-    "production": {
-        "url": "falkor://prod-server:6379",
-        "use_retry": True,
-        "retry_attempts": 5,
-        "socket_timeout": 10.0
-    }
-}
-
-# Switch to production configuration
-settings_manager.active_key = "production"
-db = get_falkordb()
-```
-
 ### Runtime Overrides
 
 ```python
-from kiarina.lib.falkordb import get_falkordb
-
 # Override settings at runtime
 db = get_falkordb(
     url="falkor://custom-server:6379",
@@ -108,143 +62,110 @@ db = get_falkordb(
 )
 ```
 
-## Advanced Usage
+## API Reference
 
-### Connection Caching
+### `get_falkordb()`
+
+Get a FalkorDB client with configuration management.
 
 ```python
-from kiarina.lib.falkordb import get_falkordb
-
-# These will return the same cached connection
-db1 = get_falkordb()
-db2 = get_falkordb()
-assert db1 is db2
-
-# Use different cache keys for separate connections
-db3 = get_falkordb(cache_key="secondary")
-assert db1 is not db3
+def get_falkordb(
+    config_key: str | None = None,
+    *,
+    cache_key: str | None = None,
+    use_retry: bool | None = None,
+    url: str | None = None,
+    **kwargs: Any,
+) -> FalkorDB
 ```
 
-### Custom Configuration Keys
+**Parameters:**
+- `config_key`: Configuration key to use (for multi-config setups)
+- `cache_key`: Cache key for connection pooling (defaults to URL)
+- `use_retry`: Override retry setting
+- `url`: Override connection URL
+- `**kwargs`: Additional parameters for FalkorDB client
+
+**Returns:** FalkorDB client instance (cached)
+
+## Configuration
+
+This library uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) for configuration management.
+
+### YAML Configuration (Recommended)
+
+```yaml
+# config.yaml
+kiarina.lib.falkordb:
+  development:
+    url: "falkor://localhost:6379"
+    use_retry: true
+    retry_attempts: 3
+
+  production:
+    url: "falkor://prod-server:6379"
+    use_retry: true
+    retry_attempts: 5
+    socket_timeout: 10.0
+```
 
 ```python
+import yaml
 from kiarina.lib.falkordb import settings_manager, get_falkordb
 
-# Configure multiple named configurations
-settings_manager.user_config = {
-    "analytics": {
-        "url": "falkor://analytics-db:6379",
-        "socket_timeout": 30.0
-    },
-    "cache": {
-        "url": "falkor://cache-db:6379",
-        "socket_timeout": 5.0
-    }
-}
+# Load configuration
+with open("config.yaml") as f:
+    config = yaml.safe_load(f)
 
-# Use specific configurations
-analytics_db = get_falkordb("analytics")
-cache_db = get_falkordb("cache")
+settings_manager.user_config = config["kiarina.lib.falkordb"]
+
+# Use specific configuration
+settings_manager.active_key = "production"
+db = get_falkordb()
 ```
 
-### Error Handling and Retries
+### Configuration Reference
 
-```python
-from kiarina.lib.falkordb import get_falkordb
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `url` | `"falkor://localhost:6379"` | FalkorDB connection URL (supports `falkor://`, `falkors://` with optional auth) |
+| `use_retry` | `false` | Enable automatic retries on connection errors |
+| `socket_timeout` | `6.0` | Socket timeout in seconds |
+| `socket_connect_timeout` | `3.0` | Connection timeout in seconds |
+| `health_check_interval` | `60` | Health check interval in seconds |
+| `retry_attempts` | `3` | Number of retry attempts |
+| `retry_delay` | `1.0` | Delay between retries in seconds |
 
-# Enable automatic retries for connection issues
-db = get_falkordb(use_retry=True)
+All settings can be configured via environment variables with the `KIARINA_LIB_FALKORDB_` prefix.
 
-try:
-    graph = db.select_graph("mydata")
-    result = graph.query("MATCH (n) RETURN count(n)")
-except Exception as e:
-    print(f"Query failed: {e}")
-```
-
-## Configuration Reference
-
-| Setting | Environment Variable | Default | Description |
-|---------|---------------------|---------|-------------|
-| `url` | `KIARINA_LIB_FALKORDB_URL` | `"falkor://localhost:6379"` | FalkorDB connection URL |
-| `use_retry` | `KIARINA_LIB_FALKORDB_USE_RETRY` | `false` | Enable automatic retries |
-| `socket_timeout` | `KIARINA_LIB_FALKORDB_SOCKET_TIMEOUT` | `6.0` | Socket timeout in seconds |
-| `socket_connect_timeout` | `KIARINA_LIB_FALKORDB_SOCKET_CONNECT_TIMEOUT` | `3.0` | Connection timeout in seconds |
-| `health_check_interval` | `KIARINA_LIB_FALKORDB_HEALTH_CHECK_INTERVAL` | `60` | Health check interval in seconds |
-| `retry_attempts` | `KIARINA_LIB_FALKORDB_RETRY_ATTEMPTS` | `3` | Number of retry attempts |
-| `retry_delay` | `KIARINA_LIB_FALKORDB_RETRY_DELAY` | `1.0` | Delay between retries in seconds |
-
-## URL Formats
-
-FalkorDB URLs support the following formats:
-
-- `falkor://localhost:6379` - Basic connection
-- `falkor://username:password@localhost:6379` - With authentication
-- `falkors://localhost:6379` - SSL/TLS connection
-- `falkors://username:password@localhost:6379` - SSL/TLS with authentication
-
-## Development
-
-### Prerequisites
-
-- Python 3.12+
-- Docker (for running FalkorDB in tests)
-
-### Setup
+## Testing
 
 ```bash
-# Clone the repository
-git clone https://github.com/kiarina/kiarina-python.git
-cd kiarina-python
-
-# Setup development environment (installs tools, syncs dependencies, downloads test data)
-mise run setup
-
-# Start FalkorDB for testing
+# Start FalkorDB
 docker compose up -d falkordb
-```
 
-### Running Tests
+# Run tests
+mise run package:test kiarina-lib-falkordb
 
-```bash
-# Run format, lint, type checks and tests
-mise run package kiarina-lib-falkordb
-
-# Coverage report
+# With coverage
 mise run package:test kiarina-lib-falkordb --coverage
-
-# Run specific tests
-uv run --group test pytest packages/kiarina-lib-falkordb/tests/test_sync.py
-uv run --group test pytest packages/kiarina-lib-falkordb/tests/test_async.py
 ```
 
 ## Dependencies
 
-- [falkordb](https://github.com/kiarina/falkordb-py) - FalkorDB Python client (fork with redis-py 6.x support and async bug fixes)
+- [kiarina-falkordb](https://github.com/kiarina/falkordb-py) - FalkorDB Python client (fork with redis-py 6.x support)
 - [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) - Settings management
 - [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Advanced settings management
-- [redis](https://github.com/redis/redis-py) - Redis client (FalkorDB is Redis-compatible)
+- [redis](https://github.com/redis/redis-py) - Redis client
 
-### Note on FalkorDB Client
-
-This library uses a [fork of the official FalkorDB Python client](https://github.com/kiarina/falkordb-py) instead of the [upstream version](https://github.com/FalkorDB/falkordb-py). The fork includes:
-
-- **Redis-py 6.x compatibility**: Support for redis-py 6.4.0+ (upstream only supports 5.x)
-- **Async client bug fixes**: Fixes for issues in the asynchronous client implementation
-- **Enhanced stability**: Additional improvements for production use
-
-The fork is based on the upstream `develop` branch and will be synchronized with upstream changes. Once these improvements are merged upstream, this library will migrate back to the official client.
+> **Note:** This library uses a fork of the official FalkorDB client that supports redis-py 6.x and includes async bug fixes. Once these improvements are merged upstream, we'll migrate back to the official client.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
-
-## Contributing
-
-This is a personal project, but contributions are welcome! Please feel free to submit issues or pull requests.
+MIT License - see the [LICENSE](../../LICENSE) file for details.
 
 ## Related Projects
 
-- [kiarina-python](https://github.com/kiarina/kiarina-python) - The main monorepo containing this package
-- [FalkorDB](https://www.falkordb.com/) - The graph database this library connects to
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Configuration management library used by this package
+- [kiarina-python](https://github.com/kiarina/kiarina-python) - Main monorepo
+- [FalkorDB](https://www.falkordb.com/) - Graph database
+- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Configuration management
