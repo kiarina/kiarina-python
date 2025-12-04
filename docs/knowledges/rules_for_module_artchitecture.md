@@ -328,8 +328,8 @@ from importlib import import_module
 from .._settings import settings_manager
 from .._types.fuga import Fuga
 
-def create_fuga(config_key: str) -> Fuga:
-    settings = settings_manager.get_settings(config_key)
+def create_fuga(settings_key: str) -> Fuga:
+    settings = settings_manager.get_settings(settings_key)
     import_path = settings.import_path
 
     if ":" in import_path:
@@ -343,17 +343,17 @@ def create_fuga(config_key: str) -> Fuga:
 
     except ImportError:
         raise ImportError(
-            f"Could not import file builder module '{module_name}' for config key '{config_key}'."
+            f"Could not import file builder module '{module_name}' for config key '{settings_key}'."
         )
 
     if not hasattr(module, object_name):
         raise AttributeError(
-            f"Module '{module_name}' does not have a '{object_name}' attribute for config key '{config_key}'."
+            f"Module '{module_name}' does not have a '{object_name}' attribute for config key '{settings_key}'."
         )
 
     if not callable(getattr(module, object_name)):
         raise TypeError(
-            f"Attribute '{object_name}' in module '{module_name}' is not callable for config key '{config_key}'."
+            f"Attribute '{object_name}' in module '{module_name}' is not callable for config key '{settings_key}'."
         )
 
     return getattr(module, object_name)()
