@@ -2,7 +2,7 @@ from typing import Awaitable, Literal, overload
 
 import httpx
 
-from ..context import D1Context
+from ..models.d1_context import D1Context
 from ..views.result import Result
 
 

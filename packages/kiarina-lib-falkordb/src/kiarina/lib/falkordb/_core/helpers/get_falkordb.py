@@ -1,60 +1,62 @@
 from typing import Any, Literal, overload
 
+import falkordb  # type: ignore
+import falkordb.asyncio  # type: ignore
 import redis
 import redis.asyncio
 from redis.backoff import ExponentialBackoff
 from redis.retry import Retry
 
-from ..settings import settings_manager
+from ..._settings import settings_manager
 
-_sync_cache: dict[str, redis.Redis] = {}
+_sync_cache: dict[str, falkordb.FalkorDB] = {}
 """
-Sync Redis clients cache
+Sync FalkorDB clients cache
 """
 
-_async_cache: dict[str, redis.asyncio.Redis] = {}
+_async_cache: dict[str, falkordb.asyncio.FalkorDB] = {}
 """
-Async Redis clients cache
+Async FalkorDB clients cache
 """
 
 
 @overload
-def get_redis(
+def get_falkordb(
     mode: Literal["sync"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
     url: str | None = None,
     **kwargs: Any,
-) -> redis.Redis: ...
+) -> falkordb.FalkorDB: ...
 
 
 @overload
-def get_redis(
+def get_falkordb(
     mode: Literal["async"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
     url: str | None = None,
     **kwargs: Any,
-) -> redis.asyncio.Redis: ...
+) -> falkordb.asyncio.FalkorDB: ...
 
 
-def get_redis(
+def get_falkordb(
     mode: Literal["sync", "async"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
     url: str | None = None,
     **kwargs: Any,
-) -> redis.Redis | redis.asyncio.Redis:
+) -> falkordb.FalkorDB | falkordb.asyncio.FalkorDB:
     """
-    Get a Redis client with shared logic.
+    Get a FalkorDB client with shared logic.
     """
-    settings = settings_manager.get_settings(config_key)
+    settings = settings_manager.get_settings(settings_key)
 
     if url is None:
         url = settings.url.get_secret_value()
@@ -90,12 +92,12 @@ def get_redis(
 
     if mode == "sync":
         if cache_key not in _sync_cache:
-            _sync_cache[cache_key] = redis.Redis.from_url(url, **params)
+            _sync_cache[cache_key] = falkordb.FalkorDB.from_url(url, **params)
 
         return _sync_cache[cache_key]
 
     else:
         if cache_key not in _async_cache:
-            _async_cache[cache_key] = redis.asyncio.Redis.from_url(url, **params)
+            _async_cache[cache_key] = falkordb.asyncio.FalkorDB.from_url(url, **params)
 
         return _async_cache[cache_key]

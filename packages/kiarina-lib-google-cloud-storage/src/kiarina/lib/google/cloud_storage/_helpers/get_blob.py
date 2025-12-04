@@ -3,16 +3,16 @@ from typing import Any
 
 from google.cloud import storage  # type: ignore[import-untyped]
 
-from ._get_bucket import get_bucket
-from .settings import settings_manager
+from .get_bucket import get_bucket
+from .._settings import settings_manager
 
 
 def get_blob(
     blob_name: str | None = None,
     *,
     placeholders: dict[str, Any] | None = None,
-    config_key: str | None = None,
-    auth_config_key: str | None = None,
+    settings_key: str | None = None,
+    auth_settings_key: str | None = None,
     **kwargs: Any,
 ) -> storage.Blob:
     """
@@ -21,8 +21,8 @@ def get_blob(
     Args:
         blob_name: Full blob name (path). If provided, this takes precedence.
         placeholders: Placeholders for blob_name_pattern formatting.
-        config_key: Configuration key for storage settings.
-        auth_config_key: Configuration key for authentication.
+        settings_key: Configuration key for storage settings.
+        auth_settings_key: Configuration key for authentication.
         **kwargs: Additional arguments passed to get_bucket().
 
     Returns:
@@ -42,7 +42,7 @@ def get_blob(
         # Using fixed pattern from settings (no placeholders)
         blob = get_blob()  # Uses settings.blob_name_pattern if it has no placeholders
     """
-    settings = settings_manager.get_settings(config_key)
+    settings = settings_manager.get_settings(settings_key)
 
     # Priority 1: Explicit blob_name
     if blob_name is not None:
@@ -81,7 +81,7 @@ def get_blob(
             f"Please provide placeholders argument to resolve them."
         )
 
-    bucket = get_bucket(config_key, auth_config_key=auth_config_key, **kwargs)
+    bucket = get_bucket(settings_key, auth_settings_key=auth_settings_key, **kwargs)
     return bucket.blob(final_blob_name)
 
 

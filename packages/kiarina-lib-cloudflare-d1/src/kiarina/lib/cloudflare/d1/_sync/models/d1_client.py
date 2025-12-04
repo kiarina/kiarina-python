@@ -2,10 +2,10 @@ from typing import Any
 
 from kiarina.lib.cloudflare.auth import CloudflareAuthSettings
 
-from .._core.context import D1Context
-from .._core.operations.query import query
-from .._core.views.result import Result
-from ..settings import D1Settings
+from ..._core.models.d1_context import D1Context
+from ..._core.operations.query import query
+from ..._core.views.result import Result
+from ..._settings import D1Settings
 
 
 class D1Client:

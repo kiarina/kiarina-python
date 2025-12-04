@@ -6,10 +6,6 @@ from pydantic_settings_manager import SettingsManager
 
 
 class FalkorDBSettings(BaseSettings):
-    """
-    FalkorDB Settings
-    """
-
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_FALKORDB_")
 
     url: SecretStr = SecretStr("falkor://localhost:6379")
@@ -19,7 +15,7 @@ class FalkorDBSettings(BaseSettings):
     Example:
     - falkor://[[username]:[password]]@localhost:6379
     - falkors://[[username]:[password]]@localhost:6379
-    
+
     Note: This field uses SecretStr to prevent accidental exposure of credentials in logs.
     """
 

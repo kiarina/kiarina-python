@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from kiarina.lib.cloudflare.auth import CloudflareAuthSettings
 
-from ..settings import D1Settings
+from ..._settings import D1Settings
 
 
 @dataclass

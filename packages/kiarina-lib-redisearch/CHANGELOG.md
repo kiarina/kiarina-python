@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Renamed function parameters for consistency (`config_key` → `settings_key` in `create_redisearch_client()`)
+
 ## [1.11.2] - 2025-12-02
 
 ### Changed
