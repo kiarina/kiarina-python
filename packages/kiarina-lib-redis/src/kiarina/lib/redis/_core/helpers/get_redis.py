@@ -5,7 +5,7 @@ import redis.asyncio
 from redis.backoff import ExponentialBackoff
 from redis.retry import Retry
 
-from ..settings import settings_manager
+from ..._settings import settings_manager
 
 _sync_cache: dict[str, redis.Redis] = {}
 """
@@ -21,7 +21,7 @@ Async Redis clients cache
 @overload
 def get_redis(
     mode: Literal["sync"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
@@ -33,7 +33,7 @@ def get_redis(
 @overload
 def get_redis(
     mode: Literal["async"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
@@ -44,7 +44,7 @@ def get_redis(
 
 def get_redis(
     mode: Literal["sync", "async"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
@@ -54,7 +54,7 @@ def get_redis(
     """
     Get a Redis client with shared logic.
     """
-    settings = settings_manager.get_settings(config_key)
+    settings = settings_manager.get_settings(settings_key)
 
     if url is None:
         url = settings.url.get_secret_value()
