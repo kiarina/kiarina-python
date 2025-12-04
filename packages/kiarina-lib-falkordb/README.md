@@ -70,7 +70,7 @@ Get a FalkorDB client with configuration management.
 
 ```python
 def get_falkordb(
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
@@ -80,7 +80,7 @@ def get_falkordb(
 ```
 
 **Parameters:**
-- `config_key`: Configuration key to use (for multi-config setups)
+- `settings_key`: Configuration key to use (for multi-config setups)
 - `cache_key`: Cache key for connection pooling (defaults to URL)
 - `use_retry`: Override retry setting
 - `url`: Override connection URL

@@ -23,7 +23,7 @@ Async FalkorDB clients cache
 @overload
 def get_falkordb(
     mode: Literal["sync"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
@@ -35,7 +35,7 @@ def get_falkordb(
 @overload
 def get_falkordb(
     mode: Literal["async"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
@@ -46,7 +46,7 @@ def get_falkordb(
 
 def get_falkordb(
     mode: Literal["sync", "async"],
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     cache_key: str | None = None,
     use_retry: bool | None = None,
@@ -56,7 +56,7 @@ def get_falkordb(
     """
     Get a FalkorDB client with shared logic.
     """
-    settings = settings_manager.get_settings(config_key)
+    settings = settings_manager.get_settings(settings_key)
 
     if url is None:
         url = settings.url.get_secret_value()
