@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._sync.helpers.create_d1_client import create_d1_client
     from ._sync.models.d1_client import D1Client
-    from .settings import D1Settings, settings_manager
+    from ._settings import D1Settings, settings_manager
 
 __version__ = version("kiarina-lib-cloudflare-d1")
 
@@ -15,7 +15,7 @@ __all__ = [
     "create_d1_client",
     # ._sync.models
     "D1Client",
-    # .settings
+    # ._settings
     "D1Settings",
     "settings_manager",
 ]
@@ -32,9 +32,9 @@ def __getattr__(name: str) -> object:
         "create_d1_client": "._sync.helpers.create_d1_client",
         # ._sync.models
         "D1Client": "._sync.models.d1_client",
-        # .settings
-        "D1Settings": ".settings",
-        "settings_manager": ".settings",
+        # ._settings
+        "D1Settings": "._settings",
+        "settings_manager": "._settings",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)

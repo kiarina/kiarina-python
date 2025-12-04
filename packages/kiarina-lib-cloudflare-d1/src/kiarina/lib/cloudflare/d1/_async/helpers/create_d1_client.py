@@ -1,6 +1,6 @@
 from kiarina.lib.cloudflare.auth import settings_manager as auth_settings_manager
 
-from ...settings import settings_manager
+from ..._settings import settings_manager
 from ..models.d1_client import D1Client
 
 
