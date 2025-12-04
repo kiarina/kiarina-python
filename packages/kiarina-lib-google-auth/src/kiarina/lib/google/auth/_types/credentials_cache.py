@@ -2,10 +2,9 @@ from typing import Protocol
 
 
 class CredentialsCache(Protocol):
-    """Protocol for a credentials cache."""
-
     def get(self) -> str | None:
-        """Retrieve cached credentials.
+        """
+        Retrieve cached credentials.
 
         Returns:
             The cached credentials as a JSON string, or None if not found.
@@ -13,7 +12,8 @@ class CredentialsCache(Protocol):
         ...
 
     def set(self, value: str) -> None:
-        """Store credentials in the cache.
+        """
+        Store credentials in the cache.
 
         Args:
             value: The credentials to store as a JSON string.
