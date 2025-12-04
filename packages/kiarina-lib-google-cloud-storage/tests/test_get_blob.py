@@ -43,7 +43,7 @@ def test_get_blob_with_placeholders_but_no_pattern(data_dir, load_settings, requ
                 "user_id": request.node.name,
                 "basename": "miineko.png",
             },
-            config_key="no_blob_name_pattern",
+            settings_key="no_blob_name_pattern",
         )
 
 
@@ -60,7 +60,7 @@ def test_get_blob_with_not_enough_placeholders(data_dir, load_settings, request)
 
 
 def test_get_blob_with_fixed_pattern(data_dir, load_settings, request):
-    blob = get_blob(config_key="fixed")
+    blob = get_blob(settings_key="fixed")
 
     if not blob.exists():
         blob.upload_from_filename(data_dir / "small" / "miineko_256x256_799b.png")
@@ -79,4 +79,4 @@ def test_no_blob_name_provided(data_dir, load_settings, request):
         ValueError,
         match="blob_name is not provided, placeholders are not provided, and blob_name_pattern is not set in settings",
     ):
-        get_blob(config_key="no_blob_name_pattern")
+        get_blob(settings_key="no_blob_name_pattern")
