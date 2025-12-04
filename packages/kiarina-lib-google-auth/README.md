@@ -87,10 +87,10 @@ from kiarina.lib.google.auth import CredentialsCache
 class InMemoryCache(CredentialsCache):
     def __init__(self):
         self._cache: str | None = None
-    
+
     def get(self) -> str | None:
         return self._cache
-    
+
     def set(self, value: str) -> None:
         self._cache = value
 
@@ -130,14 +130,14 @@ kiarina.lib.google.auth:
     authorized_user_file: ~/.config/gcloud/application_default_credentials.json
     scopes:
       - https://www.googleapis.com/auth/cloud-platform
-  
+
   production:
     type: service_account
     service_account_file: /secrets/prod-sa-key.json
     project_id: your-project-id
     scopes:
       - https://www.googleapis.com/auth/cloud-platform
-  
+
   impersonation:
     type: service_account
     service_account_file: ~/source-key.json
@@ -194,24 +194,24 @@ credentials = get_credentials()
 
 ### Main Functions
 
-#### `get_credentials(config_key=None, *, settings=None, scopes=None, cache=None)`
+#### `get_credentials(settings_key=None, *, settings=None, scopes=None, cache=None)`
 
 Get Google Cloud credentials based on configuration.
 
 **Parameters:**
-- `config_key` (str | None): Configuration key for multi-config setup
-- `settings` (GoogleAuthSettings | None): Settings object (overrides config_key)
+- `settings_key` (str | None): Configuration key for multi-config setup
+- `settings` (GoogleAuthSettings | None): Settings object (overrides settings_key)
 - `scopes` (list[str] | None): OAuth2 scopes (overrides settings.scopes)
 - `cache` (CredentialsCache | None): Credentials cache for user accounts
 
 **Returns:** `Credentials` - Google Cloud credentials
 
-#### `get_self_signed_jwt(config_key=None, *, settings=None, audience)`
+#### `get_self_signed_jwt(settings_key=None, *, settings=None, audience)`
 
 Generate a self-signed JWT for service account authentication.
 
 **Parameters:**
-- `config_key` (str | None): Configuration key
+- `settings_key` (str | None): Configuration key
 - `settings` (GoogleAuthSettings | None): Settings object
 - `audience` (str): JWT audience (target service URL)
 
