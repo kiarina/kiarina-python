@@ -9,10 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Refactored internal module structure following project architecture rules
-  - Renamed `settings.py` to `_settings.py` for consistency
-  - Reorganized registry modules into `_helpers/` subdirectories
-  - Added `FalkorDBSettings` to public API exports
-  - No breaking changes to public API
 
 ## [1.11.2] - 2025-12-02
 
