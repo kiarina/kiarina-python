@@ -67,14 +67,31 @@ jobs:
           echo "Dependencies updated"
         fi
 
-    - name: Run comprehensive CI checks
+    - name: Check for existing PR
       if: steps.update.outputs.has_changes == 'true'
+      id: check_pr
+      run: |
+        # Check if there's already an open PR for dependency updates
+        EXISTING_PR=$(gh pr list --state open --label "dependencies" --label "automated" --json number,title --jq '.[0].number // ""')
+        
+        if [ -n "$EXISTING_PR" ]; then
+          echo "existing_pr=$EXISTING_PR" >> $GITHUB_OUTPUT
+          echo "Found existing PR #$EXISTING_PR"
+        else
+          echo "existing_pr=" >> $GITHUB_OUTPUT
+          echo "No existing PR found"
+        fi
+      env:
+        GH_TOKEN: ${{ github.token }}
+
+    - name: Run comprehensive CI checks
+      if: steps.update.outputs.has_changes == 'true' && steps.check_pr.outputs.existing_pr == ''
       run: mise run ci --no-setup --no-docker
       env:
         GH_TOKEN: ${{ github.token }}
 
     - name: Create Pull Request
-      if: steps.update.outputs.has_changes == 'true'
+      if: steps.update.outputs.has_changes == 'true' && steps.check_pr.outputs.existing_pr == ''
       uses: peter-evans/create-pull-request@v7
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -97,10 +114,18 @@ jobs:
           This PR was automatically created by GitHub Actions.
           
           **Review the changes and merge when ready.**
-        branch: chore/update-dependencies-${{ github.run_number }}
+        branch: chore/update-dependencies
         delete-branch: true
         assignees: kiarina
         reviewers: kiarina
         labels: |
           dependencies
           automated
+
+    - name: Skip PR creation (existing PR found)
+      if: steps.update.outputs.has_changes == 'true' && steps.check_pr.outputs.existing_pr != ''
+      run: |
+        echo "⏭️ Skipping PR creation - existing PR #${{ steps.check_pr.outputs.existing_pr }} is still open"
+        echo "Please review and merge the existing PR before creating a new one."
+        echo ""
+        echo "View existing PR: ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.check_pr.outputs.existing_pr }}"
