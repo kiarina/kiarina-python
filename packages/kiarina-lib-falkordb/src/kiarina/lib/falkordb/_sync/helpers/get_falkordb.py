@@ -2,7 +2,7 @@ from typing import Any
 
 from falkordb import FalkorDB  # type: ignore
 
-from .._core.registry import get_falkordb as _get_falkordb
+from ..._core.helpers.get_falkordb import get_falkordb as _get_falkordb
 
 
 def get_falkordb(

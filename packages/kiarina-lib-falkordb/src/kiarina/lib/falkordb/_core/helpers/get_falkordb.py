@@ -7,7 +7,7 @@ import redis.asyncio
 from redis.backoff import ExponentialBackoff
 from redis.retry import Retry
 
-from ..settings import settings_manager
+from ..._settings import settings_manager
 
 _sync_cache: dict[str, falkordb.FalkorDB] = {}
 """
