@@ -315,8 +315,8 @@ from kiarina.lib.cloudflare.d1 import create_d1_client
 
 # Use specific configuration keys
 client = create_d1_client(
-    config_key="production",
-    auth_config_key="production"
+    settings_key="production",
+    auth_settings_key="production"
 )
 ```
 
@@ -374,15 +374,15 @@ Create a D1 client with configuration.
 
 ```python
 def create_d1_client(
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
-    auth_config_key: str | None = None,
+    auth_settings_key: str | None = None,
 ) -> D1Client
 ```
 
 **Parameters:**
-- `config_key` (str | None): Configuration key for D1 settings (default: None uses active key)
-- `auth_config_key` (str | None): Configuration key for authentication settings (default: None uses active key)
+- `settings_key` (str | None): Configuration key for D1 settings (default: None uses active key)
+- `auth_settings_key` (str | None): Configuration key for authentication settings (default: None uses active key)
 
 **Returns:**
 - `D1Client`: Configured D1 client instance
@@ -394,8 +394,8 @@ client = create_d1_client()
 
 # Use specific configurations
 client = create_d1_client(
-    config_key="production",
-    auth_config_key="production"
+    settings_key="production",
+    auth_settings_key="production"
 )
 ```
 

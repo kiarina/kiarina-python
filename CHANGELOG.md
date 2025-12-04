@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-lib-cloudflare-d1**: **BREAKING** - Refactored internal module structure and renamed function parameters for consistency
+
 ## [1.11.2] - 2025-12-02
 
 ### Added

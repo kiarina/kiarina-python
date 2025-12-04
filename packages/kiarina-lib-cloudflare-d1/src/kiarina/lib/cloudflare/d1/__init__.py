@@ -4,15 +4,18 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._sync.client import D1Client
-    from ._sync.registry import create_d1_client
+    from ._sync.helpers.create_d1_client import create_d1_client
+    from ._sync.models.d1_client import D1Client
     from .settings import D1Settings, settings_manager
 
 __version__ = version("kiarina-lib-cloudflare-d1")
 
 __all__ = [
-    "D1Client",
+    # ._sync.helpers
     "create_d1_client",
+    # ._sync.models
+    "D1Client",
+    # .settings
     "D1Settings",
     "settings_manager",
 ]
@@ -25,9 +28,10 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        # ._sync
-        "D1Client": "._sync.client",
-        "create_d1_client": "._sync.registry",
+        # ._sync.helpers
+        "create_d1_client": "._sync.helpers.create_d1_client",
+        # ._sync.models
+        "D1Client": "._sync.models.d1_client",
         # .settings
         "D1Settings": ".settings",
         "settings_manager": ".settings",
