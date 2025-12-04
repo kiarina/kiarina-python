@@ -4,10 +4,10 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._get_blob import get_blob
-    from ._get_bucket import get_bucket
-    from ._get_storage_client import get_storage_client
-    from .settings import GoogleCloudStorageSettings, settings_manager
+    from ._helpers.get_blob import get_blob
+    from ._helpers.get_bucket import get_bucket
+    from ._helpers.get_storage_client import get_storage_client
+    from ._settings import GoogleCloudStorageSettings, settings_manager
 
 __version__ = version("kiarina-lib-google-cloud-storage")
 
@@ -16,7 +16,7 @@ __all__ = [
     "get_blob",
     "get_bucket",
     "get_storage_client",
-    # .settings
+    # ._settings
     "GoogleCloudStorageSettings",
     "settings_manager",
 ]
@@ -30,12 +30,12 @@ def __getattr__(name: str) -> object:
 
     module_map = {
         # ._helpers
-        "get_blob": "._get_blob",
-        "get_bucket": "._get_bucket",
-        "get_storage_client": "._get_storage_client",
-        # .settings
-        "GoogleCloudStorageSettings": ".settings",
-        "settings_manager": ".settings",
+        "get_blob": "._helpers.get_blob",
+        "get_bucket": "._helpers.get_bucket",
+        "get_storage_client": "._helpers.get_storage_client",
+        # ._settings
+        "GoogleCloudStorageSettings": "._settings",
+        "settings_manager": "._settings",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)

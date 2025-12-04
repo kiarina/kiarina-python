@@ -4,12 +4,18 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._sync.registry import get_falkordb
-    from .settings import settings_manager
+    from ._sync.helpers.get_falkordb import get_falkordb
+    from ._settings import FalkorDBSettings, settings_manager
 
 __version__ = version("kiarina-lib-falkordb")
 
-__all__ = ["get_falkordb", "settings_manager"]
+__all__ = [
+    # ._sync._helpers
+    "get_falkordb",
+    # ._settings
+    "FalkorDBSettings",
+    "settings_manager",
+]
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
@@ -19,8 +25,11 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        "get_falkordb": "._sync.registry",
-        "settings_manager": ".settings",
+        # ._sync.helpers
+        "get_falkordb": "._sync.helpers.get_falkordb",
+        # ._settings
+        "FalkorDBSettings": "._settings",
+        "settings_manager": "._settings",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)

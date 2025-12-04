@@ -8,18 +8,18 @@ from .._types.credentials_cache import CredentialsCache
 from .._utils.get_default_credentials import get_default_credentials
 from .._utils.get_service_account_credentials import get_service_account_credentials
 from .._utils.get_user_account_credentials import get_user_account_credentials
-from ..settings import GoogleAuthSettings, settings_manager
+from .._settings import GoogleAuthSettings, settings_manager
 
 
 def get_credentials(
-    config_key: str | None = None,
+    settings_key: str | None = None,
     *,
     settings: GoogleAuthSettings | None = None,
     scopes: list[str] | None = None,
     cache: CredentialsCache | None = None,
 ) -> Credentials:
     if settings is None:
-        settings = settings_manager.get_settings(config_key)
+        settings = settings_manager.get_settings(settings_key)
 
     credentials: Credentials
 

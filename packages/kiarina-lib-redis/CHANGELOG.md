@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Refactored internal module structure following project architecture rules
+- Unified sync/async helper implementations for better code organization
+
 ## [1.11.2] - 2025-12-02
 
 ### Changed
