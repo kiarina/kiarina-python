@@ -48,9 +48,9 @@ redis_client = redis.Redis(host="localhost", port=6379, decode_responses=False)
 
 # Create RediSearch client with schema
 client = create_redisearch_client(
+    "default",  # Optional: use specific configuration
     field_dicts=schema,  # Schema is passed directly, not in settings
     redis=redis_client,
-    config_key="default"  # Optional: use specific configuration
 )
 
 # Create index
@@ -640,9 +640,9 @@ new_schema = [
 
 # Create new client with updated schema
 client = create_redisearch_client(
+    "production",
     field_dicts=new_schema,
     redis=redis_client,
-    config_key="production"
 )
 
 # Migrate (automatically detects changes and recreates index)
