@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add `currency` field to `RunContext` model for currency information management
+
 ## [1.12.0] - 2025-12-05
 
 ### Changed
