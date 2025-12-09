@@ -13,6 +13,7 @@ def test_valid():
         "runner_id": "runner-001",
         "time_zone": "UTC",
         "language": "en",
+        "currency": "USD",
         "metadata": {"key": "value"},
     }
 
@@ -32,5 +33,6 @@ def test_invalid():
                 "runner_id": "runner-001",
                 "time_zone": "UTC",
                 "language": "en",
+                "currency": "USD",
             }
         )

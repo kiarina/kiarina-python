@@ -11,6 +11,7 @@ def test_create_run_context_with_settings():
     assert context.user_id == settings.user_id
     assert context.time_zone == settings.time_zone
     assert context.language == settings.language
+    assert context.currency == settings.currency
     assert context.metadata == settings.metadata
 
 
@@ -25,6 +26,7 @@ def test_create_run_context_with_overrides():
         runner_id="test-runner",
         time_zone="Asia/Tokyo",
         language="ja",
+        currency="JPY",
         metadata={"version": "1.0.0"},
     )
 
@@ -36,4 +38,5 @@ def test_create_run_context_with_overrides():
     assert context.runner_id == "test-runner"
     assert context.time_zone == "Asia/Tokyo"
     assert context.language == "ja"
+    assert context.currency == "JPY"
     assert context.metadata == {"version": "1.0.0"}

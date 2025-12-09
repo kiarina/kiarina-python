@@ -72,5 +72,13 @@ class RunContext(BaseModel):
     Example: "en" (English), "ja" (Japanese)
     """
 
+    currency: str
+    """
+    Currency Code
+
+    ISO 4217 currency code (3 letters).
+    Example: "USD" (US Dollar), "JPY" (Japanese Yen), "EUR" (Euro)
+    """
+
     metadata: dict[str, Any] = Field(default_factory=lambda: {})
     """Metadata"""
