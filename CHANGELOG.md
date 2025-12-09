@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.13.0] - 2025-12-09
+
 ### Added
 - **kiarina-llm**: Add `currency` field to `RunContext` model for currency information management
 
