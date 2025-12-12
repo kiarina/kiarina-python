@@ -29,13 +29,15 @@ context = create_run_context(
     user_id="user-456",
     agent_id="my-agent",
     time_zone="Asia/Tokyo",
-    language="ja"
+    language="ja",
+    currency="JPY"
 )
 
 print(f"User: {context.user_id}")
 print(f"Agent: {context.agent_id}")
 print(f"Time Zone: {context.time_zone}")
 print(f"Language: {context.language}")
+print(f"Currency: {context.currency}")
 ```
 
 ### Configuration Management
@@ -85,6 +87,7 @@ The `RunContext` model includes the following fields:
 | `runner_id` | `IDStr` | Runner identifier | `"linux"` (auto-detected) |
 | `time_zone` | `str` | IANA time zone | `"Asia/Tokyo"` |
 | `language` | `str` | ISO 639-1 language code | `"ja"` |
+| `currency` | `str` | ISO 4217 currency code | `"USD"` |
 | `metadata` | `dict[str, Any]` | Additional metadata | `{"version": "1.0"}` |
 
 ## Type Validation
@@ -196,6 +199,7 @@ print(f"Data directory: {data_dir}")
 | `runner_id` | `KIARINA_LLM_RUN_CONTEXT_RUNNER_ID` | `platform.system().lower()` | Default runner ID |
 | `time_zone` | `KIARINA_LLM_RUN_CONTEXT_TIME_ZONE` | `"UTC"` | Default time zone |
 | `language` | `KIARINA_LLM_RUN_CONTEXT_LANGUAGE` | `"en"` | Default language |
+| `currency` | `KIARINA_LLM_RUN_CONTEXT_CURRENCY` | `"USD"` | Default currency code |
 
 ## Development
 

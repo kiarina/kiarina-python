@@ -73,6 +73,14 @@ class RunContextSettings(BaseSettings):
     Example: "ja"
     """
 
+    currency: str = "USD"
+    """
+    Default value for the currency code.
+
+    ISO 4217 currency code (3 letters).
+    Example: "USD" (US Dollar), "JPY" (Japanese Yen), "EUR" (Euro)
+    """
+
     metadata: dict[str, Any] = Field(default_factory=dict)
     """Default value for the metadata."""
 

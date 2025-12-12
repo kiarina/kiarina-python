@@ -14,6 +14,7 @@ def create_run_context(
     runner_id: str | None = None,
     time_zone: str | None = None,
     language: str | None = None,
+    currency: str | None = None,
     metadata: dict[str, Any] | None = None,
 ) -> RunContext:
     """
@@ -30,5 +31,6 @@ def create_run_context(
         runner_id=runner_id if runner_id is not None else settings.runner_id,
         time_zone=time_zone if time_zone is not None else settings.time_zone,
         language=language if language is not None else settings.language,
+        currency=currency if currency is not None else settings.currency,
         metadata=metadata if metadata is not None else settings.metadata,
     )
