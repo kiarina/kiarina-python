@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Service account credentials**: Fixed scope application for service account credentials
+  - `get_service_account_credentials()` now accepts `scopes` parameter
+  - Scopes are properly applied via `with_scopes()` method
+  - Resolves `invalid_scope` errors when using service account credentials with Google APIs
+
 ## [1.13.0] - 2025-12-09
 
 ### Changed

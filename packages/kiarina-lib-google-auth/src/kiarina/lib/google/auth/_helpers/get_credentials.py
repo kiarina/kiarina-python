@@ -30,6 +30,7 @@ def get_credentials(
         credentials = get_service_account_credentials(
             service_account_file=settings.service_account_file,
             service_account_data=settings.get_service_account_data(),
+            scopes=scopes or settings.scopes,
         )
 
     elif settings.type == "user_account":
