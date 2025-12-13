@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.15.0] - 2025-12-13
+
 ### Added
 - **API key authentication**: Added support for API key authentication method
   - New `type: "api_key"` option in `GoogleAuthSettings`
