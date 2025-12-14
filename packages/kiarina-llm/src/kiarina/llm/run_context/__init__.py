@@ -3,8 +3,8 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._model import RunContext
-    from ._registry import create_run_context
+    from ._helpers.create_run_context import create_run_context
+    from ._models.run_context import RunContext
     from .settings import settings_manager
 
 __all__ = [
@@ -21,8 +21,8 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        "create_run_context": "._registry",
-        "RunContext": "._model",
+        "create_run_context": "._helpers.create_run_context",
+        "RunContext": "._models.run_context",
         "settings_manager": ".settings",
     }
 

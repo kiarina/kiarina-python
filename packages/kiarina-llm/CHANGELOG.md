@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Refactored internal module structure to follow project architecture rules
+  - Moved `_registry.py` to `_helpers/create_run_context.py`
+  - Moved `_model.py` to `_models/run_context.py`
+- Added default values to `RunContext` fields: `time_zone="UTC"`, `language="en"`, `currency="USD"`
+
 ## [1.15.0] - 2025-12-13
 
 ### Changed

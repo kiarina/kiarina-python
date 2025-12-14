@@ -2,8 +2,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from ._types.fs_name import FSName
-from ._types.id_str import IDStr
+from .._types.fs_name import FSName
+from .._types.id_str import IDStr
 
 
 class RunContext(BaseModel):
@@ -55,7 +55,7 @@ class RunContext(BaseModel):
     Identifier for the runner used by the AI.
     """
 
-    time_zone: str
+    time_zone: str = "UTC"
     """
     Time Zone
 
@@ -64,7 +64,7 @@ class RunContext(BaseModel):
     Example: "Asia/Tokyo"
     """
 
-    language: str
+    language: str = "en"
     """
     Language
 
@@ -72,7 +72,7 @@ class RunContext(BaseModel):
     Example: "en" (English), "ja" (Japanese)
     """
 
-    currency: str
+    currency: str = "USD"
     """
     Currency Code
 
