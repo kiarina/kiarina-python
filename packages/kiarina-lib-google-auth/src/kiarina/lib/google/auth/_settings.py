@@ -10,7 +10,7 @@ from pydantic_settings_manager import SettingsManager
 class GoogleAuthSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_GOOGLE_AUTH_")
 
-    type: Literal["default", "service_account", "user_account"] = "default"
+    type: Literal["default", "service_account", "user_account", "api_key"] = "default"
 
     # --------------------------------------------------
     # Fields (common)
@@ -75,6 +75,13 @@ class GoogleAuthSettings(BaseSettings):
     If cache is not available, use for refresh.
     Refreshed credentials will be cached.
     """
+
+    # --------------------------------------------------
+    # Fields (api_key)
+    # --------------------------------------------------
+
+    api_key: SecretStr | None = None
+    """API key for accessing Google APIs"""
 
     # --------------------------------------------------
     # Validators
