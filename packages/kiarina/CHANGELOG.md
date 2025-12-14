@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.16.0] - 2025-12-15
+
 ### Added
 - **kiarina-i18n**: Initial release of internationalization (i18n) utilities package
 
