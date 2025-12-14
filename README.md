@@ -22,6 +22,14 @@ this project provides robust, well-tested utilities for common development tasks
   - Install all kiarina packages with a single command: `pip install kiarina`
   - Aggregates all utilities and libraries in one package
 
+### 🌍 Internationalization
+
+- **[kiarina-i18n](packages/kiarina-i18n/)** - Simple internationalization (i18n) utilities
+  - Lightweight translation with fallback support
+  - Template variable substitution
+  - Configuration-based catalog management
+  - YAML file support for translations
+
 ### 🔧 Utilities
 
 - **[kiarina-utils-common](packages/kiarina-utils-common/)** - Common utilities and helper functions
@@ -108,7 +116,7 @@ Or install individual packages as needed:
 
 ```bash
 # Core utilities
-pip install kiarina-utils-common kiarina-utils-file
+pip install kiarina-i18n kiarina-utils-common kiarina-utils-file
 
 # LLM utilities
 pip install kiarina-llm
@@ -132,6 +140,17 @@ uv add kiarina-utils-common kiarina-utils-file
 ### Basic Usage
 
 ```python
+# Internationalization (i18n)
+from kiarina.i18n import get_translator, settings_manager
+settings_manager.user_config = {
+    "catalog": {
+        "en": {"app.greeting": {"hello": "Hello, $name!"}},
+        "ja": {"app.greeting": {"hello": "こんにちは、$name!"}}
+    }
+}
+t = get_translator("ja", "app.greeting")
+print(t("hello", name="World"))  # Output: こんにちは、World!
+
 # Configuration parsing
 from kiarina.utils.common import parse_config_string
 config = parse_config_string("app.debug:true,db.port:5432")

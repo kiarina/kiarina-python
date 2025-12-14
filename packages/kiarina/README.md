@@ -16,6 +16,7 @@ pip install kiarina
 
 This meta-package installs all kiarina utilities:
 
+- **kiarina-i18n** - Simple internationalization (i18n) utilities
 - **kiarina-utils-common** - Common utilities and helper functions
 - **kiarina-utils-file** - Advanced file I/O operations with encoding detection
 - **kiarina-lib-anthropic** - Anthropic API integration utilities

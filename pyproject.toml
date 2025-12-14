@@ -39,6 +39,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "kiarina",
+    "kiarina-i18n",
     "kiarina-lib-anthropic",
     "kiarina-lib-cloudflare-auth",
     "kiarina-lib-cloudflare-d1",
@@ -82,22 +83,24 @@ test = [
 [tool.uv.workspace]
 members = [
     "packages/kiarina",
+    "packages/kiarina-i18n",
     "packages/kiarina-lib-anthropic",
     "packages/kiarina-lib-cloudflare-auth",
     "packages/kiarina-lib-cloudflare-d1",
     "packages/kiarina-lib-falkordb",
     "packages/kiarina-lib-google-auth",
     "packages/kiarina-lib-google-cloud-storage",
+    "packages/kiarina-lib-openai",
     "packages/kiarina-lib-redis",
     "packages/kiarina-lib-redisearch",
     "packages/kiarina-llm",
     "packages/kiarina-utils-common",
     "packages/kiarina-utils-file",
-    "packages/kiarina-lib-openai",
 ]
 
 [tool.uv.sources]
 kiarina = { workspace = true }
+kiarina-i18n = { workspace = true }
 kiarina-lib-anthropic = { workspace = true }
 kiarina-lib-cloudflare-auth = { workspace = true }
 kiarina-lib-cloudflare-d1 = { workspace = true }
@@ -113,6 +116,7 @@ kiarina-utils-file = { workspace = true }
 
 [tool.mypy]
 mypy_path = [
+    "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",
@@ -138,6 +142,7 @@ asyncio_default_fixture_loop_scope = "session"
 
 [tool.coverage.run]
 source = [
+    "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",

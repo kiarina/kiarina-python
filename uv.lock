@@ -9,6 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "kiarina",
+    "kiarina-i18n",
     "kiarina-lib-anthropic",
     "kiarina-lib-cloudflare-auth",
     "kiarina-lib-cloudflare-d1",
@@ -454,6 +455,7 @@ name = "kiarina"
 version = "1.15.1"
 source = { editable = "packages/kiarina" }
 dependencies = [
+    { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1" },
@@ -470,6 +472,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
@@ -495,6 +498,25 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/af/16/e03a3e8710e064087a8abc8de268392537d1545bcd27838e783bec321dad/kiarina_falkordb-1.3.0.tar.gz", hash = "sha256:786ee07e0aaa3f901b0a013dc0a3a76afe8617aa5ea7cc6826bdf35dbf06702a", size = 29640, upload-time = "2025-10-24T00:30:50.985Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b8/12/b205afe995c0fb0fc0bb2a4dabfc45d336996a8e9dcf483ca0d425e1f23e/kiarina_falkordb-1.3.0-py3-none-any.whl", hash = "sha256:56da45c968465784c1617c0c583ccf03ba1e4182229cf1754495b93026bf83f7", size = 35177, upload-time = "2025-10-24T00:30:49.873Z" },
+]
+
+[[package]]
+name = "kiarina-i18n"
+version = "1.15.1"
+source = { editable = "packages/kiarina-i18n" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+    { name = "pyyaml" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2.0.0" },
+    { name = "pydantic-settings", specifier = ">=2.0.0" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
+    { name = "pyyaml", specifier = ">=6.0.0" },
 ]
 
 [[package]]
@@ -677,6 +699,7 @@ version = "1.15.1"
 source = { virtual = "." }
 dependencies = [
     { name = "kiarina" },
+    { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1" },
@@ -713,6 +736,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "kiarina", editable = "packages/kiarina" },
+    { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
