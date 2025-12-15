@@ -3,9 +3,10 @@ from importlib import import_module
 from importlib.metadata import version
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ._helpers.get_i18n import get_i18n
     from ._helpers.get_translator import get_translator
+    from ._helpers.translate_pydantic_model import translate_pydantic_model
     from ._models.i18n import I18n
     from ._models.translator import Translator
     from ._settings import I18nSettings, settings_manager
@@ -20,6 +21,7 @@ __all__ = [
     # ._helpers
     "get_i18n",
     "get_translator",
+    "translate_pydantic_model",
     # ._models
     "I18n",
     "Translator",
@@ -37,13 +39,14 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 def __getattr__(name: str) -> object:
-    if name not in __all__:
+    if name not in __all__:  # pragma: no cover
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
         # ._helpers
         "get_i18n": "._helpers.get_i18n",
         "get_translator": "._helpers.get_translator",
+        "translate_pydantic_model": "._helpers.translate_pydantic_model",
         # ._models
         "I18n": "._models.i18n",
         "Translator": "._models.translator",

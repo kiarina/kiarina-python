@@ -1,0 +1,99 @@
+"""Helper function to translate Pydantic model field descriptions."""
+
+from typing import Any, TypeVar
+
+from pydantic import BaseModel, create_model
+
+from .get_translator import get_translator
+
+T = TypeVar("T", bound=BaseModel)
+
+
+def translate_pydantic_model(
+    model: type[T],
+    language: str,
+    scope: str,
+) -> type[T]:
+    """
+    Translate Pydantic model field descriptions.
+
+    This function creates a new model class with translated field descriptions
+    while preserving all other field attributes and model configuration.
+
+    Args:
+        model: Pydantic model class to translate
+        language: Target language code (e.g., "ja", "en")
+        scope: Translation scope (e.g., "hoge.fields")
+
+    Returns:
+        New model class with translated field descriptions
+
+    Example:
+        ```python
+        from pydantic import BaseModel, Field
+        from kiarina.i18n import translate_pydantic_model, settings_manager
+
+        class Hoge(BaseModel):
+            name: str = Field(description="Your Name")
+            age: int = Field(description="Your Age")
+
+        # Configure catalog
+        settings_manager.user_config = {
+            "catalog": {
+                "ja": {
+                    "hoge.fields": {
+                        "name": "あなたの名前",
+                        "age": "あなたの年齢",
+                    }
+                }
+            }
+        }
+
+        # Translate model
+        HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+        print(HogeJa.model_fields["name"].description)  # "あなたの名前"
+        ```
+    """
+    from pydantic.fields import FieldInfo
+
+    translator = get_translator(language, scope)
+
+    # Build new fields with translated descriptions
+    new_fields: dict[str, Any] = {}
+    for field_name, field_info in model.model_fields.items():
+        # Translate description (use original as fallback)
+        original_desc = field_info.description or ""
+        translated_desc = translator(field_name, default=original_desc)
+
+        # Create a copy of the field info with translated description
+        # We create a new FieldInfo by copying the original and updating description
+        annotation = field_info.annotation if field_info.annotation is not None else Any
+        new_field_info = FieldInfo.from_annotation(annotation)
+
+        # Copy all attributes from original field
+        for attr in dir(field_info):
+            if not attr.startswith("_") and attr not in ("annotation", "description"):
+                try:
+                    value = getattr(field_info, attr)
+                    if not callable(value):
+                        setattr(new_field_info, attr, value)
+                except (AttributeError, TypeError):
+                    pass
+
+        # Set translated description
+        new_field_info.description = translated_desc
+
+        new_fields[field_name] = (field_info.annotation, new_field_info)
+
+    # Create new model with translated fields
+    # Preserve model config
+    translated_model = create_model(
+        model.__name__,
+        __config__=model.model_config,
+        __doc__=model.__doc__,
+        __base__=model.__base__,
+        __module__=model.__module__,
+        **new_fields,
+    )
+
+    return translated_model  # type: ignore

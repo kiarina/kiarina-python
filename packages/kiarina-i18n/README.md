@@ -121,6 +121,48 @@ ja:
     goodbye: "さようなら!"
 ```
 
+### Translating Pydantic Models
+
+For LLM tool schemas or API documentation, you can translate Pydantic model field descriptions:
+
+```python
+from pydantic import BaseModel, Field
+from kiarina.i18n import translate_pydantic_model, settings_manager
+
+# Define your model
+class UserInput(BaseModel):
+    name: str = Field(description="User's full name")
+    age: int = Field(description="User's age in years")
+    email: str = Field(description="User's email address")
+
+# Configure translations
+settings_manager.user_config = {
+    "catalog": {
+        "ja": {
+            "user.input.fields": {
+                "name": "ユーザーのフルネーム",
+                "age": "ユーザーの年齢（年単位）",
+                "email": "ユーザーのメールアドレス",
+            }
+        }
+    }
+}
+
+# Create translated model
+UserInputJa = translate_pydantic_model(UserInput, "ja", "user.input.fields")
+
+# Use in LLM tool definitions
+from langchain.tools import tool
+
+@tool(args_schema=UserInputJa)
+def register_user(name: str, age: int, email: str) -> str:
+    """ユーザーを登録します"""
+    return f"Registered: {name}"
+
+# The tool schema will have Japanese descriptions
+print(UserInputJa.model_json_schema())
+```
+
 ## API Reference
 
 ### Class-Based API
@@ -166,6 +208,31 @@ class AppI18n(I18n):
 
 t = get_i18n(AppI18n, "ja")
 print(t.title)  # Translated title
+```
+
+### Pydantic Model Translation
+
+#### `translate_pydantic_model(model: type[T], language: str, scope: str) -> type[T]`
+
+Translate Pydantic model field descriptions.
+
+**Parameters:**
+- `model`: Pydantic model class to translate
+- `language`: Target language code (e.g., "ja", "en")
+- `scope`: Translation scope (e.g., "hoge.fields")
+
+**Returns:**
+- New model class with translated field descriptions
+
+**Example:**
+```python
+from pydantic import BaseModel, Field
+from kiarina.i18n import translate_pydantic_model
+
+class Hoge(BaseModel):
+    name: str = Field(description="Your Name")
+
+HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 ```
 
 ### Functional API
