@@ -14,7 +14,7 @@ pip install kiarina-i18n
 
 ## Quick Start
 
-### Basic Usage
+### Basic Usage (Functional API)
 
 ```python
 from kiarina.i18n import get_translator, settings_manager
@@ -45,6 +45,55 @@ print(t("hello", name="World"))  # Output: こんにちは、World!
 print(t("goodbye"))  # Output: さようなら!
 ```
 
+### Type-Safe Class-Based API (Recommended)
+
+For better type safety and IDE support, use the class-based API:
+
+```python
+from kiarina.i18n import I18n, get_i18n, settings_manager
+
+# Define your i18n class
+class AppI18n(I18n):
+    scope: str = "app.greeting"
+    
+    hello: str = "Hello, $name!"
+    goodbye: str = "Goodbye!"
+    welcome: str = "Welcome to our app!"
+
+# Configure the catalog
+settings_manager.user_config = {
+    "catalog": {
+        "ja": {
+            "app.greeting": {
+                "hello": "こんにちは、$name!",
+                "goodbye": "さようなら!",
+                "welcome": "アプリへようこそ!"
+            }
+        }
+    }
+}
+
+# Get translated instance
+t = get_i18n(AppI18n, "ja")
+
+# Access translations with full type safety and IDE completion
+print(t.hello)     # Output: こんにちは、$name!
+print(t.goodbye)   # Output: さようなら!
+print(t.welcome)   # Output: アプリへようこそ!
+
+# Template variables are handled by the functional API
+from kiarina.i18n import get_translator
+translator = get_translator("ja", "app.greeting")
+print(translator("hello", name="World"))  # Output: こんにちは、World!
+```
+
+**Benefits of Class-Based API:**
+- **Type Safety**: IDE detects typos in field names
+- **Auto-completion**: IDE suggests available translation keys
+- **Self-documenting**: Class definition serves as documentation
+- **Default Values**: Explicit fallback values when translation is missing
+- **Immutable**: Translation instances are frozen and cannot be modified
+
 ### Using Catalog File
 
 ```python
@@ -74,7 +123,54 @@ ja:
 
 ## API Reference
 
-### `get_translator(language: str, scope: str) -> Translator`
+### Class-Based API
+
+#### `I18n`
+
+Base class for defining i18n translations with type safety.
+
+**Usage:**
+```python
+from kiarina.i18n import I18n
+
+class MyI18n(I18n):
+    scope: str = "my.module"
+    
+    title: str = "Default Title"
+    description: str = "Default Description"
+```
+
+**Features:**
+- **Immutable**: Instances are frozen and cannot be modified
+- **Type-safe**: Full type hints and validation
+- **Self-documenting**: Field names are translation keys, field values are defaults
+
+#### `get_i18n(i18n_class: type[T], language: str) -> T`
+
+Get a translated i18n instance.
+
+**Parameters:**
+- `i18n_class`: I18n class to instantiate (not instance!)
+- `language`: Target language code (e.g., "en", "ja")
+
+**Returns:**
+- Translated i18n instance with all fields translated
+
+**Example:**
+```python
+from kiarina.i18n import I18n, get_i18n
+
+class AppI18n(I18n):
+    scope: str = "app"
+    title: str = "My App"
+
+t = get_i18n(AppI18n, "ja")
+print(t.title)  # Translated title
+```
+
+### Functional API
+
+#### `get_translator(language: str, scope: str) -> Translator`
 
 Get a translator for the specified language and scope.
 

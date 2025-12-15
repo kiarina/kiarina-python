@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-utils-common"
-version = "1.16.0"
+version = "1.17.0"
 description = "Common utility functions for the kiarina namespace packages"
 readme = "README.md"
 license = "MIT"
