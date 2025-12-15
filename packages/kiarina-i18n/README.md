@@ -291,6 +291,25 @@ class HogeI18n(I18n, scope="hoge.fields"):
 HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")  # scope is optional
 ```
 
+### Cache Management
+
+#### `clear_cache() -> None`
+
+Clear all i18n-related caches.
+
+This function clears the internal caches used by `get_catalog()` and `get_translator()`. Useful when you need to reload configuration or reset state during testing.
+
+**Example:**
+```python
+from kiarina.i18n import clear_cache, settings_manager
+
+# Change settings
+settings_manager.user_config = {"catalog": {...}}
+
+# Clear caches to apply new settings
+clear_cache()
+```
+
 ### Functional API
 
 #### `get_catalog() -> Catalog`
