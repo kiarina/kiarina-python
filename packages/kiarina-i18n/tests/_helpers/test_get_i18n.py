@@ -157,3 +157,30 @@ def test_get_i18n_multiple_instances():
 
     assert t_a.title == "モジュールA"
     assert t_b.title == "モジュールB"
+
+
+def test_get_i18n_with_scope_field():
+    """Test that 'scope' can be used as a regular translation key."""
+
+    class MyI18n(I18n, scope="test.scope_field"):
+        scope: str = "Default Scope Text"
+        title: str = "Default Title"
+
+    settings_manager.user_config = {
+        "catalog": {
+            "ja": {
+                "test.scope_field": {
+                    "scope": "スコープテキスト",
+                    "title": "タイトル",
+                }
+            }
+        }
+    }
+
+    t = get_i18n(MyI18n, "ja")
+
+    # _scope should be the class-level scope
+    assert t._scope == "test.scope_field"
+    # scope field should be translated
+    assert t.scope == "スコープテキスト"
+    assert t.title == "タイトル"

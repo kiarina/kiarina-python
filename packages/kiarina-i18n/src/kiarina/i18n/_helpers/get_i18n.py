@@ -43,12 +43,9 @@ def get_i18n(i18n_class: type[T], language: str) -> T:
     # Get translator for the scope
     translator = get_translator(language, scope)
 
-    # Translate all fields except _scope
+    # Translate all fields
     translated_data = {}
     for field_name in i18n_class.model_fields:
-        if field_name == "_scope":
-            continue
-
         default_value = getattr(default_instance, field_name)
         translated_data[field_name] = translator(field_name, default=default_value)
 
