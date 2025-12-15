@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-i18n**: Type-safe class-based I18n API with `I18n` base class and `get_i18n()` function
+
 ## [1.16.0] - 2025-12-15
 
 ### Added

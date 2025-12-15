@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `I18n` base class for type-safe translation definitions with Pydantic validation
+- `get_i18n()` helper function to get translated instances with full type safety
+- Class-based API for better IDE support and auto-completion
+- Immutable translation instances (frozen=True) to prevent accidental modifications
+- Self-documenting translation keys using class field definitions
+- Automatic fallback to default values when translations are missing
+
+### Changed
+- Reorganized test files by target module (_helpers/, _models/)
+- Converted class-based tests to function-based tests
+- Added pytest fixtures for cache management in tests
+
 ## [1.16.0] - 2025-12-15
 
 ### Added
