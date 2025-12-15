@@ -89,7 +89,7 @@ When lazy imports are needed, implement as follows:
 from importlib import import_module
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ._constants.some_constant import SOME_CONSTANT
     from ._helpers.create_fuga import create_fuga
     from ._models.fuga import Fuga
@@ -108,7 +108,7 @@ __all__ = [
 ]
 
 def __getattr__(name: str) -> object:
-    if name not in __all__:
+    if name not in __all__:  # pragma: no cover
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
@@ -191,7 +191,7 @@ The contents of `_async/`, `_core/`, and `_sync/` should follow the file structu
 from importlib import import_module
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ._core._schemas.fuga import Fuga
     from ._sync._helpers.get_fuga import get_fuga
 
@@ -203,7 +203,7 @@ __all__ = [
 ]
 
 def __getattr__(name: str) -> object:
-    if name not in __all__:
+    if name not in __all__:  # pragma: no cover
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
@@ -223,7 +223,7 @@ def __getattr__(name: str) -> object:
 from importlib import import_module
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ._async._helpers.get_fuga import get_fuga
     from ._core._schemas.fuga import Fuga
 
@@ -235,7 +235,7 @@ __all__ = [
 ]
 
 def __getattr__(name: str) -> object:
-    if name not in __all__:
+    if name not in __all__:  # pragma: no cover
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
