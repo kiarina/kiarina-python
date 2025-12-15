@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `translate_pydantic_model()` function to translate Pydantic model field descriptions for LLM tool schemas
+- `get_catalog()` helper function to get translation catalog independently for custom translation logic
 
 ## [1.17.0] - 2025-12-15
 

@@ -4,6 +4,7 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ._helpers.get_catalog import get_catalog
     from ._helpers.get_i18n import get_i18n
     from ._helpers.get_translator import get_translator
     from ._helpers.translate_pydantic_model import translate_pydantic_model
@@ -19,6 +20,7 @@ __version__ = version("kiarina-i18n")
 
 __all__ = [
     # ._helpers
+    "get_catalog",
     "get_i18n",
     "get_translator",
     "translate_pydantic_model",
@@ -44,6 +46,7 @@ def __getattr__(name: str) -> object:
 
     module_map = {
         # ._helpers
+        "get_catalog": "._helpers.get_catalog",
         "get_i18n": "._helpers.get_i18n",
         "get_translator": "._helpers.get_translator",
         "translate_pydantic_model": "._helpers.translate_pydantic_model",

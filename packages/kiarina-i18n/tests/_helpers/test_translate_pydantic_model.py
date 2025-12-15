@@ -1,21 +1,23 @@
-"""Tests for translate_pydantic_model function."""
-
 import pytest
 from pydantic import BaseModel, Field
 
-from kiarina.i18n import settings_manager, translate_pydantic_model
-from kiarina.i18n._helpers.get_translator import _get_catalog, get_translator
+from kiarina.i18n import (
+    get_catalog,
+    get_translator,
+    settings_manager,
+    translate_pydantic_model,
+)
 
 
 @pytest.fixture(autouse=True)
 def clear_caches():
     settings_manager.cli_args = {}
     get_translator.cache_clear()
-    _get_catalog.cache_clear()
+    get_catalog.cache_clear()
     yield
     settings_manager.cli_args = {}
     get_translator.cache_clear()
-    _get_catalog.cache_clear()
+    get_catalog.cache_clear()
 
 
 def test_translate_pydantic_model_basic():
