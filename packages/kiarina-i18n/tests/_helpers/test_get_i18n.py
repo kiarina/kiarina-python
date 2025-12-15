@@ -18,8 +18,7 @@ def clear_caches():
 def test_get_i18n_with_default_values():
     """Test get_i18n returns default values when no translation exists."""
 
-    class MyI18n(I18n):
-        scope: str = "test.default"
+    class MyI18n(I18n, scope="test.default"):
         title: str = "Default Title"
         description: str = "Default Description"
 
@@ -27,7 +26,7 @@ def test_get_i18n_with_default_values():
     settings_manager.user_config = {"catalog": {}}
 
     t = get_i18n(MyI18n, "en")
-    assert t.scope == "test.default"
+    assert t._scope == "test.default"
     assert t.title == "Default Title"
     assert t.description == "Default Description"
 
@@ -35,8 +34,7 @@ def test_get_i18n_with_default_values():
 def test_get_i18n_with_translations():
     """Test get_i18n returns translated values."""
 
-    class MyI18n(I18n):
-        scope: str = "test.translated"
+    class MyI18n(I18n, scope="test.translated"):
         title: str = "Default Title"
         description: str = "Default Description"
 
@@ -60,13 +58,13 @@ def test_get_i18n_with_translations():
 
     # Get Japanese translation
     t_ja = get_i18n(MyI18n, "ja")
-    assert t_ja.scope == "test.translated"
+    assert t_ja._scope == "test.translated"
     assert t_ja.title == "日本語タイトル"
     assert t_ja.description == "日本語説明"
 
     # Get English translation
     t_en = get_i18n(MyI18n, "en")
-    assert t_en.scope == "test.translated"
+    assert t_en._scope == "test.translated"
     assert t_en.title == "English Title"
     assert t_en.description == "English Description"
 
@@ -74,8 +72,7 @@ def test_get_i18n_with_translations():
 def test_get_i18n_with_partial_translations():
     """Test get_i18n falls back to default for missing translations."""
 
-    class MyI18n(I18n):
-        scope: str = "test.partial"
+    class MyI18n(I18n, scope="test.partial"):
         title: str = "Default Title"
         description: str = "Default Description"
         error: str = "Default Error"
@@ -101,8 +98,7 @@ def test_get_i18n_with_partial_translations():
 def test_get_i18n_with_fallback_language():
     """Test get_i18n uses fallback language."""
 
-    class MyI18n(I18n):
-        scope: str = "test.fallback"
+    class MyI18n(I18n, scope="test.fallback"):
         title: str = "Default Title"
 
     # Configure catalog with fallback (use default_language instead of fallback_language)
@@ -125,8 +121,7 @@ def test_get_i18n_with_fallback_language():
 def test_get_i18n_type_safety():
     """Test that get_i18n preserves type information."""
 
-    class MyI18n(I18n):
-        scope: str = "test.type"
+    class MyI18n(I18n, scope="test.type"):
         title: str = "Title"
         count: int = 42
 
@@ -142,12 +137,10 @@ def test_get_i18n_type_safety():
 def test_get_i18n_multiple_instances():
     """Test that multiple i18n classes can coexist."""
 
-    class ModuleAI18n(I18n):
-        scope: str = "module.a"
+    class ModuleAI18n(I18n, scope="module.a"):
         title: str = "Module A"
 
-    class ModuleBI18n(I18n):
-        scope: str = "module.b"
+    class ModuleBI18n(I18n, scope="module.b"):
         title: str = "Module B"
 
     settings_manager.user_config = {

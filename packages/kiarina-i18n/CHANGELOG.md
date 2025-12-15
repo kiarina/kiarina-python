@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `translate_pydantic_model()` function to translate Pydantic model field descriptions for LLM tool schemas
 - `get_catalog()` helper function to get translation catalog independently for custom translation logic
 
+### Changed
+- **BREAKING**: `I18n` class now uses `scope` as a class parameter instead of an instance field
+  - Old: `class MyI18n(I18n): scope: str = "my.module"`
+  - New: `class MyI18n(I18n, scope="my.module")` or `class MyI18n(I18n)` (auto-generated)
+  - This allows `scope` to be used as a regular translation key
+  - Internal `_scope` attribute stores the scope value
+  - If scope is not provided, it's automatically generated from module and class name
+    - Example: `my_app.i18n.UserProfileI18n` → `my_app.i18n.UserProfileI18n`
+
 ## [1.17.0] - 2025-12-15
 
 ### Added

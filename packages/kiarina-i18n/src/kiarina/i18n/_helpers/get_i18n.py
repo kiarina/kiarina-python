@@ -1,5 +1,3 @@
-"""Helper function to get translated i18n instance."""
-
 from typing import TypeVar
 
 from .._models.i18n import I18n
@@ -26,8 +24,7 @@ def get_i18n(i18n_class: type[T], language: str) -> T:
         ```python
         from kiarina.i18n import I18n, get_i18n
 
-        class MyI18n(I18n):
-            scope: str = "my.module"
+        class MyI18n(I18n, scope="my.module"):
             title: str = "My Title"
             description: str = "My Description"
 
@@ -37,18 +34,19 @@ def get_i18n(i18n_class: type[T], language: str) -> T:
         print(t.description)  # Translated description in Japanese
         ```
     """
-    # Create default instance to get scope and default values
-    # Use model_construct to bypass validation (scope will be set by subclass defaults)
+    # Get scope from class attribute
+    scope = i18n_class._scope
+
+    # Create default instance to get default values
     default_instance = i18n_class.model_construct()
-    scope = default_instance.scope
 
     # Get translator for the scope
     translator = get_translator(language, scope)
 
-    # Translate all fields except scope
-    translated_data = {"scope": scope}
+    # Translate all fields except _scope
+    translated_data = {}
     for field_name in i18n_class.model_fields:
-        if field_name == "scope":
+        if field_name == "_scope":
             continue
 
         default_value = getattr(default_instance, field_name)

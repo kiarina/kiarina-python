@@ -52,13 +52,18 @@ For better type safety and IDE support, use the class-based API:
 ```python
 from kiarina.i18n import I18n, get_i18n, settings_manager
 
-# Define your i18n class
-class AppI18n(I18n):
-    scope: str = "app.greeting"
-    
+# Define your i18n class with explicit scope
+class AppI18n(I18n, scope="app.greeting"):
     hello: str = "Hello, $name!"
     goodbye: str = "Goodbye!"
     welcome: str = "Welcome to our app!"
+
+# Or let scope be auto-generated from module.class_name
+# If defined in my_app/i18n.py, scope will be: my_app.i18n.UserProfileI18n
+class UserProfileI18n(I18n):
+    name: str = "Name"
+    email: str = "Email"
+    bio: str = "Biography"
 
 # Configure the catalog
 settings_manager.user_config = {
@@ -93,6 +98,7 @@ print(translator("hello", name="World"))  # Output: こんにちは、World!
 - **Self-documenting**: Class definition serves as documentation
 - **Default Values**: Explicit fallback values when translation is missing
 - **Immutable**: Translation instances are frozen and cannot be modified
+- **Clean Syntax**: Scope is defined at class level, not as a field
 
 ### Using Catalog File
 
@@ -175,17 +181,24 @@ Base class for defining i18n translations with type safety.
 ```python
 from kiarina.i18n import I18n
 
-class MyI18n(I18n):
-    scope: str = "my.module"
-    
+# Explicit scope
+class MyI18n(I18n, scope="my.module"):
     title: str = "Default Title"
     description: str = "Default Description"
+
+# Auto-generated scope (from module.class_name)
+# If defined in my_app/i18n.py, scope will be: my_app.i18n.UserProfileI18n
+class UserProfileI18n(I18n):
+    name: str = "Name"
+    email: str = "Email"
 ```
 
 **Features:**
 - **Immutable**: Instances are frozen and cannot be modified
 - **Type-safe**: Full type hints and validation
 - **Self-documenting**: Field names are translation keys, field values are defaults
+- **Clean Syntax**: Scope is defined at class level using inheritance parameter
+- **Auto-scope**: Automatically generates scope from module and class name if not provided
 
 #### `get_i18n(i18n_class: type[T], language: str) -> T`
 
@@ -202,8 +215,7 @@ Get a translated i18n instance.
 ```python
 from kiarina.i18n import I18n, get_i18n
 
-class AppI18n(I18n):
-    scope: str = "app"
+class AppI18n(I18n, scope="app"):
     title: str = "My App"
 
 t = get_i18n(AppI18n, "ja")
