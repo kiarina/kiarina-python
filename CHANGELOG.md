@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.18.0] - 2025-12-16
+
+### Added
+- **kiarina-i18n**: `translate_pydantic_model()` function to translate Pydantic model field descriptions for LLM tool schemas
+- **kiarina-i18n**: `get_catalog()` helper function to get translation catalog independently for custom translation logic
+
+### Changed
+- **kiarina-i18n**: **BREAKING** - `I18n` class now uses `scope` as a class parameter instead of an instance field
+
 ## [1.17.0] - 2025-12-15
 
 ### Added
