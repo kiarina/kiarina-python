@@ -133,9 +133,9 @@ For LLM tool schemas or API documentation, you can translate Pydantic model fiel
 
 ```python
 from pydantic import BaseModel, Field
-from kiarina.i18n import I18n, translate_pydantic_model, settings_manager
+from kiarina.i18n import translate_pydantic_model, settings_manager
 
-# Method 1: With explicit scope (for regular BaseModel)
+# Define your Pydantic model with English descriptions
 class UserInput(BaseModel):
     name: str = Field(description="User's full name")
     age: int = Field(description="User's age in years")
@@ -154,17 +154,8 @@ settings_manager.user_config = {
     }
 }
 
-# Create translated model (scope required)
+# Create translated model
 UserInputJa = translate_pydantic_model(UserInput, "ja", "user.input.fields")
-
-# Method 2: With I18n subclass (scope auto-detected)
-class UserInputI18n(I18n, scope="user.input.fields"):
-    name: str = "User's full name"
-    age: str = "User's age in years"
-    email: str = "User's email address"
-
-# Create translated model (scope automatically used from I18n._scope)
-UserInputI18nJa = translate_pydantic_model(UserInputI18n, "ja")
 
 # Use in LLM tool definitions
 from langchain.tools import tool
@@ -175,7 +166,44 @@ def register_user(name: str, age: int, email: str) -> str:
     return f"Registered: {name}"
 
 # The tool schema will have Japanese descriptions
-print(UserInputJa.model_json_schema())
+schema = UserInputJa.model_json_schema()
+print(schema["properties"]["name"]["description"])  # "ユーザーのフルネーム"
+```
+
+**Note:** If you're using `I18n` subclass for translation definitions, you can omit the `scope` parameter in `translate_pydantic_model()`:
+
+```python
+from kiarina.i18n import I18n
+
+# With explicit scope
+class UserInputI18n(I18n, scope="user.input.fields"):
+    name: str = "User's full name"
+    age: str = "User's age in years"
+    email: str = "User's email address"
+
+# Translate I18n class (scope is automatically detected from I18n._scope)
+UserInputI18nJa = translate_pydantic_model(UserInputI18n, "ja")
+
+# Or with auto-generated scope (from module.class_name)
+# If defined in my_app/models.py, scope will be: my_app.models.UserInputI18n
+class UserInputI18n(I18n):  # No scope parameter
+    name: str = "User's full name"
+    age: str = "User's age in years"
+
+# Configure catalog with auto-generated scope
+settings_manager.user_config = {
+    "catalog": {
+        "ja": {
+            "my_app.models.UserInputI18n": {  # Use auto-generated scope
+                "name": "ユーザーのフルネーム",
+                "age": "ユーザーの年齢（年単位）",
+            }
+        }
+    }
+}
+
+# Translate with auto-detected scope
+UserInputI18nJa = translate_pydantic_model(UserInputI18n, "ja")
 ```
 
 ## API Reference
