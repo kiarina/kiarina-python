@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.17.0] - 2025-12-15
+
 ### Added
 - `I18n` base class for type-safe translation definitions with Pydantic validation
 - `get_i18n()` helper function to get translated instances with full type safety
