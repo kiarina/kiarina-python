@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `translate_pydantic_model()` function to translate Pydantic model field descriptions for LLM tool schemas
 - `get_catalog()` helper function to get translation catalog independently for custom translation logic
+- `translate_pydantic_model()` now supports omitting `scope` parameter when translating `I18n` subclasses (automatically uses `model._scope`)
 
 ### Changed
 - **BREAKING**: `I18n` class now uses `scope` as a class parameter instead of an instance field

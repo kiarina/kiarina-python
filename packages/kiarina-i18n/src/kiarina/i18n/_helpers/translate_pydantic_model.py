@@ -1,18 +1,33 @@
-"""Helper function to translate Pydantic model field descriptions."""
-
-from typing import Any, TypeVar
+from typing import Any, TypeVar, overload
 
 from pydantic import BaseModel, create_model
 
+from .._models.i18n import I18n
 from .get_translator import get_translator
 
 T = TypeVar("T", bound=BaseModel)
 
 
+@overload
 def translate_pydantic_model(
     model: type[T],
     language: str,
     scope: str,
+) -> type[T]: ...
+
+
+@overload
+def translate_pydantic_model(
+    model: type[I18n],
+    language: str,
+    scope: None = None,
+) -> type[I18n]: ...
+
+
+def translate_pydantic_model(
+    model: type[T],
+    language: str,
+    scope: str | None = None,
 ) -> type[T]:
     """
     Translate Pydantic model field descriptions.
@@ -23,13 +38,15 @@ def translate_pydantic_model(
     Args:
         model: Pydantic model class to translate
         language: Target language code (e.g., "ja", "en")
-        scope: Translation scope (e.g., "hoge.fields")
+        scope: Translation scope (e.g., "hoge.fields").
+               If model is an I18n subclass and scope is None, uses model._scope.
 
     Returns:
         New model class with translated field descriptions
 
     Example:
         ```python
+        # With explicit scope
         from pydantic import BaseModel, Field
         from kiarina.i18n import translate_pydantic_model, settings_manager
 
@@ -52,8 +69,27 @@ def translate_pydantic_model(
         # Translate model
         HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
         print(HogeJa.model_fields["name"].description)  # "あなたの名前"
+
+        # With I18n subclass (scope auto-detected)
+        from kiarina.i18n import I18n
+
+        class HogeI18n(I18n, scope="hoge.fields"):
+            name: str = "Your Name"
+            age: str = "Your Age"
+
+        HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")
+        print(HogeI18nJa.model_fields["name"].description)  # "あなたの名前"
         ```
     """
+    # Auto-detect scope from I18n subclass
+    if scope is None:
+        if issubclass(model, I18n):
+            scope = model._scope
+        else:
+            raise ValueError(
+                "scope parameter is required when model is not an I18n subclass"
+            )
+
     from pydantic.fields import FieldInfo
 
     translator = get_translator(language, scope)

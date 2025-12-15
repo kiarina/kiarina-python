@@ -133,9 +133,9 @@ For LLM tool schemas or API documentation, you can translate Pydantic model fiel
 
 ```python
 from pydantic import BaseModel, Field
-from kiarina.i18n import translate_pydantic_model, settings_manager
+from kiarina.i18n import I18n, translate_pydantic_model, settings_manager
 
-# Define your model
+# Method 1: With explicit scope (for regular BaseModel)
 class UserInput(BaseModel):
     name: str = Field(description="User's full name")
     age: int = Field(description="User's age in years")
@@ -154,8 +154,17 @@ settings_manager.user_config = {
     }
 }
 
-# Create translated model
+# Create translated model (scope required)
 UserInputJa = translate_pydantic_model(UserInput, "ja", "user.input.fields")
+
+# Method 2: With I18n subclass (scope auto-detected)
+class UserInputI18n(I18n, scope="user.input.fields"):
+    name: str = "User's full name"
+    age: str = "User's age in years"
+    email: str = "User's email address"
+
+# Create translated model (scope automatically used from I18n._scope)
+UserInputI18nJa = translate_pydantic_model(UserInputI18n, "ja")
 
 # Use in LLM tool definitions
 from langchain.tools import tool
@@ -224,14 +233,14 @@ print(t.title)  # Translated title
 
 ### Pydantic Model Translation
 
-#### `translate_pydantic_model(model: type[T], language: str, scope: str) -> type[T]`
+#### `translate_pydantic_model(model: type[T], language: str, scope: str | None = None) -> type[T]`
 
 Translate Pydantic model field descriptions.
 
 **Parameters:**
 - `model`: Pydantic model class to translate
 - `language`: Target language code (e.g., "ja", "en")
-- `scope`: Translation scope (e.g., "hoge.fields")
+- `scope`: Translation scope (e.g., "hoge.fields"). Optional if `model` is an `I18n` subclass (automatically uses `model._scope`)
 
 **Returns:**
 - New model class with translated field descriptions
@@ -239,12 +248,19 @@ Translate Pydantic model field descriptions.
 **Example:**
 ```python
 from pydantic import BaseModel, Field
-from kiarina.i18n import translate_pydantic_model
+from kiarina.i18n import I18n, translate_pydantic_model
 
+# With explicit scope (for regular BaseModel)
 class Hoge(BaseModel):
     name: str = Field(description="Your Name")
 
 HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+
+# With I18n subclass (scope auto-detected)
+class HogeI18n(I18n, scope="hoge.fields"):
+    name: str = "Your Name"
+
+HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")  # scope is optional
 ```
 
 ### Functional API

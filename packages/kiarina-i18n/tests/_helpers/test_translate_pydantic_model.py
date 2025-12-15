@@ -240,3 +240,94 @@ def test_translate_pydantic_model_preserves_model_config():
     instance = HogeJa(name="Alice")
     with pytest.raises(Exception):  # ValidationError
         instance.name = "Bob"  # type: ignore
+
+
+def test_translate_pydantic_model_with_i18n_subclass():
+    """Test translating I18n subclass without explicit scope."""
+    from kiarina.i18n import I18n
+
+    class HogeI18n(I18n, scope="hoge.i18n"):
+        name: str = "Your Name"
+        age: str = "Your Age"
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "hoge.i18n": {
+                    "name": "あなたの名前",
+                    "age": "あなたの年齢",
+                }
+            }
+        }
+    }
+
+    # Translate without explicit scope (should use model._scope)
+    HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")
+
+    # Check translated descriptions
+    assert HogeI18nJa.model_fields["name"].description == "あなたの名前"
+    assert HogeI18nJa.model_fields["age"].description == "あなたの年齢"
+
+
+def test_translate_pydantic_model_with_i18n_subclass_explicit_scope():
+    """Test that explicit scope overrides I18n subclass scope."""
+    from kiarina.i18n import I18n
+
+    class HogeI18n(I18n, scope="hoge.i18n"):
+        name: str = "Your Name"
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "hoge.i18n": {"name": "I18nスコープ"},
+                "custom.scope": {"name": "カスタムスコープ"},
+            }
+        }
+    }
+
+    # With explicit scope (should override model._scope)
+    HogeI18nJa = translate_pydantic_model(HogeI18n, "ja", "custom.scope")
+
+    # Should use custom scope, not model._scope
+    assert HogeI18nJa.model_fields["name"].description == "カスタムスコープ"
+
+
+def test_translate_pydantic_model_without_scope_raises_error():
+    """Test that omitting scope for non-I18n model raises error."""
+
+    class Hoge(BaseModel):
+        name: str = Field(description="Your Name")
+
+    settings_manager.cli_args = {"catalog": {"ja": {"hoge.fields": {"name": "名前"}}}}
+
+    # Should raise ValueError when scope is omitted for non-I18n model
+    with pytest.raises(ValueError, match="scope parameter is required"):
+        translate_pydantic_model(Hoge, "ja")  # type: ignore
+
+
+def test_translate_pydantic_model_i18n_with_auto_scope():
+    """Test I18n subclass with auto-generated scope."""
+    from kiarina.i18n import I18n
+
+    # Auto-generated scope will be: tests._helpers.test_translate_pydantic_model.UserI18n
+    class UserI18n(I18n):
+        name: str = "Name"
+        email: str = "Email"
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "tests._helpers.test_translate_pydantic_model.UserI18n": {
+                    "name": "名前",
+                    "email": "メールアドレス",
+                }
+            }
+        }
+    }
+
+    # Translate without explicit scope
+    UserI18nJa = translate_pydantic_model(UserI18n, "ja")
+
+    # Check translated descriptions
+    assert UserI18nJa.model_fields["name"].description == "名前"
+    assert UserI18nJa.model_fields["email"].description == "メールアドレス"
