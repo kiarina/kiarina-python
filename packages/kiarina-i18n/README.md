@@ -129,7 +129,7 @@ ja:
 
 ### Translating Pydantic Models
 
-For LLM tool schemas or API documentation, you can translate Pydantic model field descriptions:
+For LLM tool schemas or API documentation, you can translate Pydantic model field descriptions and docstrings:
 
 ```python
 from pydantic import BaseModel, Field
@@ -137,15 +137,18 @@ from kiarina.i18n import translate_pydantic_model, settings_manager
 
 # Define your Pydantic model with English descriptions
 class UserInput(BaseModel):
+    """User input model for registration."""
+    
     name: str = Field(description="User's full name")
     age: int = Field(description="User's age in years")
     email: str = Field(description="User's email address")
 
-# Configure translations
+# Configure translations (including __doc__)
 settings_manager.user_config = {
     "catalog": {
         "ja": {
             "user.input.fields": {
+                "__doc__": "ユーザー登録用の入力モデル。",
                 "name": "ユーザーのフルネーム",
                 "age": "ユーザーの年齢（年単位）",
                 "email": "ユーザーのメールアドレス",
@@ -167,6 +170,7 @@ def register_user(name: str, age: int, email: str) -> str:
 
 # The tool schema will have Japanese descriptions
 schema = UserInputJa.model_json_schema()
+print(UserInputJa.__doc__)  # "ユーザー登録用の入力モデル。"
 print(schema["properties"]["name"]["description"])  # "ユーザーのフルネーム"
 ```
 

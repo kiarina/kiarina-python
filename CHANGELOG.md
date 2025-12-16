@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-i18n**: `translate_pydantic_model()` now translates model `__doc__` (docstring)
+
 ## [1.18.1] - 2025-12-16
 
 ### Added

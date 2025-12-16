@@ -94,6 +94,10 @@ def translate_pydantic_model(
 
     translator = get_translator(language, scope)
 
+    # Translate __doc__ (use original as fallback)
+    original_doc = model.__doc__ or ""
+    translated_doc = translator("__doc__", default=original_doc)
+
     # Build new fields with translated descriptions
     new_fields: dict[str, Any] = {}
     for field_name, field_info in model.model_fields.items():
@@ -126,7 +130,7 @@ def translate_pydantic_model(
     translated_model = create_model(
         model.__name__,
         __config__=model.model_config,
-        __doc__=model.__doc__,
+        __doc__=translated_doc,
         __base__=model.__base__,
         __module__=model.__module__,
         **new_fields,

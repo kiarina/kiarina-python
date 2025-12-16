@@ -315,3 +315,81 @@ def test_translate_pydantic_model_i18n_with_auto_scope():
     # Check translated descriptions
     assert UserI18nJa.model_fields["name"].description == "名前"
     assert UserI18nJa.model_fields["email"].description == "メールアドレス"
+
+
+def test_translate_pydantic_model_translates_docstring():
+    """Test that __doc__ is translated."""
+
+    class Hoge(BaseModel):
+        """
+        Hoge model for testing.
+        """
+
+        name: str = Field(description="Your Name")
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "hoge.fields": {
+                    "__doc__": "テスト用のHogeモデル。",
+                    "name": "あなたの名前",
+                }
+            }
+        }
+    }
+
+    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+
+    # Check translated __doc__
+    assert HogeJa.__doc__ == "テスト用のHogeモデル。"
+    assert HogeJa.model_fields["name"].description == "あなたの名前"
+
+
+def test_translate_pydantic_model_docstring_fallback():
+    """Test that __doc__ falls back to original when translation is missing."""
+
+    class Hoge(BaseModel):
+        """Original documentation."""
+
+        name: str = Field(description="Your Name")
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "hoge.fields": {
+                    # __doc__ translation is missing
+                    "name": "あなたの名前",
+                }
+            }
+        }
+    }
+
+    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+
+    # Should fall back to original __doc__
+    assert HogeJa.__doc__ == "Original documentation."
+    assert HogeJa.model_fields["name"].description == "あなたの名前"
+
+
+def test_translate_pydantic_model_without_docstring():
+    """Test translation when model has no __doc__."""
+
+    class Hoge(BaseModel):
+        name: str = Field(description="Your Name")
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "hoge.fields": {
+                    "__doc__": "追加されたドキュメント",
+                    "name": "あなたの名前",
+                }
+            }
+        }
+    }
+
+    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+
+    # Should use translated __doc__ even if original is None
+    assert HogeJa.__doc__ == "追加されたドキュメント"
+    assert HogeJa.model_fields["name"].description == "あなたの名前"
