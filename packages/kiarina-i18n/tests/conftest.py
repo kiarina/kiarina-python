@@ -1,5 +1,13 @@
 import pytest
 
+from kiarina.i18n import clear_cache
+
+
+@pytest.fixture(autouse=True)
+def clear_i18n_caches():
+    """Clear i18n caches before and after each test."""
+    clear_cache()
+
 
 @pytest.fixture
 def sample_catalog():

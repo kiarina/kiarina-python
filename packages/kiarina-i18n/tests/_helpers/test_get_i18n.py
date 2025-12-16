@@ -1,18 +1,4 @@
-import pytest
-
-from kiarina.i18n import I18n, get_catalog, get_i18n, get_translator, settings_manager
-
-
-@pytest.fixture(autouse=True)
-def clear_caches():
-    """Clear caches before and after each test."""
-    settings_manager.clear()
-    get_translator.cache_clear()
-    get_catalog.cache_clear()
-    yield
-    settings_manager.clear()
-    get_translator.cache_clear()
-    get_catalog.cache_clear()
+from kiarina.i18n import I18n, get_i18n, settings_manager
 
 
 def test_get_i18n_with_default_values():

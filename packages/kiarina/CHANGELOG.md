@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.18.1] - 2025-12-16
+
+### Added
+- **kiarina-i18n**: `clear_cache()` helper function for i18n cache management
+
 ## [1.18.0] - 2025-12-16
 
 ### Added

@@ -1,16 +1,4 @@
-import pytest
-
 from kiarina.i18n import get_catalog, settings_manager
-
-
-@pytest.fixture(autouse=True)
-def clear_caches():
-    """Clear caches before and after each test."""
-    settings_manager.clear()
-    get_catalog.cache_clear()
-    yield
-    settings_manager.clear()
-    get_catalog.cache_clear()
 
 
 def test_get_catalog_from_settings(sample_catalog):
