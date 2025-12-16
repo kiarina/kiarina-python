@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.18.2] - 2025-12-17
+
 ### Added
 - `translate_pydantic_model()` now translates model `__doc__` (docstring) in addition to field descriptions
   - Use `__doc__` key in catalog to provide translated docstring
