@@ -1,5 +1,3 @@
-"""Base class for i18n definitions."""
-
 from typing import Any
 
 from pydantic import BaseModel

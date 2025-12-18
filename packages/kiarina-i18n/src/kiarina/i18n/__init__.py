@@ -8,7 +8,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from ._helpers.get_catalog import get_catalog
     from ._helpers.get_i18n import get_i18n
     from ._helpers.get_translator import get_translator
-    from ._helpers.translate_pydantic_model import translate_pydantic_model
     from ._models.i18n import I18n
     from ._models.translator import Translator
     from ._settings import I18nSettings, settings_manager
@@ -25,7 +24,6 @@ __all__ = [
     "get_catalog",
     "get_i18n",
     "get_translator",
-    "translate_pydantic_model",
     # ._models
     "I18n",
     "Translator",
@@ -52,7 +50,6 @@ def __getattr__(name: str) -> object:
         "get_catalog": "._helpers.get_catalog",
         "get_i18n": "._helpers.get_i18n",
         "get_translator": "._helpers.get_translator",
-        "translate_pydantic_model": "._helpers.translate_pydantic_model",
         # ._models
         "I18n": "._models.i18n",
         "Translator": "._models.translator",

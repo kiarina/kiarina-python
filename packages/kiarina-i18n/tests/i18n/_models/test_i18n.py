@@ -60,9 +60,9 @@ def test_i18n_auto_scope_generation():
     class MyAppI18n(I18n):
         title: str = "My Title"
 
-    # Scope should be auto-generated as: tests._models.test_i18n.MyAppI18n
+    # Scope should be auto-generated as: tests.i18n._models.test_i18n.MyAppI18n
     i18n = MyAppI18n()
-    assert i18n._scope == "tests._models.test_i18n.MyAppI18n"
+    assert i18n._scope == "tests.i18n._models.test_i18n.MyAppI18n"
 
 
 def test_i18n_auto_scope_with_nested_class():
@@ -73,7 +73,7 @@ def test_i18n_auto_scope_with_nested_class():
 
     i18n = UserProfileI18n()
     # Should use class name as-is: UserProfileI18n
-    assert i18n._scope == "tests._models.test_i18n.UserProfileI18n"
+    assert i18n._scope == "tests.i18n._models.test_i18n.UserProfileI18n"
 
 
 def test_i18n_explicit_scope_overrides_auto():

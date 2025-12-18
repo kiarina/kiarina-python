@@ -127,13 +127,88 @@ ja:
     goodbye: "さようなら!"
 ```
 
-### Translating Pydantic Models
+### Creating Pydantic Schemas with I18n (Recommended)
 
-For LLM tool schemas or API documentation, you can translate Pydantic model field descriptions and docstrings:
+For LLM tool schemas, you can create a Pydantic schema with descriptions from an I18n model. This approach unifies all translation definitions in a single I18n class:
+
+```python
+from pydantic import BaseModel
+from kiarina.i18n import I18n, settings_manager
+from kiarina.i18n_pydantic import create_pydantic_schema, translate_pydantic_model
+
+# Define all translations in one I18n class
+class HogeI18n(I18n, scope="hoge"):
+    """Hoge tool for processing data."""
+    
+    # Fields for tool arguments
+    name: str = "Your Name"
+    age: str = "Your Age"
+    
+    # Additional translations for tool logic
+    note: str = "This is a note."
+    error_message: str = "Error: file not found."
+
+# Define argument schema (structure only)
+class ArgsSchema(BaseModel):
+    name: str
+    age: int
+
+# Create schema with descriptions from I18n
+Schema = create_pydantic_schema(ArgsSchema, HogeI18n)
+
+# Use in LLM tool definitions
+from langchain.tools import tool
+
+@tool(args_schema=Schema)
+def hoge_tool(name: str, age: int) -> str:
+    """Process user data"""
+    # Use I18n for runtime translations
+    from kiarina.i18n import get_i18n
+    t = get_i18n(HogeI18n, "ja")
+    
+    if not file_exists:
+        raise Exception(t.error_message)
+    
+    return f"Processed: {name}"
+
+# Translate schema for different languages
+settings_manager.user_config = {
+    "catalog": {
+        "ja": {
+            "hoge": {
+                "__doc__": "データ処理用のHogeツール。",
+                "name": "あなたの名前",
+                "age": "あなたの年齢",
+                "note": "これはメモです。",
+                "error_message": "エラー: ファイルが見つかりません。",
+            }
+        }
+    }
+}
+
+# Translate the schema
+SchemaJa = translate_pydantic_model(Schema, "ja")
+
+# The tool schema will have Japanese descriptions
+schema = SchemaJa.model_json_schema()
+print(SchemaJa.__doc__)  # "データ処理用のHogeツール。"
+print(schema["properties"]["name"]["description"])  # "あなたの名前"
+```
+
+**Benefits:**
+- **Unified Definitions**: All translations (tool args + runtime messages) in one I18n class
+- **Type Safety**: IDE completion for both schema fields and runtime translations
+- **Clean Separation**: Schema structure (ArgsSchema) separate from descriptions (HogeI18n)
+- **Easy Translation**: Single catalog entry covers all translations
+
+### Translating Pydantic Models (Alternative)
+
+You can also directly translate existing Pydantic models with field descriptions and docstrings:
 
 ```python
 from pydantic import BaseModel, Field
-from kiarina.i18n import translate_pydantic_model, settings_manager
+from kiarina.i18n import settings_manager
+from kiarina.i18n_pydantic import translate_pydantic_model
 
 # Define your Pydantic model with English descriptions
 class UserInput(BaseModel):
@@ -263,7 +338,50 @@ t = get_i18n(AppI18n, "ja")
 print(t.title)  # Translated title
 ```
 
-### Pydantic Model Translation
+### Pydantic Schema Creation (kiarina.i18n_pydantic)
+
+#### `create_pydantic_schema(pydantic_model: type[T], i18n_model: type[I18n]) -> type[I18n]`
+
+Create a Pydantic schema with field descriptions from I18n model.
+
+This function creates a new I18n subclass that:
+- Copies field structure from `pydantic_model`
+- Sets field descriptions from `i18n_model`'s default values
+- Uses `i18n_model`'s `__doc__` as the schema's docstring
+- Inherits `i18n_model`'s scope for translation
+
+**Parameters:**
+- `pydantic_model`: Source Pydantic model to copy field structure from
+- `i18n_model`: I18n model containing default descriptions and scope
+
+**Returns:**
+- New I18n subclass with combined structure and descriptions
+
+**Example:**
+```python
+from pydantic import BaseModel
+from kiarina.i18n import I18n, create_pydantic_schema
+
+class HogeI18n(I18n, scope="hoge"):
+    """Hoge tool"""
+    name: str = "Your Name"
+    age: str = "Your Age"
+
+class ArgsSchema(BaseModel):
+    name: str
+    age: int
+
+# Create schema with descriptions from I18n
+Schema = create_pydantic_schema(ArgsSchema, HogeI18n)
+
+# Schema now has:
+# - __doc__ = "Hoge tool"
+# - name field with description "Your Name"
+# - age field with description "Your Age"
+# - _scope = "hoge"
+```
+
+### Pydantic Model Translation (kiarina.i18n_pydantic)
 
 #### `translate_pydantic_model(model: type[T], language: str, scope: str | None = None) -> type[T]`
 

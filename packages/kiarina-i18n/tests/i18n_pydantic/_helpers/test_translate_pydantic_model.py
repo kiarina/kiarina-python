@@ -1,7 +1,8 @@
 import pytest
 from pydantic import BaseModel, Field
 
-from kiarina.i18n import settings_manager, translate_pydantic_model
+from kiarina.i18n import settings_manager
+from kiarina.i18n_pydantic import translate_pydantic_model
 
 
 def test_translate_pydantic_model_basic():
@@ -293,7 +294,7 @@ def test_translate_pydantic_model_i18n_with_auto_scope():
     """Test I18n subclass with auto-generated scope."""
     from kiarina.i18n import I18n
 
-    # Auto-generated scope will be: tests._helpers.test_translate_pydantic_model.UserI18n
+    # Auto-generated scope will be: tests.i18n_pydantic._helpers.test_translate_pydantic_model.UserI18n
     class UserI18n(I18n):
         name: str = "Name"
         email: str = "Email"
@@ -301,7 +302,7 @@ def test_translate_pydantic_model_i18n_with_auto_scope():
     settings_manager.cli_args = {
         "catalog": {
             "ja": {
-                "tests._helpers.test_translate_pydantic_model.UserI18n": {
+                "tests.i18n_pydantic._helpers.test_translate_pydantic_model.UserI18n": {
                     "name": "名前",
                     "email": "メールアドレス",
                 }

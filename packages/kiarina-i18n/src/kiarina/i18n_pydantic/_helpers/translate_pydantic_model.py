@@ -1,9 +1,10 @@
 from typing import Any, TypeVar, overload
 
 from pydantic import BaseModel, create_model
+from pydantic.fields import FieldInfo
 
-from .._models.i18n import I18n
-from .get_translator import get_translator
+from ...i18n._helpers.get_translator import get_translator
+from ...i18n._models.i18n import I18n
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -90,8 +91,6 @@ def translate_pydantic_model(
                 "scope parameter is required when model is not an I18n subclass"
             )
 
-    from pydantic.fields import FieldInfo
-
     translator = get_translator(language, scope)
 
     # Translate __doc__ (use original as fallback)
@@ -100,6 +99,7 @@ def translate_pydantic_model(
 
     # Build new fields with translated descriptions
     new_fields: dict[str, Any] = {}
+
     for field_name, field_info in model.model_fields.items():
         # Translate description (use original as fallback)
         original_desc = field_info.description or ""
