@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **BREAKING**: Removed `create_pydantic_schema()` function from `kiarina.i18n_pydantic`
+  - Use `I18n` subclass with `Field(description=...)` instead
+  - Example: `class ArgsSchema(I18n, scope="tool.args"): name: str = Field(description="Name")`
+  - Then use `translate_pydantic_model()` to translate at runtime
+
 ## [1.19.0] - 2025-12-19
 
 ### Added

@@ -4,14 +4,12 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ._helpers.create_pydantic_schema import create_pydantic_schema
     from ._helpers.translate_pydantic_model import translate_pydantic_model
 
 __version__ = version("kiarina-i18n")
 
 __all__ = [
     # ._helpers
-    "create_pydantic_schema",
     "translate_pydantic_model",
 ]
 
@@ -24,7 +22,6 @@ def __getattr__(name: str) -> object:
 
     module_map = {
         # ._helpers
-        "create_pydantic_schema": "._helpers.create_pydantic_schema",
         "translate_pydantic_model": "._helpers.translate_pydantic_model",
     }
 
