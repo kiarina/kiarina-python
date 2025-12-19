@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.19.0] - 2025-12-19
+
+### Added
+- **kiarina-i18n**: `kiarina.i18n_pydantic` subpackage with `create_pydantic_schema()` for creating translated Pydantic model schemas
+
 ## [1.18.2] - 2025-12-17
 
 ### Added

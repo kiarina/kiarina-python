@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.19.0] - 2025-12-19
+
+### Added
+- `kiarina.i18n_pydantic` subpackage with `create_pydantic_schema()` function for creating translated Pydantic model schemas
+- Support for translating model docstrings, field descriptions, and field titles in Pydantic schemas
+- Comprehensive test coverage for `create_pydantic_schema()` with various model configurations
+
 ## [1.18.2] - 2025-12-17
 
 ### Added

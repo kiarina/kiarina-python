@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-openai"
-version = "1.18.2"
+version = "1.19.0"
 description = "OpenAI API client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"
