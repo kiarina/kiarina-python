@@ -4,7 +4,11 @@ Simple internationalization (i18n) utilities for Python applications.
 
 ## Purpose
 
-`kiarina-i18n` provides a lightweight and straightforward approach to internationalization in Python applications. It focuses on simplicity and predictability, avoiding complex grammar rules or plural forms. For applications requiring advanced features like plural forms or complex localization, consider using established tools like `gettext`.
+`kiarina-i18n` provides a lightweight and straightforward approach to internationalization in Python applications.
+It focuses on simplicity and predictability, avoiding complex grammar rules or plural forms.
+
+For applications requiring advanced features like plural forms or complex localization,
+consider using established tools like `gettext`.
 
 ## Installation
 
@@ -127,51 +131,47 @@ ja:
     goodbye: "さようなら!"
 ```
 
-### Creating Pydantic Schemas with I18n (Recommended)
+### Pydantic Integration for LLM Tools
 
-For LLM tool schemas, you can create a Pydantic schema with descriptions from an I18n model. This approach unifies all translation definitions in a single I18n class:
+For LLM tool schemas, kiarina-i18n provides two complementary functions:
+
+1. **`create_pydantic_schema`**: Creates a schema with descriptions from an I18n model (used at tool definition time)
+2. **`translate_pydantic_model`**: Translates the schema to different languages (used at runtime)
+
+#### Recommended Pattern: Static Definition + Dynamic Translation
+
+This pattern defines the tool once with default descriptions, then translates it dynamically at runtime:
 
 ```python
 from pydantic import BaseModel
-from kiarina.i18n import I18n, settings_manager
+from langchain.tools import BaseTool, tool
+from kiarina.i18n import I18n, get_i18n, settings_manager
 from kiarina.i18n_pydantic import create_pydantic_schema, translate_pydantic_model
 
-# Define all translations in one I18n class
+# Step 1: Define all translations in one I18n class
 class HogeI18n(I18n, scope="hoge"):
     """Hoge tool for processing data."""
-    
-    # Fields for tool arguments
+
+    # Fields for tool arguments (used in schema)
     name: str = "Your Name"
     age: str = "Your Age"
-    
-    # Additional translations for tool logic
+
+    # Additional translations for runtime logic
     note: str = "This is a note."
     error_message: str = "Error: file not found."
 
-# Define argument schema (structure only)
+# Step 2: Define argument schema (structure only)
 class ArgsSchema(BaseModel):
     name: str
     age: int
 
-# Create schema with descriptions from I18n
-Schema = create_pydantic_schema(ArgsSchema, HogeI18n)
-
-# Use in LLM tool definitions
-from langchain.tools import tool
-
-@tool(args_schema=Schema)
+# Step 3: Define tool with default descriptions (static)
+@tool(args_schema=create_pydantic_schema(ArgsSchema, HogeI18n))
 def hoge_tool(name: str, age: int) -> str:
     """Process user data"""
-    # Use I18n for runtime translations
-    from kiarina.i18n import get_i18n
-    t = get_i18n(HogeI18n, "ja")
-    
-    if not file_exists:
-        raise Exception(t.error_message)
-    
     return f"Processed: {name}"
 
-# Translate schema for different languages
+# Step 4: Configure translations
 settings_manager.user_config = {
     "catalog": {
         "ja": {
@@ -182,108 +182,61 @@ settings_manager.user_config = {
                 "note": "これはメモです。",
                 "error_message": "エラー: ファイルが見つかりません。",
             }
+        },
+        "en": {
+            "hoge": {
+                "__doc__": "Hoge tool for processing data.",
+                "name": "Your Name",
+                "age": "Your Age",
+                "note": "This is a note.",
+                "error_message": "Error: file not found.",
+            }
         }
     }
 }
 
-# Translate the schema
-SchemaJa = translate_pydantic_model(Schema, "ja")
+# Step 5: Create language-specific tools at runtime (dynamic)
+def get_tool(language: str) -> BaseTool:
+    """Get tool with translated schema for the specified language."""
+    # Translate the schema
+    translated_schema = translate_pydantic_model(hoge_tool.args_schema, language)
+    
+    # Create a copy of the tool with translated schema
+    translated_tool = hoge_tool.model_copy(update={"args_schema": translated_schema})
+    
+    return translated_tool
 
-# The tool schema will have Japanese descriptions
-schema = SchemaJa.model_json_schema()
-print(SchemaJa.__doc__)  # "データ処理用のHogeツール。"
-print(schema["properties"]["name"]["description"])  # "あなたの名前"
+# Step 6: Use language-specific tools
+tool_ja = get_tool("ja")  # Japanese version
+tool_en = get_tool("en")  # English version
+
+# The tool schema will have language-specific descriptions
+schema_ja = tool_ja.args_schema.model_json_schema()
+print(tool_ja.args_schema.__doc__)  # "データ処理用のHogeツール。"
+print(schema_ja["properties"]["name"]["description"])  # "あなたの名前"
+
+schema_en = tool_en.args_schema.model_json_schema()
+print(tool_en.args_schema.__doc__)  # "Hoge tool for processing data."
+print(schema_en["properties"]["name"]["description"])  # "Your Name"
+
+# Use I18n for runtime translations in tool logic
+def enhanced_hoge_tool(name: str, age: int, language: str) -> str:
+    """Enhanced tool with runtime translations"""
+    t = get_i18n(HogeI18n, language)
+    
+    if not file_exists:
+        raise Exception(t.error_message)
+    
+    return f"Processed: {name}"
 ```
 
 **Benefits:**
-- **Unified Definitions**: All translations (tool args + runtime messages) in one I18n class
+- **Static Definition**: Tool is defined once with `create_pydantic_schema`
+- **Dynamic Translation**: Schema is translated at runtime with `translate_pydantic_model`
+- **Unified I18n**: All translations (tool args + runtime messages) in one I18n class
 - **Type Safety**: IDE completion for both schema fields and runtime translations
 - **Clean Separation**: Schema structure (ArgsSchema) separate from descriptions (HogeI18n)
 - **Easy Translation**: Single catalog entry covers all translations
-
-### Translating Pydantic Models (Alternative)
-
-You can also directly translate existing Pydantic models with field descriptions and docstrings:
-
-```python
-from pydantic import BaseModel, Field
-from kiarina.i18n import settings_manager
-from kiarina.i18n_pydantic import translate_pydantic_model
-
-# Define your Pydantic model with English descriptions
-class UserInput(BaseModel):
-    """User input model for registration."""
-    
-    name: str = Field(description="User's full name")
-    age: int = Field(description="User's age in years")
-    email: str = Field(description="User's email address")
-
-# Configure translations (including __doc__)
-settings_manager.user_config = {
-    "catalog": {
-        "ja": {
-            "user.input.fields": {
-                "__doc__": "ユーザー登録用の入力モデル。",
-                "name": "ユーザーのフルネーム",
-                "age": "ユーザーの年齢（年単位）",
-                "email": "ユーザーのメールアドレス",
-            }
-        }
-    }
-}
-
-# Create translated model
-UserInputJa = translate_pydantic_model(UserInput, "ja", "user.input.fields")
-
-# Use in LLM tool definitions
-from langchain.tools import tool
-
-@tool(args_schema=UserInputJa)
-def register_user(name: str, age: int, email: str) -> str:
-    """ユーザーを登録します"""
-    return f"Registered: {name}"
-
-# The tool schema will have Japanese descriptions
-schema = UserInputJa.model_json_schema()
-print(UserInputJa.__doc__)  # "ユーザー登録用の入力モデル。"
-print(schema["properties"]["name"]["description"])  # "ユーザーのフルネーム"
-```
-
-**Note:** If you're using `I18n` subclass for translation definitions, you can omit the `scope` parameter in `translate_pydantic_model()`:
-
-```python
-from kiarina.i18n import I18n
-
-# With explicit scope
-class UserInputI18n(I18n, scope="user.input.fields"):
-    name: str = "User's full name"
-    age: str = "User's age in years"
-    email: str = "User's email address"
-
-# Translate I18n class (scope is automatically detected from I18n._scope)
-UserInputI18nJa = translate_pydantic_model(UserInputI18n, "ja")
-
-# Or with auto-generated scope (from module.class_name)
-# If defined in my_app/models.py, scope will be: my_app.models.UserInputI18n
-class UserInputI18n(I18n):  # No scope parameter
-    name: str = "User's full name"
-    age: str = "User's age in years"
-
-# Configure catalog with auto-generated scope
-settings_manager.user_config = {
-    "catalog": {
-        "ja": {
-            "my_app.models.UserInputI18n": {  # Use auto-generated scope
-                "name": "ユーザーのフルネーム",
-                "age": "ユーザーの年齢（年単位）",
-            }
-        }
-    }
-}
-
-# Translate with auto-detected scope
-UserInputI18nJa = translate_pydantic_model(UserInputI18n, "ja")
-```
 
 ## API Reference
 
