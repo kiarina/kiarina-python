@@ -1,8 +1,42 @@
+import yaml
+
 from kiarina.i18n import clear_cache, get_catalog, get_translator, settings_manager
 
 
-def test_clear_cache_clears_get_catalog():
-    """Test that clear_cache clears get_catalog cache."""
+def test_clear_cache_clears_catalog_file_cache(tmp_path):
+    """Test that clear_cache clears catalog file loading cache."""
+    # Create catalog file
+    catalog_file = tmp_path / "catalog.yaml"
+    catalog_v1 = {"en": {"app": {"title": "Title V1"}}}
+    with open(catalog_file, "w", encoding="utf-8") as f:
+        yaml.dump(catalog_v1, f)
+
+    # Setup to use catalog file
+    settings_manager.user_config = {"catalog_file": str(catalog_file)}
+
+    # Load catalog (will be cached)
+    catalog1 = get_catalog()
+    assert catalog1["en"]["app"]["title"] == "Title V1"
+
+    # Modify file
+    catalog_v2 = {"en": {"app": {"title": "Title V2"}}}
+    with open(catalog_file, "w", encoding="utf-8") as f:
+        yaml.dump(catalog_v2, f)
+
+    # Without clear_cache, should return cached value
+    catalog2 = get_catalog()
+    assert catalog2["en"]["app"]["title"] == "Title V1"  # Still cached
+
+    # Clear cache
+    clear_cache()
+
+    # Should load new value from file
+    catalog3 = get_catalog()
+    assert catalog3["en"]["app"]["title"] == "Title V2"
+
+
+def test_settings_changes_reflected_immediately():
+    """Test that settings changes are reflected immediately (no caching)."""
     # Setup catalog
     settings_manager.user_config = {
         "catalog": {
@@ -10,7 +44,7 @@ def test_clear_cache_clears_get_catalog():
         }
     }
 
-    # Call get_catalog to populate cache
+    # Get catalog
     catalog1 = get_catalog()
     assert catalog1["en"]["app"]["title"] == "Title"
 
@@ -21,51 +55,9 @@ def test_clear_cache_clears_get_catalog():
         }
     }
 
-    # Without clear_cache, should return cached value
+    # Should immediately reflect new settings (no cache)
     catalog2 = get_catalog()
-    assert catalog2 is catalog1  # Same object (cached)
-
-    # Clear cache
-    clear_cache()
-
-    # Should return new value
-    catalog3 = get_catalog()
-    assert catalog3 is not catalog1  # Different object
-    assert catalog3["en"]["app"]["title"] == "New Title"
-
-
-def test_clear_cache_clears_get_translator():
-    """Test that clear_cache clears get_translator cache."""
-    # Setup catalog
-    settings_manager.user_config = {
-        "catalog": {
-            "en": {"app": {"title": "Title"}},
-        }
-    }
-
-    # Call get_translator to populate cache
-    t1 = get_translator("en", "app")
-    assert t1("title") == "Title"
-
-    # Modify settings
-    settings_manager.user_config = {
-        "catalog": {
-            "en": {"app": {"title": "New Title"}},
-        }
-    }
-
-    # Without clear_cache, should return cached translator
-    t2 = get_translator("en", "app")
-    assert t2 is t1  # Same object (cached)
-    assert t2("title") == "Title"  # Old value
-
-    # Clear cache
-    clear_cache()
-
-    # Should return new translator
-    t3 = get_translator("en", "app")
-    assert t3 is not t1  # Different object
-    assert t3("title") == "New Title"
+    assert catalog2["en"]["app"]["title"] == "New Title"
 
 
 def test_clear_cache_multiple_calls():

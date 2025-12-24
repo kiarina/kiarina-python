@@ -178,10 +178,10 @@ def get_tool(language: str) -> BaseTool:
     """Get tool with translated schema for the specified language."""
     # Translate the schema (scope is auto-detected from I18n subclass)
     translated_schema = translate_pydantic_model(hoge_tool.args_schema, language)
-    
+
     # Create a copy of the tool with translated schema
     translated_tool = hoge_tool.model_copy(update={"args_schema": translated_schema})
-    
+
     return translated_tool
 
 # Step 5: Use language-specific tools
@@ -296,17 +296,21 @@ HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")  # scope is optional
 
 Clear all i18n-related caches.
 
-This function clears the internal caches used by `get_catalog()` and `get_translator()`. Useful when you need to reload configuration or reset state during testing.
+This function clears the catalog file loading cache.
+Only file I/O operations are cached for performance.
+Settings changes are reflected immediately without requiring cache clearing.
 
 **Example:**
 ```python
 from kiarina.i18n import clear_cache, settings_manager
 
-# Change settings
-settings_manager.user_config = {"catalog": {...}}
+# When using catalog_file, clear cache to reload from file
+settings_manager.user_config = {"catalog_file": "new_catalog.yaml"}
+clear_cache()  # Reload catalog from new file
 
-# Clear caches to apply new settings
-clear_cache()
+# When using in-memory catalog, changes are immediate (no cache clearing needed)
+settings_manager.user_config = {"catalog": {...}}
+# No need to call clear_cache() - changes are immediately reflected
 ```
 
 ### Functional API
@@ -315,7 +319,7 @@ clear_cache()
 
 Get the translation catalog from settings.
 
-This function is cached to avoid loading the catalog multiple times. It can be used independently for custom translation logic or direct catalog access.
+When using `catalog_file`, file I/O is cached for performance. When using in-memory `catalog`, settings changes are reflected immediately. This function can be used independently for custom translation logic or direct catalog access.
 
 **Returns:**
 - `Catalog`: Translation catalog loaded from file or settings

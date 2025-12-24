@@ -9,15 +9,15 @@ def test_get_translator_basic(sample_catalog):
     assert t("hello", name="World") == "Hello, World!"
 
 
-def test_get_translator_caching(sample_catalog):
-    """Test that get_translator caches instances."""
+def test_get_translator_creates_new_instances(sample_catalog):
+    """Test that get_translator creates new instances (no caching)."""
     settings_manager.user_config = {"catalog": sample_catalog}
 
     t1 = get_translator("en", "app.greeting")
     t2 = get_translator("en", "app.greeting")
 
-    # Should return the same instance due to caching
-    assert t1 is t2
+    assert t1 is not t2
+    assert t1("hello", name="World") == t2("hello", name="World")
 
 
 def test_get_translator_different_languages(sample_catalog):

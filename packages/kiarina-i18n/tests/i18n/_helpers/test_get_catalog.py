@@ -11,14 +11,13 @@ def test_get_catalog_from_settings(sample_catalog):
     assert catalog["ja"]["app.greeting"]["hello"] == "こんにちは、$name!"
 
 
-def test_get_catalog_caching(sample_catalog):
-    """Test that get_catalog caches the result."""
+def test_get_catalog_returns_settings_catalog(sample_catalog):
+    """Test that get_catalog returns catalog from settings (no caching)."""
     settings_manager.user_config = {"catalog": sample_catalog}
 
     catalog1 = get_catalog()
     catalog2 = get_catalog()
 
-    # Should return the same object due to caching
     assert catalog1 is catalog2
 
 

@@ -1,18 +1,11 @@
-from functools import lru_cache
-
-import yaml
-
+from .._operations.load_catalog_file import load_catalog_file
 from .._settings import settings_manager
 from .._types.catalog import Catalog
 
 
-@lru_cache(maxsize=None)
 def get_catalog() -> Catalog:
     """
     Get the translation catalog from settings.
-
-    This function is cached to avoid loading the catalog multiple times.
-    The cache is cleared when settings are updated.
 
     Returns:
         Translation catalog loaded from file or settings.
@@ -37,8 +30,6 @@ def get_catalog() -> Catalog:
     settings = settings_manager.settings
 
     if settings.catalog_file is not None:
-        with open(settings.catalog_file, encoding="utf-8") as f:
-            catalog: Catalog = yaml.safe_load(f)
-            return catalog
+        return load_catalog_file(settings.catalog_file)
     else:
         return settings.catalog

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-i18n**: Optimized caching strategy to only cache file I/O operations
+
 ## [1.20.0] - 2025-12-19
 
 ### Removed
