@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.20.1] - 2025-12-25
+
 ### Changed
 - **Performance**: Optimized caching strategy to only cache file I/O operations
   - Removed `lru_cache` from `get_catalog()` and `get_translator()`
