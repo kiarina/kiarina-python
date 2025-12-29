@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.21.0] - 2025-12-30
+
 ### Added
 - **AppContext**: New `kiarina.llm.app_context` subpackage for application-level context management
   - `AppContext` model with `app_author` and `app_name` fields

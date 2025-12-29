@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.21.0] - 2025-12-30
+
+### Added
+- **kiarina-llm**: New `kiarina.llm.app_context` subpackage for application-level context management
+
+### Changed
+- **kiarina-llm**: Refactored `RunContext` to use `AppContext` for application-level settings
+
 ## [1.20.1] - 2025-12-25
 
 ### Changed
