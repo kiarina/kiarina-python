@@ -2,17 +2,12 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from .._types.fs_name import FSName
+from kiarina.llm.app_context import FSName
+
 from .._types.id_str import IDStr
 
 
 class RunContext(BaseModel):
-    """
-    Run Context
-
-    Holds the context information used in the LLM pipeline processing.
-    """
-
     app_author: FSName
     """
     Application author

@@ -1,6 +1,6 @@
 import pytest
 
-from kiarina.llm.run_context import create_run_context
+from kiarina.llm.app_context import AppContext
 
 
 # fmt: off
@@ -18,7 +18,7 @@ from kiarina.llm.run_context import create_run_context
 # fmt: on
 def test_fs_name_valid(name):
     """Test that valid FSName values are accepted"""
-    context = create_run_context(app_author=name, app_name=name)
+    context = AppContext(app_author=name, app_name=name)
     assert context.app_author == name
     assert context.app_name == name
 
@@ -81,7 +81,7 @@ def test_fs_name_invalid(name, expected_match):
     """Test that invalid FSName values are rejected"""
     if expected_match:
         with pytest.raises(ValueError, match=expected_match):
-            create_run_context(app_author=name)
+            AppContext(app_author=name, app_name=name)
     else:
         with pytest.raises(ValueError):
-            create_run_context(app_author=name)
+            AppContext(app_author=name, app_name=name)

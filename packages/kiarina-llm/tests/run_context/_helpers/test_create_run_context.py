@@ -1,22 +1,24 @@
+from kiarina.llm.app_context import get_app_context
 from kiarina.llm.run_context import create_run_context, settings_manager
 
 
-def test_create_run_context_with_settings():
-    """Test that RunContext is created using configuration values"""
-    context = create_run_context()
-    settings = settings_manager.settings
-    assert context.app_author == settings.app_author
-    assert context.app_name == settings.app_name
-    assert context.tenant_id == settings.tenant_id
-    assert context.user_id == settings.user_id
-    assert context.time_zone == settings.time_zone
-    assert context.language == settings.language
-    assert context.currency == settings.currency
-    assert context.metadata == settings.metadata
+def test_no_args():
+    settings = settings_manager.get_settings()
+
+    app_context = get_app_context()
+    run_context = create_run_context()
+
+    assert run_context.app_author == app_context.app_author
+    assert run_context.app_name == app_context.app_name
+    assert run_context.tenant_id == settings.tenant_id
+    assert run_context.user_id == settings.user_id
+    assert run_context.time_zone == settings.time_zone
+    assert run_context.language == settings.language
+    assert run_context.currency == settings.currency
+    assert run_context.metadata == settings.metadata
 
 
-def test_create_run_context_with_overrides():
-    """Test that RunContext is created with argument overrides"""
+def test_with_args():
     context = create_run_context(
         app_author="TestCompany",
         app_name="TestApp",

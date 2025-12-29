@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **AppContext**: New `kiarina.llm.app_context` subpackage for application-level context management
+  - `AppContext` model with `app_author` and `app_name` fields
+  - `AppContextSettings` for configuration management
+  - `get_app_context()` helper function
+  - `FSName` type moved from `run_context` to `app_context`
+
+### Changed
+- **RunContext**: Refactored to use `AppContext` for application-level settings
+  - `create_run_context()` now uses `get_app_context()` for `app_author` and `app_name` defaults
+  - Moved `app_author` and `app_name` settings from `RunContextSettings` to `AppContextSettings`
+  - Renamed `_models/` directory to `_schemas/` for better clarity
+  - Moved `settings.py` to `_settings.py` to indicate internal implementation
+
+### Removed
+- **Content measurement utilities**: Removed `kiarina.llm.content` subpackage
+  - Removed `ContentLimits`, `ContentMetrics`, `ContentScale` models
+  - Removed `calculate_overflow()` function
+  - These features were experimental and not yet production-ready
+
 ## [1.20.1] - 2025-12-25
 
 ### Changed

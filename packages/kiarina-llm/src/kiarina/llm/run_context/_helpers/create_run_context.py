@@ -1,7 +1,9 @@
 from typing import Any
 
-from .._models.run_context import RunContext
-from ..settings import settings_manager
+from kiarina.llm.app_context import get_app_context
+
+from .._schemas.run_context import RunContext
+from .._settings import settings_manager
 
 
 def create_run_context(
@@ -17,14 +19,19 @@ def create_run_context(
     currency: str | None = None,
     metadata: dict[str, Any] | None = None,
 ) -> RunContext:
-    """
-    Create RunContext
-    """
-    settings = settings_manager.settings
+    settings = settings_manager.get_settings()
+
+    if app_author is None or app_name is None:
+        app_context = get_app_context()
+
+        if app_author is None:
+            app_author = app_context.app_author
+        if app_name is None:
+            app_name = app_context.app_name
 
     return RunContext(
-        app_author=app_author if app_author is not None else settings.app_author,
-        app_name=app_name if app_name is not None else settings.app_name,
+        app_author=app_author,
+        app_name=app_name,
         tenant_id=tenant_id if tenant_id is not None else settings.tenant_id,
         user_id=user_id if user_id is not None else settings.user_id,
         agent_id=agent_id if agent_id is not None else settings.agent_id,

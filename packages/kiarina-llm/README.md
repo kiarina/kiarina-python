@@ -4,6 +4,7 @@ A Python library for LLM utilities and context management with type safety and c
 
 ## Features
 
+- **AppContext Management**: Application-level context for platform directories
 - **RunContext Management**: Structured context information for LLM pipeline processing
 - **Type Safety**: Full type hints and Pydantic validation
 - **Configuration Management**: Use `pydantic-settings-manager` for flexible configuration
@@ -18,181 +19,101 @@ pip install kiarina-llm
 
 ## Quick Start
 
-### Basic RunContext Usage
+### Basic Usage
 
 ```python
 from kiarina.llm.run_context import create_run_context
 
-# Create a run context with default settings
+# Create a run context
 context = create_run_context(
     tenant_id="tenant-123",
     user_id="user-456",
     agent_id="my-agent",
     time_zone="Asia/Tokyo",
-    language="ja",
-    currency="JPY"
+    language="ja"
 )
 
 print(f"User: {context.user_id}")
 print(f"Agent: {context.agent_id}")
-print(f"Time Zone: {context.time_zone}")
-print(f"Language: {context.language}")
-print(f"Currency: {context.currency}")
 ```
 
-### Configuration Management
+### Configuration
+
+Configure defaults using `pydantic-settings-manager`:
 
 ```python
 from kiarina.llm.run_context import settings_manager
 
-# Configure default values
 settings_manager.user_config = {
-    "app_author": "MyCompany",
-    "app_name": "MyAIApp",
     "tenant_id": "default-tenant",
-    "user_id": "default-user",
     "time_zone": "America/New_York",
     "language": "en"
 }
-
-# Create context with configured defaults
-context = create_run_context(
-    agent_id="specialized-agent"  # Override only specific values
-)
 ```
 
-### Environment Variable Configuration
-
-Configure defaults using environment variables:
+Or use environment variables:
 
 ```bash
-export KIARINA_LLM_RUN_CONTEXT_APP_AUTHOR="MyCompany"
-export KIARINA_LLM_RUN_CONTEXT_APP_NAME="MyAIApp"
 export KIARINA_LLM_RUN_CONTEXT_TENANT_ID="prod-tenant"
 export KIARINA_LLM_RUN_CONTEXT_TIME_ZONE="Asia/Tokyo"
-export KIARINA_LLM_RUN_CONTEXT_LANGUAGE="ja"
 ```
 
-## RunContext Fields
+## API Reference
 
-The `RunContext` model includes the following fields:
+### AppContext
+
+Application-level context for platform directories:
+
+```python
+from kiarina.llm.app_context import get_app_context, settings_manager
+
+# Configure app context
+settings_manager.user_config = {
+    "app_author": "MyCompany",
+    "app_name": "MyAIApp"
+}
+
+# Get app context
+app_context = get_app_context()
+print(f"Author: {app_context.app_author}")
+print(f"Name: {app_context.app_name}")
+```
+
+### RunContext
+
+Run-level context for LLM pipeline processing:
 
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
-| `app_author` | `FSName` | Application author (filesystem safe) | `"MyCompany"` |
-| `app_name` | `FSName` | Application name (filesystem safe) | `"MyAIApp"` |
+| `app_author` | `FSName` | Application author | `"MyCompany"` |
+| `app_name` | `FSName` | Application name | `"MyAIApp"` |
 | `tenant_id` | `IDStr` | Tenant identifier | `"tenant-123"` |
 | `user_id` | `IDStr` | User identifier | `"user-456"` |
 | `agent_id` | `IDStr` | Agent identifier | `"my-agent"` |
-| `runner_id` | `IDStr` | Runner identifier | `"linux"` (auto-detected) |
+| `runner_id` | `IDStr` | Runner identifier | `"linux"` |
 | `time_zone` | `str` | IANA time zone | `"Asia/Tokyo"` |
-| `language` | `str` | ISO 639-1 language code | `"ja"` |
-| `currency` | `str` | ISO 4217 currency code | `"USD"` |
+| `language` | `str` | Language code | `"ja"` |
+| `currency` | `str` | Currency code | `"USD"` |
 | `metadata` | `dict[str, Any]` | Additional metadata | `{"version": "1.0"}` |
 
 ## Type Validation
 
-### FSName (Filesystem Safe Name)
-
-The `FSName` type ensures names are safe for use across different filesystems:
-
-```python
-from kiarina.llm.run_context import create_run_context
-
-# Valid names
-context = create_run_context(
-    app_author="My Company",      # Spaces allowed
-    app_name="My-App_v1.0"       # Hyphens, underscores, dots allowed
-)
-
-# Invalid names (will raise ValidationError)
-try:
-    create_run_context(app_author="My App.")  # Ends with dot
-except ValueError as e:
-    print(f"Validation error: {e}")
-
-try:
-    create_run_context(app_author=".hidden")  # Starts with dot
-except ValueError as e:
-    print(f"Validation error: {e}")
-
-try:
-    create_run_context(app_author="CON")  # Windows reserved name
-except ValueError as e:
-    print(f"Validation error: {e}")
-```
-
-### IDStr (ID String)
-
-The `IDStr` type validates identifiers:
-
-```python
-# Valid IDs
-context = create_run_context(
-    tenant_id="tenant-123",
-    user_id="user.456",
-    agent_id="agent_v1.0"
-)
-
-# Invalid IDs (will raise ValidationError)
-try:
-    create_run_context(tenant_id="")  # Empty string
-except ValueError as e:
-    print(f"Validation error: {e}")
-
-try:
-    create_run_context(user_id="user@domain")  # Invalid character
-except ValueError as e:
-    print(f"Validation error: {e}")
-```
-
-## Advanced Usage
-
-### Custom Metadata
-
-```python
-context = create_run_context(
-    tenant_id="tenant-123",
-    user_id="user-456",
-    metadata={
-        "session_id": "session-789",
-        "request_id": "req-abc123",
-        "version": "1.0.0",
-        "features": ["feature-a", "feature-b"]
-    }
-)
-
-print(f"Session: {context.metadata['session_id']}")
-print(f"Features: {context.metadata['features']}")
-```
-
-### Integration with PlatformDirs
-
-The `app_author` and `app_name` fields are designed to work with libraries like `platformdirs`:
-
-```python
-from platformdirs import user_data_dir
-from kiarina.llm.run_context import create_run_context
-
-context = create_run_context(
-    app_author="MyCompany",
-    app_name="MyAIApp"
-)
-
-# Use with platformdirs
-data_dir = user_data_dir(
-    appname=context.app_name,
-    appauthor=context.app_author
-)
-print(f"Data directory: {data_dir}")
-```
+- **FSName**: Filesystem-safe names (alphanumeric, dots, underscores, hyphens, spaces)
+- **IDStr**: Identifier strings (alphanumeric, dots, underscores, hyphens)
 
 ## Configuration Reference
 
+### AppContext Settings
+
 | Setting | Environment Variable | Default | Description |
 |---------|---------------------|---------|-------------|
-| `app_author` | `KIARINA_LLM_RUN_CONTEXT_APP_AUTHOR` | `"kiarina"` | Default application author |
-| `app_name` | `KIARINA_LLM_RUN_CONTEXT_APP_NAME` | `"myaikit"` | Default application name |
+| `app_author` | `KIARINA_LLM_APP_CONTEXT_APP_AUTHOR` | `"kiarina"` | Application author |
+| `app_name` | `KIARINA_LLM_APP_CONTEXT_APP_NAME` | `"kiarina-llm"` | Application name |
+
+### RunContext Settings
+
+| Setting | Environment Variable | Default | Description |
+|---------|---------------------|---------|-------------|
 | `tenant_id` | `KIARINA_LLM_RUN_CONTEXT_TENANT_ID` | `""` | Default tenant ID |
 | `user_id` | `KIARINA_LLM_RUN_CONTEXT_USER_ID` | `""` | Default user ID |
 | `agent_id` | `KIARINA_LLM_RUN_CONTEXT_AGENT_ID` | `""` | Default agent ID |
