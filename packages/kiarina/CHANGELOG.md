@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.22.0] - 2026-01-05
+
+### Added
+- **kiarina-i18n**: Support for translating nested I18n models in `list[I18n]` and `dict[str, I18n]` fields
+
 ## [1.21.1] - 2026-01-05
 
 ### Fixed
