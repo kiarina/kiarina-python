@@ -394,3 +394,57 @@ def test_translate_pydantic_model_without_docstring():
     # Should use translated __doc__ even if original is None
     assert HogeJa.__doc__ == "追加されたドキュメント"
     assert HogeJa.model_fields["name"].description == "あなたの名前"
+
+
+def test_translate_pydantic_model_preserves_default_factory():
+    """Test that default_factory is preserved after translation."""
+
+    class Hoge(BaseModel):
+        name: str = Field(description="Your Name")
+        tags: list[str] = Field(default_factory=list, description="Tags")
+        metadata: dict[str, str] = Field(default_factory=dict, description="Metadata")
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "hoge.fields": {
+                    "name": "名前",
+                    "tags": "タグ",
+                    "metadata": "メタデータ",
+                }
+            }
+        }
+    }
+
+    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+
+    # Check translated descriptions
+    assert HogeJa.model_fields["name"].description == "名前"
+    assert HogeJa.model_fields["tags"].description == "タグ"
+    assert HogeJa.model_fields["metadata"].description == "メタデータ"
+
+    # Check default_factory is preserved
+    assert HogeJa.model_fields["tags"].default_factory is not None
+    assert HogeJa.model_fields["metadata"].default_factory is not None
+
+    # Test that default_factory works correctly
+    instance1 = HogeJa(name="Alice")
+    instance2 = HogeJa(name="Bob")
+
+    # Each instance should have its own list/dict
+    assert instance1.tags == []
+    assert instance2.tags == []
+    assert instance1.tags is not instance2.tags  # Different objects
+
+    assert instance1.metadata == {}
+    assert instance2.metadata == {}
+    assert instance1.metadata is not instance2.metadata  # Different objects
+
+    # Modify one instance should not affect the other
+    instance1.tags.append("tag1")
+    instance1.metadata["key1"] = "value1"
+
+    assert instance1.tags == ["tag1"]
+    assert instance2.tags == []
+    assert instance1.metadata == {"key1": "value1"}
+    assert instance2.metadata == {}

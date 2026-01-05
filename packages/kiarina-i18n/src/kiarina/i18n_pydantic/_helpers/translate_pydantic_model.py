@@ -1,7 +1,7 @@
+from copy import deepcopy
 from typing import Any, TypeVar, overload
 
 from pydantic import BaseModel, create_model
-from pydantic.fields import FieldInfo
 
 from ...i18n._helpers.get_translator import get_translator
 from ...i18n._models.i18n import I18n
@@ -105,22 +105,10 @@ def translate_pydantic_model(
         original_desc = field_info.description or ""
         translated_desc = translator(field_name, default=original_desc)
 
-        # Create a copy of the field info with translated description
-        # We create a new FieldInfo by copying the original and updating description
-        annotation = field_info.annotation if field_info.annotation is not None else Any
-        new_field_info = FieldInfo.from_annotation(annotation)
+        # Create a deep copy of the field info to preserve all attributes
+        new_field_info = deepcopy(field_info)
 
-        # Copy all attributes from original field
-        for attr in dir(field_info):
-            if not attr.startswith("_") and attr not in ("annotation", "description"):
-                try:
-                    value = getattr(field_info, attr)
-                    if not callable(value):
-                        setattr(new_field_info, attr, value)
-                except (AttributeError, TypeError):
-                    pass
-
-        # Set translated description
+        # Update only the description
         new_field_info.description = translated_desc
 
         new_fields[field_name] = (field_info.annotation, new_field_info)
