@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-i18n_pydantic**: Support for translating nested I18n models in `list[I18n]` and `dict[str, I18n]` fields
+  - Nested I18n models are automatically translated recursively
+  - Explicit scope inheritance: when parent scope is explicitly provided, it overrides nested model's own scope
+  - Auto scope detection: when parent scope is not provided, nested models use their own `_scope`
+
 ## [1.21.1] - 2026-01-05
 
 ### Fixed

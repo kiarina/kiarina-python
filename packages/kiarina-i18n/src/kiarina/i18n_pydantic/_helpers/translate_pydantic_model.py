@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Any, TypeVar, overload
+from typing import Any, TypeVar, get_args, get_origin, overload
 
 from pydantic import BaseModel, create_model
 
@@ -82,7 +82,10 @@ def translate_pydantic_model(
         print(HogeI18nJa.model_fields["name"].description)  # "あなたの名前"
         ```
     """
-    # Auto-detect scope from I18n subclass
+    # Keep track of the original scope argument for nested model translation
+    nested_scope = scope
+
+    # Auto-detect scope from I18n subclass if not provided
     if scope is None:
         if issubclass(model, I18n):
             scope = model._scope
@@ -111,7 +114,13 @@ def translate_pydantic_model(
         # Update only the description
         new_field_info.description = translated_desc
 
-        new_fields[field_name] = (field_info.annotation, new_field_info)
+        # Check if field type contains nested I18n models and translate them
+        # Pass the original scope argument (None = use nested model's _scope)
+        translated_annotation = _translate_nested_model(
+            field_info.annotation, language, nested_scope
+        )
+
+        new_fields[field_name] = (translated_annotation, new_field_info)
 
     # Create new model with translated fields
     # Preserve model config
@@ -125,3 +134,52 @@ def translate_pydantic_model(
     )
 
     return translated_model  # type: ignore
+
+
+def _translate_nested_model(
+    annotation: Any,
+    language: str,
+    scope: str | None,
+) -> Any:
+    """
+    Translate nested I18n models in type annotations.
+
+    Supports:
+    - list[I18n]
+    - dict[str, I18n]
+
+    Args:
+        annotation: Type annotation to check and translate
+        language: Target language code
+        scope: Translation scope to use for nested models.
+               If None, nested I18n models will use their own _scope.
+               If provided, overrides nested model's _scope (scope inheritance).
+
+    Returns:
+        Translated type annotation if nested I18n model found, otherwise original annotation
+    """
+    origin = get_origin(annotation)
+    args = get_args(annotation)
+
+    # Check for list[I18n]
+    if origin is list and len(args) == 1:
+        inner_type = args[0]
+        if isinstance(inner_type, type) and issubclass(inner_type, I18n):
+            # Pass scope to nested model (None = use nested model's _scope)
+            translated_inner = translate_pydantic_model(inner_type, language, scope)
+            return list[translated_inner]  # type: ignore
+
+    # Check for dict[str, I18n]
+    if origin is dict and len(args) == 2:
+        key_type, value_type = args
+        if (
+            key_type is str
+            and isinstance(value_type, type)
+            and issubclass(value_type, I18n)
+        ):
+            # Pass scope to nested model (None = use nested model's _scope)
+            translated_value = translate_pydantic_model(value_type, language, scope)
+            return dict[str, translated_value]  # type: ignore
+
+    # Return original annotation if not a supported nested type
+    return annotation

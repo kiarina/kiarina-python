@@ -133,6 +133,8 @@ ja:
 
 ### Pydantic Integration for LLM Tools
 
+#### Basic Usage
+
 For LLM tool schemas, use `translate_pydantic_model` to create language-specific tool schemas at runtime:
 
 ```python
@@ -204,6 +206,61 @@ print(schema_en["properties"]["name"]["description"])  # "Your Name"
 - **Dynamic Translation**: Schema is translated at runtime with `translate_pydantic_model`
 - **Clean Syntax**: Scope is defined at class level
 - **Easy Translation**: Single catalog entry covers all translations
+
+#### Nested I18n Models
+
+`translate_pydantic_model` supports translating nested I18n models in `list[I18n]` and `dict[str, I18n]` fields:
+
+```python
+from pydantic import Field
+from kiarina.i18n import I18n, settings_manager
+from kiarina.i18n_pydantic import translate_pydantic_model
+
+# Define nested I18n model
+class FileArg(I18n, scope="file_arg"):
+    file_path: str = "File path"
+    start_line: int = "Start line"
+    end_line: int = "End line"
+
+# Define parent I18n model with nested list
+class ArgsSchema(I18n, scope="args_schema"):
+    """Tool arguments"""
+    files: list[FileArg] = "List of files"
+    dir_path: str = "Directory path"
+
+# Configure translations
+settings_manager.user_config = {
+    "catalog": {
+        "ja": {
+            "file_arg": {
+                "file_path": "ファイルパス",
+                "start_line": "開始行",
+                "end_line": "終了行",
+            },
+            "args_schema": {
+                "__doc__": "ツール引数",
+                "files": "ファイルのリスト",
+                "dir_path": "ディレクトリパス",
+            }
+        }
+    }
+}
+
+# Translate parent model (nested models are automatically translated)
+ArgsSchemaJa = translate_pydantic_model(ArgsSchema, "ja")
+
+# Both parent and nested fields are translated
+schema = ArgsSchemaJa.model_json_schema()
+print(ArgsSchemaJa.__doc__)  # "ツール引数"
+print(schema["properties"]["files"]["description"])  # "ファイルのリスト"
+print(schema["$defs"]["FileArg"]["properties"]["file_path"]["description"])  # "ファイルパス"
+```
+
+**Supported Nested Types:**
+- `list[I18n]` - List of I18n models
+- `dict[str, I18n]` - Dictionary with string keys and I18n model values
+
+**Note:** Only I18n subclasses are translated recursively. Regular BaseModel subclasses remain unchanged.
 
 ## API Reference
 

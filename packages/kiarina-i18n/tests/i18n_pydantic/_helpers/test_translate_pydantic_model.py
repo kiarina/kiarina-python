@@ -1,5 +1,6 @@
 import pytest
 from pydantic import BaseModel, Field
+from typing import get_args
 
 from kiarina.i18n import settings_manager
 from kiarina.i18n_pydantic import translate_pydantic_model
@@ -394,6 +395,214 @@ def test_translate_pydantic_model_without_docstring():
     # Should use translated __doc__ even if original is None
     assert HogeJa.__doc__ == "追加されたドキュメント"
     assert HogeJa.model_fields["name"].description == "あなたの名前"
+
+
+def test_translate_pydantic_model_nested_i18n_list():
+    """Test translation of nested I18n models in list."""
+    from kiarina.i18n import I18n
+
+    class FileArg(I18n, scope="file_arg"):
+        file_path: str = "File path"
+        start_line: int = "Start line"
+
+    class ArgsSchema(I18n, scope="args_schema"):
+        files: list[FileArg] = "List of files"
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "file_arg": {
+                    "file_path": "ファイルパス",
+                    "start_line": "開始行",
+                },
+                "args_schema": {
+                    "files": "ファイルのリスト",
+                },
+            }
+        }
+    }
+
+    # Translate with scope inheritance
+    ArgsSchemaJa = translate_pydantic_model(ArgsSchema, "ja")
+
+    # Check parent field is translated
+    assert ArgsSchemaJa.model_fields["files"].description == "ファイルのリスト"
+
+    # Check nested model type is translated
+    files_annotation = ArgsSchemaJa.model_fields["files"].annotation
+    args = get_args(files_annotation)
+    assert len(args) == 1
+    nested_model = args[0]
+
+    # Check nested model fields are translated
+    assert nested_model.model_fields["file_path"].description == "ファイルパス"
+    assert nested_model.model_fields["start_line"].description == "開始行"
+
+
+def test_translate_pydantic_model_nested_i18n_dict():
+    """Test translation of nested I18n models in dict."""
+    from kiarina.i18n import I18n
+
+    class Config(I18n, scope="config"):
+        value: str = "Configuration value"
+
+    class Settings(I18n, scope="settings"):
+        configs: dict[str, Config] = "Configuration map"
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "config": {
+                    "value": "設定値",
+                },
+                "settings": {
+                    "configs": "設定マップ",
+                },
+            }
+        }
+    }
+
+    # Translate with scope inheritance
+    SettingsJa = translate_pydantic_model(Settings, "ja")
+
+    # Check parent field is translated
+    assert SettingsJa.model_fields["configs"].description == "設定マップ"
+
+    # Check nested model type is translated
+    configs_annotation = SettingsJa.model_fields["configs"].annotation
+    args = get_args(configs_annotation)
+    assert len(args) == 2
+    key_type, value_type = args
+    assert key_type is str
+
+    # Check nested model fields are translated
+    assert value_type.model_fields["value"].description == "設定値"
+
+
+def test_translate_pydantic_model_nested_with_explicit_scope():
+    """Test that explicit scope is inherited to nested models."""
+    from kiarina.i18n import I18n
+
+    class Inner(I18n, scope="inner"):
+        name: str = "Name"
+
+    class Outer(BaseModel):
+        items: list[Inner] = Field(description="Items")
+
+    # Use single scope for all translations
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "unified.scope": {
+                    "items": "アイテム",
+                    "name": "名前",
+                }
+            }
+        }
+    }
+
+    # Translate with explicit scope (should override Inner._scope)
+    OuterJa = translate_pydantic_model(Outer, "ja", "unified.scope")
+
+    # Check parent field is translated
+    assert OuterJa.model_fields["items"].description == "アイテム"
+
+    # Check nested model uses inherited scope
+    items_annotation = OuterJa.model_fields["items"].annotation
+    args = get_args(items_annotation)
+    nested_model = args[0]
+    assert nested_model.model_fields["name"].description == "名前"
+
+
+def test_translate_pydantic_model_nested_non_i18n_unchanged():
+    """Test that non-I18n nested models are not translated."""
+    from kiarina.i18n import I18n
+
+    class RegularModel(BaseModel):
+        value: str = Field(description="Regular value")
+
+    class Container(I18n, scope="container"):
+        items: list[RegularModel] = "Items"
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "container": {
+                    "items": "アイテム",
+                }
+            }
+        }
+    }
+
+    ContainerJa = translate_pydantic_model(Container, "ja")
+
+    # Parent field should be translated
+    assert ContainerJa.model_fields["items"].description == "アイテム"
+
+    # Nested non-I18n model should remain unchanged
+    items_annotation = ContainerJa.model_fields["items"].annotation
+    args = get_args(items_annotation)
+    nested_model = args[0]
+    assert nested_model.model_fields["value"].description == "Regular value"
+
+
+def test_translate_pydantic_model_complex_nested_structure():
+    """Test translation with complex nested structure."""
+    from kiarina.i18n import I18n
+
+    class FileArg(I18n, scope="file_arg"):
+        file_path: str = "File path"
+        start_line: int = "Start line"
+        end_line: int = "End line"
+
+    class ArgsSchema(I18n, scope="args_schema"):
+        """Tool arguments"""
+
+        files: list[FileArg] = "List of files"
+        dir_path: str = "Directory path"
+        include_patterns: list[str] = "Include patterns"
+        exclude_patterns: list[str] = "Exclude patterns"
+
+    settings_manager.cli_args = {
+        "catalog": {
+            "ja": {
+                "file_arg": {
+                    "file_path": "ファイルパス",
+                    "start_line": "開始行",
+                    "end_line": "終了行",
+                },
+                "args_schema": {
+                    "__doc__": "ツール引数",
+                    "files": "ファイルのリスト",
+                    "dir_path": "ディレクトリパス",
+                    "include_patterns": "含めるパターン",
+                    "exclude_patterns": "除外するパターン",
+                },
+            }
+        }
+    }
+
+    ArgsSchemaJa = translate_pydantic_model(ArgsSchema, "ja")
+
+    # Check docstring
+    assert ArgsSchemaJa.__doc__ == "ツール引数"
+
+    # Check parent fields
+    assert ArgsSchemaJa.model_fields["files"].description == "ファイルのリスト"
+    assert ArgsSchemaJa.model_fields["dir_path"].description == "ディレクトリパス"
+    assert ArgsSchemaJa.model_fields["include_patterns"].description == "含めるパターン"
+    assert (
+        ArgsSchemaJa.model_fields["exclude_patterns"].description == "除外するパターン"
+    )
+
+    # Check nested model
+    files_annotation = ArgsSchemaJa.model_fields["files"].annotation
+    args = get_args(files_annotation)
+    file_arg_ja = args[0]
+
+    assert file_arg_ja.model_fields["file_path"].description == "ファイルパス"
+    assert file_arg_ja.model_fields["start_line"].description == "開始行"
+    assert file_arg_ja.model_fields["end_line"].description == "終了行"
 
 
 def test_translate_pydantic_model_preserves_default_factory():
