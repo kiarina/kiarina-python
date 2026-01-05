@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-i18n**: Fixed bug where `default_factory` was lost in `translate_pydantic_model()` during field translation
+
 ## [1.21.0] - 2025-12-30
 
 ### Added

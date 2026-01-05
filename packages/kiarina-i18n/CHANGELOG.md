@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-i18n_pydantic**: Fixed bug where `default_factory` was lost in `translate_pydantic_model()` during field translation
+  - Changed from manual attribute copying to `deepcopy` for complete FieldInfo preservation
+  - All field attributes (default_factory, metadata, examples, etc.) are now correctly preserved
+
 ## [1.21.0] - 2025-12-30
 
 ### Changed
