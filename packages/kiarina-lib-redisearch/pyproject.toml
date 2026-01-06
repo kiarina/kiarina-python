@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-redisearch"
-version = "1.22.0"
+version = "1.22.1"
 description = "RediSearch client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"

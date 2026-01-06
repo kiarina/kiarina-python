@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.22.1] - 2026-01-06
+
+### Changed
+- **kiarina-lib-google-auth**: Upgraded dependencies and removed unnecessary type ignore comments
+
 ## [1.22.0] - 2026-01-05
 
 ### Added
