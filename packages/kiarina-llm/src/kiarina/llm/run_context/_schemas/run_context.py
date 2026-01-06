@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Self
 
 from pydantic import BaseModel, Field
 
@@ -77,3 +77,22 @@ class RunContext(BaseModel):
 
     metadata: dict[str, Any] = Field(default_factory=lambda: {})
     """Metadata"""
+
+    def with_metadata(self, **kwargs: Any) -> Self:
+        """
+        Create a new RunContext with updated metadata.
+
+        Args:
+            **kwargs: Key-value pairs to update in metadata
+
+        Returns:
+            New RunContext instance with merged metadata
+
+        Example:
+            >>> context = create_run_context(metadata={"version": "1.0"})
+            >>> new_context = context.with_metadata(version="2.0", env="prod")
+            >>> new_context.metadata
+            {"version": "2.0", "env": "prod"}
+        """
+        updated_metadata = {**self.metadata, **kwargs}
+        return self.model_copy(update={"metadata": updated_metadata})
