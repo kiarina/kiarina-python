@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.23.0] - 2026-01-06
+
+### Added
+- Added `with_metadata()` method to `RunContext` for creating new instances with updated metadata
+
 ## [1.22.1] - 2026-01-06
 
 ### Changed
