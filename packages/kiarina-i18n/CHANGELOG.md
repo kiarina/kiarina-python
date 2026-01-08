@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: Catalog management has been completely redesigned
+  - Removed `I18nSettings.catalog` and `I18nSettings.catalog_file` fields
+  - Removed `clear_cache()` helper function (use `catalog.clear()` instead)
+  - Removed `_types/catalog.py` TypeAlias
+  - Removed `_operations/get_catalog.py` and `_operations/load_catalog_file.py`
+  - Added `Catalog` service class for managing translation data
+  - Added `catalog.add_from_dict()` and `catalog.add_from_file()` methods
+  - Catalog management is now completely user-controlled
+  - Migration guide:
+    - Before: `settings_manager.user_config = {"catalog": {...}}` and `clear_cache()`
+    - After: `catalog.add_from_dict({...})` and `catalog.clear()`
+  - This change reduces code by 248 lines and makes catalog management more explicit
+
 ## [1.23.0] - 2026-01-06
 
 ### Changed

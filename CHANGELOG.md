@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-i18n**: **BREAKING** - Catalog management has been completely redesigned with `Catalog` service class
+
 ## [1.23.0] - 2026-01-06
 
 ### Added
