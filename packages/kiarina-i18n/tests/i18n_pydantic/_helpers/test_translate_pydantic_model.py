@@ -2,7 +2,7 @@ import pytest
 from pydantic import BaseModel, Field
 from typing import get_args
 
-from kiarina.i18n import settings_manager
+from kiarina.i18n import catalog
 from kiarina.i18n_pydantic import translate_pydantic_model
 
 
@@ -18,8 +18,8 @@ def test_translate_pydantic_model_basic():
         age: int = Field(description="Your Age")
 
     # Configure catalog
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "name": "あなたの名前",
@@ -27,7 +27,7 @@ def test_translate_pydantic_model_basic():
                 }
             }
         }
-    }
+    )
 
     # Translate model
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
@@ -45,8 +45,8 @@ def test_translate_pydantic_model_preserves_types():
         age: int = Field(description="Your Age")
         active: bool = Field(default=True, description="Is Active")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "name": "名前",
@@ -55,7 +55,7 @@ def test_translate_pydantic_model_preserves_types():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -72,8 +72,8 @@ def test_translate_pydantic_model_preserves_defaults():
         name: str = Field(default="Anonymous", description="Your Name")
         age: int = Field(default=0, description="Your Age")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "name": "名前",
@@ -81,7 +81,7 @@ def test_translate_pydantic_model_preserves_defaults():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -103,15 +103,15 @@ def test_translate_pydantic_model_fallback_to_original():
         age: int = Field(description="Your Age")
 
     # Only translate 'name', not 'age'
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "name": "名前",
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -128,8 +128,8 @@ def test_translate_pydantic_model_validation_works():
         name: str = Field(min_length=1, description="Your Name")
         age: int = Field(ge=0, description="Your Age")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "name": "名前",
@@ -137,7 +137,7 @@ def test_translate_pydantic_model_validation_works():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -162,8 +162,8 @@ def test_translate_pydantic_model_json_schema():
         name: str = Field(description="Your Name")
         age: int = Field(description="Your Age")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "name": "あなたの名前",
@@ -171,7 +171,7 @@ def test_translate_pydantic_model_json_schema():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -189,13 +189,13 @@ def test_translate_pydantic_model_multiple_languages():
     class Hoge(BaseModel):
         name: str = Field(description="Your Name")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {"hoge.fields": {"name": "名前"}},
             "fr": {"hoge.fields": {"name": "Votre nom"}},
             "es": {"hoge.fields": {"name": "Tu nombre"}},
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
     HogeFr = translate_pydantic_model(Hoge, "fr", "hoge.fields")
@@ -214,7 +214,7 @@ def test_translate_pydantic_model_preserves_model_config():
 
         name: str = Field(description="Your Name")
 
-    settings_manager.cli_args = {"catalog": {"ja": {"hoge.fields": {"name": "名前"}}}}
+    catalog.add_from_dict({"ja": {"hoge.fields": {"name": "名前"}}})
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -236,8 +236,8 @@ def test_translate_pydantic_model_with_i18n_subclass():
         name: str = "Your Name"
         age: str = "Your Age"
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.i18n": {
                     "name": "あなたの名前",
@@ -245,7 +245,7 @@ def test_translate_pydantic_model_with_i18n_subclass():
                 }
             }
         }
-    }
+    )
 
     # Translate without explicit scope (should use model._scope)
     HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")
@@ -262,14 +262,14 @@ def test_translate_pydantic_model_with_i18n_subclass_explicit_scope():
     class HogeI18n(I18n, scope="hoge.i18n"):
         name: str = "Your Name"
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.i18n": {"name": "I18nスコープ"},
                 "custom.scope": {"name": "カスタムスコープ"},
             }
         }
-    }
+    )
 
     # With explicit scope (should override model._scope)
     HogeI18nJa = translate_pydantic_model(HogeI18n, "ja", "custom.scope")
@@ -284,7 +284,7 @@ def test_translate_pydantic_model_without_scope_raises_error():
     class Hoge(BaseModel):
         name: str = Field(description="Your Name")
 
-    settings_manager.cli_args = {"catalog": {"ja": {"hoge.fields": {"name": "名前"}}}}
+    catalog.add_from_dict({"ja": {"hoge.fields": {"name": "名前"}}})
 
     # Should raise ValueError when scope is omitted for non-I18n model
     with pytest.raises(ValueError, match="scope parameter is required"):
@@ -300,8 +300,8 @@ def test_translate_pydantic_model_i18n_with_auto_scope():
         name: str = "Name"
         email: str = "Email"
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "tests.i18n_pydantic._helpers.test_translate_pydantic_model.UserI18n": {
                     "name": "名前",
@@ -309,7 +309,7 @@ def test_translate_pydantic_model_i18n_with_auto_scope():
                 }
             }
         }
-    }
+    )
 
     # Translate without explicit scope
     UserI18nJa = translate_pydantic_model(UserI18n, "ja")
@@ -329,8 +329,8 @@ def test_translate_pydantic_model_translates_docstring():
 
         name: str = Field(description="Your Name")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "__doc__": "テスト用のHogeモデル。",
@@ -338,7 +338,7 @@ def test_translate_pydantic_model_translates_docstring():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -355,8 +355,8 @@ def test_translate_pydantic_model_docstring_fallback():
 
         name: str = Field(description="Your Name")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     # __doc__ translation is missing
@@ -364,7 +364,7 @@ def test_translate_pydantic_model_docstring_fallback():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -379,8 +379,8 @@ def test_translate_pydantic_model_without_docstring():
     class Hoge(BaseModel):
         name: str = Field(description="Your Name")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "__doc__": "追加されたドキュメント",
@@ -388,7 +388,7 @@ def test_translate_pydantic_model_without_docstring():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 
@@ -402,14 +402,14 @@ def test_translate_pydantic_model_nested_i18n_list():
     from kiarina.i18n import I18n
 
     class FileArg(I18n, scope="file_arg"):
-        file_path: str = "File path"
-        start_line: int = "Start line"
+        file_path: str = Field(description="File path")
+        start_line: int = Field(description="Start line")
 
     class ArgsSchema(I18n, scope="args_schema"):
-        files: list[FileArg] = "List of files"
+        files: list[FileArg] = Field(description="List of files")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "file_arg": {
                     "file_path": "ファイルパス",
@@ -420,7 +420,7 @@ def test_translate_pydantic_model_nested_i18n_list():
                 },
             }
         }
-    }
+    )
 
     # Translate with scope inheritance
     ArgsSchemaJa = translate_pydantic_model(ArgsSchema, "ja")
@@ -444,13 +444,13 @@ def test_translate_pydantic_model_nested_i18n_dict():
     from kiarina.i18n import I18n
 
     class Config(I18n, scope="config"):
-        value: str = "Configuration value"
+        value: str = Field(description="Configuration value")
 
     class Settings(I18n, scope="settings"):
-        configs: dict[str, Config] = "Configuration map"
+        configs: dict[str, Config] = Field(description="Configuration map")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "config": {
                     "value": "設定値",
@@ -460,7 +460,7 @@ def test_translate_pydantic_model_nested_i18n_dict():
                 },
             }
         }
-    }
+    )
 
     # Translate with scope inheritance
     SettingsJa = translate_pydantic_model(Settings, "ja")
@@ -484,14 +484,14 @@ def test_translate_pydantic_model_nested_with_explicit_scope():
     from kiarina.i18n import I18n
 
     class Inner(I18n, scope="inner"):
-        name: str = "Name"
+        name: str = Field(description="Name")
 
     class Outer(BaseModel):
         items: list[Inner] = Field(description="Items")
 
     # Use single scope for all translations
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "unified.scope": {
                     "items": "アイテム",
@@ -499,7 +499,7 @@ def test_translate_pydantic_model_nested_with_explicit_scope():
                 }
             }
         }
-    }
+    )
 
     # Translate with explicit scope (should override Inner._scope)
     OuterJa = translate_pydantic_model(Outer, "ja", "unified.scope")
@@ -522,17 +522,17 @@ def test_translate_pydantic_model_nested_non_i18n_unchanged():
         value: str = Field(description="Regular value")
 
     class Container(I18n, scope="container"):
-        items: list[RegularModel] = "Items"
+        items: list[RegularModel] = Field(description="Items")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "container": {
                     "items": "アイテム",
                 }
             }
         }
-    }
+    )
 
     ContainerJa = translate_pydantic_model(Container, "ja")
 
@@ -551,20 +551,20 @@ def test_translate_pydantic_model_complex_nested_structure():
     from kiarina.i18n import I18n
 
     class FileArg(I18n, scope="file_arg"):
-        file_path: str = "File path"
-        start_line: int = "Start line"
-        end_line: int = "End line"
+        file_path: str = Field(description="File path")
+        start_line: int = Field(description="Start line")
+        end_line: int = Field(description="End line")
 
     class ArgsSchema(I18n, scope="args_schema"):
         """Tool arguments"""
 
-        files: list[FileArg] = "List of files"
-        dir_path: str = "Directory path"
-        include_patterns: list[str] = "Include patterns"
-        exclude_patterns: list[str] = "Exclude patterns"
+        files: list[FileArg] = Field(description="List of files")
+        dir_path: str = Field(description="Directory path")
+        include_patterns: list[str] = Field(description="Include patterns")
+        exclude_patterns: list[str] = Field(description="Exclude patterns")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "file_arg": {
                     "file_path": "ファイルパス",
@@ -580,7 +580,7 @@ def test_translate_pydantic_model_complex_nested_structure():
                 },
             }
         }
-    }
+    )
 
     ArgsSchemaJa = translate_pydantic_model(ArgsSchema, "ja")
 
@@ -613,8 +613,8 @@ def test_translate_pydantic_model_preserves_default_factory():
         tags: list[str] = Field(default_factory=list, description="Tags")
         metadata: dict[str, str] = Field(default_factory=dict, description="Metadata")
 
-    settings_manager.cli_args = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "hoge.fields": {
                     "name": "名前",
@@ -623,7 +623,7 @@ def test_translate_pydantic_model_preserves_default_factory():
                 }
             }
         }
-    }
+    )
 
     HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
 

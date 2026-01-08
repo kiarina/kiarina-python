@@ -1,4 +1,4 @@
-from kiarina.i18n import I18n, get_i18n, settings_manager
+from kiarina.i18n import I18n, catalog, get_i18n
 
 
 def test_get_i18n_with_default_values():
@@ -9,7 +9,7 @@ def test_get_i18n_with_default_values():
         description: str = "Default Description"
 
     # No catalog configured, should return default values
-    settings_manager.user_config = {"catalog": {}}
+    catalog.add_from_dict({})
 
     t = get_i18n(MyI18n, "en")
     assert t._scope == "test.default"
@@ -25,8 +25,8 @@ def test_get_i18n_with_translations():
         description: str = "Default Description"
 
     # Configure catalog with translations
-    settings_manager.user_config = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "test.translated": {
                     "title": "日本語タイトル",
@@ -40,7 +40,7 @@ def test_get_i18n_with_translations():
                 }
             },
         }
-    }
+    )
 
     # Get Japanese translation
     t_ja = get_i18n(MyI18n, "ja")
@@ -64,8 +64,8 @@ def test_get_i18n_with_partial_translations():
         error: str = "Default Error"
 
     # Configure catalog with partial translations
-    settings_manager.user_config = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "test.partial": {
                     "title": "日本語タイトル",
@@ -73,7 +73,7 @@ def test_get_i18n_with_partial_translations():
                 }
             }
         }
-    }
+    )
 
     t = get_i18n(MyI18n, "ja")
     assert t.title == "日本語タイトル"
@@ -88,16 +88,20 @@ def test_get_i18n_with_fallback_language():
         title: str = "Default Title"
 
     # Configure catalog with fallback (use default_language instead of fallback_language)
+    from kiarina.i18n import settings_manager
+
     settings_manager.user_config = {
         "default_language": "en",
-        "catalog": {
+    }
+    catalog.add_from_dict(
+        {
             "en": {
                 "test.fallback": {
                     "title": "English Title",
                 }
             }
-        },
-    }
+        }
+    )
 
     # Request non-existent language, should fallback to English
     t = get_i18n(MyI18n, "fr")
@@ -111,7 +115,7 @@ def test_get_i18n_type_safety():
         title: str = "Title"
         count: int = 42
 
-    settings_manager.user_config = {"catalog": {}}
+    catalog.add_from_dict({})
 
     t = get_i18n(MyI18n, "en")
 
@@ -129,14 +133,14 @@ def test_get_i18n_multiple_instances():
     class ModuleBI18n(I18n, scope="module.b"):
         title: str = "Module B"
 
-    settings_manager.user_config = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "module.a": {"title": "モジュールA"},
                 "module.b": {"title": "モジュールB"},
             }
         }
-    }
+    )
 
     t_a = get_i18n(ModuleAI18n, "ja")
     t_b = get_i18n(ModuleBI18n, "ja")
@@ -152,8 +156,8 @@ def test_get_i18n_with_scope_field():
         scope: str = "Default Scope Text"
         title: str = "Default Title"
 
-    settings_manager.user_config = {
-        "catalog": {
+    catalog.add_from_dict(
+        {
             "ja": {
                 "test.scope_field": {
                     "scope": "スコープテキスト",
@@ -161,7 +165,7 @@ def test_get_i18n_with_scope_field():
                 }
             }
         }
-    }
+    )
 
     t = get_i18n(MyI18n, "ja")
 

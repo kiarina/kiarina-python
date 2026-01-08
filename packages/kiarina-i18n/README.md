@@ -21,25 +21,23 @@ pip install kiarina-i18n
 ### Basic Usage (Functional API)
 
 ```python
-from kiarina.i18n import get_translator, settings_manager
+from kiarina.i18n import catalog, get_translator
 
 # Configure the catalog
-settings_manager.user_config = {
-    "catalog": {
-        "en": {
-            "app.greeting": {
-                "hello": "Hello, $name!",
-                "goodbye": "Goodbye!"
-            }
-        },
-        "ja": {
-            "app.greeting": {
-                "hello": "こんにちは、$name!",
-                "goodbye": "さようなら!"
-            }
+catalog.add_from_dict({
+    "en": {
+        "app.greeting": {
+            "hello": "Hello, $name!",
+            "goodbye": "Goodbye!"
+        }
+    },
+    "ja": {
+        "app.greeting": {
+            "hello": "こんにちは、$name!",
+            "goodbye": "さようなら!"
         }
     }
-}
+})
 
 # Get a translator
 t = get_translator("ja", "app.greeting")
@@ -70,17 +68,15 @@ class UserProfileI18n(I18n):
     bio: str = "Biography"
 
 # Configure the catalog
-settings_manager.user_config = {
-    "catalog": {
-        "ja": {
-            "app.greeting": {
-                "hello": "こんにちは、$name!",
-                "goodbye": "さようなら!",
-                "welcome": "アプリへようこそ!"
-            }
+catalog.add_from_dict({
+    "ja": {
+        "app.greeting": {
+            "hello": "こんにちは、$name!",
+            "goodbye": "さようなら!",
+            "welcome": "アプリへようこそ!"
         }
     }
-}
+})
 
 # Get translated instance
 t = get_i18n(AppI18n, "ja")
@@ -107,12 +103,10 @@ print(translator("hello", name="World"))  # Output: こんにちは、World!
 ### Using Catalog File
 
 ```python
-from kiarina.i18n import get_translator, settings_manager
+from kiarina.i18n import catalog, get_translator
 
 # Load catalog from YAML file
-settings_manager.user_config = {
-    "catalog_file": "i18n_catalog.yaml"
-}
+catalog.add_from_file("i18n_catalog.yaml")
 
 t = get_translator("en", "app.greeting")
 print(t("hello", name="Alice"))
@@ -156,24 +150,22 @@ def hoge_tool(name: str, age: int) -> str:
     return f"Processed: {name}, {age}"
 
 # Step 3: Configure translations
-settings_manager.user_config = {
-    "catalog": {
-        "ja": {
-            "hoge_tool.args_schema": {
-                "__doc__": "データ処理用のHogeツール。",
-                "name": "あなたの名前",
-                "age": "あなたの年齢",
-            }
-        },
-        "en": {
-            "hoge_tool.args_schema": {
-                "__doc__": "Hoge tool for processing data.",
-                "name": "Your Name",
-                "age": "Your Age",
-            }
+catalog.add_from_dict({
+    "ja": {
+        "hoge_tool.args_schema": {
+            "__doc__": "データ処理用のHogeツール。",
+            "name": "あなたの名前",
+            "age": "あなたの年齢",
+        }
+    },
+    "en": {
+        "hoge_tool.args_schema": {
+            "__doc__": "Hoge tool for processing data.",
+            "name": "Your Name",
+            "age": "Your Age",
         }
     }
-}
+})
 
 # Step 4: Create language-specific tools at runtime
 def get_tool(language: str) -> BaseTool:
@@ -229,22 +221,20 @@ class ArgsSchema(I18n, scope="args_schema"):
     dir_path: str = "Directory path"
 
 # Configure translations
-settings_manager.user_config = {
-    "catalog": {
-        "ja": {
-            "file_arg": {
-                "file_path": "ファイルパス",
-                "start_line": "開始行",
-                "end_line": "終了行",
-            },
-            "args_schema": {
-                "__doc__": "ツール引数",
-                "files": "ファイルのリスト",
-                "dir_path": "ディレクトリパス",
-            }
+catalog.add_from_dict({
+    "ja": {
+        "file_arg": {
+            "file_path": "ファイルパス",
+            "start_line": "開始行",
+            "end_line": "終了行",
+        },
+        "args_schema": {
+            "__doc__": "ツール引数",
+            "files": "ファイルのリスト",
+            "dir_path": "ディレクトリパス",
         }
     }
-}
+})
 
 # Translate parent model (nested models are automatically translated)
 ArgsSchemaJa = translate_pydantic_model(ArgsSchema, "ja")
@@ -347,27 +337,21 @@ class HogeI18n(I18n, scope="hoge.fields"):
 HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")  # scope is optional
 ```
 
-### Cache Management
+### Catalog Management
 
-#### `clear_cache() -> None`
-
-Clear all i18n-related caches.
-
-This function clears the catalog file loading cache.
-Only file I/O operations are cached for performance.
-Settings changes are reflected immediately without requiring cache clearing.
+The `catalog` object provides methods to manage translation data:
 
 **Example:**
 ```python
-from kiarina.i18n import clear_cache, settings_manager
+from kiarina.i18n import catalog
 
-# When using catalog_file, clear cache to reload from file
-settings_manager.user_config = {"catalog_file": "new_catalog.yaml"}
-clear_cache()  # Reload catalog from new file
+# Add catalog data
+catalog.add_from_dict({
+    "en": {"app": {"title": "My App"}},
+})
 
-# When using in-memory catalog, changes are immediate (no cache clearing needed)
-settings_manager.user_config = {"catalog": {...}}
-# No need to call clear_cache() - changes are immediately reflected
+# Clear catalog (useful for testing)
+catalog.clear()
 ```
 
 ### Functional API
@@ -423,19 +407,39 @@ print(t("hello", name="World"))  # Output: こんにちは、World!
 
 ## Configuration
 
-### Using pydantic-settings-manager
+### Catalog Management
+
+The catalog is managed separately from settings using the `catalog` singleton:
+
+```python
+from kiarina.i18n import catalog
+
+# Add from dictionary
+catalog.add_from_dict({
+    "en": {"app.greeting": {"hello": "Hello!"}},
+    "ja": {"app.greeting": {"hello": "こんにちは!"}}
+})
+
+# Add from YAML file
+catalog.add_from_file("translations.yaml")
+
+# Multiple files can be merged
+catalog.add_from_file("base.yaml")
+catalog.add_from_file("app-specific.yaml")
+catalog.add_from_file("user-overrides.yaml")
+
+# Clear all catalog data
+catalog.clear()
+```
+
+### Settings Configuration
+
+Settings only manage the default language:
 
 ```yaml
 # config.yaml
 kiarina.i18n:
   default_language: "en"
-  catalog:
-    en:
-      app.greeting:
-        hello: "Hello, $name!"
-    ja:
-      app.greeting:
-        hello: "こんにちは、$name!"
 ```
 
 ```python
@@ -451,8 +455,6 @@ load_user_configs(config)
 ### Settings Fields
 
 - `default_language` (str): Default language to use when translation is not found (default: "en")
-- `catalog_file` (str | None): Path to YAML file containing translation catalog
-- `catalog` (dict): Translation catalog mapping languages to scopes to keys to translations
 
 ## Testing
 

@@ -2,7 +2,7 @@ import logging
 from string import Template
 from typing import Any
 
-from .._types.catalog import Catalog
+from .._services.catalog import Catalog
 from .._types.i18n_key import I18nKey
 from .._types.i18n_scope import I18nScope
 from .._types.language import Language
@@ -17,16 +17,17 @@ class Translator:
     It supports template substitution using Python's string.Template.
 
     Args:
-        catalog: Translation catalog mapping languages to scopes to keys to translations.
+        catalog: Catalog instance for managing translation data.
         language: Target language for translation.
         scope: Scope for translation keys (e.g., "kiarina.app.greeting").
         fallback_language: Fallback language when translation is not found.
 
     Example:
-        >>> catalog = {
+        >>> from kiarina.i18n import catalog, Translator
+        >>> catalog.add_from_dict({
         ...     "en": {"app.greeting": {"hello": "Hello, $name!"}},
         ...     "ja": {"app.greeting": {"hello": "こんにちは、$name!"}}
-        ... }
+        ... })
         >>> t = Translator(catalog=catalog, language="ja", scope="app.greeting")
         >>> t("hello", name="World")
         'こんにちは、World!'
@@ -56,10 +57,10 @@ class Translator:
         Returns:
             Translated text with template variables substituted.
         """
-        text = self._get_text(self.language, self.scope, key)
+        text = self.catalog.get_text(self.language, self.scope, key)
 
         if text is None and self.language != self.fallback_language:
-            text = self._get_text(self.fallback_language, self.scope, key)
+            text = self.catalog.get_text(self.fallback_language, self.scope, key)
 
         if text is None:
             text = default
@@ -76,11 +77,3 @@ class Translator:
             return Template(text).safe_substitute(**kwargs)
 
         return text
-
-    def _get_text(
-        self,
-        language: Language,
-        scope: I18nScope,
-        key: I18nKey,
-    ) -> str | None:
-        return self.catalog.get(language, {}).get(scope, {}).get(key)

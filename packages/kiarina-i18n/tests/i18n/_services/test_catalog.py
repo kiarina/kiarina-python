@@ -1,0 +1,125 @@
+import tempfile
+from pathlib import Path
+
+import pytest
+
+from kiarina.i18n._services.catalog import Catalog
+
+
+@pytest.fixture
+def catalog_instance() -> Catalog:
+    """Create a fresh Catalog instance for testing."""
+    catalog = Catalog()
+    catalog.clear()
+    return catalog
+
+
+def test_catalog_add_from_dict(catalog_instance: Catalog) -> None:
+    """Test adding catalog data from dictionary."""
+    data = {
+        "en": {"app": {"title": "My App"}},
+        "ja": {"app": {"title": "マイアプリ"}},
+    }
+
+    catalog_instance.add_from_dict(data)
+
+    assert catalog_instance.get_text("en", "app", "title") == "My App"
+    assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
+
+
+def test_catalog_add_from_dict_deep_merge(catalog_instance: Catalog) -> None:
+    """Test that add_from_dict performs deep merge."""
+    # First add
+    catalog_instance.add_from_dict(
+        {
+            "en": {"app": {"title": "My App"}},
+        }
+    )
+
+    # Second add (should merge, not replace)
+    catalog_instance.add_from_dict(
+        {
+            "en": {"app": {"description": "My Description"}},
+            "ja": {"app": {"title": "マイアプリ"}},
+        }
+    )
+
+    # Both keys should exist
+    assert catalog_instance.get_text("en", "app", "title") == "My App"
+    assert catalog_instance.get_text("en", "app", "description") == "My Description"
+    assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
+
+
+def test_catalog_add_from_file(catalog_instance: Catalog) -> None:
+    """Test adding catalog data from YAML file."""
+    yaml_content = """
+en:
+  app:
+    title: "My App"
+    description: "My Description"
+ja:
+  app:
+    title: "マイアプリ"
+    description: "マイ説明"
+"""
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+        f.write(yaml_content)
+        temp_path = f.name
+
+    try:
+        catalog_instance.add_from_file(temp_path)
+
+        assert catalog_instance.get_text("en", "app", "title") == "My App"
+        assert catalog_instance.get_text("en", "app", "description") == "My Description"
+        assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
+        assert catalog_instance.get_text("ja", "app", "description") == "マイ説明"
+    finally:
+        Path(temp_path).unlink()
+
+
+def test_catalog_clear(catalog_instance: Catalog) -> None:
+    """Test clearing catalog data."""
+    catalog_instance.add_from_dict(
+        {
+            "en": {"app": {"title": "My App"}},
+        }
+    )
+
+    assert catalog_instance.get_text("en", "app", "title") == "My App"
+
+    catalog_instance.clear()
+
+    assert catalog_instance.get_text("en", "app", "title") is None
+
+
+def test_catalog_get_text_not_found(catalog_instance: Catalog) -> None:
+    """Test get_text returns None when translation is not found."""
+    assert catalog_instance.get_text("en", "app", "nonexistent") is None
+    assert catalog_instance.get_text("nonexistent", "app", "title") is None
+    assert catalog_instance.get_text("en", "nonexistent", "title") is None
+
+
+def test_catalog_singleton_behavior() -> None:
+    """Test that catalog behaves as a singleton at module level."""
+    from kiarina.i18n._services.catalog import catalog as catalog1
+    from kiarina.i18n._services.catalog import catalog as catalog2
+
+    # Should be the same instance
+    assert catalog1 is catalog2
+
+    # Clear for clean state
+    catalog1.clear()
+
+    # Add data via catalog1
+    catalog1.add_from_dict(
+        {
+            "en": {"test": {"key": "value"}},
+        }
+    )
+
+    # Should be accessible via catalog2
+    assert catalog2.get_text("en", "test", "key") == "value"
+
+    # Clear for next tests
+    catalog1.clear()
