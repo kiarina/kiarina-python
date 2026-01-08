@@ -10,7 +10,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from ._models.i18n import I18n
     from ._models.translator import Translator
     from ._settings import I18nSettings, settings_manager
-    from ._types.catalog import Catalog
     from ._types.i18n_key import I18nKey
     from ._types.i18n_scope import I18nScope
     from ._types.language import Language
@@ -29,7 +28,6 @@ __all__ = [
     "I18nSettings",
     "settings_manager",
     # ._types
-    "Catalog",
     "I18nKey",
     "I18nScope",
     "Language",
@@ -54,7 +52,6 @@ def __getattr__(name: str) -> object:
         "I18nSettings": "._settings",
         "settings_manager": "._settings",
         # ._types
-        "Catalog": "._types.catalog",
         "I18nKey": "._types.i18n_key",
         "I18nScope": "._types.i18n_scope",
         "Language": "._types.language",
