@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-falkordb"
-version = "1.24.0"
+version = "1.25.0"
 description = "FalkorDB client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"

@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.25.0] - 2026-01-08
+
+### Added
+- **kiarina-i18n**: Added `add_from_dir()` and `add_from_package()` methods to `Catalog` for loading catalogs from directories and package resources
+
 ## [1.24.0] - 2026-01-08
 
 ### Changed

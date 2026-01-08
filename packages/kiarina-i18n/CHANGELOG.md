@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.25.0] - 2026-01-08
+
+### Added
+- Added `add_from_dir()` method to `Catalog` for loading catalogs from directories
+- Added `add_from_package()` method to `Catalog` for loading catalogs from package resources
+
 ## [1.24.0] - 2026-01-08
 
 ### Changed
