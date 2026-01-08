@@ -66,7 +66,9 @@ class Catalog:
         """
         with open(file_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
-            self.add_from_dict(data)
+
+            if data is not None:
+                self.add_from_dict(data)
 
     def add_from_dir(self, dir_path: str) -> None:
         """Add catalog data from all YAML files in directory (deep merge).
@@ -116,7 +118,9 @@ class Catalog:
 
             content = resource_file.read_text(encoding="utf-8")
             data = yaml.safe_load(content)
-            self.add_from_dict(data)
+
+            if data is not None:
+                self.add_from_dict(data)
 
         except ModuleNotFoundError as e:
             raise FileNotFoundError(
@@ -163,7 +167,9 @@ class Catalog:
             for yaml_file in yaml_files:
                 content = yaml_file.read_text(encoding="utf-8")
                 data = yaml.safe_load(content)
-                self.add_from_dict(data)
+
+                if data is not None:
+                    self.add_from_dict(data)
 
         except ModuleNotFoundError as e:
             raise FileNotFoundError(

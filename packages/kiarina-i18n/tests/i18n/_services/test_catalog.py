@@ -79,6 +79,24 @@ ja:
         Path(temp_path).unlink()
 
 
+def test_catalog_add_from_file_empty_yaml(catalog_instance: Catalog) -> None:
+    """Test adding catalog data from empty YAML file."""
+    yaml_content = ""
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+        f.write(yaml_content)
+        temp_path = f.name
+
+    try:
+        # Should not raise an error
+        catalog_instance.add_from_file(temp_path)
+
+        # Catalog should remain empty
+        assert catalog_instance.get_text("en", "app", "title") is None
+    finally:
+        Path(temp_path).unlink()
+
+
 def test_catalog_add_from_dir(catalog_instance: Catalog) -> None:
     """Test adding catalog data from directory."""
     temp_dir = Path(tempfile.mkdtemp())
@@ -214,6 +232,93 @@ def test_catalog_add_from_package_file_file_not_found(
             catalog_instance.add_from_package_file("test_package", "nonexistent.yaml")
 
     finally:
+        sys.path.remove(str(temp_dir))
+        import shutil
+
+        shutil.rmtree(temp_dir)
+
+
+def test_catalog_add_from_package_dir(catalog_instance: Catalog) -> None:
+    """Test adding catalog data from package directory."""
+    # Create temporary directory for test package
+    temp_dir = Path(tempfile.mkdtemp())
+    package_dir = temp_dir / "test_i18n_package_dir"
+    package_dir.mkdir()
+
+    # Create __init__.py
+    (package_dir / "__init__.py").write_text("")
+
+    # Create catalog files
+    (package_dir / "en.yaml").write_text(
+        """
+en:
+  app:
+    title: "My App"
+"""
+    )
+    (package_dir / "ja.yml").write_text(
+        """
+ja:
+  app:
+    title: "マイアプリ"
+"""
+    )
+
+    # Add package to sys.path
+    sys.path.insert(0, str(temp_dir))
+
+    try:
+        # Load from package directory
+        catalog_instance.add_from_package_dir("test_i18n_package_dir")
+
+        # Verify data was loaded
+        assert catalog_instance.get_text("en", "app", "title") == "My App"
+        assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
+
+    finally:
+        # Cleanup
+        sys.path.remove(str(temp_dir))
+        import shutil
+
+        shutil.rmtree(temp_dir)
+
+
+def test_catalog_add_from_package_dir_with_empty_yaml(
+    catalog_instance: Catalog,
+) -> None:
+    """Test adding catalog data from package directory with empty YAML file."""
+    # Create temporary directory for test package
+    temp_dir = Path(tempfile.mkdtemp())
+    package_dir = temp_dir / "test_i18n_package_empty"
+    package_dir.mkdir()
+
+    # Create __init__.py
+    (package_dir / "__init__.py").write_text("")
+
+    # Create empty YAML file
+    (package_dir / "empty.yaml").write_text("")
+
+    # Create valid YAML file
+    (package_dir / "en.yaml").write_text(
+        """
+en:
+  app:
+    title: "My App"
+"""
+    )
+
+    # Add package to sys.path
+    sys.path.insert(0, str(temp_dir))
+
+    try:
+        # Should not raise an error
+        catalog_instance.add_from_package_dir("test_i18n_package_empty")
+
+        # Verify valid data was loaded
+        assert catalog_instance.get_text("en", "app", "title") == "My App"
+
+    finally:
+        # Cleanup
         sys.path.remove(str(temp_dir))
         import shutil
 
