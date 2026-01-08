@@ -100,13 +100,18 @@ print(translator("hello", name="World"))  # Output: こんにちは、World!
 - **Immutable**: Translation instances are frozen and cannot be modified
 - **Clean Syntax**: Scope is defined at class level, not as a field
 
-### Using Catalog File
+### Using Catalog Files
+
+#### From File System
 
 ```python
 from kiarina.i18n import catalog, get_translator
 
-# Load catalog from YAML file
+# Load single file
 catalog.add_from_file("i18n_catalog.yaml")
+
+# Load all YAML files from directory (recursive)
+catalog.add_from_dir("translations/")
 
 t = get_translator("en", "app.greeting")
 print(t("hello", name="Alice"))
@@ -123,6 +128,35 @@ ja:
   app.greeting:
     hello: "こんにちは、$name!"
     goodbye: "さようなら!"
+```
+
+#### From Package Resources
+
+When you want to bundle translation files with your Python package:
+
+```python
+from kiarina.i18n import catalog
+
+# Load single file from package
+catalog.add_from_package_file("myapp.i18n", "catalogs/en.yaml")
+catalog.add_from_package_file("myapp.i18n", "catalogs/ja.yaml")
+
+# Load all YAML files from package directory (non-recursive)
+catalog.add_from_package_dir("myapp.i18n.catalogs")
+```
+
+**Package Structure Example:**
+
+```
+myapp/
+├── __init__.py
+└── i18n/
+    ├── __init__.py
+    ├── catalogs/
+    │   ├── __init__.py
+    │   ├── en.yaml
+    │   └── ja.yaml
+    └── en.yaml  # Also loaded by add_from_package_dir("myapp.i18n")
 ```
 
 ### Pydantic Integration for LLM Tools
