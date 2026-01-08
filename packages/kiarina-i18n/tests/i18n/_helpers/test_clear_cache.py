@@ -1,6 +1,7 @@
 import yaml
 
-from kiarina.i18n import clear_cache, get_catalog, get_translator, settings_manager
+from kiarina.i18n import clear_cache, get_translator, settings_manager
+from kiarina.i18n._operations.get_catalog import get_catalog
 
 
 def test_clear_cache_clears_catalog_file_cache(tmp_path):

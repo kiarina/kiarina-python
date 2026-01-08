@@ -1,8 +1,8 @@
 from .._models.translator import Translator
+from .._operations.get_catalog import get_catalog
 from .._settings import settings_manager
 from .._types.i18n_scope import I18nScope
 from .._types.language import Language
-from .get_catalog import get_catalog
 
 
 def get_translator(language: Language, scope: I18nScope) -> Translator:

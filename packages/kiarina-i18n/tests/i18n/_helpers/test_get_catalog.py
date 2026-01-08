@@ -1,4 +1,5 @@
-from kiarina.i18n import get_catalog, settings_manager
+from kiarina.i18n import settings_manager
+from kiarina.i18n._operations.get_catalog import get_catalog
 
 
 def test_get_catalog_from_settings(sample_catalog):

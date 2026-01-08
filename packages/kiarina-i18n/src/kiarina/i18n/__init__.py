@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
     from ._helpers.clear_cache import clear_cache
-    from ._helpers.get_catalog import get_catalog
     from ._helpers.get_i18n import get_i18n
     from ._helpers.get_translator import get_translator
     from ._models.i18n import I18n
@@ -21,7 +20,6 @@ __version__ = version("kiarina-i18n")
 __all__ = [
     # ._helpers
     "clear_cache",
-    "get_catalog",
     "get_i18n",
     "get_translator",
     # ._models
@@ -47,7 +45,6 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._helpers
         "clear_cache": "._helpers.clear_cache",
-        "get_catalog": "._helpers.get_catalog",
         "get_i18n": "._helpers.get_i18n",
         "get_translator": "._helpers.get_translator",
         # ._models

@@ -372,38 +372,6 @@ settings_manager.user_config = {"catalog": {...}}
 
 ### Functional API
 
-#### `get_catalog() -> Catalog`
-
-Get the translation catalog from settings.
-
-When using `catalog_file`, file I/O is cached for performance. When using in-memory `catalog`, settings changes are reflected immediately. This function can be used independently for custom translation logic or direct catalog access.
-
-**Returns:**
-- `Catalog`: Translation catalog loaded from file or settings
-
-**Example:**
-```python
-from kiarina.i18n import get_catalog, settings_manager
-
-# Configure catalog
-settings_manager.user_config = {
-    "catalog": {
-        "en": {"app.greeting": {"hello": "Hello!"}},
-        "ja": {"app.greeting": {"hello": "こんにちは!"}}
-    }
-}
-
-# Get catalog
-catalog = get_catalog()
-print(catalog["en"]["app.greeting"]["hello"])  # "Hello!"
-
-# Use for custom translation logic
-def custom_translate(lang: str, scope: str, key: str) -> str:
-    return catalog.get(lang, {}).get(scope, {}).get(key, "")
-
-print(custom_translate("ja", "app.greeting", "hello"))  # "こんにちは!"
-```
-
 #### `get_translator(language: str, scope: str) -> Translator`
 
 Get a translator for the specified language and scope.
