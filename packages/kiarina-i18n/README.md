@@ -47,6 +47,28 @@ print(t("hello", name="World"))  # Output: こんにちは、World!
 print(t("goodbye"))  # Output: さようなら!
 ```
 
+### Automatic Language Detection
+
+Use `get_system_language()` to automatically detect the user's system language:
+
+```python
+from kiarina.i18n import catalog, get_system_language, get_translator
+
+# Configure the catalog
+catalog.add_from_dict({
+    "en": {"app.greeting": {"hello": "Hello, $name!"}},
+    "ja": {"app.greeting": {"hello": "こんにちは、$name!"}},
+    "fr": {"app.greeting": {"hello": "Bonjour, $name!"}},
+})
+
+# Automatically detect system language
+language = get_system_language()  # Returns "ja" on Japanese systems, "en" on English systems, etc.
+
+# Get translator for detected language
+t = get_translator(language, "app.greeting")
+print(t("hello", name="World"))  # Output varies based on system language
+```
+
 ### Type-Safe Class-Based API (Recommended)
 
 For better type safety and IDE support, use the class-based API:
@@ -389,6 +411,26 @@ catalog.clear()
 ```
 
 ### Functional API
+
+#### `get_system_language() -> str`
+
+Get the system's default language code.
+
+This function attempts to detect the system's language preference by checking:
+1. Environment variables (LANG, LC_ALL, LC_MESSAGES, LANGUAGE)
+2. locale.getlocale() as fallback
+3. Returns "en" if detection fails
+
+**Returns:**
+- Language code (e.g., "en", "ja", "fr")
+
+**Example:**
+```python
+from kiarina.i18n import get_system_language, get_translator
+
+language = get_system_language()  # Auto-detect system language
+t = get_translator(language, "app.greeting")
+```
 
 #### `get_translator(language: str, scope: str) -> Translator`
 
