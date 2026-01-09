@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-i18n"
-version = "1.25.1"
+version = "1.26.0"
 description = "Simple internationalization (i18n) utilities for Python applications"
 readme = "README.md"
 authors = [

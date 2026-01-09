@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.26.0] - 2026-01-09
+
+### Added
+- **kiarina-i18n**: Added `get_system_language()` helper function for automatic system language detection
+
 ## [1.25.1] - 2026-01-08
 
 ### Changed

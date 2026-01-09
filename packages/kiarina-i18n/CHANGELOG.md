@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.26.0] - 2026-01-09
+
 ### Added
 - `get_system_language()` helper function for automatic system language detection
   - Detects language from environment variables (LANG, LC_ALL, LC_MESSAGES, LANGUAGE)
