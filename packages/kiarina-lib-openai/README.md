@@ -36,6 +36,29 @@ settings = settings_manager.settings
 print(f"API Key configured: {settings.api_key.get_secret_value()[:10]}...")
 ```
 
+### Using with OpenAI Client
+
+```python
+from openai import AsyncOpenAI
+from kiarina.lib.openai import settings_manager
+
+# Configure settings
+settings_manager.user_config = {
+    "default": {
+        "api_key": "sk-your-api-key-here",
+        "organization_id": "org-your-org-id",
+        "base_url": "https://api.openai.com/v1"
+    }
+}
+
+# Get client initialization arguments
+settings = settings_manager.settings
+client_kwargs = settings.to_client_kwargs()
+
+# Initialize OpenAI client
+client = AsyncOpenAI(**client_kwargs)
+```
+
 ### Environment Variable Configuration
 
 Configure authentication using environment variables:
@@ -195,6 +218,9 @@ class OpenAISettings(BaseSettings):
     api_key: SecretStr
     organization_id: str | None = None
     base_url: str | None = None
+    
+    def to_client_kwargs(self) -> dict[str, Any]:
+        """Convert settings to OpenAI client initialization arguments."""
 ```
 
 Pydantic settings model for OpenAI API configuration.
@@ -203,6 +229,9 @@ Pydantic settings model for OpenAI API configuration.
 - `api_key` (SecretStr): OpenAI API key (protected)
 - `organization_id` (str | None): Optional organization ID
 - `base_url` (str | None): Optional custom base URL for OpenAI-compatible APIs
+
+**Methods:**
+- `to_client_kwargs()` -> `dict[str, Any]`: Convert settings to OpenAI client initialization arguments. Returns a dictionary with non-None values that can be passed directly to `OpenAI()` or `AsyncOpenAI()` constructors.
 
 ### settings_manager
 

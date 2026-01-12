@@ -18,7 +18,7 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 def __getattr__(name: str) -> object:
-    if name not in __all__:
+    if name not in __all__:  # pragma: no cover
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
