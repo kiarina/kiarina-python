@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.27.0] - 2026-01-12
+
+### Added
+- **kiarina-lib-openai**: Added `to_client_kwargs()` method to `OpenAISettings` for easy conversion to OpenAI client initialization parameters
+
 ## [1.26.0] - 2026-01-09
 
 ### Added
