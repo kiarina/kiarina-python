@@ -17,7 +17,11 @@ pip install kiarina-currency
 ### Basic Usage
 
 ```python
-from kiarina.currency import get_exchange_rate
+from kiarina.currency import get_exchange_rate, get_system_currency
+
+# Get system currency
+currency = get_system_currency()
+print(f"System currency: {currency}")  # e.g., "JPY" on Japanese system
 
 # Get exchange rate (uses static provider by default)
 rate = await get_exchange_rate("USD", "JPY")
@@ -63,6 +67,36 @@ rate = await get_exchange_rate(
 ```
 
 ## API Reference
+
+### `get_system_currency()`
+
+Get system currency code from locale settings.
+
+```python
+def get_system_currency() -> CurrencyCode
+```
+
+**Returns:** Currency code (ISO 4217) based on system locale. Falls back to "USD" if detection fails.
+
+**Detection Strategy:**
+1. Try to get currency from `locale.localeconv()["int_curr_symbol"]`
+2. Map locale string to currency (e.g., `ja_JP` → `JPY`, `en_US` → `USD`)
+3. Check environment variables (`LC_ALL`, `LC_MONETARY`, `LANG`)
+4. Fallback to `"USD"`
+
+**Examples:**
+```python
+from kiarina.currency import get_system_currency
+
+# On Japanese system
+currency = get_system_currency()  # Returns "JPY"
+
+# On US system
+currency = get_system_currency()  # Returns "USD"
+
+# On unknown system
+currency = get_system_currency()  # Returns "USD" (fallback)
+```
 
 ### `get_exchange_rate()`
 

@@ -14,6 +14,7 @@ if TYPE_CHECKING:
         create_rate_provider,
         settings_manager as rate_provider_settings_manager,
     )
+    from .system_currency import get_system_currency
 
 __version__ = version("kiarina-currency")
 
@@ -32,6 +33,8 @@ __all__ = [
     "RateProviderSettings",
     "create_rate_provider",
     "rate_provider_settings_manager",
+    # .system_currency
+    "get_system_currency",
 ]
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -56,6 +59,8 @@ def __getattr__(name: str) -> object:
         "RateProviderSettings": ".rate_provider",
         "create_rate_provider": ".rate_provider",
         "rate_provider_settings_manager": ".rate_provider",
+        # .system_currency
+        "get_system_currency": ".system_currency",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)
