@@ -22,13 +22,18 @@ this project provides robust, well-tested utilities for common development tasks
   - Install all kiarina packages with a single command: `pip install kiarina`
   - Aggregates all utilities and libraries in one package
 
-### 🌍 Internationalization
+### 🌍 Internationalization & Localization
 
 - **[kiarina-i18n](packages/kiarina-i18n/)** - Simple internationalization (i18n) utilities
   - Lightweight translation with fallback support
   - Template variable substitution
   - Configuration-based catalog management
   - YAML file support for translations
+- **[kiarina-currency](packages/kiarina-currency/)** - Currency utilities with exchange rate support
+  - System currency detection from locale settings
+  - Exchange rate retrieval with pluggable rate providers
+  - Static and real-time (Frankfurter API) rate providers
+  - ISO 4217 currency code support
 
 ### 🔧 Utilities
 
