@@ -39,6 +39,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "kiarina",
+    "kiarina-currency",
     "kiarina-i18n",
     "kiarina-lib-anthropic",
     "kiarina-lib-cloudflare-auth",
@@ -83,6 +84,7 @@ test = [
 [tool.uv.workspace]
 members = [
     "packages/kiarina",
+    "packages/kiarina-currency",
     "packages/kiarina-i18n",
     "packages/kiarina-lib-anthropic",
     "packages/kiarina-lib-cloudflare-auth",
@@ -100,6 +102,7 @@ members = [
 
 [tool.uv.sources]
 kiarina = { workspace = true }
+kiarina-currency = { workspace = true }
 kiarina-i18n = { workspace = true }
 kiarina-lib-anthropic = { workspace = true }
 kiarina-lib-cloudflare-auth = { workspace = true }
@@ -116,6 +119,7 @@ kiarina-utils-file = { workspace = true }
 
 [tool.mypy]
 mypy_path = [
+    "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
     "packages/kiarina-lib-cloudflare-auth/src",
@@ -142,6 +146,7 @@ asyncio_default_fixture_loop_scope = "session"
 
 [tool.coverage.run]
 source = [
+    "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
     "packages/kiarina-lib-cloudflare-auth/src",

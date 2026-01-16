@@ -4,6 +4,9 @@
       "path": "packages/kiarina"
     },
     {
+      "path": "packages/kiarina-currency"
+    },
+    {
       "path": "packages/kiarina-i18n"
     },
     {

@@ -9,6 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "kiarina",
+    "kiarina-currency",
     "kiarina-i18n",
     "kiarina-lib-anthropic",
     "kiarina-lib-cloudflare-auth",
@@ -448,6 +449,7 @@ name = "kiarina"
 version = "1.27.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
+    { name = "kiarina-currency" },
     { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth" },
@@ -465,6 +467,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "kiarina-currency", editable = "packages/kiarina-currency" },
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
@@ -478,6 +481,27 @@ requires-dist = [
     { name = "kiarina-llm", editable = "packages/kiarina-llm" },
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
     { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
+]
+
+[[package]]
+name = "kiarina-currency"
+version = "1.27.0"
+source = { editable = "packages/kiarina-currency" }
+dependencies = [
+    { name = "httpx" },
+    { name = "kiarina-utils-common" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
 
 [[package]]
@@ -692,6 +716,7 @@ version = "1.27.0"
 source = { virtual = "." }
 dependencies = [
     { name = "kiarina" },
+    { name = "kiarina-currency" },
     { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth" },
@@ -729,6 +754,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "kiarina", editable = "packages/kiarina" },
+    { name = "kiarina-currency", editable = "packages/kiarina-currency" },
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
