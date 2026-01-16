@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.28.0] - 2026-01-16
+
+### Added
+- **kiarina-currency**: Initial release of currency exchange rate utilities with pluggable rate provider support
+
 ## [1.27.0] - 2026-01-12
 
 ### Added
