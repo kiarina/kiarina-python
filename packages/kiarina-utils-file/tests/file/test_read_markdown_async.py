@@ -147,3 +147,53 @@ settings:
         assert result.metadata["settings"]["draft"] is False
         assert result.metadata["settings"]["published"] is True
         assert result.content == "# Content\n"
+
+
+def test_markdown_content_from_text_with_front_matter():
+    """Test MarkdownContent.from_text() with YAML front matter"""
+    text = """---
+title: Test Document
+author: John Doe
+date: 2025-01-01
+tags:
+  - test
+  - markdown
+---
+
+# Hello World
+
+This is a test document.
+"""
+    result = kfa.MarkdownContent.from_text(text)
+
+    assert result.metadata["title"] == "Test Document"
+    assert result.metadata["author"] == "John Doe"
+    assert str(result.metadata["date"]) == "2025-01-01"
+    assert result.metadata["tags"] == ["test", "markdown"]
+    assert result.content == "# Hello World\n\nThis is a test document.\n"
+
+
+def test_markdown_content_from_text_without_front_matter():
+    """Test MarkdownContent.from_text() without front matter"""
+    text = "# Hello World\n\nThis is a test document.\n"
+    result = kfa.MarkdownContent.from_text(text)
+
+    assert result.metadata == {}
+    assert result.content == text
+
+
+def test_markdown_content_from_text_with_invalid_front_matter():
+    """Test MarkdownContent.from_text() with invalid YAML front matter"""
+    # Invalid YAML (missing colon)
+    text = """---
+title Test Document
+author: John Doe
+---
+
+# Hello World
+"""
+    result = kfa.MarkdownContent.from_text(text)
+
+    # Invalid YAML should be treated as regular content
+    assert result.metadata == {}
+    assert result.content == text

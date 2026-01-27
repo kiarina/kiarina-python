@@ -1,8 +1,5 @@
 import os
-import re
 from typing import Awaitable, Literal, overload
-
-import yaml
 
 from ..types.markdown_content import MarkdownContent
 from ..utils.read_text import read_text
@@ -87,39 +84,7 @@ def read_markdown(
         if raw_text is None:
             return default
 
-        # Pattern to match YAML front matter at the start of the file
-        # Must start with ---, followed by content, then end with ---
-        front_matter_pattern = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
-
-        match = front_matter_pattern.match(raw_text)
-
-        if match:
-            # Extract front matter and content
-            front_matter_text = match.group(1)
-            content = raw_text[match.end() :]
-
-            try:
-                metadata = yaml.safe_load(front_matter_text)
-
-                # Ensure metadata is a dict (YAML can return other types)
-                if not isinstance(metadata, dict):
-                    # Invalid front matter structure, treat as regular content
-                    return MarkdownContent(content=raw_text, metadata={})
-
-                # Ensure all keys are strings
-                if not all(isinstance(key, str) for key in metadata.keys()):
-                    # Non-string keys, treat as regular content
-                    return MarkdownContent(content=raw_text, metadata={})
-
-            except yaml.YAMLError:
-                # Invalid YAML, treat as regular content
-                return MarkdownContent(content=raw_text, metadata={})
-        else:
-            # No front matter
-            content = raw_text
-            metadata = {}
-
-        return MarkdownContent(content=content, metadata=metadata)
+        return MarkdownContent.from_text(raw_text)
 
     def _sync() -> MarkdownContent | None:
         raw_text = read_text("sync", file_path)

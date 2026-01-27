@@ -258,3 +258,165 @@ This is a separator.
         assert result is not None
         assert result.metadata == {}
         assert result.content == content
+
+
+def test_markdown_content_from_text_with_front_matter():
+    """Test MarkdownContent.from_text() with YAML front matter"""
+    text = """---
+title: Test Document
+author: John Doe
+date: 2025-01-01
+tags:
+  - test
+  - markdown
+---
+
+# Hello World
+
+This is a test document.
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    assert result.metadata["title"] == "Test Document"
+    assert result.metadata["author"] == "John Doe"
+    assert str(result.metadata["date"]) == "2025-01-01"
+    assert result.metadata["tags"] == ["test", "markdown"]
+    assert result.content == "# Hello World\n\nThis is a test document.\n"
+
+
+def test_markdown_content_from_text_without_front_matter():
+    """Test MarkdownContent.from_text() without front matter"""
+    text = "# Hello World\n\nThis is a test document.\n"
+    result = kf.MarkdownContent.from_text(text)
+
+    assert result.metadata == {}
+    assert result.content == text
+
+
+def test_markdown_content_from_text_with_invalid_front_matter():
+    """Test MarkdownContent.from_text() with invalid YAML front matter"""
+    # Invalid YAML (missing colon)
+    text = """---
+title Test Document
+author: John Doe
+---
+
+# Hello World
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    # Invalid YAML should be treated as regular content
+    assert result.metadata == {}
+    assert result.content == text
+
+
+def test_markdown_content_from_text_with_non_dict_front_matter():
+    """Test MarkdownContent.from_text() with non-dict YAML front matter"""
+    # YAML that parses to a list, not a dict
+    text = """---
+- item1
+- item2
+---
+
+# Hello World
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    # Non-dict YAML should be treated as regular content
+    assert result.metadata == {}
+    assert result.content == text
+
+
+def test_markdown_content_from_text_with_non_string_keys():
+    """Test MarkdownContent.from_text() with non-string keys in front matter"""
+    # YAML with numeric keys
+    text = """---
+1: value1
+2: value2
+---
+
+# Hello World
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    # Non-string keys should be treated as regular content
+    assert result.metadata == {}
+    assert result.content == text
+
+
+def test_markdown_content_from_text_empty_string():
+    """Test MarkdownContent.from_text() with empty string"""
+    text = ""
+    result = kf.MarkdownContent.from_text(text)
+
+    assert result.metadata == {}
+    assert result.content == ""
+
+
+def test_markdown_content_from_text_only_front_matter():
+    """Test MarkdownContent.from_text() with only front matter"""
+    text = """---
+title: Only Front Matter
+---
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    assert result.metadata["title"] == "Only Front Matter"
+    assert result.content == ""
+
+
+def test_markdown_content_from_text_with_empty_front_matter():
+    """Test MarkdownContent.from_text() with empty front matter"""
+    text = """---
+---
+
+# Hello World
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    # Empty front matter (no content between ---) is treated as regular content
+    assert result.metadata == {}
+    assert result.content == text
+
+
+def test_markdown_content_from_text_with_complex_metadata():
+    """Test MarkdownContent.from_text() with complex nested metadata"""
+    text = """---
+title: Complex Document
+author:
+  name: John Doe
+  email: john@example.com
+tags:
+  - python
+  - markdown
+settings:
+  draft: false
+  published: true
+---
+
+# Content
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    assert result.metadata["title"] == "Complex Document"
+    assert result.metadata["author"]["name"] == "John Doe"
+    assert result.metadata["author"]["email"] == "john@example.com"
+    assert result.metadata["tags"] == ["python", "markdown"]
+    assert result.metadata["settings"]["draft"] is False
+    assert result.metadata["settings"]["published"] is True
+    assert result.content == "# Content\n"
+
+
+def test_markdown_content_from_text_with_dashes_in_content():
+    """Test MarkdownContent.from_text() with --- in content (not front matter)"""
+    # --- not at the start, so not front matter
+    text = """# Hello
+
+---
+
+This is a separator.
+"""
+    result = kf.MarkdownContent.from_text(text)
+
+    assert result.metadata == {}
+    assert result.content == text

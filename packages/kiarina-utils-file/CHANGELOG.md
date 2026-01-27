@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **MarkdownContent.from_text() classmethod**: Added `from_text()` classmethod to `MarkdownContent` for parsing Markdown text with YAML front matter directly from strings
+  - Enables parsing Markdown content without file I/O operations
+  - Useful for processing Markdown strings from APIs, databases, or in-memory sources
+  - Maintains the same parsing logic as `read_markdown()` for consistency
+  - Comprehensive test coverage with 10 new test cases
+
 ## [1.29.0] - 2026-01-16
 
 ### Changed
