@@ -21,11 +21,11 @@ class SlackSettings(BaseSettings):
     signing_secret: SecretStr
     """Slack Signing Secret"""
 
-    scopes: list[str] = Field(default_factory=list)
-    """OAuth Scopes for the Slack App"""
-
     app_token: SecretStr | None = None
     """Slack App-Level Token (xapp-...)"""
+
+    scopes: list[str] = Field(default_factory=list)
+    """OAuth Scopes for the Slack App"""
 
     team_id: str | None = None
     """Slack Team ID"""
