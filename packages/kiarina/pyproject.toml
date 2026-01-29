@@ -46,6 +46,7 @@ dependencies = [
     "kiarina-lib-openai>=1.10.0",
     "kiarina-lib-redis>=1.0.1",
     "kiarina-lib-redisearch>=1.0.1",
+    "kiarina-lib-slack>=1.31.0",
     "kiarina-llm>=1.0.1",
     "kiarina-utils-common>=1.0.1",
     "kiarina-utils-file>=1.0.1",
