@@ -22,6 +22,9 @@
       "path": "packages/kiarina-lib-falkordb"
     },
     {
+      "path": "packages/kiarina-lib-firebase-auth"
+    },
+    {
       "path": "packages/kiarina-lib-google-auth"
     },
     {
