@@ -36,8 +36,5 @@ class SlackSettings(BaseSettings):
     bot_token: SecretStr | None = None
     """Slack Bot User OAuth Token (xoxb-...)"""
 
-    file_installation_store_base_dir: str | None = None
-    """Base directory for storing Slack file installation data."""
-
 
 settings_manager = SettingsManager(SlackSettings, multi=True)

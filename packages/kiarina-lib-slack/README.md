@@ -150,28 +150,6 @@ settings = settings_manager.settings
 print(f"App Token configured: {settings.app_token is not None}")
 ```
 
-### File Installation Store
-
-Configure file-based installation store for OAuth:
-
-```python
-from kiarina.lib.slack import settings_manager
-
-settings_manager.user_config = {
-    "oauth_app": {
-        "app_id": "A01234567",
-        "client_id": "1234567890.1234567890",
-        "client_secret": "your-client-secret",
-        "signing_secret": "your-signing-secret",
-        "scopes": ["chat:write", "channels:read"],
-        "file_installation_store_base_dir": "./slack_installations"
-    }
-}
-
-settings = settings_manager.settings
-print(f"Installation store: {settings.file_installation_store_base_dir}")
-```
-
 ## Configuration
 
 This library uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) for flexible configuration management.
@@ -191,7 +169,6 @@ The `SlackSettings` class provides the following configuration fields:
 | `team_id` | `str \| None` | No | Slack Team ID |
 | `enterprise_id` | `str \| None` | No | Slack Enterprise ID |
 | `bot_token` | `SecretStr \| None` | No | Slack Bot User OAuth Token (xoxb-...) |
-| `file_installation_store_base_dir` | `str \| None` | No | Base directory for storing Slack file installation data |
 
 ### Environment Variables
 
@@ -210,7 +187,6 @@ export KIARINA_LIB_SLACK_APP_TOKEN="xapp-your-app-token"
 export KIARINA_LIB_SLACK_TEAM_ID="T01234567"
 export KIARINA_LIB_SLACK_ENTERPRISE_ID="E01234567"
 export KIARINA_LIB_SLACK_BOT_TOKEN="xoxb-your-bot-token"
-export KIARINA_LIB_SLACK_FILE_INSTALLATION_STORE_BASE_DIR="./slack_installations"
 ```
 
 ### Programmatic Configuration
@@ -298,7 +274,6 @@ class SlackSettings(BaseSettings):
     team_id: str | None = None
     enterprise_id: str | None = None
     bot_token: SecretStr | None = None
-    file_installation_store_base_dir: str | None = None
 ```
 
 Pydantic settings model for Slack API configuration.
@@ -315,7 +290,6 @@ Pydantic settings model for Slack API configuration.
 - `team_id` (str | None): Slack Team ID
 - `enterprise_id` (str | None): Slack Enterprise ID
 - `bot_token` (SecretStr | None): Slack Bot User OAuth Token (protected)
-- `file_installation_store_base_dir` (str | None): Base directory for storing Slack file installation data
 
 ### settings_manager
 
