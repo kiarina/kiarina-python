@@ -561,7 +561,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-currency" },
@@ -600,7 +600,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-currency"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-currency" }
 dependencies = [
     { name = "httpx" },
@@ -634,7 +634,7 @@ wheels = [
 
 [[package]]
 name = "kiarina-i18n"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-i18n" }
 dependencies = [
     { name = "pydantic" },
@@ -653,7 +653,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-anthropic"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-anthropic" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -668,7 +668,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-cloudflare-auth"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-cloudflare-auth" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -683,7 +683,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-cloudflare-d1"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-cloudflare-d1" }
 dependencies = [
     { name = "httpx" },
@@ -702,7 +702,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-falkordb"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-falkordb" }
 dependencies = [
     { name = "kiarina-falkordb" },
@@ -721,7 +721,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-google-auth"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-google-auth" }
 dependencies = [
     { name = "google-api-python-client" },
@@ -738,7 +738,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-google-cloud-storage"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-google-cloud-storage" }
 dependencies = [
     { name = "google-cloud-storage" },
@@ -757,7 +757,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-openai"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-openai" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -772,7 +772,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-redis"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-redis" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -789,7 +789,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-redisearch"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-redisearch" }
 dependencies = [
     { name = "numpy" },
@@ -810,7 +810,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-slack"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-lib-slack" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -825,7 +825,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-llm"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-llm" }
 dependencies = [
     { name = "pydantic" },
@@ -842,7 +842,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-python"
-version = "1.30.0"
+version = "1.31.0"
 source = { virtual = "." }
 dependencies = [
     { name = "kiarina" },
@@ -923,12 +923,12 @@ test = [
 
 [[package]]
 name = "kiarina-utils-common"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-utils-common" }
 
 [[package]]
 name = "kiarina-utils-file"
-version = "1.30.0"
+version = "1.31.0"
 source = { editable = "packages/kiarina-utils-file" }
 dependencies = [
     { name = "aiofiles" },

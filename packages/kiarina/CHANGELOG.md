@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.31.0] - 2026-01-29
+
+### Added
+- **kiarina-lib-slack**: Initial release with Slack API configuration management
+
 ## [1.30.0] - 2026-01-27
 
 ### Added

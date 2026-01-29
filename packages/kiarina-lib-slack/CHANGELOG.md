@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.31.0] - 2026-01-29
+
 ### Added
 - Initial release with Slack API configuration management
 - `SlackSettings` class with comprehensive Slack App configuration support
