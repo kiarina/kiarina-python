@@ -50,6 +50,7 @@ dependencies = [
     "kiarina-lib-openai",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
+    "kiarina-lib-slack",
     "kiarina-llm",
     "kiarina-utils-common",
     "kiarina-utils-file",
@@ -95,6 +96,7 @@ members = [
     "packages/kiarina-lib-openai",
     "packages/kiarina-lib-redis",
     "packages/kiarina-lib-redisearch",
+    "packages/kiarina-lib-slack",
     "packages/kiarina-llm",
     "packages/kiarina-utils-common",
     "packages/kiarina-utils-file",
@@ -113,6 +115,7 @@ kiarina-lib-google-cloud-storage = { workspace = true }
 kiarina-lib-openai = { workspace = true }
 kiarina-lib-redis = { workspace = true }
 kiarina-lib-redisearch = { workspace = true }
+kiarina-lib-slack = { workspace = true }
 kiarina-llm = { workspace = true }
 kiarina-utils-common = { workspace = true }
 kiarina-utils-file = { workspace = true }
@@ -130,6 +133,7 @@ mypy_path = [
     "packages/kiarina-lib-openai/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
+    "packages/kiarina-lib-slack/src",
     "packages/kiarina-llm/src",
     "packages/kiarina-utils-common/src",
     "packages/kiarina-utils-file/src",
@@ -157,6 +161,7 @@ source = [
     "packages/kiarina-lib-openai/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
+    "packages/kiarina-lib-slack/src",
     "packages/kiarina-llm/src",
     "packages/kiarina-utils-common/src",
     "packages/kiarina-utils-file/src",

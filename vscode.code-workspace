@@ -37,6 +37,9 @@
       "path": "packages/kiarina-lib-redisearch"
     },
     {
+      "path": "packages/kiarina-lib-slack"
+    },
+    {
       "path": "packages/kiarina-llm"
     },
     {

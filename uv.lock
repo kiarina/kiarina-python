@@ -20,6 +20,7 @@ members = [
     "kiarina-lib-openai",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
+    "kiarina-lib-slack",
     "kiarina-llm",
     "kiarina-python",
     "kiarina-utils-common",
@@ -808,6 +809,21 @@ requires-dist = [
 ]
 
 [[package]]
+name = "kiarina-lib-slack"
+version = "1.30.0"
+source = { editable = "packages/kiarina-lib-slack" }
+dependencies = [
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic-settings", specifier = ">=2.10.1" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
+]
+
+[[package]]
 name = "kiarina-llm"
 version = "1.30.0"
 source = { editable = "packages/kiarina-llm" }
@@ -841,6 +857,7 @@ dependencies = [
     { name = "kiarina-lib-openai" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
+    { name = "kiarina-lib-slack" },
     { name = "kiarina-llm" },
     { name = "kiarina-utils-common" },
     { name = "kiarina-utils-file" },
@@ -879,6 +896,7 @@ requires-dist = [
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
+    { name = "kiarina-lib-slack", editable = "packages/kiarina-lib-slack" },
     { name = "kiarina-llm", editable = "packages/kiarina-llm" },
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
     { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
