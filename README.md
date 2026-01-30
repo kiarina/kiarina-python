@@ -78,6 +78,15 @@ this project provides robust, well-tested utilities for common development tasks
   - Thin wrapper for Cloudflare D1 operations
   - Separation of authentication and resource configuration
 
+#### Firebase
+
+- **[kiarina-lib-firebase-auth](packages/kiarina-lib-firebase-auth/)** - Firebase authentication
+  - Custom token exchange for refresh/ID tokens via REST API
+  - Automatic ID token lifecycle management with TokenManager
+  - Token refresh 5 minutes before expiration
+  - Thread-safe token refresh with asyncio.Lock
+  - Secure API key management with SecretStr
+
 #### Google Cloud
 
 - **[kiarina-lib-google-auth](packages/kiarina-lib-google-auth/)** - Google Cloud authentication

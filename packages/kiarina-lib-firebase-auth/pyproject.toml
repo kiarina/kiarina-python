@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-firebase-auth"
-version = "1.32.0"
+version = "1.31.0"
 description = "Firebase authentication library for kiarina namespace"
 readme = "README.md"
 license = "MIT"
@@ -23,6 +23,8 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "httpx>=0.28.1",
+    "pydantic>=2.10.6",
     "pydantic-settings>=2.10.1",
     "pydantic-settings-manager>=2.3.0",
 ]
@@ -33,6 +35,12 @@ Repository = "https://github.com/kiarina/kiarina-python"
 Issues = "https://github.com/kiarina/kiarina-python/issues"
 Changelog = "https://github.com/kiarina/kiarina-python/blob/main/packages/kiarina-lib-firebase-auth/CHANGELOG.md"
 Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-firebase-auth#readme"
+
+[dependency-groups]
+dev = [
+    "firebase-admin>=6.6.0",
+    "kiarina-lib-google-auth>=1.22.0",
+]
 
 [build-system]
 requires = ["hatchling"]
