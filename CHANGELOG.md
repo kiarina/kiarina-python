@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.32.0] - 2026-01-30
+
 ### Added
 - **kiarina-lib-firebase-auth**: Initial release with Firebase authentication REST API integration and automatic token management
 
