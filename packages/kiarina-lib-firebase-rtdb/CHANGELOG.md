@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.32.0] - 2026-01-30
-
 ### Added
 - Initial release with Firebase Realtime Database REST API integration
 - `get_data()` function for retrieving data from Firebase RTDB
