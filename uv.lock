@@ -17,6 +17,7 @@ members = [
     "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
     "kiarina-lib-firebase-auth",
+    "kiarina-lib-firebase-rtdb",
     "kiarina-lib-google-auth",
     "kiarina-lib-google-cloud-storage",
     "kiarina-lib-openai",
@@ -716,6 +717,7 @@ dependencies = [
     { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth" },
+    { name = "kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai" },
@@ -736,6 +738,7 @@ requires-dist = [
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth", editable = "packages/kiarina-lib-firebase-auth" },
+    { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
@@ -900,6 +903,39 @@ dev = [
 ]
 
 [[package]]
+name = "kiarina-lib-firebase-rtdb"
+version = "1.32.0"
+source = { editable = "packages/kiarina-lib-firebase-rtdb" }
+dependencies = [
+    { name = "httpx" },
+    { name = "kiarina-lib-firebase-auth" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "firebase-admin" },
+    { name = "kiarina-lib-google-auth" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "kiarina-lib-firebase-auth", editable = "packages/kiarina-lib-firebase-auth" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+    { name = "pydantic-settings", specifier = ">=2.10.1" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "firebase-admin", specifier = ">=6.6.0" },
+    { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
+]
+
+[[package]]
 name = "kiarina-lib-google-auth"
 version = "1.32.0"
 source = { editable = "packages/kiarina-lib-google-auth" }
@@ -1033,6 +1069,7 @@ dependencies = [
     { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth" },
+    { name = "kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai" },
@@ -1073,6 +1110,7 @@ requires-dist = [
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth", editable = "packages/kiarina-lib-firebase-auth" },
+    { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
     { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },

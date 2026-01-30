@@ -1,3 +1,4 @@
+import logging
 from importlib import import_module
 from typing import TYPE_CHECKING
 
@@ -29,6 +30,8 @@ __all__ = [
     "exchange_custom_token",
     "refresh_id_token",
 ]
+
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 def __getattr__(name: str) -> object:
