@@ -51,6 +51,10 @@ def read_yaml_dict(
 
         data = yaml.safe_load(raw_text)
 
+        # Handle comment-only YAML files (yaml.safe_load returns None)
+        if data is None:
+            return {} if default is None else default
+
         if not isinstance(data, dict):
             raise yaml.YAMLError("YAML data is not a dictionary")
 

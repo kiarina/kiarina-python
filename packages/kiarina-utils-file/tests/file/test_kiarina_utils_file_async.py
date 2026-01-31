@@ -238,6 +238,37 @@ async def test_symlink_operations():
 
 
 @pytest.mark.asyncio
+async def test_yaml_comment_only_files():
+    """Test reading YAML files with only comments asynchronously"""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        # Test read_yaml_dict with comment-only file
+        yaml_dict_path = os.path.join(tmp_dir, "comment_only_dict.yaml")
+        await kfa.write_text(yaml_dict_path, "# This is a comment\n# Another comment\n")
+
+        result_dict = await kfa.read_yaml_dict(yaml_dict_path)
+        assert result_dict == {}
+
+        # Test read_yaml_dict with comment-only file and default
+        result_dict_with_default = await kfa.read_yaml_dict(
+            yaml_dict_path, default={"default": "value"}
+        )
+        assert result_dict_with_default == {"default": "value"}
+
+        # Test read_yaml_list with comment-only file
+        yaml_list_path = os.path.join(tmp_dir, "comment_only_list.yaml")
+        await kfa.write_text(yaml_list_path, "# Comment 1\n# Comment 2\n")
+
+        result_list = await kfa.read_yaml_list(yaml_list_path)
+        assert result_list == []
+
+        # Test read_yaml_list with comment-only file and default
+        result_list_with_default = await kfa.read_yaml_list(
+            yaml_list_path, default=["default"]
+        )
+        assert result_list_with_default == ["default"]
+
+
+@pytest.mark.asyncio
 async def test_broken_symlink_operations():
     """Test read/write operations with broken symbolic links"""
     with tempfile.TemporaryDirectory() as tmp_dir:
