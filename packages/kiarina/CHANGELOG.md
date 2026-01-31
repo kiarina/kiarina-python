@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.35.0] - 2026-01-31
+
 ### Added
 - **kiarina-lib-firebase-auth**: Added `TokenDataCache` protocol for persistent token storage implementations
 - **kiarina-lib-firebase-auth**: `TokenManager` now supports `token_data_cache` parameter for automatic token persistence
