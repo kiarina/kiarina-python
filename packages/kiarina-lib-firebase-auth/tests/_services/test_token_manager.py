@@ -16,14 +16,15 @@ async def test_token_manager(firebase_app):
     settings = settings_manager.get_settings()
     api_key = settings.api_key.get_secret_value()
 
-    response = await exchange_custom_token(
+    token_data = await exchange_custom_token(
         custom_token=custom_token,
         api_key=api_key,
     )
 
     manager = TokenManager(
-        refresh_token=response.refresh_token,
+        refresh_token=token_data.refresh_token,
         api_key=api_key,
+        token_data=token_data,
     )
 
     id_token = await manager.get_id_token()
@@ -36,5 +37,6 @@ async def test_token_manager(firebase_app):
 
     await asyncio.sleep(0.1)
 
-    await manager.refresh()
+    new_token_data = await manager.refresh()
     assert manager.expires_at > expires_at
+    assert new_token_data.expires_at == manager.expires_at

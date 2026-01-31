@@ -7,7 +7,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ._exceptions.firebase_auth_error import FirebaseAuthError
     from ._exceptions.invalid_custom_token_error import InvalidCustomTokenError
     from ._exceptions.invalid_refresh_token_error import InvalidRefreshTokenError
-    from ._schemas.token_response import TokenResponse
+    from ._schemas.token_data import TokenData
     from ._services.token_manager import TokenManager
     from ._settings import FirebaseAuthSettings, settings_manager
     from ._utils.exchange_custom_token import exchange_custom_token
@@ -20,7 +20,7 @@ __all__ = [
     "InvalidCustomTokenError",
     "InvalidRefreshTokenError",
     # ._schemas
-    "TokenResponse",
+    "TokenData",
     # ._services
     "TokenManager",
     # ._settings
@@ -45,7 +45,7 @@ def __getattr__(name: str) -> object:
         "InvalidCustomTokenError": "._exceptions.invalid_custom_token_error",
         "InvalidRefreshTokenError": "._exceptions.invalid_refresh_token_error",
         # ._schemas
-        "TokenResponse": "._schemas.token_response",
+        "TokenData": "._schemas.token_data",
         # ._services
         "TokenManager": "._services.token_manager",
         # ._settings

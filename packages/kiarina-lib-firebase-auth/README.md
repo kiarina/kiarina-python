@@ -47,12 +47,13 @@ api_key = settings.api_key.get_secret_value()
 
 # Exchange custom token for ID and refresh tokens
 custom_token = "your_custom_token_here"
-response = await exchange_custom_token(custom_token, api_key)
+token_data = await exchange_custom_token(custom_token, api_key)
 
 # Create token manager for automatic token refresh
 manager = TokenManager(
-    refresh_token=response.refresh_token,
+    refresh_token=token_data.refresh_token,
     api_key=api_key,
+    token_data=token_data,
 )
 
 # Get ID token (automatically refreshes when needed)
@@ -69,13 +70,13 @@ print(f"ID Token: {id_token}")
 from kiarina.lib.firebase.auth import refresh_id_token
 
 # Manually refresh ID token using refresh token
-response = await refresh_id_token(
+token_data = await refresh_id_token(
     refresh_token="your_refresh_token",
     api_key="your_api_key",
 )
 
-print(f"New ID Token: {response.id_token}")
-print(f"Expires at: {response.expires_at}")
+print(f"New ID Token: {token_data.id_token}")
+print(f"Expires at: {token_data.expires_at}")
 ```
 
 ## API Reference
@@ -102,7 +103,7 @@ settings = FirebaseAuthSettings(
 
 ### Functions
 
-#### `exchange_custom_token(custom_token: str, api_key: str) -> TokenResponse`
+#### `exchange_custom_token(custom_token: str, api_key: str) -> TokenData`
 
 Exchange a Firebase custom token for an ID token and refresh token.
 
@@ -111,13 +112,13 @@ Exchange a Firebase custom token for an ID token and refresh token.
 - `api_key: str` - Firebase Web API Key
 
 **Returns:**
-- `TokenResponse` - Contains `id_token`, `refresh_token`, and `expires_in`
+- `TokenData` - Contains `refresh_token`, `id_token`, and `expires_at`
 
 **Raises:**
 - `InvalidCustomTokenError` - If the custom token is invalid or expired
 - `FirebaseAPIError` - If Firebase API returns an error
 
-#### `refresh_id_token(refresh_token: str, api_key: str) -> TokenResponse`
+#### `refresh_id_token(refresh_token: str, api_key: str) -> TokenData`
 
 Refresh ID token using refresh token.
 
@@ -126,7 +127,7 @@ Refresh ID token using refresh token.
 - `api_key: str` - Firebase Web API Key
 
 **Returns:**
-- `TokenResponse` - Contains new `id_token`, `refresh_token`, and `expires_in`
+- `TokenData` - Contains new `refresh_token`, `id_token`, and `expires_at`
 
 **Raises:**
 - `InvalidRefreshTokenError` - If refresh token is invalid or expired
@@ -139,13 +140,12 @@ Refresh ID token using refresh token.
 Service class for automatic ID token lifecycle management.
 
 ```python
-from kiarina.lib.firebase.auth import TokenManager
+from kiarina.lib.firebase.auth import TokenManager, TokenData
 
 manager = TokenManager(
     refresh_token="your_refresh_token",
     api_key="your_api_key",
-    id_token="optional_initial_id_token",  # Optional
-    expires_at=datetime.now(timezone.utc) + timedelta(hours=1),  # Optional
+    token_data=token_data,  # Optional: initial token data
     refresh_buffer_seconds=300,  # Default: 5 minutes
 )
 ```
@@ -153,29 +153,28 @@ manager = TokenManager(
 **Constructor Parameters:**
 - `refresh_token: str` - Firebase refresh token
 - `api_key: str` - Firebase Web API Key
-- `id_token: str | None` - Initial ID token (optional)
-- `expires_at: datetime | None` - Initial expiration time (optional)
+- `token_data: TokenData | None` - Initial token data (optional)
 - `refresh_buffer_seconds: int` - Refresh buffer time in seconds (default: 300)
 
 **Methods:**
 - `async get_id_token() -> str` - Get current ID token (auto-refreshes if needed)
-- `async refresh() -> TokenResponse` - Manually refresh ID token
+- `async refresh() -> TokenData` - Manually refresh ID token
 
 **Properties:**
 - `id_token: str` - Current ID token
 - `expires_at: datetime` - Token expiration time (UTC)
 
-#### `TokenResponse`
+#### `TokenData`
 
-Schema for Firebase token exchange responses.
+Schema for Firebase authentication token data.
 
 **Fields:**
-- `id_token: str` - Firebase ID token (JWT)
 - `refresh_token: str` - Refresh token for getting new ID tokens
-- `expires_in: int` - ID token lifetime in seconds
+- `id_token: str` - Firebase ID token (JWT)
+- `expires_at: datetime` - ID token expiration time (UTC)
 
-**Properties:**
-- `expires_at: datetime` - Calculated expiration datetime (UTC)
+**Class Methods:**
+- `from_api_response(id_token: str, refresh_token: str, expires_in: int, *, issued_at: datetime | None = None) -> TokenData` - Create TokenData from Firebase API response
 
 ### Exceptions
 

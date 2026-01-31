@@ -49,15 +49,16 @@ async def test_happy_path(firebase_app) -> None:
     custom_token = auth.create_custom_token("test").decode("utf-8")
 
     settings = settings_manager.get_settings()
-    exchange_response = await exchange_custom_token(
+    exchange_token_data = await exchange_custom_token(
         custom_token=custom_token,
         api_key=settings.api_key.get_secret_value(),
     )
 
-    response = await refresh_id_token(
-        refresh_token=exchange_response.refresh_token,
+    token_data = await refresh_id_token(
+        refresh_token=exchange_token_data.refresh_token,
         api_key=settings.api_key.get_secret_value(),
     )
 
-    assert response.id_token
-    assert response.refresh_token
+    assert token_data.id_token
+    assert token_data.refresh_token
+    assert token_data.expires_at

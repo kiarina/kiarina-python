@@ -2,10 +2,10 @@ import httpx
 
 from .._exceptions.firebase_api_error import FirebaseAPIError
 from .._exceptions.invalid_custom_token_error import InvalidCustomTokenError
-from .._schemas.token_response import TokenResponse
+from .._schemas.token_data import TokenData
 
 
-async def exchange_custom_token(custom_token: str, api_key: str) -> TokenResponse:
+async def exchange_custom_token(custom_token: str, api_key: str) -> TokenData:
     """
     Exchange a Firebase custom token for an ID token.
 
@@ -47,7 +47,7 @@ async def exchange_custom_token(custom_token: str, api_key: str) -> TokenRespons
 
     data = response.json()
 
-    return TokenResponse(
+    return TokenData.from_api_response(
         id_token=data["idToken"],
         refresh_token=data["refreshToken"],
         expires_in=int(data["expiresIn"]),

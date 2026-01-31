@@ -2,10 +2,10 @@ import httpx
 
 from .._exceptions.firebase_api_error import FirebaseAPIError
 from .._exceptions.invalid_refresh_token_error import InvalidRefreshTokenError
-from .._schemas.token_response import TokenResponse
+from .._schemas.token_data import TokenData
 
 
-async def refresh_id_token(refresh_token: str, api_key: str) -> TokenResponse:
+async def refresh_id_token(refresh_token: str, api_key: str) -> TokenData:
     """
     Refresh ID token using refresh token.
 
@@ -50,7 +50,7 @@ async def refresh_id_token(refresh_token: str, api_key: str) -> TokenResponse:
 
     data = response.json()
 
-    return TokenResponse(
+    return TokenData.from_api_response(
         id_token=data["id_token"],
         refresh_token=data["refresh_token"],
         expires_in=int(data["expires_in"]),
