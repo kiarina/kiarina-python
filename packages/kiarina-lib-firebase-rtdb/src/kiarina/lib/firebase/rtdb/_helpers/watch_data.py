@@ -77,7 +77,7 @@ async def watch_data(
                 retry_delay = settings.initial_retry_delay
 
             # Stream ended normally (shouldn't happen with Firebase RTDB)
-            logger.warning("Stream ended normally, exiting watch loop")
+            logger.info("Stream ended normally, exiting watch loop")
             break
 
         except _AuthRevokedError:
