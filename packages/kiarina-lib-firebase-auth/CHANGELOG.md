@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.34.0] - 2026-01-31
+
 ### Changed
 - **BREAKING**: Renamed `TokenResponse` to `TokenData` for better semantic clarity
 - **BREAKING**: Changed `TokenData.expires_in` field to `TokenData.expires_at` (datetime) for improved usability

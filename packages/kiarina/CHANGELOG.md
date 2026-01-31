@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.34.0] - 2026-01-31
+
+### Changed
+- **kiarina-lib-firebase-auth**: BREAKING - Renamed `TokenResponse` to `TokenData` with `expires_at` field
+- **kiarina-lib-firebase-auth**: BREAKING - Changed `TokenManager` to use keyword-only arguments
+- **kiarina-lib-firebase-rtdb**: Updated to use `kiarina-lib-firebase-auth>=1.33.0` with new `TokenData` schema
+
 ## [1.33.1] - 2026-01-31
 
 ### Fixed

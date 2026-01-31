@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.34.0] - 2026-01-31
+
 ### Changed
 - Updated to use `kiarina-lib-firebase-auth>=1.33.0` with new `TokenData` schema and keyword-only `TokenManager` initialization
 
