@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-currency"
-version = "1.33.0"
+version = "1.33.1"
 description = "Currency utilities for the kiarina namespace"
 readme = "README.md"
 license = "MIT"

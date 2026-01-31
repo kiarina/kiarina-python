@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.33.1] - 2026-01-31
+
 ### Fixed
 - **YAML operations**: Fixed type checking errors when reading comment-only YAML files
   - `read_yaml_dict()` now returns empty dict `{}` for comment-only files (when `default` is None)

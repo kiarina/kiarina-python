@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-firebase-rtdb"
-version = "1.33.0"
+version = "1.33.1"
 description = "Firebase Realtime Database library for kiarina namespace"
 readme = "README.md"
 license = "MIT"
