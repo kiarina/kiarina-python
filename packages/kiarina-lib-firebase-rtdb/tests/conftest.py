@@ -94,7 +94,7 @@ def custom_token(firebase_app, user_id) -> str:
 
 
 @pytest.fixture
-async def token_response(custom_token):
+async def token_data(custom_token):
     from kiarina.lib.firebase.auth import exchange_custom_token, settings_manager
 
     settings = settings_manager.get_settings()
@@ -106,18 +106,21 @@ async def token_response(custom_token):
 
 
 @pytest.fixture
-def refresh_token(token_response) -> str:
-    return token_response.refresh_token
+def refresh_token(token_data) -> str:
+    return token_data.refresh_token
 
 
 @pytest.fixture
-def id_token(token_response) -> str:
-    return token_response.id_token
+def id_token(token_data) -> str:
+    return token_data.id_token
 
 
 @pytest.fixture
-def token_manager(refresh_token):
+def token_manager(token_data):
     from kiarina.lib.firebase.auth import TokenManager, settings_manager
 
     settings = settings_manager.get_settings()
-    return TokenManager(refresh_token, settings.api_key.get_secret_value())
+    return TokenManager(
+        api_key=settings.api_key.get_secret_value(),
+        token_data=token_data,
+    )

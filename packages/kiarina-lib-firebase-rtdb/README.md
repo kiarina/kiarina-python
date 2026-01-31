@@ -37,8 +37,8 @@ from kiarina.lib.firebase.rtdb import get_data
 
 # Setup token manager
 token_manager = TokenManager(
+    api_key="your_firebase_api_key",
     refresh_token="your_refresh_token",
-    api_key="your_firebase_api_key"
 )
 
 # Get data from database
@@ -60,8 +60,8 @@ from kiarina.lib.firebase.rtdb import watch_data
 
 # Setup token manager
 token_manager = TokenManager(
+    api_key="your_firebase_api_key",
     refresh_token="your_refresh_token",
-    api_key="your_firebase_api_key"
 )
 
 # Watch data changes
