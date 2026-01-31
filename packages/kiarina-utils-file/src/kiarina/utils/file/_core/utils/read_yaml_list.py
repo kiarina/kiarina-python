@@ -46,6 +46,9 @@ def read_yaml_list(
         if raw_text is None:
             return default
 
+        if not raw_text.strip():
+            return default
+
         data = yaml.safe_load(raw_text)
 
         if not isinstance(data, list):
