@@ -20,15 +20,6 @@ class TokenManager:
         token_data: TokenData | None = None,
         refresh_buffer_seconds: int = 300,
     ):
-        """
-        Initialize TokenManager.
-
-        Args:
-            refresh_token: Firebase refresh token
-            api_key: Firebase Web API Key
-            token_data: Initial token data (optional)
-            refresh_buffer_seconds: Refresh buffer time in seconds (default: 300)
-        """
         self.refresh_token: str = refresh_token
         self.api_key: str = api_key
         self._id_token: str | None = token_data.id_token if token_data else None
@@ -40,7 +31,6 @@ class TokenManager:
 
     @property
     def id_token(self) -> str:
-        """Get current ID token."""
         if self._id_token is None:  # pragma: no cover
             raise AssertionError("ID token is not set.")
 
@@ -48,7 +38,6 @@ class TokenManager:
 
     @property
     def expires_at(self) -> datetime:
-        """Get token expiration time (UTC)."""
         if self._expires_at is None:  # pragma: no cover
             raise AssertionError("Expiration time is not set.")
 
@@ -57,9 +46,6 @@ class TokenManager:
     async def get_id_token(self) -> str:
         """
         Get current ID token (auto-refreshes if needed).
-
-        Returns:
-            Current valid ID token
         """
         if self._needs_refresh():
             async with self._refresh_lock:
@@ -73,9 +59,6 @@ class TokenManager:
     async def refresh(self) -> TokenData:
         """
         Manually refresh ID token.
-
-        Returns:
-            New token data
         """
         async with self._refresh_lock:
             return await self._do_refresh()
