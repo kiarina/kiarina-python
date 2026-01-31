@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `TokenDataCache` protocol for persistent token storage implementations
+- `TokenManager` now supports `token_data_cache` parameter for automatic token persistence
+- Automatic token data loading from cache on first `get_id_token()` call
+- Automatic token data saving to cache after refresh
+
+### Changed
+- `TokenManager.refresh_token` and `TokenManager.token_data` are now properties that raise `AssertionError` if accessed before initialization
+
 ## [1.34.0] - 2026-01-31
 
 ### Changed

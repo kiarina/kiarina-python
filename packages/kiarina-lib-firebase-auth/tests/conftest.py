@@ -55,6 +55,26 @@ def user_id() -> str:
 
 
 @pytest.fixture
+def api_key(load_settings) -> str:
+    from kiarina.lib.firebase.auth import settings_manager
+
+    settings = settings_manager.get_settings()
+    return settings.api_key.get_secret_value()
+
+
+@pytest.fixture
 def custom_token(firebase_app, user_id) -> str:
     auth = pytest.importorskip("firebase_admin.auth")
     return auth.create_custom_token(user_id).decode("utf-8")
+
+
+@pytest.fixture
+async def token_data(api_key, custom_token):
+    from kiarina.lib.firebase.auth import exchange_custom_token
+
+    token_data = await exchange_custom_token(
+        custom_token=custom_token,
+        api_key=api_key,
+    )
+
+    return token_data

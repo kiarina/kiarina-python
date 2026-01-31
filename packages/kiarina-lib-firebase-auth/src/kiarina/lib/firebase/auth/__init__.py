@@ -10,6 +10,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ._schemas.token_data import TokenData
     from ._services.token_manager import TokenManager
     from ._settings import FirebaseAuthSettings, settings_manager
+    from ._types.token_data_cache import TokenDataCache
     from ._utils.exchange_custom_token import exchange_custom_token
     from ._utils.refresh_id_token import refresh_id_token
 
@@ -26,6 +27,8 @@ __all__ = [
     # ._settings
     "FirebaseAuthSettings",
     "settings_manager",
+    # ._types
+    "TokenDataCache",
     # ._utils
     "exchange_custom_token",
     "refresh_id_token",
@@ -51,6 +54,8 @@ def __getattr__(name: str) -> object:
         # ._settings
         "FirebaseAuthSettings": "._settings",
         "settings_manager": "._settings",
+        # ._types
+        "TokenDataCache": "._types.token_data_cache",
         # ._utils
         "exchange_custom_token": "._utils.exchange_custom_token",
         "refresh_id_token": "._utils.refresh_id_token",

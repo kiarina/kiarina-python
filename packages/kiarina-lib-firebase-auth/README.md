@@ -154,12 +154,20 @@ manager = TokenManager(
     refresh_token="your_refresh_token",
     refresh_buffer_seconds=300,  # Default: 5 minutes
 )
+
+# Option 3: With token_data_cache for persistent storage
+manager = TokenManager(
+    api_key="your_api_key",
+    token_data_cache=my_cache_implementation,
+    refresh_buffer_seconds=300,  # Default: 5 minutes
+)
 ```
 
 **Constructor Parameters (all keyword-only):**
 - `api_key: str` - **Required.** Firebase Web API Key
-- `refresh_token: str | None` - Firebase refresh token (either this or `token_data` is required)
-- `token_data: TokenData | None` - Initial token data (either this or `refresh_token` is required)
+- `refresh_token: str | None` - Firebase refresh token (at least one of `refresh_token`, `token_data`, or `token_data_cache` is required)
+- `token_data: TokenData | None` - Initial token data (at least one of `refresh_token`, `token_data`, or `token_data_cache` is required)
+- `token_data_cache: TokenDataCache | None` - Cache implementation for persistent token storage (at least one of `refresh_token`, `token_data`, or `token_data_cache` is required)
 - `refresh_buffer_seconds: int` - Refresh buffer time in seconds (default: 300)
 
 **Methods:**
@@ -181,6 +189,35 @@ Schema for Firebase authentication token data.
 
 **Class Methods:**
 - `from_api_response(id_token: str, refresh_token: str, expires_in: int, *, issued_at: datetime | None = None) -> TokenData` - Create TokenData from Firebase API response
+
+#### `TokenDataCache`
+
+Protocol for token data cache implementations.
+
+Implementations should provide persistent storage for `TokenData`, allowing `TokenManager` to automatically save and restore token state.
+
+```python
+from kiarina.lib.firebase.auth import TokenDataCache, TokenData
+
+class MyTokenCache(TokenDataCache):
+    async def get(self) -> TokenData:
+        # Load token data from persistent storage
+        ...
+    
+    async def set(self, token_data: TokenData) -> None:
+        # Save token data to persistent storage
+        ...
+
+# Use with TokenManager
+manager = TokenManager(
+    api_key="your_api_key",
+    token_data_cache=MyTokenCache(),
+)
+```
+
+**Methods:**
+- `async get() -> TokenData` - Retrieve cached token data
+- `async set(token_data: TokenData) -> None` - Store token data in cache
 
 ### Exceptions
 
