@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: Renamed `TokenResponse` to `TokenData` for better semantic clarity
 - **BREAKING**: Changed `TokenData.expires_in` field to `TokenData.expires_at` (datetime) for improved usability
-- **BREAKING**: Changed `TokenManager.__init__` parameters: replaced `id_token` and `expires_at` with single `token_data` parameter
+- **BREAKING**: Changed `TokenManager.__init__` to use keyword-only arguments with `api_key` required and either `refresh_token` or `token_data` required
 - **BREAKING**: Changed `TokenManager.refresh()` return type from `TokenResponse` to `TokenData`
 
 ### Added

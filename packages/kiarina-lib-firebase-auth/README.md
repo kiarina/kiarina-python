@@ -51,7 +51,6 @@ token_data = await exchange_custom_token(custom_token, api_key)
 
 # Create token manager for automatic token refresh
 manager = TokenManager(
-    refresh_token=token_data.refresh_token,
     api_key=api_key,
     token_data=token_data,
 )
@@ -142,18 +141,25 @@ Service class for automatic ID token lifecycle management.
 ```python
 from kiarina.lib.firebase.auth import TokenManager, TokenData
 
+# Option 1: With token_data (recommended)
 manager = TokenManager(
-    refresh_token="your_refresh_token",
     api_key="your_api_key",
-    token_data=token_data,  # Optional: initial token data
+    token_data=token_data,
+    refresh_buffer_seconds=300,  # Default: 5 minutes
+)
+
+# Option 2: With refresh_token only
+manager = TokenManager(
+    api_key="your_api_key",
+    refresh_token="your_refresh_token",
     refresh_buffer_seconds=300,  # Default: 5 minutes
 )
 ```
 
-**Constructor Parameters:**
-- `refresh_token: str` - Firebase refresh token
-- `api_key: str` - Firebase Web API Key
-- `token_data: TokenData | None` - Initial token data (optional)
+**Constructor Parameters (all keyword-only):**
+- `api_key: str` - **Required.** Firebase Web API Key
+- `refresh_token: str | None` - Firebase refresh token (either this or `token_data` is required)
+- `token_data: TokenData | None` - Initial token data (either this or `refresh_token` is required)
 - `refresh_buffer_seconds: int` - Refresh buffer time in seconds (default: 300)
 
 **Methods:**

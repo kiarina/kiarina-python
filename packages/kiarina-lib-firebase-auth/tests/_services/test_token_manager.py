@@ -9,10 +9,12 @@ from kiarina.lib.firebase.auth import (
 )
 
 
-async def test_token_manager(firebase_app):
-    auth = pytest.importorskip("firebase_admin.auth")
-    custom_token = auth.create_custom_token("test").decode("utf-8")
+async def test_missing_parameters():
+    with pytest.raises(ValueError, match="Either 'refresh_token' or 'token_data'"):
+        TokenManager(api_key="test")
 
+
+async def test_happy_path(custom_token):
     settings = settings_manager.get_settings()
     api_key = settings.api_key.get_secret_value()
 
@@ -21,11 +23,19 @@ async def test_token_manager(firebase_app):
         api_key=api_key,
     )
 
+    # check both initialization methods
     manager = TokenManager(
-        refresh_token=token_data.refresh_token,
         api_key=api_key,
         token_data=token_data,
     )
+
+    manager = TokenManager(
+        api_key=api_key,
+        refresh_token=token_data.refresh_token,
+    )
+
+    with pytest.raises(AssertionError, match="Token data is not set."):
+        manager.token_data
 
     id_token = await manager.get_id_token()
     expires_at = manager.expires_at

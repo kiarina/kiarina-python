@@ -14,34 +14,40 @@ class TokenManager:
 
     def __init__(
         self,
-        refresh_token: str,
-        api_key: str,
         *,
+        api_key: str,
+        refresh_token: str | None = None,
         token_data: TokenData | None = None,
         refresh_buffer_seconds: int = 300,
     ):
-        self.refresh_token: str = refresh_token
+        if not refresh_token:
+            if not token_data:
+                raise ValueError(
+                    "Either 'refresh_token' or 'token_data' must be provided."
+                )
+
+            refresh_token = token_data.refresh_token
+
         self.api_key: str = api_key
-        self._id_token: str | None = token_data.id_token if token_data else None
-        self._expires_at: datetime | None = (
-            token_data.expires_at if token_data else None
-        )
+        self.refresh_token: str = refresh_token
+        self._token_data: TokenData | None = token_data
         self._refresh_buffer_seconds = refresh_buffer_seconds
         self._refresh_lock = asyncio.Lock()
 
     @property
-    def id_token(self) -> str:
-        if self._id_token is None:  # pragma: no cover
-            raise AssertionError("ID token is not set.")
+    def token_data(self) -> TokenData:
+        if not self._token_data:
+            raise AssertionError("Token data is not set.")
 
-        return self._id_token
+        return self._token_data
+
+    @property
+    def id_token(self) -> str:
+        return self.token_data.id_token
 
     @property
     def expires_at(self) -> datetime:
-        if self._expires_at is None:  # pragma: no cover
-            raise AssertionError("Expiration time is not set.")
-
-        return self._expires_at
+        return self.token_data.expires_at
 
     async def get_id_token(self) -> str:
         """
@@ -53,8 +59,7 @@ class TokenManager:
                 if self._needs_refresh():
                     await self._do_refresh()
 
-        assert self._id_token is not None
-        return self._id_token
+        return self.id_token
 
     async def refresh(self) -> TokenData:
         """
@@ -64,11 +69,11 @@ class TokenManager:
             return await self._do_refresh()
 
     def _needs_refresh(self) -> bool:
-        if self._id_token is None or self._expires_at is None:
+        if not self._token_data:
             return True
 
         now = datetime.now(timezone.utc)
-        refresh_threshold = self._expires_at - timedelta(
+        refresh_threshold = self.expires_at - timedelta(
             seconds=self._refresh_buffer_seconds
         )
 
@@ -78,7 +83,6 @@ class TokenManager:
         token_data = await refresh_id_token(self.refresh_token, self.api_key)
 
         self.refresh_token = token_data.refresh_token
-        self._id_token = token_data.id_token
-        self._expires_at = token_data.expires_at
+        self._token_data = token_data
 
         return token_data

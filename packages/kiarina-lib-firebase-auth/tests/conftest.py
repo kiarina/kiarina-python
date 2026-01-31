@@ -47,3 +47,14 @@ def firebase_app(load_settings):
 
     # Cleanup after all tests
     firebase_admin.delete_app(app)
+
+
+@pytest.fixture
+def user_id() -> str:
+    return "test_user"
+
+
+@pytest.fixture
+def custom_token(firebase_app, user_id) -> str:
+    auth = pytest.importorskip("firebase_admin.auth")
+    return auth.create_custom_token(user_id).decode("utf-8")
