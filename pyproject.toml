@@ -42,6 +42,7 @@ dependencies = [
     "kiarina-currency",
     "kiarina-i18n",
     "kiarina-lib-anthropic",
+    "kiarina-lib-atlassian",
     "kiarina-lib-cloudflare-auth",
     "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
@@ -90,6 +91,7 @@ members = [
     "packages/kiarina-currency",
     "packages/kiarina-i18n",
     "packages/kiarina-lib-anthropic",
+    "packages/kiarina-lib-atlassian",
     "packages/kiarina-lib-cloudflare-auth",
     "packages/kiarina-lib-cloudflare-d1",
     "packages/kiarina-lib-falkordb",
@@ -111,6 +113,7 @@ kiarina = { workspace = true }
 kiarina-currency = { workspace = true }
 kiarina-i18n = { workspace = true }
 kiarina-lib-anthropic = { workspace = true }
+kiarina-lib-atlassian = { workspace = true }
 kiarina-lib-cloudflare-auth = { workspace = true }
 kiarina-lib-cloudflare-d1 = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
@@ -131,6 +134,7 @@ mypy_path = [
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
+    "packages/kiarina-lib-atlassian/src",
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
@@ -161,6 +165,7 @@ source = [
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
+    "packages/kiarina-lib-atlassian/src",
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",

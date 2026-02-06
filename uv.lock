@@ -13,6 +13,7 @@ members = [
     "kiarina-currency",
     "kiarina-i18n",
     "kiarina-lib-anthropic",
+    "kiarina-lib-atlassian",
     "kiarina-lib-cloudflare-auth",
     "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
@@ -710,6 +711,7 @@ dependencies = [
     { name = "kiarina-currency" },
     { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
+    { name = "kiarina-lib-atlassian" },
     { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
@@ -731,6 +733,7 @@ requires-dist = [
     { name = "kiarina-currency", editable = "packages/kiarina-currency" },
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
+    { name = "kiarina-lib-atlassian", editable = "packages/kiarina-lib-atlassian" },
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
@@ -814,6 +817,26 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
+
+[[package]]
+name = "kiarina-lib-atlassian"
+version = "0.1.0"
+source = { editable = "packages/kiarina-lib-atlassian" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2.10.5" },
+    { name = "pydantic-settings", specifier = ">=2.7.1" },
+    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
+]
+
+[package.metadata.requires-dev]
+dev = []
 
 [[package]]
 name = "kiarina-lib-cloudflare-auth"
@@ -1062,6 +1085,7 @@ dependencies = [
     { name = "kiarina-currency" },
     { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
+    { name = "kiarina-lib-atlassian" },
     { name = "kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
@@ -1103,6 +1127,7 @@ requires-dist = [
     { name = "kiarina-currency", editable = "packages/kiarina-currency" },
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
+    { name = "kiarina-lib-atlassian", editable = "packages/kiarina-lib-atlassian" },
     { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },

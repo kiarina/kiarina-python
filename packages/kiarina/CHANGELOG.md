@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-lib-atlassian**: Initial release with Atlassian API configuration management
+
 ## [1.35.0] - 2026-01-31
 
 ### Added
