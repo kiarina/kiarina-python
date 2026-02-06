@@ -5,7 +5,6 @@ from pydantic_settings_manager import SettingsManager
 
 
 class AtlassianSettings(BaseSettings):
-
     model_config = SettingsConfigDict(
         env_prefix="KIARINA_LIB_ATLASSIAN_",
         extra="ignore",

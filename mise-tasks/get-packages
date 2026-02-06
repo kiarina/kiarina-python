@@ -13,6 +13,11 @@ for package_dir in packages/*/; do
     if [ -d "$package_dir" ]; then
         package_name=$(basename "$package_dir")
         
+        # Skip packages without pyproject.toml (empty/placeholder packages)
+        if [ ! -f "$package_dir/pyproject.toml" ]; then
+            continue
+        fi
+        
         # Check if this is a meta-package
         is_meta=false
         if [ "$include_all" = "false" ]; then
