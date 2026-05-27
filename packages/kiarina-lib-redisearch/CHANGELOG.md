@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.37.0] - 2026-05-27
 
-### Changed
-- No changes
+### Fixed
+- Recognize Redis 8.2+ `SEARCH_INDEX_NOT_FOUND Index not found` error in `exists_index` so `reset_index`/`migrate_index` work against the bundled RediSearch in newer Redis releases
 
 ## [1.35.0] - 2026-01-31
 

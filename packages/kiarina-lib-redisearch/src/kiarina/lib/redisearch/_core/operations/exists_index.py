@@ -27,11 +27,15 @@ def exists_index(
     """
 
     def _handle_exception(e: Exception) -> bool:
+        msg = str(e)
         # <= Redis 7
-        if str(e) == "Unknown index name":
+        if msg == "Unknown index name":
             return False
         # Redis 8
-        elif "no such index" in str(e):
+        elif "no such index" in msg:
+            return False
+        # Redis 8.2+: SEARCH_INDEX_NOT_FOUND Index not found: <name>
+        elif "Index not found" in msg or "SEARCH_INDEX_NOT_FOUND" in msg:
             return False
 
         raise
