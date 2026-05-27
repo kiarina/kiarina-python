@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.37.0] - 2026-05-27
+
 ### Added
 - **parse_config_string**: Add `brackets` parameter (default `"()"`) to quote values containing separator characters. Bracketed values are treated as verbatim strings with type-conversion suppressed (e.g. `vad=(mock?sample_rate=16000&p.0=1.0)` → `{"vad": "mock?sample_rate=16000&p.0=1.0"}`). Pass `brackets=""` to disable. Unbalanced brackets raise `ValueError`.
 
