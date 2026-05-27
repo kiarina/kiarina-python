@@ -6,8 +6,8 @@ from .._types.config_str import ConfigStr
 def parse_config_string(
     config_str: ConfigStr,
     *,
-    separator: str = ",",
-    key_value_separator: str = ":",
+    separator: str = "&",
+    key_value_separator: str = "=",
     nested_separator: str = ".",
     brackets: str = "()",
 ) -> dict[str, Any]:
@@ -15,10 +15,10 @@ def parse_config_string(
     Parse configuration string into nested dictionary
 
     When key contains nested_separator, it will be treated as nested keys:
-    - hoge.fuga:30 → {"hoge": {"fuga": 30}}
+    - hoge.fuga=30 → {"hoge": {"fuga": 30}}
 
     When key_value_separator is not found, the key is treated as a flag with None value:
-    - debug,enabled:true → {"debug": None, "enabled": True}
+    - debug&enabled=true → {"debug": None, "enabled": True}
 
     Values are automatically converted to appropriate types:
     - "true", "True" → bool(True)
@@ -32,17 +32,17 @@ def parse_config_string(
     outer pair stripped and type-conversion suppressed (the inner text becomes
     a string verbatim). This is useful for embedding nested specifier strings.
 
-    - key=(a&b=c) with separator="&", key_value_separator="=" → {"key": "a&b=c"}
-    - key=(123) → {"key": "123"}   # not converted to int
-    - key=()    → {"key": ""}
+    - key=(a&b=c) → {"key": "a&b=c"}
+    - key=(123)   → {"key": "123"}   # not converted to int
+    - key=()      → {"key": ""}
 
     Brackets must balance across the whole string; unbalanced brackets raise
     ValueError. Pass brackets="" to disable bracket handling entirely.
 
     Args:
         config_str: Configuration string to parse
-        separator: Item separator (default: ",")
-        key_value_separator: Key-value separator (default: ":")
+        separator: Item separator (default: "&")
+        key_value_separator: Key-value separator (default: "=")
         nested_separator: Nested key separator (default: ".")
         brackets: Two-character string giving the open and close bracket
             (default: "()"). Pass "" to disable bracket handling.
@@ -51,19 +51,16 @@ def parse_config_string(
         Parsed configuration dictionary
 
     Examples:
-        >>> parse_config_string("cache.enabled:true,db.port:5432")
+        >>> parse_config_string("cache.enabled=true&db.port=5432")
         {"cache": {"enabled": True}, "db": {"port": 5432}}
 
-        >>> parse_config_string("debug,verbose,cache.enabled:true")
+        >>> parse_config_string("debug&verbose&cache.enabled=true")
         {"debug": None, "verbose": None, "cache": {"enabled": True}}
 
-        >>> parse_config_string("key1=val1;key2.sub=42", separator=";", key_value_separator="=")
+        >>> parse_config_string("key1:val1;key2.sub:42", separator=";", key_value_separator=":")
         {"key1": "val1", "key2": {"sub": 42}}
 
-        >>> parse_config_string(
-        ...     "vad=(mock?sample_rate=16000&p.0=1.0)&top_k=3",
-        ...     separator="&", key_value_separator="=",
-        ... )
+        >>> parse_config_string("vad=(mock?sample_rate=16000&p.0=1.0)&top_k=3")
         {"vad": "mock?sample_rate=16000&p.0=1.0", "top_k": 3}
     """
     if not config_str:

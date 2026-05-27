@@ -69,7 +69,7 @@ def test_import_object_import_constant() -> None:
 
 def test_import_object_from_kiarina_package() -> None:
     parse_fn = import_object("kiarina.utils.common:parse_config_string")
-    result = parse_fn("key:value")
+    result = parse_fn("key=value")
     assert result == {"key": "value"}
 
 
@@ -77,5 +77,5 @@ def test_import_object_with_nested_module() -> None:
     parse_fn = import_object(
         "kiarina.utils.common._helpers.parse_config_string:parse_config_string"
     )
-    result = parse_fn("debug:true")
+    result = parse_fn("debug=true")
     assert result == {"debug": True}

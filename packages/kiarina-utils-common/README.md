@@ -23,7 +23,7 @@ from kiarina.utils.common import import_object
 
 # Import a function
 parse_fn = import_object("kiarina.utils.common:parse_config_string")
-result = parse_fn("key:value")
+result = parse_fn("key=value")
 
 # Import a class
 MyClass = import_object("myapp.plugins:MyPlugin")
@@ -42,22 +42,26 @@ Parse configuration strings into nested dictionaries with automatic type convers
 from kiarina.utils.common import parse_config_string
 
 # Basic usage
-config = parse_config_string("cache.enabled:true,db.port:5432")
+config = parse_config_string("cache.enabled=true&db.port=5432")
 # Result: {"cache": {"enabled": True}, "db": {"port": 5432}}
 
 # Flag support (no value)
-config = parse_config_string("debug,verbose,cache.enabled:true")
+config = parse_config_string("debug&verbose&cache.enabled=true")
 # Result: {"debug": None, "verbose": None, "cache": {"enabled": True}}
 
 # Array indices support
-config = parse_config_string("items.0:first,items.1:second")
+config = parse_config_string("items.0=first&items.1=second")
 # Result: {"items": ["first", "second"]}
+
+# Bracketed values (atomic, no type conversion)
+config = parse_config_string("vad=(mock?sample_rate=16000&p.0=1.0)&top_k=3")
+# Result: {"vad": "mock?sample_rate=16000&p.0=1.0", "top_k": 3}
 
 # Custom separators
 config = parse_config_string(
-    "key1=val1;key2.sub=42", 
-    separator=";", 
-    key_value_separator="="
+    "key1:val1;key2.sub:42",
+    separator=";",
+    key_value_separator=":",
 )
 # Result: {"key1": "val1", "key2": {"sub": 42}}
 ```
@@ -76,7 +80,7 @@ Values are automatically converted to appropriate types:
 Use dot notation for nested structures:
 
 ```python
-config = parse_config_string("database.host:localhost,database.port:5432")
+config = parse_config_string("database.host=localhost&database.port=5432")
 # Result: {"database": {"host": "localhost", "port": 5432}}
 ```
 
@@ -85,7 +89,7 @@ config = parse_config_string("database.host:localhost,database.port:5432")
 Use numeric keys for array structures:
 
 ```python
-config = parse_config_string("users.0.name:Alice,users.0.age:30,users.1.name:Bob")
+config = parse_config_string("users.0.name=Alice&users.0.age=30&users.1.name=Bob")
 # Result: {"users": [{"name": "Alice", "age": 30}, {"name": "Bob"}]}
 ```
 
@@ -112,7 +116,7 @@ Import and return an object from an import path.
 ```python
 # Import a function
 parse_fn = import_object('kiarina.utils.common:parse_config_string')
-result = parse_fn('key:value')
+result = parse_fn('key=value')
 
 # Import a class
 MyClass = import_object('myapp.plugins:MyPlugin')
@@ -123,15 +127,16 @@ from typing import Callable
 parser: Callable = import_object('kiarina.utils.common:parse_config_string')
 ```
 
-### `parse_config_string(config_str, *, separator=",", key_value_separator=":", nested_separator=".")`
+### `parse_config_string(config_str, *, separator="&", key_value_separator="=", nested_separator=".", brackets="()")`
 
 Parse configuration string into nested dictionary.
 
 **Parameters:**
 - `config_str` (str): Configuration string to parse
-- `separator` (str, optional): Item separator. Default: `","`
-- `key_value_separator` (str, optional): Key-value separator. Default: `":"`
+- `separator` (str, optional): Item separator. Default: `"&"`
+- `key_value_separator` (str, optional): Key-value separator. Default: `"="`
 - `nested_separator` (str, optional): Nested key separator. Default: `"."`
+- `brackets` (str, optional): Two-character open/close pair for quoting values that contain separator characters. Default: `"()"`. Pass `""` to disable.
 
 **Returns:**
 - `dict[str, Any]`: Parsed configuration dictionary
@@ -140,19 +145,23 @@ Parse configuration string into nested dictionary.
 
 ```python
 # Basic usage
-parse_config_string("key1:value1,key2:value2")
+parse_config_string("key1=value1&key2=value2")
 # {"key1": "value1", "key2": "value2"}
 
 # Nested keys
-parse_config_string("cache.enabled:true,db.port:5432")
+parse_config_string("cache.enabled=true&db.port=5432")
 # {"cache": {"enabled": True}, "db": {"port": 5432}}
 
 # Flags (no value)
-parse_config_string("debug,verbose")
+parse_config_string("debug&verbose")
 # {"debug": None, "verbose": None}
 
+# Bracketed values (verbatim, type-conversion suppressed)
+parse_config_string("k=(a&b=c)&n=5")
+# {"k": "a&b=c", "n": 5}
+
 # Custom separators
-parse_config_string("a=1;b=2", separator=";", key_value_separator="=")
+parse_config_string("a:1;b:2", separator=";", key_value_separator=":")
 # {"a": 1, "b": 2}
 ```
 
