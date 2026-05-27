@@ -58,10 +58,12 @@
       "path": "packages/kiarina-utils-file"
     },
     {
-      "path": "."
+      "path": ".",
+      "name": "root"
     }
   ],
   "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder:root}/.venv/bin/python",
     "files.exclude": {
       "**/__pycache__": true,
       "**/*.egg-info": true,
