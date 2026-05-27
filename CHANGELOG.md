@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-utils-common**: Add `brackets` parameter to `parse_config_string` for embedding nested specifier strings
+
 ## [1.36.0] - 2026-02-07
 
 ### Added

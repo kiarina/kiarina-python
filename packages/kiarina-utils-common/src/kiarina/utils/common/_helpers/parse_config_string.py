@@ -9,6 +9,7 @@ def parse_config_string(
     separator: str = ",",
     key_value_separator: str = ":",
     nested_separator: str = ".",
+    brackets: str = "()",
 ) -> dict[str, Any]:
     """
     Parse configuration string into nested dictionary
@@ -25,11 +26,26 @@ def parse_config_string(
     - Numeric strings ("1", "0", "-5", etc.) → int/float
     - Others → str
 
+    Bracketed values quote a substring so that separator / key_value_separator
+    characters inside are not interpreted as delimiters. The default brackets
+    are "(" and ")". A value that is fully wrapped by the brackets has the
+    outer pair stripped and type-conversion suppressed (the inner text becomes
+    a string verbatim). This is useful for embedding nested specifier strings.
+
+    - key=(a&b=c) with separator="&", key_value_separator="=" → {"key": "a&b=c"}
+    - key=(123) → {"key": "123"}   # not converted to int
+    - key=()    → {"key": ""}
+
+    Brackets must balance across the whole string; unbalanced brackets raise
+    ValueError. Pass brackets="" to disable bracket handling entirely.
+
     Args:
         config_str: Configuration string to parse
         separator: Item separator (default: ",")
         key_value_separator: Key-value separator (default: ":")
         nested_separator: Nested key separator (default: ".")
+        brackets: Two-character string giving the open and close bracket
+            (default: "()"). Pass "" to disable bracket handling.
 
     Returns:
         Parsed configuration dictionary
@@ -43,32 +59,163 @@ def parse_config_string(
 
         >>> parse_config_string("key1=val1;key2.sub=42", separator=";", key_value_separator="=")
         {"key1": "val1", "key2": {"sub": 42}}
+
+        >>> parse_config_string(
+        ...     "vad=(mock?sample_rate=16000&p.0=1.0)&top_k=3",
+        ...     separator="&", key_value_separator="=",
+        ... )
+        {"vad": "mock?sample_rate=16000&p.0=1.0", "top_k": 3}
     """
     if not config_str:
         return {}
 
+    open_ch, close_ch = _validate_brackets(
+        brackets, separator, key_value_separator, nested_separator
+    )
+
     result: dict[str, Any] = {}
 
-    for option in config_str.split(separator):
+    for option in _split_top_level(config_str, separator, open_ch, close_ch):
         option = option.strip()
 
         if not option:
             continue
 
-        if key_value_separator in option:
-            key, value = option.split(key_value_separator, 1)
-            key = key.strip()
-            value = value.strip()
+        key, raw_value = _split_kv(option, key_value_separator, open_ch, close_ch)
 
-            converted_value = _convert_value(value)
-
-            # Handle nested keys
-            _set_nested_value(result, key, converted_value, nested_separator)
-        else:
+        if raw_value is None:
             # No key_value_separator found, treat as flag with None value
-            _set_nested_value(result, option, None, nested_separator)
+            _set_nested_value(result, key.strip(), None, nested_separator)
+            continue
+
+        key = key.strip()
+        raw_value = raw_value.strip()
+
+        value: Any
+        if open_ch and _is_fully_wrapped(raw_value, open_ch, close_ch):
+            # Strip outer brackets; keep inner content as a verbatim string
+            # (no type conversion).
+            value = raw_value[1:-1]
+        else:
+            value = _convert_value(raw_value)
+
+        _set_nested_value(result, key, value, nested_separator)
 
     return result
+
+
+def _validate_brackets(
+    brackets: str,
+    separator: str,
+    key_value_separator: str,
+    nested_separator: str,
+) -> tuple[str, str]:
+    """Validate brackets argument and return (open, close).
+
+    Returns ("", "") when bracket handling is disabled.
+    """
+    if brackets == "":
+        return "", ""
+
+    if len(brackets) != 2:
+        raise ValueError(f"brackets must be a 2-character string (got {brackets!r})")
+
+    open_ch, close_ch = brackets[0], brackets[1]
+
+    if open_ch == close_ch:
+        raise ValueError(f"brackets open and close must differ (got {brackets!r})")
+
+    for sep_name, sep in (
+        ("separator", separator),
+        ("key_value_separator", key_value_separator),
+        ("nested_separator", nested_separator),
+    ):
+        if sep in (open_ch, close_ch):
+            raise ValueError(f"brackets={brackets!r} conflicts with {sep_name}={sep!r}")
+
+    return open_ch, close_ch
+
+
+def _split_top_level(s: str, sep: str, open_ch: str, close_ch: str) -> list[str]:
+    """Split s on sep at bracket depth 0.
+
+    Tracks bracket depth so that occurrences of sep inside (...) are kept
+    intact. Raises ValueError on unbalanced brackets.
+    """
+    if not open_ch:
+        return s.split(sep)
+
+    parts: list[str] = []
+    buf: list[str] = []
+    depth = 0
+
+    for ch in s:
+        if ch == open_ch:
+            depth += 1
+            buf.append(ch)
+        elif ch == close_ch:
+            depth -= 1
+            if depth < 0:
+                raise ValueError(f"Unbalanced {close_ch!r} in config string: {s!r}")
+            buf.append(ch)
+        elif ch == sep and depth == 0:
+            parts.append("".join(buf))
+            buf = []
+        else:
+            buf.append(ch)
+
+    if depth != 0:
+        raise ValueError(f"Unbalanced {open_ch!r} in config string: {s!r}")
+
+    parts.append("".join(buf))
+    return parts
+
+
+def _split_kv(
+    option: str, kv_sep: str, open_ch: str, close_ch: str
+) -> tuple[str, str | None]:
+    """Split option on the first key_value_separator at bracket depth 0.
+
+    Returns (key, value) where value is None if kv_sep is not found at
+    depth 0.
+    """
+    if not open_ch:
+        if kv_sep in option:
+            key, value = option.split(kv_sep, 1)
+            return key, value
+        return option, None
+
+    depth = 0
+    for i, ch in enumerate(option):
+        if ch == open_ch:
+            depth += 1
+        elif ch == close_ch:
+            depth -= 1
+        elif ch == kv_sep and depth == 0:
+            return option[:i], option[i + 1 :]
+
+    return option, None
+
+
+def _is_fully_wrapped(value: str, open_ch: str, close_ch: str) -> bool:
+    """Return True if value is exactly one balanced (...) span.
+
+    "(...)" → True, "(a)(b)" → False, "(a)x" → False, "" → False.
+    """
+    if len(value) < 2 or value[0] != open_ch or value[-1] != close_ch:
+        return False
+
+    depth = 0
+    for i, ch in enumerate(value):
+        if ch == open_ch:
+            depth += 1
+        elif ch == close_ch:
+            depth -= 1
+            if depth == 0 and i != len(value) - 1:
+                # Closed before the end → not a single wrap
+                return False
+
+    return depth == 0
 
 
 def _convert_value(value: str) -> Any:

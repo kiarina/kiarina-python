@@ -283,6 +283,82 @@ def test_parse_config_string_real_world_example():
     assert result == expected
 
 
+@pytest.mark.parametrize(
+    "config_str,expected",
+    [
+        # Fully wrapped value is unwrapped and kept as a verbatim string
+        # (no type conversion, inner separators preserved).
+        (
+            "vad=(mock?sample_rate=16000&p.0=1.0)&top_k=3",
+            {"vad": "mock?sample_rate=16000&p.0=1.0", "top_k": 3},
+        ),
+        # Multiple bracketed values mixed with normal ones
+        (
+            "stt=(a&b=c)&ambient=(x&y=z)&n=5",
+            {"stt": "a&b=c", "ambient": "x&y=z", "n": 5},
+        ),
+        # Type-conversion suppression
+        ("k=(123)", {"k": "123"}),
+        ("k=(true)", {"k": "true"}),
+        # Empty wrap
+        ("k=()", {"k": ""}),
+        # Nested brackets: only the outer pair is stripped
+        ("k=(a(b)c)", {"k": "a(b)c"}),
+        # Bracket inside an unwrapped value is preserved verbatim
+        ("k=pre(x&y)post", {"k": "pre(x&y)post"}),
+    ],
+)
+def test_parse_config_string_brackets(config_str, expected):
+    """Bracketed values are atomic and type-conversion is suppressed."""
+    result = parse_config_string(config_str, separator="&", key_value_separator="=")
+    assert result == expected
+
+
+def test_parse_config_string_brackets_disabled():
+    """brackets='' disables bracket handling (legacy behavior)."""
+    # With brackets disabled, '&' inside parens is still a separator.
+    result = parse_config_string(
+        "k=(a&b)", separator="&", key_value_separator="=", brackets=""
+    )
+    assert result == {"k": "(a", "b)": None}
+
+
+def test_parse_config_string_brackets_custom_chars():
+    """Custom bracket characters work for both open and close."""
+    result = parse_config_string(
+        "k=[a,b]", separator=",", key_value_separator="=", brackets="[]"
+    )
+    assert result == {"k": "a,b"}
+
+
+@pytest.mark.parametrize(
+    "config_str",
+    [
+        "k=(unclosed",  # missing close
+        "k=unopened)",  # missing open
+        "k=(()",  # unbalanced inner
+        "k=())",  # extra close
+    ],
+)
+def test_parse_config_string_brackets_unbalanced(config_str):
+    with pytest.raises(ValueError):
+        parse_config_string(config_str, separator="&", key_value_separator="=")
+
+
+def test_parse_config_string_brackets_invalid_argument():
+    # 1-char and 3+-char are rejected
+    with pytest.raises(ValueError):
+        parse_config_string("k:v", brackets="(")
+    with pytest.raises(ValueError):
+        parse_config_string("k:v", brackets="(((")
+    # Same open/close are rejected
+    with pytest.raises(ValueError):
+        parse_config_string("k:v", brackets="||")
+    # Conflict with other separators
+    with pytest.raises(ValueError):
+        parse_config_string("k:v", separator="(", brackets="()")
+
+
 def test_parse_config_string_real_world_with_arrays():
     """Test real-world configuration with arrays"""
     config_str = "app.name:myapp,app.tags.0:web,app.tags.1:api,db.servers.0:primary,db.servers.1:secondary,db.ports.0:5432,db.ports.1:5433"
