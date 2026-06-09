@@ -16,7 +16,6 @@ Brief description of the changes in this PR.
 
 - [ ] kiarina-utils-common
 - [ ] kiarina-utils-file
-- [ ] kiarina-llm
 - [ ] kiarina-lib-falkordb
 - [ ] kiarina-lib-redis
 - [ ] kiarina-lib-redisearch

@@ -24,7 +24,6 @@ Packages under the `kiarina` namespace will be published to PyPI as kiarina-* pa
 - kiarina-lib-openai: `kiarina.lib.openai` package. OpenAI API integration utilities
 - kiarina-lib-redis: `kiarina.lib.redis` package. Redis utilities
 - kiarina-lib-redisearch: `kiarina.lib.redisearch` package. Advanced Redisearch wrapper
-- kiarina-llm: `kiarina.llm` package. LLM utilities
 - kiarina-utils-common: `kiarina.utils.common` package. Common utilities
 - kiarina-utils-file: `kiarina.utils.file` package. File operation utilities
 

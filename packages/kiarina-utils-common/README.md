@@ -176,4 +176,3 @@ This is a personal project by kiarina. While issues and pull requests are welcom
 ## Related Packages
 
 - [kiarina-utils-file](../kiarina-utils-file/): File operation utilities
-- [kiarina-llm](../kiarina-llm/): LLM-related utilities

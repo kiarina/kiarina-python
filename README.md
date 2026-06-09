@@ -46,13 +46,6 @@ this project provides robust, well-tested utilities for common development tasks
   - Markdown file support with YAML front matter parsing
   - Sync & async API support with atomic operations
 
-### 🤖 AI & LLM
-
-- **[kiarina-llm](packages/kiarina-llm/)** - LLM integration utilities
-  - LLM client abstractions and prompt management
-  - Response processing helpers
-  - Content measurement utilities for LLM-handled content
-
 ### 🗄️ Database Libraries
 
 - **[kiarina-lib-falkordb](packages/kiarina-lib-falkordb/)** - FalkorDB integration
@@ -134,9 +127,6 @@ Or install individual packages as needed:
 ```bash
 # Core utilities
 pip install kiarina-i18n kiarina-utils-common kiarina-utils-file
-
-# LLM utilities
-pip install kiarina-llm
 
 # Database libraries
 pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
@@ -243,7 +233,6 @@ mise run clean
 # Work with specific packages
 mise run package:format kiarina-utils-file
 mise run package:lint kiarina-utils-common
-mise run package:test kiarina-llm
 mise run package:build kiarina-lib-redis
 
 # Test with coverage
@@ -279,7 +268,6 @@ kiarina-python/
 │   ├── kiarina/                      # Meta package
 │   ├── kiarina-utils-common/         # Common utilities
 │   ├── kiarina-utils-file/           # File operations
-│   ├── kiarina-llm/                  # LLM utilities
 │   ├── kiarina-lib-falkordb/         # FalkorDB integration
 │   ├── kiarina-lib-redis/            # Redis integration
 │   ├── kiarina-lib-redisearch/       # RediSearch integration

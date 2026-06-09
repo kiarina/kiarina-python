@@ -27,7 +27,6 @@ This meta-package installs all kiarina utilities:
 - **kiarina-lib-openai** - OpenAI API integration utilities
 - **kiarina-lib-redis** - Redis integration with configuration management
 - **kiarina-lib-redisearch** - RediSearch integration and query builders
-- **kiarina-llm** - LLM integration utilities
 
 ## 📖 Usage
 
@@ -62,9 +61,6 @@ pip install kiarina-utils-common kiarina-utils-file
 
 # Database libraries
 pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
-
-# LLM utilities
-pip install kiarina-llm
 ```
 
 ## 📚 Documentation

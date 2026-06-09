@@ -25,7 +25,6 @@ members = [
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-lib-slack",
-    "kiarina-llm",
     "kiarina-python",
     "kiarina-utils-common",
     "kiarina-utils-file",
@@ -788,7 +787,6 @@ dependencies = [
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
     { name = "kiarina-lib-slack" },
-    { name = "kiarina-llm" },
     { name = "kiarina-utils-common" },
     { name = "kiarina-utils-file" },
 ]
@@ -809,7 +807,6 @@ requires-dist = [
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
     { name = "kiarina-lib-slack", editable = "packages/kiarina-lib-slack" },
-    { name = "kiarina-llm", editable = "packages/kiarina-llm" },
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
     { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
 ]
@@ -1120,23 +1117,6 @@ requires-dist = [
 ]
 
 [[package]]
-name = "kiarina-llm"
-version = "1.37.0"
-source = { editable = "packages/kiarina-llm" }
-dependencies = [
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "pydantic-settings-manager" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "pydantic", specifier = ">=2.10.1" },
-    { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
-]
-
-[[package]]
 name = "kiarina-python"
 version = "1.37.0"
 source = { virtual = "." }
@@ -1156,7 +1136,6 @@ dependencies = [
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
     { name = "kiarina-lib-slack" },
-    { name = "kiarina-llm" },
     { name = "kiarina-utils-common" },
     { name = "kiarina-utils-file" },
 ]
@@ -1197,7 +1176,6 @@ requires-dist = [
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
     { name = "kiarina-lib-slack", editable = "packages/kiarina-lib-slack" },
-    { name = "kiarina-llm", editable = "packages/kiarina-llm" },
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
     { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
 ]
