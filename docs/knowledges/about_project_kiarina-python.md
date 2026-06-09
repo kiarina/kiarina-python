@@ -17,8 +17,8 @@ Packages under the `kiarina` namespace will be published to PyPI as kiarina-* pa
 - kiarina: Meta package for the `kiarina` namespace
 - kiarina-i18n: `kiarina.i18n` package. Internationalization (i18n) utilities
 - kiarina-lib-anthropic: `kiarina.lib.anthropic` package. Anthropic API integration utilities
-- kiarina-lib-cloudflare-auth: `kiarina.lib.cloudflare.auth` package. Cloudflare authentication utilities
-- kiarina-lib-cloudflare-d1: `kiarina.lib.cloudflare.d1` package. Cloudflare D1 utilities
+- kiarina-lib-cloudflare: `kiarina.lib.cloudflare` package. Cloudflare authentication utilities
+- kiarina-lib-cloudflare-d1: `kiarina.lib.cloudflare_d1` package. Cloudflare D1 utilities
 - kiarina-lib-falkordb: `kiarina.lib.falkordb` package. FalkorDB utilities
 - kiarina-lib-google: `kiarina.lib.google` package. Google Cloud authentication utilities
 - kiarina-lib-openai: `kiarina.lib.openai` package. OpenAI API integration utilities

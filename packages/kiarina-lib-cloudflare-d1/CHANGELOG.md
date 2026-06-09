@@ -257,17 +257,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `rows`: Alias property for `results`
 - Type safety with full type hints and Pydantic validation
 - Support for both synchronous and asynchronous operations
-  - Sync API: `kiarina.lib.cloudflare.d1`
-  - Async API: `kiarina.lib.cloudflare.d1.asyncio`
+  - Sync API: `kiarina.lib.cloudflare_d1`
+  - Async API: `kiarina.lib.cloudflare_d1.asyncio`
 - Environment variable configuration support with `KIARINA_LIB_CLOUDFLARE_D1_` prefix
 - Runtime configuration overrides via `cli_args`
 - Multiple named configurations support (e.g., production, staging)
-- Seamless integration with kiarina-lib-cloudflare-auth for authentication
+- Seamless integration with kiarina-lib-cloudflare for authentication
 - Parameterized query support for SQL injection prevention
 - HTTP client using httpx for reliable API communication
 
 ### Dependencies
 - httpx>=0.28.1
-- kiarina-lib-cloudflare-auth>=1.5.0
+- kiarina-lib-cloudflare>=1.5.0
 - pydantic-settings>=2.10.1
 - pydantic-settings-manager>=2.1.0

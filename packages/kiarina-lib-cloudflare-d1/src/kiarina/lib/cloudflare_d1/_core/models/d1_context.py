@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from kiarina.lib.cloudflare.auth import CloudflareAuthSettings
+from kiarina.lib.cloudflare import CloudflareSettings
 
 from ..._settings import D1Settings
 
@@ -9,7 +9,7 @@ from ..._settings import D1Settings
 class D1Context:
     settings: D1Settings
 
-    auth_settings: CloudflareAuthSettings
+    auth_settings: CloudflareSettings
 
     @property
     def query_api_url(self) -> str:

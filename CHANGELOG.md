@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed (BREAKING)
+- **kiarina-lib-cloudflare**: Renamed package from `kiarina-lib-cloudflare-auth` to `kiarina-lib-cloudflare`. The python module `kiarina.lib.cloudflare.auth` has been simplified to `kiarina.lib.cloudflare`. `CloudflareAuthSettings` has been renamed to `CloudflareSettings`, and the environment variable prefix `KIARINA_LIB_CLOUDFLARE_AUTH_` has been changed to `KIARINA_LIB_CLOUDFLARE_`.
+- **kiarina-lib-cloudflare-d1**: The python module `kiarina.lib.cloudflare.d1` has been changed to `kiarina.lib.cloudflare_d1`.
 - **kiarina-lib-google**: Renamed package from `kiarina-lib-google-auth` to `kiarina-lib-google`. The python module `kiarina.lib.google.auth` has been simplified to `kiarina.lib.google`. `GoogleAuthSettings` has been renamed to `GoogleSettings`, and the environment variable prefix `KIARINA_LIB_GOOGLE_AUTH_` has been changed to `KIARINA_LIB_GOOGLE_`.
 - **kiarina-lib-firebase**: Renamed package from `kiarina-lib-firebase-auth` to `kiarina-lib-firebase`. The python module `kiarina.lib.firebase.auth` has been simplified to `kiarina.lib.firebase`. `FirebaseAuthSettings` has been renamed to `FirebaseSettings`, and the environment variable prefix `KIARINA_LIB_FIREBASE_AUTH_` has been changed to `KIARINA_LIB_FIREBASE_`.
 - **kiarina-lib-firebase-rtdb**: The python module `kiarina.lib.firebase.rtdb` has been changed to `kiarina.lib.firebase_rtdb`. Environment variable prefix `KIARINA_LIB_FIREBASE_RTDB_` remains the same.

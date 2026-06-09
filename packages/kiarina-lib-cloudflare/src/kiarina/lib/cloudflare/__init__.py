@@ -4,13 +4,13 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .settings import CloudflareAuthSettings, settings_manager
+    from .settings import CloudflareSettings, settings_manager
 
-__version__ = version("kiarina-lib-cloudflare-auth")
+__version__ = version("kiarina-lib-cloudflare")
 
 __all__ = [
     # .settings
-    "CloudflareAuthSettings",
+    "CloudflareSettings",
     "settings_manager",
 ]
 
@@ -22,7 +22,7 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        "CloudflareAuthSettings": ".settings",
+        "CloudflareSettings": ".settings",
         "settings_manager": ".settings",
     }
 

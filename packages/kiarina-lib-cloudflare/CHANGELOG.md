@@ -190,7 +190,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.11.0] - 2025-12-01
 
 ### Changed
-- Add environment variable prefix `KIARINA_LIB_CLOUDFLARE_AUTH_` to `CloudflareAuthSettings` for better configuration management
+- Add environment variable prefix `KIARINA_LIB_CLOUDFLARE_` to `CloudflareSettings` for better configuration management
 
 ## [1.10.0] - 2025-12-01
 
@@ -240,14 +240,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.0] - 2025-10-09
 
 ### Added
-- Initial release of kiarina-lib-cloudflare-auth
+- Initial release of kiarina-lib-cloudflare
 - Cloudflare authentication library with configuration management using pydantic-settings-manager
-- `CloudflareAuthSettings`: Pydantic settings model for Cloudflare authentication
+- `CloudflareSettings`: Pydantic settings model for Cloudflare authentication
   - `account_id`: Cloudflare account ID (required)
   - `api_token`: Cloudflare API token (required, protected with SecretStr)
 - `settings_manager`: Global settings manager instance with multi-configuration support
 - Type safety with full type hints and Pydantic validation
-- Environment variable configuration support with `KIARINA_LIB_CLOUDFLARE_AUTH_` prefix
+- Environment variable configuration support with `KIARINA_LIB_CLOUDFLARE_` prefix
 - Runtime configuration overrides via `cli_args`
 - Multiple named configurations support (e.g., production, staging)
 

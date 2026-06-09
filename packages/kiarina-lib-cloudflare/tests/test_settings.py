@@ -1,4 +1,4 @@
-from kiarina.lib.cloudflare.auth import settings_manager
+from kiarina.lib.cloudflare import settings_manager
 
 
 def test_settings():

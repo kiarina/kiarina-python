@@ -15,7 +15,7 @@ members = [
     "kiarina-i18n",
     "kiarina-lib-anthropic",
     "kiarina-lib-atlassian",
-    "kiarina-lib-cloudflare-auth",
+    "kiarina-lib-cloudflare",
     "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
     "kiarina-lib-firebase",
@@ -778,7 +778,7 @@ dependencies = [
     { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
     { name = "kiarina-lib-atlassian" },
-    { name = "kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare" },
     { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase" },
@@ -799,7 +799,7 @@ requires-dist = [
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
     { name = "kiarina-lib-atlassian", editable = "packages/kiarina-lib-atlassian" },
-    { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare", editable = "packages/kiarina-lib-cloudflare" },
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },
@@ -903,9 +903,9 @@ requires-dist = [
 dev = []
 
 [[package]]
-name = "kiarina-lib-cloudflare-auth"
+name = "kiarina-lib-cloudflare"
 version = "1.37.0"
-source = { editable = "packages/kiarina-lib-cloudflare-auth" }
+source = { editable = "packages/kiarina-lib-cloudflare" }
 dependencies = [
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -923,7 +923,7 @@ version = "1.37.0"
 source = { editable = "packages/kiarina-lib-cloudflare-d1" }
 dependencies = [
     { name = "httpx" },
-    { name = "kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
 ]
@@ -931,7 +931,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare", editable = "packages/kiarina-lib-cloudflare" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
 ]
@@ -1146,7 +1146,7 @@ dependencies = [
     { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
     { name = "kiarina-lib-atlassian" },
-    { name = "kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare" },
     { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase" },
@@ -1187,7 +1187,7 @@ requires-dist = [
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
     { name = "kiarina-lib-atlassian", editable = "packages/kiarina-lib-atlassian" },
-    { name = "kiarina-lib-cloudflare-auth", editable = "packages/kiarina-lib-cloudflare-auth" },
+    { name = "kiarina-lib-cloudflare", editable = "packages/kiarina-lib-cloudflare" },
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },

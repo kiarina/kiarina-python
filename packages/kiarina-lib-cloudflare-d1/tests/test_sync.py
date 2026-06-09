@@ -1,6 +1,6 @@
 import pytest
 
-from kiarina.lib.cloudflare.d1 import create_d1_client
+from kiarina.lib.cloudflare_d1 import create_d1_client
 
 
 def test_success(load_settings) -> None:

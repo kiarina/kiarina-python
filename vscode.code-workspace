@@ -16,7 +16,7 @@
       "path": "packages/kiarina-lib-atlassian"
     },
     {
-      "path": "packages/kiarina-lib-cloudflare-auth"
+      "path": "packages/kiarina-lib-cloudflare"
     },
     {
       "path": "packages/kiarina-lib-cloudflare-d1"

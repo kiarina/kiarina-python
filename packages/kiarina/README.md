@@ -20,7 +20,7 @@ This meta-package installs all kiarina utilities:
 - **kiarina-utils-common** - Common utilities and helper functions
 - **kiarina-utils-file** - Advanced file I/O operations with encoding detection
 - **kiarina-lib-anthropic** - Anthropic API integration utilities
-- **kiarina-lib-cloudflare-auth** - Cloudflare authentication utilities
+- **kiarina-lib-cloudflare** - Cloudflare authentication utilities
 - **kiarina-lib-cloudflare-d1** - Cloudflare D1 database integration
 - **kiarina-lib-falkordb** - FalkorDB integration utilities
 - **kiarina-lib-google** - Google Cloud authentication utilities

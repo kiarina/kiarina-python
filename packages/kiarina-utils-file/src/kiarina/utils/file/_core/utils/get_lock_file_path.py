@@ -257,7 +257,7 @@ def cleanup_old_lock_files(
                 # Safe to remove the file
                 with suppress(FileNotFoundError):
                     os.remove(path)
-                
+
                 removed += 1
 
                 # Respect the maximum removal limit

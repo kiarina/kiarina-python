@@ -22,7 +22,7 @@ pip install kiarina-lib-cloudflare-d1
 ### Basic Usage (Sync)
 
 ```python
-from kiarina.lib.cloudflare.d1 import create_d1_client
+from kiarina.lib.cloudflare_d1 import create_d1_client
 
 # Create client (configuration loaded from environment or settings)
 client = create_d1_client()
@@ -39,7 +39,7 @@ if result.success:
 ### Async Usage
 
 ```python
-from kiarina.lib.cloudflare.d1.asyncio import create_d1_client
+from kiarina.lib.cloudflare_d1.asyncio import create_d1_client
 
 async def main():
     client = create_d1_client()
@@ -53,7 +53,7 @@ async def main():
 ### CRUD Operations
 
 ```python
-from kiarina.lib.cloudflare.d1 import create_d1_client
+from kiarina.lib.cloudflare_d1 import create_d1_client
 
 client = create_d1_client()
 
@@ -218,17 +218,17 @@ Error or message information.
 
 ## Configuration
 
-This library uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) for configuration management and requires [kiarina-lib-cloudflare-auth](../kiarina-lib-cloudflare-auth/) for authentication.
+This library uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) for configuration management and requires [kiarina-lib-cloudflare](../kiarina-lib-cloudflare/) for authentication.
 
 ### YAML Configuration
 
 ```yaml
 # config/production.yaml
-kiarina.lib.cloudflare.d1:
+kiarina.lib.cloudflare_d1:
   default:
     database_id: "prod-database-id"
 
-kiarina.lib.cloudflare.auth:
+kiarina.lib.cloudflare:
   default:
     account_id: "prod-account-id"
     api_token: "${CLOUDFLARE_API_TOKEN}"  # From environment
@@ -260,13 +260,13 @@ client = create_d1_client()
 
 #### Authentication Settings
 
-See [kiarina-lib-cloudflare-auth](../kiarina-lib-cloudflare-auth/README.md) for authentication configuration details.
+See [kiarina-lib-cloudflare](../kiarina-lib-cloudflare/README.md) for authentication configuration details.
 
 Required fields:
 - `account_id`: Cloudflare account ID
 - `api_token`: Cloudflare API token
 
-**Environment variable prefix:** `KIARINA_LIB_CLOUDFLARE_AUTH_`
+**Environment variable prefix:** `KIARINA_LIB_CLOUDFLARE_`
 
 ## Testing
 
@@ -280,12 +280,12 @@ KIARINA_LIB_CLOUDFLARE_D1_TEST_SETTINGS_FILE=/path/to/test_settings.yaml
 Create `test_settings.yaml`:
 
 ```yaml
-kiarina.lib.cloudflare.auth:
+kiarina.lib.cloudflare:
   default:
     account_id: "your-test-account-id"
     api_token: "your-test-api-token"
 
-kiarina.lib.cloudflare.d1:
+kiarina.lib.cloudflare_d1:
   default:
     database_id: "your-test-database-id"
 ```
@@ -305,7 +305,7 @@ Tests will be skipped if credentials are not configured.
 ## Dependencies
 
 - [httpx](https://www.python-httpx.org/) - HTTP client
-- [kiarina-lib-cloudflare-auth](../kiarina-lib-cloudflare-auth/) - Cloudflare authentication
+- [kiarina-lib-cloudflare](../kiarina-lib-cloudflare/) - Cloudflare authentication
 - [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) - Settings management
 - [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Advanced settings management
 
@@ -316,5 +316,5 @@ MIT License - see the [LICENSE](../../LICENSE) file for details.
 ## Related Projects
 
 - [kiarina-python](https://github.com/kiarina/kiarina-python) - Main monorepo
-- [kiarina-lib-cloudflare-auth](../kiarina-lib-cloudflare-auth/) - Cloudflare authentication library
+- [kiarina-lib-cloudflare](../kiarina-lib-cloudflare/) - Cloudflare authentication library
 - [Cloudflare D1](https://developers.cloudflare.com/d1/) - Cloudflare's serverless SQL database

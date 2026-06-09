@@ -69,7 +69,7 @@ this project provides robust, well-tested utilities for common development tasks
 
 #### Cloudflare
 
-- **[kiarina-lib-cloudflare-auth](packages/kiarina-lib-cloudflare-auth/)** - Cloudflare authentication
+- **[kiarina-lib-cloudflare](packages/kiarina-lib-cloudflare/)** - Cloudflare authentication
   - Secure credential management with SecretStr
   - Multi-configuration support for different accounts
   - Environment variable configuration
@@ -142,7 +142,7 @@ pip install kiarina-llm
 pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
 
 # Cloud services - Cloudflare
-pip install kiarina-lib-cloudflare-auth kiarina-lib-cloudflare-d1
+pip install kiarina-lib-cloudflare kiarina-lib-cloudflare-d1
 
 # Cloud services - Google Cloud
 pip install kiarina-lib-google
@@ -283,7 +283,7 @@ kiarina-python/
 │   ├── kiarina-lib-falkordb/         # FalkorDB integration
 │   ├── kiarina-lib-redis/            # Redis integration
 │   ├── kiarina-lib-redisearch/       # RediSearch integration
-│   ├── kiarina-lib-cloudflare-auth/  # Cloudflare authentication
+│   ├── kiarina-lib-cloudflare/  # Cloudflare authentication
 │   ├── kiarina-lib-cloudflare-d1/    # Cloudflare D1 database
 │   ├── kiarina-lib-google/      # Google Cloud authentication
 ├── pyproject.toml             # Workspace configuration

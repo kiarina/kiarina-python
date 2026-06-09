@@ -1,6 +1,6 @@
 import pytest
 
-from kiarina.lib.cloudflare.d1.asyncio import create_d1_client
+from kiarina.lib.cloudflare_d1.asyncio import create_d1_client
 
 
 async def test_success(load_settings) -> None:
