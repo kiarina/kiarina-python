@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **kiarina-lib-google-cloud-storage**: Package removed from monorepo
+
 ## [1.37.0] - 2026-05-27
 
 ### Added
