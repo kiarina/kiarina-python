@@ -4,6 +4,7 @@ import os
 import random
 import tempfile
 import time
+from contextlib import suppress
 from unicodedata import normalize
 
 from filelock import FileLock, Timeout
@@ -254,15 +255,17 @@ def cleanup_old_lock_files(
                         pass
 
                 # Safe to remove the file
-                os.remove(path)
+                with suppress(FileNotFoundError):
+                    os.remove(path)
+                
                 removed += 1
 
                 # Respect the maximum removal limit
                 if max_remove is not None and removed >= max_remove:
                     break
 
-            except (OSError, FileNotFoundError):
-                # File might be already removed by another process
+            except OSError:
+                # Permission error or other OS error
                 continue
             except Exception:
                 # Unexpected error, but don't fail the entire cleanup
