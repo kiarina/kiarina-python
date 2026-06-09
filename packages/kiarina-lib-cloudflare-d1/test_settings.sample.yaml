@@ -1,7 +1,9 @@
 kiarina.lib.cloudflare.auth:
-  default:
-    account_id: youtr_account_id
-    api_token: your_api_token
+  configs:
+    default:
+      account_id: youtr_account_id
+      api_token: your_api_token
 kiarina.lib.cloudflare.d1:
-  default:
-    database_id: your_database_id
+  configs:
+    default:
+      database_id: your_database_id

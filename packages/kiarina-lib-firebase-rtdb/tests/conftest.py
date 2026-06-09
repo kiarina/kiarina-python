@@ -9,7 +9,7 @@ import kiarina.utils.file as kf
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_logger():
-    logger = logging.getLogger("kiarina.lib.firebase.rtdb")
+    logger = logging.getLogger("kiarina.lib.firebase_rtdb")
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
 
@@ -95,7 +95,7 @@ def custom_token(firebase_app, user_id) -> str:
 
 @pytest.fixture
 async def token_data(custom_token):
-    from kiarina.lib.firebase.auth import exchange_custom_token, settings_manager
+    from kiarina.lib.firebase import exchange_custom_token, settings_manager
 
     settings = settings_manager.get_settings()
 
@@ -117,7 +117,7 @@ def id_token(token_data) -> str:
 
 @pytest.fixture
 def token_manager(token_data):
-    from kiarina.lib.firebase.auth import TokenManager, settings_manager
+    from kiarina.lib.firebase import TokenManager, settings_manager
 
     settings = settings_manager.get_settings()
     return TokenManager(

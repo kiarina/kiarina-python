@@ -53,7 +53,7 @@ def get_user_account_credentials(
         return credentials
 
     if credentials.expired and credentials.refresh_token:
-        credentials.refresh(Request())
+        credentials.refresh(Request())  # type: ignore[no-untyped-call]
 
         if cache:
             cache.set(credentials.to_json())  # type: ignore[no-untyped-call]

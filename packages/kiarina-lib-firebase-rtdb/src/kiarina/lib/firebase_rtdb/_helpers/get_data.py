@@ -23,10 +23,10 @@ async def get_data(
         httpx.HTTPError: If request fails
 
     Example:
-        >>> from kiarina.lib.firebase.rtdb import get_data
+        >>> from kiarina.lib.firebase_rtdb import get_data
         >>>
         >>> # With TokenManager
-        >>> from kiarina.lib.firebase.auth import TokenManager
+        >>> from kiarina.lib.firebase import TokenManager
         >>> manager = TokenManager(refresh_token="...", api_key="...")
         >>> id_token = await manager.get_id_token()
         >>> data = await get_data(

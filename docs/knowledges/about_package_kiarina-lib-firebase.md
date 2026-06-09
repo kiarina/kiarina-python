@@ -1,11 +1,11 @@
 ---
-title: About kiarina-lib-firebase-auth package
+title: About kiarina-lib-firebase package
 description: >-
-  kiarina-lib-firebase-auth is a library for Firebase authentication
+  kiarina-lib-firebase is a library for Firebase authentication
   with REST API integration and automatic token management using pydantic-settings-manager.
 ---
 
-kiarina-lib-firebase-auth provides a simple and secure way to manage Firebase authentication using REST APIs.
+kiarina-lib-firebase provides a simple and secure way to manage Firebase authentication using REST APIs.
 This library enables custom token exchange and automatic ID token lifecycle management with configuration management using pydantic-settings-manager.
 
 Key features include:

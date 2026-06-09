@@ -1,7 +1,7 @@
 import httpx
 import pytest
 
-from kiarina.lib.firebase.auth import (
+from kiarina.lib.firebase import (
     FirebaseAPIError,
     InvalidCustomTokenError,
     exchange_custom_token,

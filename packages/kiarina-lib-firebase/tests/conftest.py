@@ -8,7 +8,7 @@ import kiarina.utils.file as kf
 
 @pytest.fixture(scope="session")
 def load_settings():
-    env_var = "KIARINA_LIB_FIREBASE_AUTH_TEST_SETTINGS_FILE"
+    env_var = "KIARINA_LIB_FIREBASE_TEST_SETTINGS_FILE"
 
     if env_var not in os.environ:
         pytest.skip(f"Environment variable {env_var} not set, skipping tests.")
@@ -56,7 +56,7 @@ def user_id() -> str:
 
 @pytest.fixture
 def api_key(load_settings) -> str:
-    from kiarina.lib.firebase.auth import settings_manager
+    from kiarina.lib.firebase import settings_manager
 
     settings = settings_manager.get_settings()
     return settings.api_key.get_secret_value()
@@ -70,7 +70,7 @@ def custom_token(firebase_app, user_id) -> str:
 
 @pytest.fixture
 async def token_data(api_key, custom_token):
-    from kiarina.lib.firebase.auth import exchange_custom_token
+    from kiarina.lib.firebase import exchange_custom_token
 
     token_data = await exchange_custom_token(
         custom_token=custom_token,

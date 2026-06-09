@@ -25,7 +25,7 @@
       "path": "packages/kiarina-lib-falkordb"
     },
     {
-      "path": "packages/kiarina-lib-firebase-auth"
+      "path": "packages/kiarina-lib-firebase"
     },
     {
       "path": "packages/kiarina-lib-firebase-rtdb"

@@ -1,10 +1,10 @@
-# kiarina-lib-firebase-auth
+# kiarina-lib-firebase
 
 Firebase authentication library with REST API integration and automatic token management.
 
 ## Purpose
 
-`kiarina-lib-firebase-auth` provides a simple and secure way to manage Firebase authentication using REST APIs. This library enables custom token exchange and automatic ID token lifecycle management with configuration management using pydantic-settings-manager.
+`kiarina-lib-firebase` provides a simple and secure way to manage Firebase authentication using REST APIs. This library enables custom token exchange and automatic ID token lifecycle management with configuration management using pydantic-settings-manager.
 
 Key features:
 - Custom token exchange for refresh/ID tokens via Firebase REST API
@@ -19,7 +19,7 @@ Key features:
 ## Installation
 
 ```bash
-pip install kiarina-lib-firebase-auth
+pip install kiarina-lib-firebase
 ```
 
 ## Quick Start
@@ -27,7 +27,7 @@ pip install kiarina-lib-firebase-auth
 ### Basic Usage
 
 ```python
-from kiarina.lib.firebase.auth import (
+from kiarina.lib.firebase import (
     TokenManager,
     exchange_custom_token,
     settings_manager,
@@ -66,7 +66,7 @@ print(f"ID Token: {id_token}")
 ### Manual Token Refresh
 
 ```python
-from kiarina.lib.firebase.auth import refresh_id_token
+from kiarina.lib.firebase import refresh_id_token
 
 # Manually refresh ID token using refresh token
 token_data = await refresh_id_token(
@@ -82,15 +82,15 @@ print(f"Expires at: {token_data.expires_at}")
 
 ### Settings
 
-#### `FirebaseAuthSettings`
+#### `FirebaseSettings`
 
 Configuration for Firebase authentication.
 
 ```python
 from pydantic import SecretStr
-from kiarina.lib.firebase.auth import FirebaseAuthSettings
+from kiarina.lib.firebase import FirebaseSettings
 
-settings = FirebaseAuthSettings(
+settings = FirebaseSettings(
     project_id="your-project-id",
     api_key=SecretStr("your-firebase-api-key"),
 )
@@ -139,7 +139,7 @@ Refresh ID token using refresh token.
 Service class for automatic ID token lifecycle management.
 
 ```python
-from kiarina.lib.firebase.auth import TokenManager, TokenData
+from kiarina.lib.firebase import TokenManager, TokenData
 
 # Option 1: With token_data (recommended)
 manager = TokenManager(
@@ -197,7 +197,7 @@ Protocol for token data cache implementations.
 Implementations should provide persistent storage for `TokenData`, allowing `TokenManager` to automatically save and restore token state.
 
 ```python
-from kiarina.lib.firebase.auth import TokenDataCache, TokenData
+from kiarina.lib.firebase import TokenDataCache, TokenData
 
 class MyTokenCache(TokenDataCache):
     async def get(self) -> TokenData:
@@ -246,7 +246,7 @@ Raised when Firebase API returns an error response.
 ### YAML Configuration
 
 ```yaml
-kiarina.lib.firebase.auth:
+kiarina.lib.firebase:
   default:
     project_id: your-project-id
     api_key: your-firebase-api-key
@@ -258,17 +258,17 @@ kiarina.lib.firebase.auth:
 
 ### Environment Variables
 
-Settings can be configured via environment variables with the `KIARINA_LIB_FIREBASE_AUTH_` prefix:
+Settings can be configured via environment variables with the `KIARINA_LIB_FIREBASE_` prefix:
 
 ```bash
-export KIARINA_LIB_FIREBASE_AUTH_PROJECT_ID=your-project-id
-export KIARINA_LIB_FIREBASE_AUTH_API_KEY=your-firebase-api-key
+export KIARINA_LIB_FIREBASE_PROJECT_ID=your-project-id
+export KIARINA_LIB_FIREBASE_API_KEY=your-firebase-api-key
 ```
 
 ### Multi-Configuration Support
 
 ```python
-from kiarina.lib.firebase.auth import settings_manager
+from kiarina.lib.firebase import settings_manager
 
 # Configure multiple environments
 settings_manager.user_config = {
@@ -304,7 +304,7 @@ kiarina.lib.google:
     service_account_email: your-service-account@your-project.iam.gserviceaccount.com
     service_account_file: ~/.gcp/service-account/your-project/key.json
 
-kiarina.lib.firebase.auth:
+kiarina.lib.firebase:
   default:
     project_id: your-project-id
     api_key: your-firebase-api-key
@@ -313,7 +313,7 @@ kiarina.lib.firebase.auth:
 2. Set environment variable:
 
 ```bash
-export KIARINA_LIB_FIREBASE_AUTH_TEST_SETTINGS_FILE=/path/to/test_settings.yaml
+export KIARINA_LIB_FIREBASE_TEST_SETTINGS_FILE=/path/to/test_settings.yaml
 ```
 
 3. Run tests:

@@ -80,7 +80,7 @@ this project provides robust, well-tested utilities for common development tasks
 
 #### Firebase
 
-- **[kiarina-lib-firebase-auth](packages/kiarina-lib-firebase-auth/)** - Firebase authentication
+- **[kiarina-lib-firebase](packages/kiarina-lib-firebase/)** - Firebase authentication
   - Custom token exchange for refresh/ID tokens via REST API
   - Automatic ID token lifecycle management with TokenManager
   - Token refresh 5 minutes before expiration

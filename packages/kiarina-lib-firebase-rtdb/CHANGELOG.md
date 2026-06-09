@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Renamed internal module structure from `kiarina.lib.firebase.rtdb` to `kiarina.lib.firebase_rtdb`
+- Updated dependency from `kiarina-lib-firebase-auth` to `kiarina-lib-firebase`
+- Updated settings key to `kiarina.lib.firebase_rtdb`
+
 ## [1.37.0] - 2026-05-27
 
 ### Changed

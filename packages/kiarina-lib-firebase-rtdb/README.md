@@ -32,8 +32,8 @@ uv add kiarina-lib-firebase-rtdb
 ### Basic Data Retrieval
 
 ```python
-from kiarina.lib.firebase.auth import TokenManager
-from kiarina.lib.firebase.rtdb import get_data
+from kiarina.lib.firebase import TokenManager
+from kiarina.lib.firebase_rtdb import get_data
 
 # Setup token manager
 token_manager = TokenManager(
@@ -55,8 +55,8 @@ print(data)  # {"name": "John", "age": 30}
 
 ```python
 import asyncio
-from kiarina.lib.firebase.auth import TokenManager
-from kiarina.lib.firebase.rtdb import watch_data
+from kiarina.lib.firebase import TokenManager
+from kiarina.lib.firebase_rtdb import watch_data
 
 # Setup token manager
 token_manager = TokenManager(
@@ -173,7 +173,7 @@ from pydantic_settings_manager import load_user_configs
 
 # Load from YAML configuration
 config = {
-    "kiarina.lib.firebase.rtdb": {
+    "kiarina.lib.firebase_rtdb": {
         "default": {
             "max_retry_delay": 60.0,
             "initial_retry_delay": 1.0,
@@ -188,7 +188,7 @@ load_user_configs(config)
 ### YAML Configuration Example
 
 ```yaml
-kiarina.lib.firebase.rtdb:
+kiarina.lib.firebase_rtdb:
   default:
     max_retry_delay: 60.0
     initial_retry_delay: 1.0
@@ -226,7 +226,7 @@ class RTDBSettings(BaseSettings):
 
 ```python
 import asyncio
-from kiarina.lib.firebase.rtdb import watch_data
+from kiarina.lib.firebase_rtdb import watch_data
 
 stop_event = asyncio.Event()
 
@@ -252,7 +252,7 @@ await watch_task
 ### Error Handling
 
 ```python
-from kiarina.lib.firebase.rtdb import watch_data, RTDBStreamCancelledError
+from kiarina.lib.firebase_rtdb import watch_data, RTDBStreamCancelledError
 import httpx
 
 try:
@@ -296,12 +296,12 @@ kiarina.lib.google:
     service_account_email: your-service-account@your-project.iam.gserviceaccount.com
     service_account_file: ~/.gcp/service-account/your-project/key.json
 
-kiarina.lib.firebase.auth:
+kiarina.lib.firebase:
   default:
     project_id: your-project-id
     api_key: your-firebase-api-key
 
-kiarina.lib.firebase.rtdb:
+kiarina.lib.firebase_rtdb:
   default:
     database_url: https://your-project.firebaseio.com
     api_key: your-firebase-api-key
@@ -335,7 +335,7 @@ kiarina.lib.firebase.rtdb:
 pytest
 
 # Run with coverage
-pytest --cov=kiarina.lib.firebase.rtdb --cov-report=html
+pytest --cov=kiarina.lib.firebase_rtdb --cov-report=html
 
 # Run specific test
 pytest tests/_helpers/test_watch_data.py -v
@@ -344,7 +344,7 @@ pytest tests/_helpers/test_watch_data.py -v
 ## Dependencies
 
 - **httpx**: HTTP client for async requests
-- **kiarina-lib-firebase-auth**: Firebase authentication with automatic token management
+- **kiarina-lib-firebase**: Firebase authentication with automatic token management
 - **pydantic**: Data validation and settings management
 - **pydantic-settings**: Settings management from environment variables
 - **pydantic-settings-manager**: Multi-configuration settings management
@@ -355,7 +355,7 @@ This project is licensed under the MIT License - see the [LICENSE](../../LICENSE
 
 ## Related Projects
 
-- [kiarina-lib-firebase-auth](../kiarina-lib-firebase-auth/) - Firebase authentication library
+- [kiarina-lib-firebase](../kiarina-lib-firebase/) - Firebase authentication library
 - [kiarina-lib-google](../kiarina-lib-google/) - Google Cloud authentication library
 - [kiarina-python](https://github.com/kiarina/kiarina-python) - Parent monorepo
 

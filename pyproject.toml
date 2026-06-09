@@ -46,7 +46,7 @@ dependencies = [
     "kiarina-lib-cloudflare-auth",
     "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
-    "kiarina-lib-firebase-auth",
+    "kiarina-lib-firebase",
     "kiarina-lib-firebase-rtdb",
     "kiarina-lib-google",
     "kiarina-lib-openai",
@@ -94,7 +94,7 @@ members = [
     "packages/kiarina-lib-cloudflare-auth",
     "packages/kiarina-lib-cloudflare-d1",
     "packages/kiarina-lib-falkordb",
-    "packages/kiarina-lib-firebase-auth",
+    "packages/kiarina-lib-firebase",
     "packages/kiarina-lib-firebase-rtdb",
     "packages/kiarina-lib-google",
     "packages/kiarina-lib-openai",
@@ -115,7 +115,7 @@ kiarina-lib-atlassian = { workspace = true }
 kiarina-lib-cloudflare-auth = { workspace = true }
 kiarina-lib-cloudflare-d1 = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
-kiarina-lib-firebase-auth = { workspace = true }
+kiarina-lib-firebase = { workspace = true }
 kiarina-lib-firebase-rtdb = { workspace = true }
 kiarina-lib-google = { workspace = true }
 kiarina-lib-openai = { workspace = true }
@@ -135,7 +135,7 @@ mypy_path = [
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
-    "packages/kiarina-lib-firebase-auth/src",
+    "packages/kiarina-lib-firebase/src",
     "packages/kiarina-lib-firebase-rtdb/src",
     "packages/kiarina-lib-google/src",
     "packages/kiarina-lib-openai/src",
@@ -165,7 +165,7 @@ source = [
     "packages/kiarina-lib-cloudflare-auth/src",
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
-    "packages/kiarina-lib-firebase-auth/src",
+    "packages/kiarina-lib-firebase/src",
     "packages/kiarina-lib-firebase-rtdb/src",
     "packages/kiarina-lib-google/src",
     "packages/kiarina-lib-openai/src",

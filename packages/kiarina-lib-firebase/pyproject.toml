@@ -1,5 +1,5 @@
 [project]
-name = "kiarina-lib-firebase-auth"
+name = "kiarina-lib-firebase"
 version = "1.37.0"
 description = "Firebase authentication library for kiarina namespace"
 readme = "README.md"
@@ -33,8 +33,8 @@ dependencies = [
 Homepage = "https://github.com/kiarina/kiarina-python"
 Repository = "https://github.com/kiarina/kiarina-python"
 Issues = "https://github.com/kiarina/kiarina-python/issues"
-Changelog = "https://github.com/kiarina/kiarina-python/blob/main/packages/kiarina-lib-firebase-auth/CHANGELOG.md"
-Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-firebase-auth#readme"
+Changelog = "https://github.com/kiarina/kiarina-python/blob/main/packages/kiarina-lib-firebase/CHANGELOG.md"
+Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-firebase#readme"
 
 [dependency-groups]
 dev = [

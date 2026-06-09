@@ -8,7 +8,7 @@ Usage:
 import asyncio
 from typing import Any
 
-from kiarina.lib.firebase.rtdb._utils.watch_data import watch_data
+from kiarina.lib.firebase_rtdb._helpers.watch_data import watch_data
 
 
 def on_event(event_type: str, path: str, data: Any) -> None:

@@ -3,9 +3,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
 
-class FirebaseAuthSettings(BaseSettings):
+class FirebaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="KIARINA_LIB_FIREBASE_AUTH_",
+        env_prefix="KIARINA_LIB_FIREBASE_",
         extra="ignore",
     )
 
@@ -23,4 +23,4 @@ class FirebaseAuthSettings(BaseSettings):
     """
 
 
-settings_manager = SettingsManager(FirebaseAuthSettings, multi=True)
+settings_manager = SettingsManager(FirebaseSettings, multi=True)

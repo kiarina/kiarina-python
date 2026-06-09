@@ -1,7 +1,7 @@
 import asyncio
 
 
-from kiarina.lib.firebase.rtdb import DataChangeEvent, watch_data
+from kiarina.lib.firebase_rtdb import DataChangeEvent, watch_data
 
 
 async def test_unauthorized(database_url, token_manager) -> None:

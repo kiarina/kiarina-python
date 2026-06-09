@@ -1,6 +1,6 @@
 import pytest
 
-from kiarina.lib.firebase.rtdb import get_data
+from kiarina.lib.firebase_rtdb import get_data
 
 
 async def test_unauthorized(database_url, id_token) -> None:

@@ -4,7 +4,7 @@ import logging
 from typing import Any, AsyncIterator, Literal, cast
 
 import httpx
-from kiarina.lib.firebase.auth import TokenManager
+from kiarina.lib.firebase import TokenManager
 
 from .._exceptions.rtdb_stream_cancelled_error import RTDBStreamCancelledError
 from .._schemas.data_change_event import DataChangeEvent
@@ -41,8 +41,8 @@ async def watch_data(
         RTDBStreamCancelledError: When stream is cancelled by server
 
     Example:
-        >>> from kiarina.lib.firebase.auth import TokenManager
-        >>> from kiarina.lib.firebase.rtdb import watch_data
+        >>> from kiarina.lib.firebase import TokenManager
+        >>> from kiarina.lib.firebase_rtdb import watch_data
         >>> import asyncio
         >>>
         >>> manager = TokenManager(refresh_token="...", api_key="...")
