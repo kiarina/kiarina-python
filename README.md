@@ -89,7 +89,7 @@ this project provides robust, well-tested utilities for common development tasks
 
 #### Google Cloud
 
-- **[kiarina-lib-google-auth](packages/kiarina-lib-google-auth/)** - Google Cloud authentication
+- **[kiarina-lib-google](packages/kiarina-lib-google/)** - Google Cloud authentication
   - Multiple authentication methods (service account, user account, default credentials)
   - Service account impersonation support
   - Credentials caching and self-signed JWT generation
@@ -145,7 +145,7 @@ pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
 pip install kiarina-lib-cloudflare-auth kiarina-lib-cloudflare-d1
 
 # Cloud services - Google Cloud
-pip install kiarina-lib-google-auth
+pip install kiarina-lib-google
 
 # Cloud services - OpenAI
 pip install kiarina-lib-openai
@@ -285,7 +285,7 @@ kiarina-python/
 │   ├── kiarina-lib-redisearch/       # RediSearch integration
 │   ├── kiarina-lib-cloudflare-auth/  # Cloudflare authentication
 │   ├── kiarina-lib-cloudflare-d1/    # Cloudflare D1 database
-│   ├── kiarina-lib-google-auth/      # Google Cloud authentication
+│   ├── kiarina-lib-google/      # Google Cloud authentication
 ├── pyproject.toml             # Workspace configuration
 ├── uv.lock                    # Dependency lock file
 ├── docker-compose.yml         # Test services (Redis, FalkorDB)

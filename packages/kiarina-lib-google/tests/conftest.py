@@ -8,7 +8,7 @@ import kiarina.utils.file as kf
 
 @pytest.fixture(scope="session")
 def load_settings():
-    env_var = "KIARINA_LIB_GOOGLE_AUTH_TEST_SETTINGS_FILE"
+    env_var = "KIARINA_LIB_GOOGLE_TEST_SETTINGS_FILE"
 
     if env_var not in os.environ:
         pytest.skip(f"Environment variable {env_var} not set, skipping tests.")

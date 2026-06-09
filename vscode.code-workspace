@@ -31,7 +31,7 @@
       "path": "packages/kiarina-lib-firebase-rtdb"
     },
     {
-      "path": "packages/kiarina-lib-google-auth"
+      "path": "packages/kiarina-lib-google"
     },
     {
       "path": "packages/kiarina-lib-openai"

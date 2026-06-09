@@ -297,7 +297,7 @@ This package includes integration tests that require Firebase Admin SDK and Goog
 
 ```yaml
 # test_settings.yaml
-kiarina.lib.google.auth:
+kiarina.lib.google:
   default:
     type: service_account
     project_id: your-project-id
@@ -332,7 +332,7 @@ pytest tests/
 ### Development Dependencies
 
 - `firebase-admin>=6.6.0` - Firebase Admin SDK (for testing)
-- `kiarina-lib-google-auth>=1.22.0` - Google Cloud authentication (for testing)
+- `kiarina-lib-google>=1.22.0` - Google Cloud authentication (for testing)
 
 ## License
 
@@ -340,5 +340,5 @@ This project is licensed under the MIT License.
 
 ## Related Projects
 
-- [kiarina-lib-google-auth](https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-google-auth) - Google Cloud authentication library
+- [kiarina-lib-google](https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-google) - Google Cloud authentication library
 - [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Multi-configuration settings management

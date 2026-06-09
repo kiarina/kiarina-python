@@ -1,7 +1,7 @@
 from google.oauth2.credentials import Credentials
 import pytest
 
-from kiarina.lib.google.auth import (
+from kiarina.lib.google import (
     CredentialsCache,
     settings_manager,
     get_user_account_credentials,

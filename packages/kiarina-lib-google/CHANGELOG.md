@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- **kiarina-lib-google**: Package renamed from `kiarina-lib-google-auth` to `kiarina-lib-google`.
+- Python module namespace simplified from `kiarina.lib.google.auth` to `kiarina.lib.google`.
+- `GoogleAuthSettings` has been renamed to `GoogleSettings`.
+- Environment variable prefix changed from `KIARINA_LIB_GOOGLE_AUTH_` to `KIARINA_LIB_GOOGLE_`.
+
 ## [1.37.0] - 2026-05-27
 
 ### Changed
@@ -161,7 +167,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **API key authentication**: Added support for API key authentication method
-  - New `type: "api_key"` option in `GoogleAuthSettings`
+  - New `type: "api_key"` option in `GoogleSettings`
   - New `api_key` field for storing API keys securely with `SecretStr`
   - Enables direct API key usage for Google APIs that support it
 
@@ -227,7 +233,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tests now use `pydantic-settings-manager` with multiple named configurations for different authentication scenarios
 - Added `test_settings.sample.yaml` as a template for test configuration
 - Added `.env.sample` to document required environment variables
-- Reorganized `GoogleAuthSettings` field order for better readability (common fields first)
+- Reorganized `GoogleSettings` field order for better readability (common fields first)
 - Enhanced test coverage with more comprehensive authentication method tests
 - Simplified test fixtures using session-scoped `load_settings` fixture
 
@@ -254,7 +260,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.0] - 2025-10-09
 
 ### Added
-- Initial release of kiarina-lib-google-auth
+- Initial release of kiarina-lib-google
 - Google Cloud authentication library with configuration management using pydantic-settings-manager
 - Multiple authentication methods:
   - Default credentials (Application Default Credentials)
@@ -264,7 +270,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Credentials caching support with `CredentialsCache` protocol
 - Self-signed JWT generation for service accounts
 - Type safety with full type hints and Pydantic validation
-- Environment variable configuration support with `KIARINA_LIB_GOOGLE_AUTH_` prefix
+- Environment variable configuration support with `KIARINA_LIB_GOOGLE_` prefix
 - Runtime configuration overrides
 - Multiple named configurations support via pydantic-settings-manager
 - Automatic credential refresh for user accounts
@@ -277,7 +283,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`get_default_credentials()`**: Utility to get default Google credentials (ADC)
 - **`get_service_account_credentials()`**: Utility to get service account credentials
 - **`get_user_account_credentials()`**: Utility to get user account credentials with caching
-- **`GoogleAuthSettings`**: Pydantic settings model with comprehensive configuration options
+- **`GoogleSettings`**: Pydantic settings model with comprehensive configuration options
 - **`CredentialsCache`**: Protocol for implementing custom credentials caching strategies
 - **`Credentials`**: Type alias for all supported credential types
 

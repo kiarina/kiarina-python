@@ -289,7 +289,7 @@ KIARINA_LIB_FIREBASE_RTDB_TEST_DATABASE_URL=https://your-database.firebaseio.com
 
 3. Update test_settings.yaml with your credentials:
 ```yaml
-kiarina.lib.google.auth:
+kiarina.lib.google:
   default:
     type: service_account
     project_id: your-project-id
@@ -356,7 +356,7 @@ This project is licensed under the MIT License - see the [LICENSE](../../LICENSE
 ## Related Projects
 
 - [kiarina-lib-firebase-auth](../kiarina-lib-firebase-auth/) - Firebase authentication library
-- [kiarina-lib-google-auth](../kiarina-lib-google-auth/) - Google Cloud authentication library
+- [kiarina-lib-google](../kiarina-lib-google/) - Google Cloud authentication library
 - [kiarina-python](https://github.com/kiarina/kiarina-python) - Parent monorepo
 
 ## Resources

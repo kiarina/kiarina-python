@@ -2,13 +2,13 @@ from google.auth import jwt
 from google.auth.transport.requests import Request
 
 from .get_credentials import get_credentials
-from .._settings import GoogleAuthSettings
+from .._settings import GoogleSettings
 
 
 def get_self_signed_jwt(
     settings_key: str | None = None,
     *,
-    settings: GoogleAuthSettings | None = None,
+    settings: GoogleSettings | None = None,
     audience: str,
 ) -> str:
     """

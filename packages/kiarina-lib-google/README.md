@@ -1,4 +1,4 @@
-# kiarina-lib-google-auth
+# kiarina-lib-google
 
 A Python library for Google Cloud authentication with configuration management using pydantic-settings-manager.
 
@@ -14,7 +14,7 @@ A Python library for Google Cloud authentication with configuration management u
 ## Installation
 
 ```bash
-pip install kiarina-lib-google-auth
+pip install kiarina-lib-google
 ```
 
 ## Quick Start
@@ -22,7 +22,7 @@ pip install kiarina-lib-google-auth
 ### Default Credentials (ADC)
 
 ```python
-from kiarina.lib.google.auth import get_credentials
+from kiarina.lib.google import get_credentials
 
 # Uses Application Default Credentials
 credentials = get_credentials()
@@ -31,11 +31,11 @@ credentials = get_credentials()
 ### Service Account
 
 ```python
-from kiarina.lib.google.auth import get_credentials, GoogleAuthSettings
+from kiarina.lib.google import get_credentials, GoogleSettings
 
 # From key file
 credentials = get_credentials(
-    settings=GoogleAuthSettings(
+    settings=GoogleSettings(
         type="service_account",
         service_account_file="~/path/to/key.json"
     )
@@ -43,7 +43,7 @@ credentials = get_credentials(
 
 # From JSON data
 credentials = get_credentials(
-    settings=GoogleAuthSettings(
+    settings=GoogleSettings(
         type="service_account",
         service_account_data='{"type":"service_account",...}'
     )
@@ -55,7 +55,7 @@ credentials = get_credentials(
 ```python
 # From authorized user file
 credentials = get_credentials(
-    settings=GoogleAuthSettings(
+    settings=GoogleSettings(
         type="user_account",
         authorized_user_file="~/.config/gcloud/application_default_credentials.json",
         scopes=["https://www.googleapis.com/auth/drive"]
@@ -68,7 +68,7 @@ credentials = get_credentials(
 ```python
 # Impersonate a service account
 credentials = get_credentials(
-    settings=GoogleAuthSettings(
+    settings=GoogleSettings(
         type="service_account",
         service_account_file="~/source-key.json",
         impersonate_service_account="target@project.iam.gserviceaccount.com",
@@ -82,7 +82,7 @@ credentials = get_credentials(
 ### Credentials Caching
 
 ```python
-from kiarina.lib.google.auth import CredentialsCache
+from kiarina.lib.google import CredentialsCache
 
 class InMemoryCache(CredentialsCache):
     def __init__(self):
@@ -96,7 +96,7 @@ class InMemoryCache(CredentialsCache):
 
 # Use cache for user account credentials
 credentials = get_credentials(
-    settings=GoogleAuthSettings(
+    settings=GoogleSettings(
         type="user_account",
         authorized_user_file="~/authorized-user.json",
         scopes=["https://www.googleapis.com/auth/drive"]
@@ -108,10 +108,10 @@ credentials = get_credentials(
 ### Self-Signed JWT
 
 ```python
-from kiarina.lib.google.auth import get_self_signed_jwt
+from kiarina.lib.google import get_self_signed_jwt
 
 jwt_token = get_self_signed_jwt(
-    settings=GoogleAuthSettings(
+    settings=GoogleSettings(
         type="service_account",
         service_account_file="~/key.json"
     ),
@@ -124,7 +124,7 @@ jwt_token = get_self_signed_jwt(
 ### YAML Configuration (Recommended)
 
 ```yaml
-kiarina.lib.google.auth:
+kiarina.lib.google:
   development:
     type: user_account
     authorized_user_file: ~/.config/gcloud/application_default_credentials.json
@@ -157,23 +157,23 @@ with open("config.yaml") as f:
     load_user_configs(config)
 
 # Use configured credentials
-from kiarina.lib.google.auth import get_credentials
+from kiarina.lib.google import get_credentials
 credentials = get_credentials("production")
 ```
 
 ### Environment Variables
 
 ```bash
-export KIARINA_LIB_GOOGLE_AUTH_TYPE="service_account"
-export KIARINA_LIB_GOOGLE_AUTH_SERVICE_ACCOUNT_FILE="~/key.json"
-export KIARINA_LIB_GOOGLE_AUTH_PROJECT_ID="your-project-id"
-export KIARINA_LIB_GOOGLE_AUTH_SCOPES="https://www.googleapis.com/auth/cloud-platform"
+export KIARINA_LIB_GOOGLE_TYPE="service_account"
+export KIARINA_LIB_GOOGLE_SERVICE_ACCOUNT_FILE="~/key.json"
+export KIARINA_LIB_GOOGLE_PROJECT_ID="your-project-id"
+export KIARINA_LIB_GOOGLE_SCOPES="https://www.googleapis.com/auth/cloud-platform"
 ```
 
 ### Programmatic Configuration
 
 ```python
-from kiarina.lib.google.auth import settings_manager
+from kiarina.lib.google import settings_manager
 
 settings_manager.user_config = {
     "dev": {
@@ -200,7 +200,7 @@ Get Google Cloud credentials based on configuration.
 
 **Parameters:**
 - `settings_key` (str | None): Configuration key for multi-config setup
-- `settings` (GoogleAuthSettings | None): Settings object (overrides settings_key)
+- `settings` (GoogleSettings | None): Settings object (overrides settings_key)
 - `scopes` (list[str] | None): OAuth2 scopes (overrides settings.scopes)
 - `cache` (CredentialsCache | None): Credentials cache for user accounts
 
@@ -212,7 +212,7 @@ Generate a self-signed JWT for service account authentication.
 
 **Parameters:**
 - `settings_key` (str | None): Configuration key
-- `settings` (GoogleAuthSettings | None): Settings object
+- `settings` (GoogleSettings | None): Settings object
 - `audience` (str): JWT audience (target service URL)
 
 **Returns:** `str` - Self-signed JWT token
@@ -239,7 +239,7 @@ Get user account credentials from file or data with optional caching.
 
 ### Configuration
 
-#### `GoogleAuthSettings`
+#### `GoogleSettings`
 
 Pydantic settings model for authentication configuration.
 
@@ -288,24 +288,27 @@ Override by specifying custom scopes in configuration or function call.
 
 ### Setup Test Configuration
 
+> [!Note] ADC tests
+> Tests that depend on default credentials (ADC) require you to be authenticated with Google Cloud. Run `gcloud auth application-default login` before running the tests.
+
 ```bash
 # Copy sample configuration
-cp packages/kiarina-lib-google-auth/test_settings.sample.yaml \
-   packages/kiarina-lib-google-auth/test_settings.yaml
+cp packages/kiarina-lib-google/test_settings.sample.yaml \
+   packages/kiarina-lib-google/test_settings.yaml
 
 # Edit with your credentials
 # Set environment variable
-export KIARINA_LIB_GOOGLE_AUTH_TEST_SETTINGS_FILE="packages/kiarina-lib-google-auth/test_settings.yaml"
+export KIARINA_LIB_GOOGLE_TEST_SETTINGS_FILE="packages/kiarina-lib-google/test_settings.yaml"
 ```
 
 ### Run Tests
 
 ```bash
 # Run all checks
-mise run package kiarina-lib-google-auth
+mise run package kiarina-lib-google
 
 # Run tests with coverage
-mise run package:test kiarina-lib-google-auth --coverage
+mise run package:test kiarina-lib-google --coverage
 ```
 
 ## Dependencies

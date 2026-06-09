@@ -61,7 +61,7 @@ Use `SecretStr` for sensitive fields:
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 
-class GoogleAuthSettings(BaseSettings):
+class GoogleSettings(BaseSettings):
     service_account_data: SecretStr | None = None
     client_secret_data: SecretStr | None = None
     authorized_user_data: SecretStr | None = None
@@ -75,7 +75,7 @@ Provide helper methods to access parsed secret values:
 import json
 from typing import Any
 
-class GoogleAuthSettings(BaseSettings):
+class GoogleSettings(BaseSettings):
     service_account_data: SecretStr | None = None
 
     def get_service_account_data(self) -> dict[str, Any] | None:
@@ -89,7 +89,7 @@ class GoogleAuthSettings(BaseSettings):
 If direct access is needed, use `.get_secret_value()`:
 
 ```python
-settings = GoogleAuthSettings(service_account_data='{"key": "value"}')
+settings = GoogleSettings(service_account_data='{"key": "value"}')
 
 # Access the secret value
 secret_value = settings.service_account_data.get_secret_value()

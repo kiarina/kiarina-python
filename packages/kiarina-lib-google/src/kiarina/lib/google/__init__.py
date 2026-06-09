@@ -6,21 +6,21 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._helpers.get_credentials import get_credentials
     from ._helpers.get_self_signed_jwt import get_self_signed_jwt
-    from ._settings import GoogleAuthSettings, settings_manager
+    from ._settings import GoogleSettings, settings_manager
     from ._types.credentials import Credentials
     from ._types.credentials_cache import CredentialsCache
     from ._utils.get_default_credentials import get_default_credentials
     from ._utils.get_service_account_credentials import get_service_account_credentials
     from ._utils.get_user_account_credentials import get_user_account_credentials
 
-__version__ = version("kiarina-lib-google-auth")
+__version__ = version("kiarina-lib-google")
 
 __all__ = [
     # ._helpers
     "get_credentials",
     "get_self_signed_jwt",
     # ._settings
-    "GoogleAuthSettings",
+    "GoogleSettings",
     "settings_manager",
     # ._types
     "Credentials",
@@ -43,7 +43,7 @@ def __getattr__(name: str) -> object:
         "get_credentials": "._helpers.get_credentials",
         "get_self_signed_jwt": "._helpers.get_self_signed_jwt",
         # ._settings
-        "GoogleAuthSettings": "._settings",
+        "GoogleSettings": "._settings",
         "settings_manager": "._settings",
         # ._types
         "Credentials": "._types.credentials",

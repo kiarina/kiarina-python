@@ -1,4 +1,4 @@
-kiarina.lib.google.auth:
+kiarina.lib.google:
   default:
     type: default
   service_account_file:

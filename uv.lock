@@ -19,7 +19,7 @@ members = [
     "kiarina-lib-falkordb",
     "kiarina-lib-firebase-auth",
     "kiarina-lib-firebase-rtdb",
-    "kiarina-lib-google-auth",
+    "kiarina-lib-google",
     "kiarina-lib-openai",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
@@ -716,7 +716,7 @@ dependencies = [
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb" },
-    { name = "kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google" },
     { name = "kiarina-lib-openai" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
@@ -737,7 +737,7 @@ requires-dist = [
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth", editable = "packages/kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
-    { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
@@ -902,7 +902,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "firebase-admin" },
-    { name = "kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google" },
 ]
 
 [package.metadata]
@@ -916,7 +916,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "firebase-admin", specifier = ">=6.6.0" },
-    { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
 ]
 
 [[package]]
@@ -934,7 +934,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "firebase-admin" },
-    { name = "kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google" },
 ]
 
 [package.metadata]
@@ -949,13 +949,13 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "firebase-admin", specifier = ">=6.6.0" },
-    { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
 ]
 
 [[package]]
-name = "kiarina-lib-google-auth"
+name = "kiarina-lib-google"
 version = "1.37.0"
-source = { editable = "packages/kiarina-lib-google-auth" }
+source = { editable = "packages/kiarina-lib-google" }
 dependencies = [
     { name = "google-api-python-client" },
     { name = "pydantic-settings" },
@@ -1069,7 +1069,7 @@ dependencies = [
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb" },
-    { name = "kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google" },
     { name = "kiarina-lib-openai" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
@@ -1110,7 +1110,7 @@ requires-dist = [
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase-auth", editable = "packages/kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
-    { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
+    { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },

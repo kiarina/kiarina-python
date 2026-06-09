@@ -6,7 +6,7 @@ import google.oauth2.service_account
 from google.auth import impersonated_credentials
 import pytest
 
-from kiarina.lib.google.auth import get_credentials
+from kiarina.lib.google import get_credentials
 
 
 @pytest.mark.xfail(

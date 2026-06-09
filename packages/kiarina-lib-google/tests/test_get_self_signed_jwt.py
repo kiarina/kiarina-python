@@ -1,4 +1,4 @@
-from kiarina.lib.google.auth import get_self_signed_jwt
+from kiarina.lib.google import get_self_signed_jwt
 
 
 def test_get_self_signed_jwt(load_settings):

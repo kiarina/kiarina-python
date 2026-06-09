@@ -7,8 +7,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
 
-class GoogleAuthSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_GOOGLE_AUTH_")
+class GoogleSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_GOOGLE_")
 
     type: Literal["default", "service_account", "user_account", "api_key"] = "default"
 
@@ -120,4 +120,4 @@ class GoogleAuthSettings(BaseSettings):
         return json.loads(self.authorized_user_data.get_secret_value())  # type: ignore[no-any-return]
 
 
-settings_manager = SettingsManager(GoogleAuthSettings, multi=True)
+settings_manager = SettingsManager(GoogleSettings, multi=True)

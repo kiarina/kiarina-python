@@ -33,10 +33,10 @@ def firebase_app(load_settings):
     firebase_admin = pytest.importorskip("firebase_admin")
     credentials = pytest.importorskip("firebase_admin.credentials")
 
-    import kiarina.lib.google.auth
+    import kiarina.lib.google
 
     service_account_file = (
-        kiarina.lib.google.auth.settings_manager.get_settings().service_account_file
+        kiarina.lib.google.settings_manager.get_settings().service_account_file
     )
     assert service_account_file is not None
 

@@ -1,4 +1,4 @@
-kiarina.lib.google.auth:
+kiarina.lib.google:
   default:
     type: service_account
     project_id: your-project-id

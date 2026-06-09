@@ -4,8 +4,8 @@ import google.oauth2.credentials
 import google.oauth2.service_account
 import pytest
 
-from kiarina.lib.google.auth import settings_manager
-from kiarina.lib.google.auth._utils.get_default_credentials import (
+from kiarina.lib.google import settings_manager
+from kiarina.lib.google._utils.get_default_credentials import (
     get_default_credentials,
 )
 

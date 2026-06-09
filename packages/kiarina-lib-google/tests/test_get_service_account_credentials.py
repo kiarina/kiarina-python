@@ -1,7 +1,7 @@
 import google.oauth2.service_account
 import pytest
 
-from kiarina.lib.google.auth import settings_manager, get_service_account_credentials
+from kiarina.lib.google import settings_manager, get_service_account_credentials
 
 
 def test_file(load_settings):

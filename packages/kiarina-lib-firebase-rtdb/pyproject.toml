@@ -40,7 +40,7 @@ Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/ki
 [dependency-groups]
 dev = [
     "firebase-admin>=6.6.0",
-    "kiarina-lib-google-auth>=1.22.0",
+    "kiarina-lib-google>=1.22.0",
 ]
 
 [build-system]
