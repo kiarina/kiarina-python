@@ -49,7 +49,6 @@ dependencies = [
     "kiarina-lib-firebase-auth",
     "kiarina-lib-firebase-rtdb",
     "kiarina-lib-google-auth",
-    "kiarina-lib-google-cloud-storage",
     "kiarina-lib-openai",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
@@ -98,7 +97,6 @@ members = [
     "packages/kiarina-lib-firebase-auth",
     "packages/kiarina-lib-firebase-rtdb",
     "packages/kiarina-lib-google-auth",
-    "packages/kiarina-lib-google-cloud-storage",
     "packages/kiarina-lib-openai",
     "packages/kiarina-lib-redis",
     "packages/kiarina-lib-redisearch",
@@ -120,7 +118,6 @@ kiarina-lib-falkordb = { workspace = true }
 kiarina-lib-firebase-auth = { workspace = true }
 kiarina-lib-firebase-rtdb = { workspace = true }
 kiarina-lib-google-auth = { workspace = true }
-kiarina-lib-google-cloud-storage = { workspace = true }
 kiarina-lib-openai = { workspace = true }
 kiarina-lib-redis = { workspace = true }
 kiarina-lib-redisearch = { workspace = true }
@@ -141,7 +138,6 @@ mypy_path = [
     "packages/kiarina-lib-firebase-auth/src",
     "packages/kiarina-lib-firebase-rtdb/src",
     "packages/kiarina-lib-google-auth/src",
-    "packages/kiarina-lib-google-cloud-storage/src",
     "packages/kiarina-lib-openai/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",
@@ -172,7 +168,6 @@ source = [
     "packages/kiarina-lib-firebase-auth/src",
     "packages/kiarina-lib-firebase-rtdb/src",
     "packages/kiarina-lib-google-auth/src",
-    "packages/kiarina-lib-google-cloud-storage/src",
     "packages/kiarina-lib-openai/src",
     "packages/kiarina-lib-redis/src",
     "packages/kiarina-lib-redisearch/src",

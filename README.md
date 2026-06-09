@@ -93,11 +93,6 @@ this project provides robust, well-tested utilities for common development tasks
   - Multiple authentication methods (service account, user account, default credentials)
   - Service account impersonation support
   - Credentials caching and self-signed JWT generation
-- **[kiarina-lib-google-cloud-storage](packages/kiarina-lib-google-cloud-storage/)** - Google Cloud Storage
-  - Configuration-based GCS client setup
-  - Blob name pattern support with template placeholders
-  - Multi-tenancy patterns for integration testing
-  - Separation of authentication and storage configuration
 
 #### AI Services
 
@@ -150,7 +145,7 @@ pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
 pip install kiarina-lib-cloudflare-auth kiarina-lib-cloudflare-d1
 
 # Cloud services - Google Cloud
-pip install kiarina-lib-google-auth kiarina-lib-google-cloud-storage
+pip install kiarina-lib-google-auth
 
 # Cloud services - OpenAI
 pip install kiarina-lib-openai
@@ -291,7 +286,6 @@ kiarina-python/
 │   ├── kiarina-lib-cloudflare-auth/  # Cloudflare authentication
 │   ├── kiarina-lib-cloudflare-d1/    # Cloudflare D1 database
 │   ├── kiarina-lib-google-auth/      # Google Cloud authentication
-│   └── kiarina-lib-google-cloud-storage/  # Google Cloud Storage
 ├── pyproject.toml             # Workspace configuration
 ├── uv.lock                    # Dependency lock file
 ├── docker-compose.yml         # Test services (Redis, FalkorDB)

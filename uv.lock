@@ -20,7 +20,6 @@ members = [
     "kiarina-lib-firebase-auth",
     "kiarina-lib-firebase-rtdb",
     "kiarina-lib-google-auth",
-    "kiarina-lib-google-cloud-storage",
     "kiarina-lib-openai",
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
@@ -718,7 +717,6 @@ dependencies = [
     { name = "kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth" },
-    { name = "kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
@@ -740,7 +738,6 @@ requires-dist = [
     { name = "kiarina-lib-firebase-auth", editable = "packages/kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
-    { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
@@ -973,25 +970,6 @@ requires-dist = [
 ]
 
 [[package]]
-name = "kiarina-lib-google-cloud-storage"
-version = "1.37.0"
-source = { editable = "packages/kiarina-lib-google-cloud-storage" }
-dependencies = [
-    { name = "google-cloud-storage" },
-    { name = "kiarina-lib-google-auth" },
-    { name = "pydantic-settings" },
-    { name = "pydantic-settings-manager" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "google-cloud-storage", specifier = ">=2.19.0" },
-    { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
-    { name = "pydantic-settings", specifier = ">=2.10.1" },
-    { name = "pydantic-settings-manager", specifier = ">=2.3.0" },
-]
-
-[[package]]
 name = "kiarina-lib-openai"
 version = "1.37.0"
 source = { editable = "packages/kiarina-lib-openai" }
@@ -1092,7 +1070,6 @@ dependencies = [
     { name = "kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth" },
-    { name = "kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai" },
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
@@ -1134,7 +1111,6 @@ requires-dist = [
     { name = "kiarina-lib-firebase-auth", editable = "packages/kiarina-lib-firebase-auth" },
     { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google-auth", editable = "packages/kiarina-lib-google-auth" },
-    { name = "kiarina-lib-google-cloud-storage", editable = "packages/kiarina-lib-google-cloud-storage" },
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },

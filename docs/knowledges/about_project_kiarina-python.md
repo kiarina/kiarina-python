@@ -21,7 +21,6 @@ Packages under the `kiarina` namespace will be published to PyPI as kiarina-* pa
 - kiarina-lib-cloudflare-d1: `kiarina.lib.cloudflare.d1` package. Cloudflare D1 utilities
 - kiarina-lib-falkordb: `kiarina.lib.falkordb` package. FalkorDB utilities
 - kiarina-lib-google-auth: `kiarina.lib.google.auth` package. Google Cloud authentication utilities
-- kiarina-lib-google-cloud-storage: `kiarina.lib.google.cloud.storage` package. Google Cloud Storage utilities
 - kiarina-lib-openai: `kiarina.lib.openai` package. OpenAI API integration utilities
 - kiarina-lib-redis: `kiarina.lib.redis` package. Redis utilities
 - kiarina-lib-redisearch: `kiarina.lib.redisearch` package. Advanced Redisearch wrapper
