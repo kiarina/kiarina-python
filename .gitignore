@@ -31,5 +31,5 @@ packages/*/test_settings.yaml
 tests/data/large/
 
 # mise tasks (always include)
-!mise-tasks/
-!mise-tasks/**
+!.mise/tasks/
+!.mise/tasks/**

@@ -278,8 +278,8 @@ mise run upgrade --sync   # Update and sync environment
 ```
 kiarina-python/
 ├── .github/                    # GitHub Actions workflows
+├── .mise/tasks/                # Development task definitions
 ├── docs/                       # Documentation (knowledges, playbooks, runbooks)
-├── mise-tasks/                 # Development task definitions
 ├── packages/                   # Individual packages
 │   ├── kiarina/                      # Meta package
 │   ├── kiarina-utils-common/         # Common utilities

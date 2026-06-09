@@ -3,7 +3,7 @@ title: How to Define Tasks
 description: Tasks are defined as mise File Tasks.
 ---
 
-Tasks are defined as mise File Tasks under `mise-tasks/`.
+Tasks are defined as mise File Tasks under `.mise/tasks/`.
 
 You can check the current list of tasks with `mise tasks`.
 
