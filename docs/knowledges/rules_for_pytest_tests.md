@@ -1,5 +1,5 @@
 ---
-title: Rules for Writing Tests with pytest
+name: Rules for Writing Tests with pytest
 description: Using pytest-asyncio, the Event Loop is managed at the session scope.
 ---
 

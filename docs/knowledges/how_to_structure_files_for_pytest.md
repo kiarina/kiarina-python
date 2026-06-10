@@ -1,5 +1,5 @@
 ---
-title: File Placement for pytest
+name: File Placement for pytest
 description: >-
   When using files with pytest,
   place them under tests/fixtures/, tests/data/small/, or tests/data/large/.

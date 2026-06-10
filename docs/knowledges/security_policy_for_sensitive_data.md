@@ -1,5 +1,5 @@
 ---
-title: Security Policy for Sensitive Data
+name: Security Policy for Sensitive Data
 description: >-
   Guidelines for handling sensitive data (credentials, API keys, passwords) in kiarina-python packages.
   Use Pydantic's SecretStr to prevent accidental exposure in logs and debug output.

@@ -1,5 +1,5 @@
 ---
-title: How to Define Tasks
+name: How to Define Tasks
 description: Tasks are defined as mise File Tasks.
 ---
 

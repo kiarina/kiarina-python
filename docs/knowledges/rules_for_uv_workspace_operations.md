@@ -1,5 +1,5 @@
 ---
-title: uv workspace operational rules
+name: uv workspace operational rules
 description: Operational rules for projects using uv workspace.
 ---
 

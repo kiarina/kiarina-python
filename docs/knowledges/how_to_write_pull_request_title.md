@@ -1,5 +1,5 @@
 ---
-title: How to Write Pull Request Titles
+name: How to Write Pull Request Titles
 description: Titles should follow Conventional Commits format
 ---
 

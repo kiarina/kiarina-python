@@ -1,5 +1,5 @@
 ---
-title: How to Release
+name: How to Release
 description: Explains how to release kiarina-python to PyPI.
 ---
 

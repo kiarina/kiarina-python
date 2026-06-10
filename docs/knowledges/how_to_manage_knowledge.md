@@ -1,5 +1,5 @@
 ---
-title: How to Manage Knowledge
+name: How to Manage Knowledge
 description: Explains the procedures for managing useful knowledge.
 ---
 
@@ -19,7 +19,7 @@ Once you have determined where to save, save it as a markdown file as shown belo
 `docs/knowledges/about_xxx.md`
 ```markdown
 ---
-title: {Knowledge Title}
+name: {Knowledge Title}
 description: >-
   {Brief description of the knowledge content}
 ---

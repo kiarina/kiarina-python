@@ -1,5 +1,5 @@
 ---
-title: Procedure for adding a new package to the UV workspace
+name: Procedure for adding a new package to the UV workspace
 description: >-
   The correct procedure for adding a namespace package to a uv workspace.
   Editable installation is performed automatically.

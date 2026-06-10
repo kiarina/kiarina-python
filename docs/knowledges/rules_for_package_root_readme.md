@@ -1,5 +1,5 @@
 ---
-title: Rules for package root README.md
+name: Rules for package root README.md
 description: Guidelines for creating README.md files at the root of package.
 ---
 

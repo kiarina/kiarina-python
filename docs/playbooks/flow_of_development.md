@@ -1,5 +1,5 @@
 ---
-title: Development Flow for kiarina-python
+name: Development Flow for kiarina-python
 description: Explains the process from receiving development/fix requests for kiarina-python through development, testing, and Pull Request creation.
 ---
 

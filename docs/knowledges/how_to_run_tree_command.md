@@ -1,5 +1,5 @@
 ---
-title: How to run the tree command
+name: How to run the tree command
 description: Use the eza command instead of the tree command
 ---
 
