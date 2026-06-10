@@ -12,7 +12,13 @@
 
 `kiarina-python` is a collection of foundational modules designed to build advanced AI systems, specifically "LLM agents with qualia."
 
-Rather than just a set of generic utilities, it serves as the underlying framework supporting autonomous LLM reasoning, persistent memory (FalkorDB, Redis), and interaction with the external environment (file operations, various cloud/AI API integrations). All modules are organized as `kiarina.*` namespace packages and robustly managed as a monorepo using modern Python practices and [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/).
+Rather than just a set of generic utilities, it serves as the underlying framework supporting autonomous LLM reasoning, persistent memory (FalkorDB, Redis), and interaction with the external environment (file operations, various cloud/AI API integrations).
+
+## 🏗️ Design Philosophy
+
+- **Monorepo Structure**: All modules are organized as `kiarina.*` namespace packages and robustly managed using modern Python practices and [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/).
+- **Crystal Architecture**: This project adopts the [Crystal Architecture](https://github.com/kiarina/crystal-architecture), ensuring a highly modular, maintainable, and scalable codebase.
+- **Configuration Injection**: By utilizing [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager), the declaration of configuration dependencies is localized within each module, while still allowing for unified global management when the system is integrated.
 
 ## 📦 Packages
 

@@ -12,7 +12,13 @@
 
 `kiarina-python` は、「クオリアを持つ LLM エージェント」という高度なAIシステムを構築するための土台となるフレームワークを構成するモジュール群です。
 
-単なる汎用ユーティリティの集まりではなく、LLMの自律的な思考、記憶の永続化（FalkorDB, Redis）、外部環境との相互作用（ファイル操作、各種クラウド・AI API連携）を支えるための基盤として設計されています。すべてのモジュールは `kiarina.*` 名前空間パッケージとして整理され、モダンなPythonのプラクティスと [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/) を用いたモノレポ構成により、堅牢に管理されています。
+単なる汎用ユーティリティの集まりではなく、LLMの自律的な思考、記憶の永続化（FalkorDB, Redis）、外部環境との相互作用（ファイル操作、各種クラウド・AI API連携）を支えるための基盤として設計されています。
+
+## 🏗️ 設計思想 (Design Philosophy)
+
+- **モノレポ構成**: すべてのモジュールは `kiarina.*` 名前空間パッケージとして整理され、モダンなPythonのプラクティスと [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/) を用いたモノレポ構成により堅牢に管理されています。
+- **結晶アーキテクチャ**: 本プロジェクトは [結晶アーキテクチャ (Crystal Architecture)](https://github.com/kiarina/crystal-architecture) を採用しており、高度にモジュール化され、保守性とスケーラビリティに優れたコードベースを実現しています。
+- **設定の注入 (Configuration Injection)**: [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) を活用することで、設定という依存の宣言を各モジュールに局所化しつつ、システム全体として統合した際にも一元的に管理できる仕組みを実現しています。
 
 ## 📦 パッケージ (Packages)
 

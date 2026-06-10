@@ -46,9 +46,6 @@
       "path": "packages/kiarina-lib-slack"
     },
     {
-      "path": "packages/kiarina-llm"
-    },
-    {
       "path": "packages/kiarina-utils-common"
     },
     {
