@@ -6,13 +6,13 @@
 [![CI](https://github.com/kiarina/kiarina-python/workflows/CI/badge.svg)](https://github.com/kiarina/kiarina-python/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/kiarina/kiarina-python/graph/badge.svg?token=NS6QHOXDC0)](https://codecov.io/gh/kiarina/kiarina-python)
 
-> 🐍 **kiarina's Python utility collection** - A comprehensive namespace package monorepo providing essential utilities for modern Python development.
+> 🚀 **kiarina-python** - A foundational collection of Python modules for building LLM agents with qualia (the subjective texture of consciousness).
 
 ## 🌟 Overview
 
-`kiarina-python` is a collection of high-quality Python utilities organized as namespace packages under the `kiarina.*` namespace.
-Built with modern Python practices and managed as a monorepo using [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/),
-this project provides robust, well-tested utilities for common development tasks.
+`kiarina-python` is a collection of foundational modules designed to build advanced AI systems, specifically "LLM agents with qualia."
+
+Rather than just a set of generic utilities, it serves as the underlying framework supporting autonomous LLM reasoning, persistent memory (FalkorDB, Redis), and interaction with the external environment (file operations, various cloud/AI API integrations). All modules are organized as `kiarina.*` namespace packages and robustly managed as a monorepo using modern Python practices and [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/).
 
 ## 📦 Packages
 
@@ -79,6 +79,9 @@ this project provides robust, well-tested utilities for common development tasks
   - Token refresh 5 minutes before expiration
   - Thread-safe token refresh with asyncio.Lock
   - Secure API key management with SecretStr
+- **[kiarina-lib-firebase-rtdb](packages/kiarina-lib-firebase-rtdb/)** - Firebase Realtime Database
+  - Real-time state synchronization and data persistence for agents
+  - Lightweight REST API-based client using HTTPX
 
 #### Google Cloud
 
@@ -107,6 +110,12 @@ this project provides robust, well-tested utilities for common development tasks
   - Multi-configuration support for different Atlassian instances
   - Support for Jira, Confluence, and other Atlassian products
   - Environment variable configuration
+
+#### Slack
+
+- **[kiarina-lib-slack](packages/kiarina-lib-slack/)** - Slack API client
+  - Interface for dialogue between the agent and human users
+  - Configuration-based secure Bot token management
 
 ## 🚀 Quick Start
 
