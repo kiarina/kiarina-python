@@ -33,7 +33,7 @@ dependencies = [
     "kiarina-utils-common>=1.11.0",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.7.1",
-    "pydantic-settings-manager>=2.3.0",
+    "pydantic-settings-manager>=3.2.0",
 ]
 
 [project.urls]
