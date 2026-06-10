@@ -109,14 +109,6 @@ Rather than just a set of generic utilities, it serves as the underlying framewo
   - Custom base URL support for OpenAI-compatible APIs
   - Environment variable configuration
 
-#### Atlassian
-
-- **[kiarina-lib-atlassian](packages/kiarina-lib-atlassian/)** - Atlassian API integration
-  - Secure API credential management with SecretStr for passwords
-  - Multi-configuration support for different Atlassian instances
-  - Support for Jira, Confluence, and other Atlassian products
-  - Environment variable configuration
-
 #### Slack
 
 - **[kiarina-lib-slack](packages/kiarina-lib-slack/)** - Slack API client

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Removed
+- Removed `kiarina-lib-atlassian` from dependencies
 - Removed `kiarina-llm` from dependencies
 - Removed `kiarina-lib-google-cloud-storage` from dependencies
 

@@ -109,14 +109,6 @@
   - OpenAI互換APIのためのカスタムベースURLサポート
   - 環境変数による設定
 
-#### Atlassian
-
-- **[kiarina-lib-atlassian](packages/kiarina-lib-atlassian/)** - Atlassian API 連携
-  - パスワード用のSecretStrを用いた安全なAPIクレデンシャル管理
-  - 異なるAtlassianインスタンスのマルチ設定サポート
-  - Jira, Confluence, その他のAtlassian製品のサポート
-  - 環境変数による設定
-
 #### Slack
 
 - **[kiarina-lib-slack](packages/kiarina-lib-slack/)** - Slack API クライアント

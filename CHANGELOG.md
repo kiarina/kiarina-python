@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-lib-firebase-rtdb**: The python module `kiarina.lib.firebase.rtdb` has been changed to `kiarina.lib.firebase_rtdb`. Environment variable prefix `KIARINA_LIB_FIREBASE_RTDB_` remains the same.
 
 ### Removed
+- **kiarina-lib-atlassian**: Package removed from monorepo
 - **kiarina-llm**: Package removed from monorepo
 - **kiarina-lib-google-cloud-storage**: Package removed from monorepo
 

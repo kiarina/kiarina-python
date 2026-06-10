@@ -13,9 +13,6 @@
       "path": "packages/kiarina-lib-anthropic"
     },
     {
-      "path": "packages/kiarina-lib-atlassian"
-    },
-    {
       "path": "packages/kiarina-lib-cloudflare"
     },
     {
