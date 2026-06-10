@@ -66,8 +66,11 @@
 
 ### ☁️ クラウドサービス (Cloud Services)
 
-#### Cloudflare
-
+- **[kiarina-lib-anthropic](packages/kiarina-lib-anthropic/)** - Anthropic API 連携
+  - SecretStrを用いた安全なAPIキー管理
+  - 異なるプロジェクト/環境のマルチ設定サポート
+  - Anthropic互換APIのためのカスタムベースURLサポート
+  - 環境変数による設定
 - **[kiarina-lib-cloudflare](packages/kiarina-lib-cloudflare/)** - Cloudflare 認証
   - SecretStrを用いた安全なクレデンシャル管理
   - 異なるアカウントのマルチ設定サポート
@@ -76,9 +79,6 @@
   - 設定ベースのD1クライアントセットアップ
   - Cloudflare D1 操作のための薄いラッパー
   - 認証とリソース設定の分離
-
-#### Firebase
-
 - **[kiarina-lib-firebase](packages/kiarina-lib-firebase/)** - Firebase 認証
   - REST API経由の更新/IDトークンのためのカスタムトークン交換
   - TokenManagerによるIDトークンライフサイクルの自動管理
@@ -88,29 +88,15 @@
 - **[kiarina-lib-firebase-rtdb](packages/kiarina-lib-firebase-rtdb/)** - Firebase Realtime Database
   - エージェントのリアルタイムな状態同期やデータ保存
   - HTTPXを用いたREST APIベースの軽量なクライアント
-
-#### Google Cloud
-
 - **[kiarina-lib-google](packages/kiarina-lib-google/)** - Google Cloud 認証
   - 複数の認証方法（サービスアカウント、ユーザーアカウント、デフォルト認証情報）
   - サービスアカウントのなりすまし（Impersonation）サポート
   - 認証情報のキャッシングと自己署名JWTの生成
-
-#### AI サービス (AI Services)
-
-- **[kiarina-lib-anthropic](packages/kiarina-lib-anthropic/)** - Anthropic API 連携
-  - SecretStrを用いた安全なAPIキー管理
-  - 異なるプロジェクト/環境のマルチ設定サポート
-  - Anthropic互換APIのためのカスタムベースURLサポート
-  - 環境変数による設定
 - **[kiarina-lib-openai](packages/kiarina-lib-openai/)** - OpenAI API 連携
   - SecretStrを用いた安全なAPIキー管理
   - 異なるプロジェクト/環境のマルチ設定サポート
   - OpenAI互換APIのためのカスタムベースURLサポート
   - 環境変数による設定
-
-#### Slack
-
 - **[kiarina-lib-slack](packages/kiarina-lib-slack/)** - Slack API クライアント
   - エージェントと人間のユーザーが対話するためのインターフェース
   - 設定ベースのセキュアなBotトークン管理
@@ -138,46 +124,25 @@ pip install kiarina-i18n kiarina-utils-common kiarina-utils-file
 # データベースライブラリ
 pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
 
+# クラウドサービス - AI サービス
+pip install kiarina-lib-anthropic kiarina-lib-openai
+
 # クラウドサービス - Cloudflare
 pip install kiarina-lib-cloudflare kiarina-lib-cloudflare-d1
+
+# クラウドサービス - Firebase
+pip install kiarina-lib-firebase kiarina-lib-firebase-rtdb
 
 # クラウドサービス - Google Cloud
 pip install kiarina-lib-google
 
-# クラウドサービス - OpenAI
-pip install kiarina-lib-openai
+# クラウドサービス - Slack
+pip install kiarina-lib-slack
 
 # または uv を使用
 uv add kiarina-utils-common kiarina-utils-file
 ```
 
-### 基本的な使用方法 (Basic Usage)
-
-```python
-# 国際化 (i18n)
-from kiarina.i18n import get_translator, settings_manager
-settings_manager.user_config = {
-    "catalog": {
-        "en": {"app.greeting": {"hello": "Hello, $name!"}},
-        "ja": {"app.greeting": {"hello": "こんにちは、$name!"}}
-    }
-}
-t = get_translator("ja", "app.greeting")
-print(t("hello", name="World"))  # 出力: こんにちは、World!
-
-# 設定のパース
-from kiarina.utils.common import parse_config_string
-config = parse_config_string("app.debug:true,db.port:5432")
-
-# エンコーディング自動検出付きのファイル操作
-import kiarina.utils.file as kf
-blob = kf.read_file("document.txt")  # エンコーディングを自動検出
-data = kf.read_json_dict("config.json", default={})
-
-# 非同期ファイル操作
-import kiarina.utils.file.asyncio as kfa
-blob = await kfa.read_file("large_file.dat")
-```
 
 ## 🏗️ 開発 (Development)
 
@@ -278,9 +243,14 @@ kiarina-python/
 │   ├── kiarina-lib-falkordb/         # FalkorDB 連携
 │   ├── kiarina-lib-redis/            # Redis 連携
 │   ├── kiarina-lib-redisearch/       # RediSearch 連携
+│   ├── kiarina-lib-anthropic/        # Anthropic API 連携
 │   ├── kiarina-lib-cloudflare/       # Cloudflare 認証
 │   ├── kiarina-lib-cloudflare-d1/    # Cloudflare D1 データベース
+│   ├── kiarina-lib-firebase/         # Firebase 認証
+│   ├── kiarina-lib-firebase-rtdb/    # Firebase Realtime Database
 │   ├── kiarina-lib-google/           # Google Cloud 認証
+│   ├── kiarina-lib-openai/           # OpenAI API 連携
+│   ├── kiarina-lib-slack/            # Slack API クライアント
 ├── pyproject.toml             # ワークスペースの設定
 ├── uv.lock                    # 依存関係のロックファイル
 ├── docker-compose.yml         # テスト用サービス (Redis, FalkorDB)

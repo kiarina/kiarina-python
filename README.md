@@ -66,8 +66,11 @@ Rather than just a set of generic utilities, it serves as the underlying framewo
 
 ### ☁️ Cloud Services
 
-#### Cloudflare
-
+- **[kiarina-lib-anthropic](packages/kiarina-lib-anthropic/)** - Anthropic API integration
+  - Secure API key management with SecretStr
+  - Multi-configuration support for different projects/environments
+  - Custom base URL support for Anthropic-compatible APIs
+  - Environment variable configuration
 - **[kiarina-lib-cloudflare](packages/kiarina-lib-cloudflare/)** - Cloudflare authentication
   - Secure credential management with SecretStr
   - Multi-configuration support for different accounts
@@ -76,9 +79,6 @@ Rather than just a set of generic utilities, it serves as the underlying framewo
   - Configuration-based D1 client setup
   - Thin wrapper for Cloudflare D1 operations
   - Separation of authentication and resource configuration
-
-#### Firebase
-
 - **[kiarina-lib-firebase](packages/kiarina-lib-firebase/)** - Firebase authentication
   - Custom token exchange for refresh/ID tokens via REST API
   - Automatic ID token lifecycle management with TokenManager
@@ -88,29 +88,15 @@ Rather than just a set of generic utilities, it serves as the underlying framewo
 - **[kiarina-lib-firebase-rtdb](packages/kiarina-lib-firebase-rtdb/)** - Firebase Realtime Database
   - Real-time state synchronization and data persistence for agents
   - Lightweight REST API-based client using HTTPX
-
-#### Google Cloud
-
 - **[kiarina-lib-google](packages/kiarina-lib-google/)** - Google Cloud authentication
   - Multiple authentication methods (service account, user account, default credentials)
   - Service account impersonation support
   - Credentials caching and self-signed JWT generation
-
-#### AI Services
-
-- **[kiarina-lib-anthropic](packages/kiarina-lib-anthropic/)** - Anthropic API integration
-  - Secure API key management with SecretStr
-  - Multi-configuration support for different projects/environments
-  - Custom base URL support for Anthropic-compatible APIs
-  - Environment variable configuration
 - **[kiarina-lib-openai](packages/kiarina-lib-openai/)** - OpenAI API integration
   - Secure API key management with SecretStr
   - Multi-configuration support for different projects/environments
   - Custom base URL support for OpenAI-compatible APIs
   - Environment variable configuration
-
-#### Slack
-
 - **[kiarina-lib-slack](packages/kiarina-lib-slack/)** - Slack API client
   - Interface for dialogue between the agent and human users
   - Configuration-based secure Bot token management
@@ -138,46 +124,25 @@ pip install kiarina-i18n kiarina-utils-common kiarina-utils-file
 # Database libraries
 pip install kiarina-lib-redis kiarina-lib-falkordb kiarina-lib-redisearch
 
+# Cloud services - AI Services
+pip install kiarina-lib-anthropic kiarina-lib-openai
+
 # Cloud services - Cloudflare
 pip install kiarina-lib-cloudflare kiarina-lib-cloudflare-d1
+
+# Cloud services - Firebase
+pip install kiarina-lib-firebase kiarina-lib-firebase-rtdb
 
 # Cloud services - Google Cloud
 pip install kiarina-lib-google
 
-# Cloud services - OpenAI
-pip install kiarina-lib-openai
+# Cloud services - Slack
+pip install kiarina-lib-slack
 
 # Or with uv
 uv add kiarina-utils-common kiarina-utils-file
 ```
 
-### Basic Usage
-
-```python
-# Internationalization (i18n)
-from kiarina.i18n import get_translator, settings_manager
-settings_manager.user_config = {
-    "catalog": {
-        "en": {"app.greeting": {"hello": "Hello, $name!"}},
-        "ja": {"app.greeting": {"hello": "こんにちは、$name!"}}
-    }
-}
-t = get_translator("ja", "app.greeting")
-print(t("hello", name="World"))  # Output: こんにちは、World!
-
-# Configuration parsing
-from kiarina.utils.common import parse_config_string
-config = parse_config_string("app.debug:true,db.port:5432")
-
-# File operations with encoding detection
-import kiarina.utils.file as kf
-blob = kf.read_file("document.txt")  # Auto-detects encoding
-data = kf.read_json_dict("config.json", default={})
-
-# Async file operations
-import kiarina.utils.file.asyncio as kfa
-blob = await kfa.read_file("large_file.dat")
-```
 
 ## 🏗️ Development
 
@@ -278,9 +243,14 @@ kiarina-python/
 │   ├── kiarina-lib-falkordb/         # FalkorDB integration
 │   ├── kiarina-lib-redis/            # Redis integration
 │   ├── kiarina-lib-redisearch/       # RediSearch integration
-│   ├── kiarina-lib-cloudflare/  # Cloudflare authentication
+│   ├── kiarina-lib-anthropic/        # Anthropic API integration
+│   ├── kiarina-lib-cloudflare/       # Cloudflare authentication
 │   ├── kiarina-lib-cloudflare-d1/    # Cloudflare D1 database
-│   ├── kiarina-lib-google/      # Google Cloud authentication
+│   ├── kiarina-lib-firebase/         # Firebase authentication
+│   ├── kiarina-lib-firebase-rtdb/    # Firebase Realtime Database
+│   ├── kiarina-lib-google/           # Google Cloud authentication
+│   ├── kiarina-lib-openai/           # OpenAI API integration
+│   ├── kiarina-lib-slack/            # Slack API client
 ├── pyproject.toml             # Workspace configuration
 ├── uv.lock                    # Dependency lock file
 ├── docker-compose.yml         # Test services (Redis, FalkorDB)
