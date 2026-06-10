@@ -343,8 +343,6 @@ GitHub Actions を使用した自動化されたワークフロー：
 
 <div align="center">
 
-**No Programming, No Life.**
-
-*Programming is elegant.*
+**Programming is Elegant.**
 
 </div>

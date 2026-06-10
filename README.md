@@ -343,8 +343,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**No Programming, No Life.**
-
-*Programming is elegant.*
+**Programming is Elegant.**
 
 </div>
