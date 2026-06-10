@@ -343,8 +343,8 @@ GitHub Actions を使用した自動化されたワークフロー：
 
 <div align="center">
 
-**Made with ❤️ by [kiarina](https://github.com/kiarina)**
+**No Programming, No Life.**
 
-*Building better Python utilities, one package at a time.*
+*Programming is elegant.*
 
 </div>

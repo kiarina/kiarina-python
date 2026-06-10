@@ -343,8 +343,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Made with ❤️ by [kiarina](https://github.com/kiarina)**
+**No Programming, No Life.**
 
-*Building better Python utilities, one package at a time.*
+*Programming is elegant.*
 
 </div>
