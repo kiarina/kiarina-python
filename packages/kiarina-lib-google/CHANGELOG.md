@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-06-10
+
 ### Changed (BREAKING)
 - **kiarina-lib-google**: Package renamed from `kiarina-lib-google-auth` to `kiarina-lib-google`.
 - Python module namespace simplified from `kiarina.lib.google.auth` to `kiarina.lib.google`.

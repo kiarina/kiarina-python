@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-06-10
+
 ### Changed (BREAKING)
 - **kiarina-lib-cloudflare**: Renamed package from `kiarina-lib-cloudflare-auth` to `kiarina-lib-cloudflare`. The python module `kiarina.lib.cloudflare.auth` has been simplified to `kiarina.lib.cloudflare`. `CloudflareAuthSettings` has been renamed to `CloudflareSettings`, and the environment variable prefix `KIARINA_LIB_CLOUDFLARE_AUTH_` has been changed to `KIARINA_LIB_CLOUDFLARE_`.
 - **kiarina-lib-cloudflare-d1**: The python module `kiarina.lib.cloudflare.d1` has been changed to `kiarina.lib.cloudflare_d1`.
