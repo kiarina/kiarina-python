@@ -16,8 +16,8 @@ echo "📁 Creating tests/data/large directory..."
 mkdir -p tests/data/large
 
 # Download test data from GitHub Releases
-echo "⬇️  Downloading kiarina-python-dataset-v1.0.tar.zst from kiarina/test-data..."
-gh release download --repo kiarina/test-data v2025.09 -p kiarina-python-dataset-v1.0.tar.zst --dir tests/data/large
+echo "⬇️  Downloading kiarina-python-dataset-v1.0.tar.zst from kiarina/test-assets..."
+gh release download --repo kiarina/test-assets v2025.09 -p kiarina-python-dataset-v1.0.tar.zst --dir tests/data/large
 
 # Extract the archive
 echo "📦 Extracting archive..."
