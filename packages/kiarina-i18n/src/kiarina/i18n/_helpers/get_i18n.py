@@ -1,30 +1,40 @@
 from typing import TypeVar
 
-from .._models.i18n import I18n
+from pydantic import BaseModel
+
+from .._types.language import Language
+from .get_system_language import get_system_language
 from .get_translator import get_translator
+from .resolve_i18n_scope import resolve_i18n_scope
 
-T = TypeVar("T", bound=I18n)
+T = TypeVar("T", bound=BaseModel)
 
 
-def get_i18n(i18n_class: type[T], language: str) -> T:
+def get_i18n(model_class: type[T], language: Language | None = None) -> T:
     """
-    Get translated i18n instance.
+    Get translated Pydantic model instance.
 
-    This function creates an instance of the given i18n class with all fields
+    This function creates an instance of the given model class with all fields
     translated to the specified language.
 
     Args:
-        i18n_class: I18n class to instantiate (not instance!)
-        language: Target language code (e.g., "en", "ja")
+        model_class: Pydantic model class to instantiate (not instance!)
+        language: Target BCP 47 language tag (e.g., "en", "ja-JP").
+            If omitted, the system language is detected automatically.
 
     Returns:
-        Translated i18n instance with all fields translated
+        Translated model instance with all fields translated
 
     Example:
         ```python
+        from pydantic import BaseModel
         from kiarina.i18n import I18n, get_i18n
 
         class MyI18n(I18n, scope="my.module"):
+            title: str = "My Title"
+            description: str = "My Description"
+
+        class PublicModel(BaseModel):
             title: str = "My Title"
             description: str = "My Description"
 
@@ -34,19 +44,16 @@ def get_i18n(i18n_class: type[T], language: str) -> T:
         print(t.description)  # Translated description in Japanese
         ```
     """
-    # Get scope from class attribute
-    scope = i18n_class._scope
+    scope = resolve_i18n_scope(model_class)
+    target_language = language or get_system_language()
 
-    # Create default instance to get default values
-    default_instance = i18n_class.model_construct()
+    default_instance = model_class.model_construct()
+    translator = get_translator(target_language, scope)
 
-    # Get translator for the scope
-    translator = get_translator(language, scope)
-
-    # Translate all fields
     translated_data = {}
-    for field_name in i18n_class.model_fields:
+
+    for field_name in model_class.model_fields:
         default_value = getattr(default_instance, field_name)
         translated_data[field_name] = translator(field_name, default=default_value)
 
-    return i18n_class(**translated_data)
+    return model_class(**translated_data)

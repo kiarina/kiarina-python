@@ -40,16 +40,16 @@ def test_known_misdetections(raw_data, expected_encoding, actual_encoding):
 @pytest.mark.parametrize(
     "file_path, expected_encoding",
     [
-        ("small/miineko_256x256_799b.png", None),
-        ("large/shape_animation_1600x900_24fps_13s_4400kb.mp4", None),
-        ("large/image_and_text_3p_1800kb.pdf", None),
-        ("large/utf-8_1027line_125kb.txt", "utf-8"),
-        ("large/ascii_code_docs_1600kb.txt", "ascii"),
+        ("png/miineko_256x256_799b.png", None),
+        ("mp4/shape_animation_1600x900_24fps_13s_4400kb.mp4", None),
+        ("pdf/image_and_text_3p_1800kb.pdf", None),
+        ("txt/utf-8_1027line_125kb.txt", "utf-8"),
+        ("txt/ascii_code_docs_1600kb.txt", "ascii"),
     ],
 )
 # fmt: on
-def test_with_file(file_path, expected_encoding, data_dir):
-    with open(data_dir / file_path, "rb") as f:
+def test_with_file(file_path, expected_encoding, assets_dir):
+    with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 
     assert detect_with_charset_normalizer(raw_data) == expected_encoding

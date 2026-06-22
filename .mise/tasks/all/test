@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#MISE description="Test all packages"
+#USAGE flag "-c --coverage" help="Run with coverage"
+#USAGE flag "--no-docker" help="Skip Docker Compose up/down"
+
+set -euo pipefail
+
+# Default values for optional flags
+coverage="${usage_coverage:-false}"
+no_docker="${usage_no_docker:-false}"
+
+if [ "$no_docker" = "false" ]; then
+    echo "🐳 Starting Docker services..."
+    docker compose up -d
+fi
+
+# Clean previous coverage data
+if [ "$coverage" = "true" ]; then
+    echo "🧹 Cleaning previous coverage data..."
+    rm -f .coverage .coverage.*
+fi
+
+while IFS= read -r package; do
+    if [ "$coverage" = "true" ]; then
+        mise run package:test "$package" --coverage --no-clean
+    else
+        mise run package:test "$package"
+    fi
+done < <(mise run get-packages)
+
+# Generate coverage reports
+if [ "$coverage" = "true" ]; then
+    echo ""
+    echo "📊 Generating coverage reports..."
+    
+    echo "📋 Generating coverage report..."
+    uv run --group test coverage report
+    
+    echo "📄 Generating XML coverage report..."
+    uv run --group test coverage xml
+    
+    echo "✅ Coverage reports generated:"
+    echo "   - Terminal report: shown above"
+    echo "   - XML report: coverage.xml"
+fi
+
+if [ "$no_docker" = "false" ]; then
+    echo "🐳 Stopping Docker services..."
+    docker compose down
+fi

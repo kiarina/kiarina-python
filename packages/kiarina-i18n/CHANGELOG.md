@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add BCP 47 language tag normalization, validation, and fallback chain support.
+- Allow language-named catalog files such as `en.yaml`, `en-US.yaml`, and `zh-Hant.yaml` to omit the top-level language key.
+
+### Changed
+- **BREAKING**: Remove the `scope` argument from `translate_pydantic_model()`.
+  - `I18n` subclasses continue to use their class-level scope.
+  - Regular Pydantic `BaseModel` classes now derive their scope from the public module path, matching `get_i18n()`.
+- Treat `Language` values as BCP 47 language tags, with ISO 639-1 codes remaining valid tags.
+- Normalize catalog language keys during registration and lookup.
+- Change `Translator` fallback behavior from a single fallback language lookup to a parent-tag chain such as `zh-Hant-TW -> zh-Hant -> zh -> en`.
+- Rename `Translator`'s `fallback_language` argument to `default_language`.
+- Change `get_system_language()` to return normalized BCP 47 tags such as `ja-JP` instead of only the base language.
+- Change `get_system_language()` return type annotation to `Language`.
+- Allow `get_i18n()` to omit `language` and automatically use `get_system_language()`.
+- Allow `get_i18n()` to accept regular Pydantic `BaseModel` classes and derive their scope from the public module path.
+- Moved the module-level `catalog` singleton into the `_instances` layer.
+
 ## [2.0.0] - 2026-06-10
 
 ### Changed

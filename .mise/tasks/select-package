@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#MISE description="Select a package with fzf"
+#USAGE flag "--all" help="Include all packages (including meta-packages)"
+
+set -euo pipefail
+
+include_all="${usage_all:-false}"
+
+if ! command -v fzf >/dev/null 2>&1; then
+    echo "❌ fzf is required to select a package interactively." >&2
+    echo "   Pass a package name explicitly, or install fzf." >&2
+    exit 1
+fi
+
+if [ "$include_all" = "true" ]; then
+    package="$(
+        mise run get-packages --all |
+            fzf --prompt="Package> " --height=40% --border
+    )"
+else
+    package="$(
+        mise run get-packages |
+            fzf --prompt="Package> " --height=40% --border
+    )"
+fi
+
+if [ -z "$package" ]; then
+    echo "❌ No package selected." >&2
+    exit 1
+fi
+
+if [[ "$package" == *$'\n'* ]]; then
+    echo "❌ Select exactly one package." >&2
+    exit 1
+fi
+
+echo "$package"

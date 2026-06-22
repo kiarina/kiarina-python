@@ -1,5 +1,7 @@
 # kiarina-currency
 
+[English](README.md) | [日本語](README.ja.md)
+
 Currency utilities for the kiarina namespace with exchange rate support.
 
 ## Purpose

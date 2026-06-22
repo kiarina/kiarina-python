@@ -3,13 +3,14 @@ from importlib import import_module
 from importlib.metadata import version
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:  # pragma: no cover
+if TYPE_CHECKING:
     from ._helpers.get_i18n import get_i18n
     from ._helpers.get_system_language import get_system_language
     from ._helpers.get_translator import get_translator
+    from ._instances.catalog import catalog
     from ._models.i18n import I18n
     from ._models.translator import Translator
-    from ._services.catalog import Catalog, catalog
+    from ._services.catalog import Catalog
     from ._settings import I18nSettings, settings_manager
     from ._types.i18n_key import I18nKey
     from ._types.i18n_scope import I18nScope
@@ -22,12 +23,13 @@ __all__ = [
     "get_i18n",
     "get_system_language",
     "get_translator",
+    # ._instances
+    "catalog",
     # ._models
     "I18n",
     "Translator",
     # ._services
     "Catalog",
-    "catalog",
     # ._settings
     "I18nSettings",
     "settings_manager",
@@ -49,12 +51,13 @@ def __getattr__(name: str) -> object:
         "get_i18n": "._helpers.get_i18n",
         "get_system_language": "._helpers.get_system_language",
         "get_translator": "._helpers.get_translator",
+        # ._instances
+        "catalog": "._instances.catalog",
         # ._models
         "I18n": "._models.i18n",
         "Translator": "._models.translator",
         # ._services
         "Catalog": "._services.catalog",
-        "catalog": "._services.catalog",
         # ._settings
         "I18nSettings": "._settings",
         "settings_manager": "._settings",

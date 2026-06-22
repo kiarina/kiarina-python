@@ -62,6 +62,12 @@
       "**/.pytest_cache": true,
       "**/.ruff_cache": true,
       "**/.coverage": true
+    },
+    "files.associations": {
+      ".mise/tasks/*": "shellscript",
+      ".mise/tasks/**/*": "shellscript",
+      "format": "shellscript",
+      "version": "shellscript"
     }
   }
 }

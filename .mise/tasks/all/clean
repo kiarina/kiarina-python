@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#MISE description="Clean all package artifacts"
+
+set -euo pipefail
+
+while IFS= read -r package; do
+    mise run package:clean "$package"
+done < <(mise run get-packages --all)
+
+# Clean root-level mypy cache
+if [ -d ".mypy_cache" ]; then
+    echo "🔍 Removing root-level .mypy_cache/"
+    rm -rf ".mypy_cache"
+fi
+
+# Clean root-level pytest cache
+if [ -d ".pytest_cache" ]; then
+    echo "🧪 Removing root-level .pytest_cache/"
+    rm -rf ".pytest_cache"
+fi
+
+# Clean dist directory
+if [ -d "dist" ]; then
+    echo "📦 Removing root-level dist/"
+    rm -rf "dist"
+fi

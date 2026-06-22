@@ -177,37 +177,43 @@ The project uses [mise File Tasks](https://mise.jdx.dev/tasks/file-tasks.html) f
 
 #### All Packages
 
+Use Makefile shortcuts for common all-package workflows:
+
 ```bash
-# Format all packages
-mise run format
+# Format all packages (auto-fixes lint issues)
+make format
 
-# Lint all packages
-mise run lint
-mise run lint-fix  # Auto-fix issues
-
-# Type check all packages
-mise run typecheck
+# Lint and type check all packages
+make lint
 
 # Test all packages (starts Docker services automatically)
-mise run test
+make test
 
 # Build all packages
-mise run build
+make build
 
 # Run complete CI pipeline
-mise run ci
+make ci
 
 # Clean all build artifacts
-mise run clean
+make clean
 ```
+
+The underlying mise tasks are namespaced under `all:`, such as `mise run all:format`, `mise run all:test`, and `mise run all:build`.
 
 #### Individual Packages
 
 ```bash
+# Choose a package task, then choose the package with fzf
+make package
+
 # Work with specific packages
 mise run package:format kiarina-utils-file
 mise run package:lint kiarina-utils-common
 mise run package:build kiarina-lib-redis
+
+# Omit the package name to choose one with fzf
+mise run package:format
 
 # Test with coverage
 mise run package:test kiarina-utils-file --coverage
@@ -220,15 +226,14 @@ mise run package:publish kiarina-lib-redis --test  # Test PyPI
 #### Utility Tasks
 
 ```bash
-# Download test data for large file testing
-mise run download-test-data
-
 # Setup development environment from scratch
 mise run setup
 
-# Upgrade dependencies
-mise run upgrade          # Update uv.lock only
-mise run upgrade --sync   # Update and sync environment
+# Sync dependencies and show outdated packages
+make update
+
+# Upgrade dependencies and sync the environment
+make upgrade
 ```
 
 ### Project Structure
@@ -237,7 +242,7 @@ mise run upgrade --sync   # Update and sync environment
 kiarina-python/
 ├── .github/                    # GitHub Actions workflows
 ├── .mise/tasks/                # Development task definitions
-├── docs/                       # Documentation (knowledges, playbooks, runbooks)
+├── docs/                       # Documentation (concepts, playbooks, runbooks)
 ├── packages/                   # Individual packages
 │   ├── kiarina/                      # Meta package
 │   ├── kiarina-utils-common/         # Common utilities
@@ -297,8 +302,7 @@ The project includes comprehensive testing with special considerations:
 
 Test data organization:
 - `tests/fixtures/` - Small JSON/YAML files for fixtures
-- `tests/data/small/` - Small test files (< 1MB)
-- `tests/data/large/` - Large test files (downloaded separately)
+- `tests/assets/` - Sample files used in tests
 
 ### CI/CD Pipeline
 

@@ -177,37 +177,43 @@ mise run ci
 
 #### すべてのパッケージ (All Packages)
 
+全パッケージ向けのよく使うワークフローには Makefile のショートカットを使用します：
+
 ```bash
-# すべてのパッケージのフォーマット
-mise run format
+# すべてのパッケージのフォーマット（Lint問題の自動修正を含む）
+make format
 
-# すべてのパッケージのLint実行
-mise run lint
-mise run lint-fix  # 問題の自動修正
-
-# すべてのパッケージの型チェック
-mise run typecheck
+# すべてのパッケージのLint実行と型チェック
+make lint
 
 # すべてのパッケージのテスト（Dockerサービスが自動的に起動します）
-mise run test
+make test
 
 # すべてのパッケージのビルド
-mise run build
+make build
 
 # CIパイプライン全体の実行
-mise run ci
+make ci
 
 # すべてのビルドアーティファクトのクリーンアップ
-mise run clean
+make clean
 ```
+
+内部の mise task は `all:` 名前空間に整理されています。例：`mise run all:format`、`mise run all:test`、`mise run all:build`
 
 #### 個別のパッケージ (Individual Packages)
 
 ```bash
+# package task を選択し、その後 package を fzf で選択
+make package
+
 # 特定のパッケージでの作業
 mise run package:format kiarina-utils-file
 mise run package:lint kiarina-utils-common
 mise run package:build kiarina-lib-redis
+
+# パッケージ名を省略すると fzf で選択できます
+mise run package:format
 
 # カバレッジ付きのテスト
 mise run package:test kiarina-utils-file --coverage
@@ -220,15 +226,14 @@ mise run package:publish kiarina-lib-redis --test  # Test PyPIへの公開
 #### ユーティリティタスク (Utility Tasks)
 
 ```bash
-# 大容量ファイルテスト用のデータダウンロード
-mise run download-test-data
-
 # 開発環境をゼロからセットアップ
 mise run setup
 
-# 依存関係のアップグレード
-mise run upgrade          # uv.lock のみ更新
-mise run upgrade --sync   # 更新と環境の同期
+# 依存関係を同期し、更新可能なパッケージを表示
+make update
+
+# 依存関係をアップグレードし、環境を同期
+make upgrade
 ```
 
 ### プロジェクト構造 (Project Structure)
@@ -237,7 +242,7 @@ mise run upgrade --sync   # 更新と環境の同期
 kiarina-python/
 ├── .github/                    # GitHub Actions ワークフロー
 ├── .mise/tasks/                # 開発タスクの定義
-├── docs/                       # ドキュメント (ナレッジ、プレイブック、ランブック)
+├── docs/                       # ドキュメント (コンセプト、プレイブック、ランブック)
 ├── packages/                   # 個別のパッケージ
 │   ├── kiarina/                      # メタパッケージ
 │   ├── kiarina-utils-common/         # 共通ユーティリティ
@@ -297,8 +302,7 @@ kiarina-python/
 
 テストデータの構成:
 - `tests/fixtures/` - フィクスチャ用の小さな JSON/YAML ファイル
-- `tests/data/small/` - 小さなテストファイル (< 1MB)
-- `tests/data/large/` - 大きなテストファイル (別途ダウンロード)
+- `tests/assets/` - テストで使用されるサンプルファイル
 
 ### CI/CD パイプライン (CI/CD Pipeline)
 

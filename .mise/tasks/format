@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Format *"
-
-set -euo pipefail
-
-while IFS= read -r package; do
-    mise run package:format "$package"
-done < <(mise run get-packages)

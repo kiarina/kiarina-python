@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
-#MISE description="Test <package>"
-#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+#MISE description="Test [package]"
+#USAGE arg "[package]" help="Package name (e.g. 'kiarina-utils-common')"
 #USAGE flag "-v --verbose" help="Verbose output"
 #USAGE flag "-c --coverage" help="Run with coverage"
 #USAGE flag "--no-clean" help="Skip cleaning previous coverage data (for CI)"
 
 set -euo pipefail
 
-package="$usage_package"
+package="${usage_package:-}"
 
 # Default values for optional flags
 verbose="${usage_verbose:-false}"
 coverage="${usage_coverage:-false}"
 no_clean="${usage_no_clean:-false}"
+
+if [ -z "$package" ]; then
+    package="$(mise run select-package)"
+fi
 
 # Package name validation
 if [ ! -d "packages/$package" ]; then

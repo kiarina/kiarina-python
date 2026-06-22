@@ -2,6 +2,8 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from .._types.i18n_scope import I18nScope
+
 
 class I18n(BaseModel):
     """
@@ -31,26 +33,17 @@ class I18n(BaseModel):
         ```
     """
 
-    _scope: str = ""  # Internal field for scope, set via __init_subclass__
+    _scope: I18nScope = ""
 
-    def __init_subclass__(cls, scope: str = "", **kwargs: Any) -> None:
-        """
-        Set scope when subclass is defined.
-
-        If scope is not provided, automatically generates it from module and class name.
-        Example: module.path.MyI18n -> module.path.MyI18n
-        """
+    def __init_subclass__(cls, scope: I18nScope = "", **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)
 
         if scope:
             cls._scope = scope
         else:
-            # Generate scope from module and class name (as-is)
-            module_name = cls.__module__
-            class_name = cls.__name__
-            cls._scope = f"{module_name}.{class_name}"
+            cls._scope = f"{cls.__module__}.{cls.__name__}"
 
     model_config = {
-        "frozen": True,  # Make instances immutable
-        "extra": "forbid",  # Forbid extra fields
+        "frozen": True,
+        "extra": "forbid",
     }

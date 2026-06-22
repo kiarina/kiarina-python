@@ -1,18 +1,21 @@
 import locale
 import os
 
+from .._types.language import Language
+from .._utils.normalize_language_tag import normalize_language_tag
 
-def get_system_language() -> str:
+
+def get_system_language() -> Language:
     """
-    Get the system's default language code.
+    Get the system's default language tag.
 
     This function attempts to detect the system's language preference by checking:
     1. Environment variables (LANG, LC_ALL, LC_MESSAGES, LANGUAGE)
     2. locale.getlocale() as fallback
-    3. Returns "en" if detection fails
+    3. Returns "en" if detection fails or the system locale is C/POSIX
 
     Returns:
-        Language code (e.g., "en", "ja", "fr")
+        BCP 47 language tag (e.g., "en", "ja-JP", "fr-FR")
 
     Example:
         ```python
@@ -24,28 +27,23 @@ def get_system_language() -> str:
         print(t("hello", name="World"))
         ```
     """
-    # First, try environment variables (most reliable for runtime changes)
     try:
         for env_var in ("LANG", "LC_ALL", "LC_MESSAGES", "LANGUAGE"):
             lang = os.environ.get(env_var)
+
             if lang:
-                # Extract language code (e.g., "ja_JP.UTF-8" -> "ja")
-                language_code = lang.split("_")[0].split(".")[0]
-                if language_code:
-                    return language_code.lower()
+                return normalize_language_tag(lang)
+
     except Exception:  # pragma: no cover
         pass
 
-    # Fallback: try locale.getlocale()
     try:
         current_locale = locale.getlocale()[0]
 
         if current_locale:
-            # Extract language code (e.g., "ja_JP" -> "ja")
-            language_code = current_locale.split("_")[0]
-            return language_code.lower()
+            return normalize_language_tag(current_locale)
+
     except Exception:  # pragma: no cover
         pass
 
-    # Final fallback
     return "en"

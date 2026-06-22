@@ -27,9 +27,9 @@ htmlcov/
 tmp/
 packages/*/test_settings.yaml
 
-# Test data
-tests/data/large/
-
 # mise tasks (always include)
 !.mise/tasks/
 !.mise/tasks/**
+
+# Test assets downloaded via mise
+tests/assets/

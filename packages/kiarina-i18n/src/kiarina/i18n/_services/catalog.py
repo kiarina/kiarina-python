@@ -1,12 +1,17 @@
 from importlib.resources import files
 from importlib.resources.abc import Traversable
 from pathlib import Path
+from typing import TypeAlias, cast
 
 import yaml
 
 from .._types.i18n_key import I18nKey
 from .._types.i18n_scope import I18nScope
 from .._types.language import Language
+from .._utils.normalize_language_tag import normalize_language_tag
+
+_CatalogData: TypeAlias = dict[Language, dict[I18nScope, dict[I18nKey, str]]]
+_LanguageCatalogData: TypeAlias = dict[I18nScope, dict[I18nKey, str]]
 
 
 class Catalog:
@@ -53,7 +58,7 @@ class Catalog:
             ...     "ja": {"app": {"title": "マイアプリ"}},
             ... })
         """
-        self._data = self._deep_merge(self._data, data)
+        self._data = self._deep_merge(self._data, self._normalize_data(data))
 
     def add_from_file(self, file_path: str) -> None:
         """Add catalog data from YAML file (deep merge).
@@ -68,7 +73,9 @@ class Catalog:
             data = yaml.safe_load(f)
 
             if data is not None:
-                self.add_from_dict(data)
+                self.add_from_dict(
+                    self._normalize_file_data(data, Path(file_path).stem)
+                )
 
     def add_from_dir(self, dir_path: str) -> None:
         """Add catalog data from all YAML files in directory (deep merge).
@@ -120,7 +127,9 @@ class Catalog:
             data = yaml.safe_load(content)
 
             if data is not None:
-                self.add_from_dict(data)
+                self.add_from_dict(
+                    self._normalize_file_data(data, Path(file_path).stem)
+                )
 
         except ModuleNotFoundError as e:
             raise FileNotFoundError(
@@ -169,7 +178,9 @@ class Catalog:
                 data = yaml.safe_load(content)
 
                 if data is not None:
-                    self.add_from_dict(data)
+                    self.add_from_dict(
+                        self._normalize_file_data(data, Path(yaml_file.name).stem)
+                    )
 
         except ModuleNotFoundError as e:
             raise FileNotFoundError(
@@ -204,22 +215,18 @@ class Catalog:
             >>> catalog.get_text("ja", "app", "title")
             'マイアプリ'
         """
-        return self._data.get(language, {}).get(scope, {}).get(key)
+        try:
+            normalized_language = normalize_language_tag(language)
+        except ValueError:
+            return None
+
+        return self._data.get(normalized_language, {}).get(scope, {}).get(key)
 
     def _deep_merge(
         self,
-        base: dict[Language, dict[I18nScope, dict[I18nKey, str]]],
-        update: dict[Language, dict[I18nScope, dict[I18nKey, str]]],
-    ) -> dict[Language, dict[I18nScope, dict[I18nKey, str]]]:
-        """Deep merge two catalog dictionaries.
-
-        Args:
-            base: Base dictionary.
-            update: Dictionary to merge into base.
-
-        Returns:
-            Merged dictionary.
-        """
+        base: _CatalogData,
+        update: _CatalogData,
+    ) -> _CatalogData:
         result = base.copy()
 
         for language, scopes in update.items():
@@ -234,6 +241,52 @@ class Catalog:
 
         return result
 
+    def _normalize_data(self, data: _CatalogData) -> _CatalogData:
+        normalized_data: _CatalogData = {}
 
-# Module-level singleton instance
-catalog = Catalog()
+        for language, scopes in data.items():
+            normalized_language = normalize_language_tag(language)
+
+            if normalized_language not in normalized_data:
+                normalized_data[normalized_language] = {}
+
+            for scope, keys in scopes.items():
+                if scope not in normalized_data[normalized_language]:
+                    normalized_data[normalized_language][scope] = {}
+
+                normalized_data[normalized_language][scope].update(keys)
+
+        return normalized_data
+
+    def _normalize_file_data(
+        self,
+        data: object,
+        file_stem: str,
+    ) -> _CatalogData:
+        catalog_data = cast(_CatalogData, data)
+
+        if not _is_language_tag(file_stem):
+            return catalog_data
+
+        normalized_file_stem = normalize_language_tag(file_stem)
+
+        for language in catalog_data:
+            try:
+                if normalize_language_tag(language) == normalized_file_stem:
+                    return catalog_data
+            except ValueError:
+                continue
+
+        return {normalized_file_stem: cast(_LanguageCatalogData, data)}
+
+
+def _is_language_tag(language: str) -> bool:
+    if any(separator in language for separator in ("_", ".", ":", "@")):
+        return False
+
+    try:
+        normalize_language_tag(language)
+    except ValueError:
+        return False
+
+    return True

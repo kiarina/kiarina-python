@@ -1,5 +1,7 @@
 # kiarina-i18n
 
+[English](README.md) | [日本語](README.ja.md)
+
 Simple internationalization (i18n) utilities for Python applications.
 
 ## Purpose
@@ -62,7 +64,7 @@ catalog.add_from_dict({
 })
 
 # Automatically detect system language
-language = get_system_language()  # Returns "ja" on Japanese systems, "en" on English systems, etc.
+language = get_system_language()  # Returns BCP 47 tags such as "ja-JP" or "en-US"
 
 # Get translator for detected language
 t = get_translator(language, "app.greeting")
@@ -74,6 +76,7 @@ print(t("hello", name="World"))  # Output varies based on system language
 For better type safety and IDE support, use the class-based API:
 
 ```python
+from pydantic import BaseModel
 from kiarina.i18n import I18n, get_i18n, settings_manager
 
 # Define your i18n class with explicit scope
@@ -85,6 +88,13 @@ class AppI18n(I18n, scope="app.greeting"):
 # Or let scope be auto-generated from module.class_name
 # If defined in my_app/i18n.py, scope will be: my_app.i18n.UserProfileI18n
 class UserProfileI18n(I18n):
+    name: str = "Name"
+    email: str = "Email"
+    bio: str = "Biography"
+
+# Or use a regular Pydantic model when the public module path is enough
+# If defined in my_app/profile/_schemas/user.py, scope will be: my_app.profile
+class UserProfileText(BaseModel):
     name: str = "Name"
     email: str = "Email"
     bio: str = "Biography"
@@ -108,6 +118,9 @@ print(t.hello)     # Output: こんにちは、$name!
 print(t.goodbye)   # Output: さようなら!
 print(t.welcome)   # Output: アプリへようこそ!
 
+# Omit the language to use the system language automatically
+system_t = get_i18n(AppI18n)
+
 # Template variables are handled by the functional API
 from kiarina.i18n import get_translator
 translator = get_translator("ja", "app.greeting")
@@ -121,6 +134,7 @@ print(translator("hello", name="World"))  # Output: こんにちは、World!
 - **Default Values**: Explicit fallback values when translation is missing
 - **Immutable**: Translation instances are frozen and cannot be modified
 - **Clean Syntax**: Scope is defined at class level, not as a field
+- **Regular Pydantic Models**: Plain `BaseModel` classes use their public module path as scope
 
 ### Using Catalog Files
 
@@ -150,6 +164,20 @@ ja:
   app.greeting:
     hello: "こんにちは、$name!"
     goodbye: "さようなら!"
+```
+
+#### Language-Named Files
+
+When the file name is a BCP 47 language tag such as `en.yaml`, `en-US.yaml`,
+or `zh-Hant.yaml`, the top-level language key can be omitted. The file content
+is automatically registered under the language from the file name.
+
+Example `zh-Hant.yaml`:
+
+```yaml
+app.greeting:
+  hello: "你好，$name!"
+  goodbye: "再見!"
 ```
 
 #### From Package Resources
@@ -190,7 +218,7 @@ For LLM tool schemas, use `translate_pydantic_model` to create language-specific
 ```python
 from pydantic import Field
 from langchain.tools import BaseTool, tool
-from kiarina.i18n import I18n, get_i18n, settings_manager
+from kiarina.i18n import I18n, catalog
 from kiarina.i18n_pydantic import translate_pydantic_model
 
 # Step 1: Define argument schema with I18n
@@ -261,7 +289,7 @@ print(schema_en["properties"]["name"]["description"])  # "Your Name"
 
 ```python
 from pydantic import Field
-from kiarina.i18n import I18n, settings_manager
+from kiarina.i18n import I18n, catalog
 from kiarina.i18n_pydantic import translate_pydantic_model
 
 # Define nested I18n model
@@ -339,16 +367,18 @@ class UserProfileI18n(I18n):
 - **Clean Syntax**: Scope is defined at class level using inheritance parameter
 - **Auto-scope**: Automatically generates scope from module and class name if not provided
 
-#### `get_i18n(i18n_class: type[T], language: str) -> T`
+#### `get_i18n(model_class: type[T], language: str | None = None) -> T`
 
-Get a translated i18n instance.
+Get a translated Pydantic model instance.
 
 **Parameters:**
-- `i18n_class`: I18n class to instantiate (not instance!)
-- `language`: Target language code (e.g., "en", "ja")
+- `model_class`: Pydantic model class to instantiate (not instance!)
+- `language`: Target BCP 47 language tag (e.g., "en", "ja-JP"). If omitted or `None`, `get_system_language()` is used automatically.
 
 **Returns:**
-- Translated i18n instance with all fields translated
+- Translated model instance with all fields translated
+
+`I18n` subclasses use their class-level scope. Regular `BaseModel` classes use `__module__` as scope. If the module path contains a word with an `_` prefix, such as `my_app.profile._schemas.user`, that word and everything after it are removed, so the scope becomes `my_app.profile`.
 
 **Example:**
 ```python
@@ -359,38 +389,50 @@ class AppI18n(I18n, scope="app"):
 
 t = get_i18n(AppI18n, "ja")
 print(t.title)  # Translated title
+
+system_t = get_i18n(AppI18n)
+print(system_t.title)  # Translated title in the system language
 ```
 
 ### Pydantic Model Translation (kiarina.i18n_pydantic)
 
-#### `translate_pydantic_model(model: type[T], language: str, scope: str | None = None) -> type[T]`
+#### `translate_pydantic_model(model: type[T], language: str) -> type[T]`
 
 Translate Pydantic model field descriptions.
 
 **Parameters:**
 - `model`: Pydantic model class to translate
-- `language`: Target language code (e.g., "ja", "en")
-- `scope`: Translation scope (e.g., "hoge.fields"). Optional if `model` is an `I18n` subclass (automatically uses `model._scope`)
+- `language`: Target BCP 47 language tag (e.g., "ja", "en-US")
 
 **Returns:**
 - New model class with translated field descriptions
 
+`I18n` subclasses use their class-level scope. Regular `BaseModel` classes use the same scope resolution as `get_i18n()`: the public module path before any `_`-prefixed internal module word.
+
 **Example:**
 ```python
 from pydantic import BaseModel, Field
-from kiarina.i18n import I18n, translate_pydantic_model
+from kiarina.i18n import I18n, catalog
+from kiarina.i18n_pydantic import translate_pydantic_model
 
-# With explicit scope (for regular BaseModel)
 class Hoge(BaseModel):
     name: str = Field(description="Your Name")
 
-HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+catalog.add_from_dict({
+    "ja": {
+        "__main__": {
+            "name": "名前",
+        },
+    },
+})
+
+HogeJa = translate_pydantic_model(Hoge, "ja")
 
 # With I18n subclass (scope auto-detected)
 class HogeI18n(I18n, scope="hoge.fields"):
     name: str = "Your Name"
 
-HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")  # scope is optional
+HogeI18nJa = translate_pydantic_model(HogeI18n, "ja")
 ```
 
 ### Catalog Management
@@ -412,17 +454,17 @@ catalog.clear()
 
 ### Functional API
 
-#### `get_system_language() -> str`
+#### `get_system_language() -> Language`
 
-Get the system's default language code.
+Get the system's default BCP 47 language tag.
 
 This function attempts to detect the system's language preference by checking:
 1. Environment variables (LANG, LC_ALL, LC_MESSAGES, LANGUAGE)
 2. locale.getlocale() as fallback
-3. Returns "en" if detection fails
+3. Returns "en" if detection fails or the system locale is C/POSIX
 
 **Returns:**
-- Language code (e.g., "en", "ja", "fr")
+- BCP 47 language tag (e.g., "en", "ja-JP", "en-US", "zh-Hant")
 
 **Example:**
 ```python
@@ -437,7 +479,7 @@ t = get_translator(language, "app.greeting")
 Get a translator for the specified language and scope.
 
 **Parameters:**
-- `language`: Target language code (e.g., "en", "ja", "fr")
+- `language`: Target BCP 47 language tag (e.g., "en", "ja-JP", "zh-Hant")
 - `scope`: Translation scope (e.g., "app.greeting", "app.error")
 
 **Returns:**
@@ -448,7 +490,7 @@ Get a translator for the specified language and scope.
 t = get_translator("ja", "app.greeting")
 ```
 
-### `Translator(catalog, language, scope, fallback_language="en")`
+### `Translator(catalog, language, scope, default_language="en")`
 
 Translator class for internationalization support.
 
@@ -456,7 +498,7 @@ Translator class for internationalization support.
 - `catalog`: Translation catalog mapping languages to scopes to keys to translations
 - `language`: Target language for translation
 - `scope`: Scope for translation keys
-- `fallback_language`: Fallback language when translation is not found (default: "en")
+- `default_language`: Default language when translation is not found (default: "en")
 
 **Methods:**
 - `__call__(key, default=None, **kwargs)`: Translate a key with optional template variables
@@ -476,10 +518,11 @@ print(t("hello", name="World"))  # Output: こんにちは、World!
 
 ### Translation Behavior
 
-1. **Primary lookup**: Searches for the key in the target language
-2. **Fallback lookup**: If not found, searches in the fallback language
-3. **Default value**: If still not found, uses the provided default value
-4. **Error handling**: If no default is provided, returns `"{scope}#{key}"` and logs an error
+1. **Exact lookup**: Searches for the key in the target language tag
+2. **Parent lookup**: Falls back through parent tags such as `zh-Hant-TW` -> `zh-Hant` -> `zh`
+3. **Default language lookup**: Searches the configured default language and its parent tags
+4. **Default value**: If still not found, uses the provided default value
+5. **Error handling**: If no default is provided, returns `"{scope}#{key}"` and logs an error
 
 ## Configuration
 

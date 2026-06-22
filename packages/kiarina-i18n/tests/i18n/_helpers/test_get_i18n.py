@@ -1,3 +1,5 @@
+from pydantic import BaseModel
+
 from kiarina.i18n import I18n, catalog, get_i18n
 
 
@@ -55,6 +57,50 @@ def test_get_i18n_with_translations():
     assert t_en.description == "English Description"
 
 
+def test_get_i18n_uses_system_language_by_default(monkeypatch):
+    """Test get_i18n uses system language when language is omitted."""
+
+    class MyI18n(I18n, scope="test.system_language"):
+        title: str = "Default Title"
+
+    monkeypatch.setenv("LANG", "ja_JP.UTF-8")
+    catalog.add_from_dict(
+        {
+            "ja": {
+                "test.system_language": {
+                    "title": "システム言語",
+                }
+            }
+        }
+    )
+
+    t = get_i18n(MyI18n)
+
+    assert t.title == "システム言語"
+
+
+def test_get_i18n_uses_system_language_when_language_is_none(monkeypatch):
+    """Test get_i18n uses system language when language is None."""
+
+    class MyI18n(I18n, scope="test.none_language"):
+        title: str = "Default Title"
+
+    monkeypatch.setenv("LANG", "ja_JP.UTF-8")
+    catalog.add_from_dict(
+        {
+            "ja": {
+                "test.none_language": {
+                    "title": "Noneの言語",
+                }
+            }
+        }
+    )
+
+    t = get_i18n(MyI18n, None)
+
+    assert t.title == "Noneの言語"
+
+
 def test_get_i18n_with_partial_translations():
     """Test get_i18n falls back to default for missing translations."""
 
@@ -81,13 +127,13 @@ def test_get_i18n_with_partial_translations():
     assert t.error == "Default Error"  # Fallback to default
 
 
-def test_get_i18n_with_fallback_language():
-    """Test get_i18n uses fallback language."""
+def test_get_i18n_with_default_language():
+    """Test get_i18n uses default language."""
 
     class MyI18n(I18n, scope="test.fallback"):
         title: str = "Default Title"
 
-    # Configure catalog with fallback (use default_language instead of fallback_language)
+    # Configure catalog with default language
     from kiarina.i18n import settings_manager
 
     settings_manager.user_config = {
@@ -174,3 +220,52 @@ def test_get_i18n_with_scope_field():
     # scope field should be translated
     assert t.scope == "スコープテキスト"
     assert t.title == "タイトル"
+
+
+def test_get_i18n_with_base_model_uses_module_as_scope():
+    """Test get_i18n supports regular Pydantic models."""
+
+    class MyModel(BaseModel):
+        title: str = "Default Title"
+
+    MyModel.__module__ = "test.public_model"
+
+    catalog.add_from_dict(
+        {
+            "ja": {
+                "test.public_model": {
+                    "title": "公開モデル",
+                }
+            }
+        }
+    )
+
+    t = get_i18n(MyModel, "ja")
+
+    assert t.title == "公開モデル"
+
+
+def test_get_i18n_with_base_model_uses_public_module_before_private_word():
+    """Test BaseModel scope removes private module words and everything after them."""
+
+    class MyModel(BaseModel):
+        title: str = "Default Title"
+
+    MyModel.__module__ = "hoge.fuga._fire.aaa"
+
+    catalog.add_from_dict(
+        {
+            "ja": {
+                "hoge.fuga": {
+                    "title": "公開スコープ",
+                },
+                "hoge.fuga._fire.aaa": {
+                    "title": "内部スコープ",
+                },
+            }
+        }
+    )
+
+    t = get_i18n(MyModel, "ja")
+
+    assert t.title == "公開スコープ"

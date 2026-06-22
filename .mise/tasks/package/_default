@@ -1,12 +1,26 @@
 #!/usr/bin/env bash
-#MISE description="Run format, lint-fix, typecheck, test with coverage"
-#USAGE arg "<package>" help="Package name (e.g. 'kiarina-utils-common')"
+#MISE description="Choose and run a package task"
 
 set -euo pipefail
 
-package="$usage_package"
+if ! command -v fzf >/dev/null 2>&1; then
+    echo "❌ fzf is required to select a package task interactively." >&2
+    exit 1
+fi
 
-mise run package:lint-fix $(basename "$package")
-mise run package:format $(basename "$package")
-mise run package:typecheck $(basename "$package")
-mise run package:test $(basename "$package") --coverage
+task="$(
+    printf '%s\n' build check clean format lint publish test |
+        fzf --prompt="Package task> " --height=40% --border
+)"
+
+if [ -z "$task" ]; then
+    echo "❌ No package task selected." >&2
+    exit 1
+fi
+
+if [[ "$task" == *$'\n'* ]]; then
+    echo "❌ Select exactly one package task." >&2
+    exit 1
+fi
+
+mise run "package:$task"

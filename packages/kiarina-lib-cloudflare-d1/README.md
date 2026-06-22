@@ -1,5 +1,7 @@
 # kiarina-lib-cloudflare-d1
 
+[English](README.md) | [日本語](README.ja.md)
+
 A Python client library for [Cloudflare D1](https://developers.cloudflare.com/d1/) with configuration management using [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager).
 
 ## Purpose
@@ -294,7 +296,7 @@ Run tests:
 
 ```bash
 # Run all checks
-mise run package kiarina-lib-cloudflare-d1
+mise run package:check kiarina-lib-cloudflare-d1
 
 # Run tests with coverage
 mise run package:test kiarina-lib-cloudflare-d1 --coverage

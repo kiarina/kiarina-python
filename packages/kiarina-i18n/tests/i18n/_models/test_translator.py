@@ -27,9 +27,82 @@ def test_translator_fallback(sample_catalog):
         catalog=catalog,
         language="ja",
         scope="app.greeting",
-        fallback_language="en",
+        default_language="en",
     )
     assert t("goodbye") == "Goodbye!"
+
+
+def test_translator_fallbacks_from_region_to_language() -> None:
+    """Test fallback from BCP 47 region tag to base language."""
+    catalog.add_from_dict(
+        {
+            "pt": {
+                "app.greeting": {
+                    "hello": "Olá, $name!",
+                },
+            },
+            "en": {
+                "app.greeting": {
+                    "hello": "Hello, $name!",
+                },
+            },
+        }
+    )
+
+    t = Translator(catalog=catalog, language="pt-BR", scope="app.greeting")
+
+    assert t("hello", name="World") == "Olá, World!"
+
+
+def test_translator_fallbacks_from_script_region_to_script_then_language() -> None:
+    """Test fallback from BCP 47 script-region tag to script tag."""
+    catalog.add_from_dict(
+        {
+            "zh-Hant": {
+                "app.greeting": {
+                    "hello": "你好",
+                },
+            },
+            "zh": {
+                "app.greeting": {
+                    "goodbye": "再見",
+                },
+            },
+            "en": {
+                "app.greeting": {
+                    "hello": "Hello",
+                    "goodbye": "Goodbye",
+                },
+            },
+        }
+    )
+
+    t = Translator(catalog=catalog, language="zh-Hant-TW", scope="app.greeting")
+
+    assert t("hello") == "你好"
+    assert t("goodbye") == "再見"
+
+
+def test_translator_uses_default_language_fallback_chain() -> None:
+    """Test default language also falls back through parent tags."""
+    catalog.add_from_dict(
+        {
+            "en": {
+                "app.greeting": {
+                    "hello": "Hello",
+                },
+            },
+        }
+    )
+
+    t = Translator(
+        catalog=catalog,
+        language="fr-CA",
+        scope="app.greeting",
+        default_language="en-US",
+    )
+
+    assert t("hello") == "Hello"
 
 
 def test_translator_default(sample_catalog):

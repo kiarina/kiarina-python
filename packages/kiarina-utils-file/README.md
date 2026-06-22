@@ -1,5 +1,7 @@
 # kiarina-utils-file
 
+[English](README.md) | [日本語](README.ja.md)
+
 A comprehensive Python library for file I/O operations with automatic encoding detection, MIME type detection, and support for various file formats.
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
@@ -395,14 +397,11 @@ uv run --group test pytest tests/file/test_kiarina_utils_file_async.py
 # Format code
 mise run package:format kiarina-utils-file
 
-# Run linting
+# Run linting and type checking
 mise run package:lint kiarina-utils-file
 
-# Type checking
-mise run package:typecheck kiarina-utils-file
-
 # Run all checks
-mise run package kiarina-utils-file
+mise run package:check kiarina-utils-file
 ```
 
 ## Performance

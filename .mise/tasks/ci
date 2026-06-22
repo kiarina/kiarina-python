@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Run CI checks (setup, format, lint, typecheck, test, build) for all packages"
+#MISE description="Run CI checks (setup, all:lint, all:test, all:build)"
 #USAGE flag "--no-setup" help="Skip setup step (useful when environment is already prepared)"
 #USAGE flag "--no-docker" help="Skip Docker Compose up/down during testing"
 
@@ -12,38 +12,28 @@ echo "🚀 Running CI checks for all packages..."
 
 if [ "$no_setup" = "false" ]; then
     echo ""
-    echo "🔧 Step 1/6: Setup environment..."
+    echo "🔧 Step 1/4: Setup environment..."
     mise run setup
-    step_prefix="Step"
 else
     echo ""
     echo "⏭️  Skipping setup step..."
-    step_prefix="Step"
 fi
 
 echo ""
-echo "📝 Step 2/6: Format check..."
-mise run format
+echo "🔍 Step 2/4: Lint check..."
+mise run all:lint
 
 echo ""
-echo "🔍 Step 3/6: Lint check..."
-mise run lint
-
-echo ""
-echo "🔍 Step 4/6: Type check..."
-mise run typecheck
-
-echo ""
-echo "🧪 Step 5/6: Test..."
+echo "🧪 Step 3/4: Test..."
 if [ "$no_docker" = "true" ]; then
-    mise run test --coverage --no-docker
+    mise run all:test --coverage --no-docker
 else
-    mise run test --coverage
+    mise run all:test --coverage
 fi
 
 echo ""
-echo "🏗️  Step 6/6: Build check..."
-mise run build
+echo "🏗️  Step 4/4: Build check..."
+mise run all:build
 
 echo ""
 echo "✅ All CI checks passed!"

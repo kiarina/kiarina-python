@@ -26,11 +26,11 @@ def test_main(raw_data, expected_text):
 @pytest.mark.parametrize(
     "file_path, expected_text",
     [
-        ("small/miineko_256x256_799b.png", None),
+        ("png/miineko_256x256_799b.png", None),
     ],
 )
-def test_with_file(file_path, expected_text, data_dir):
-    with open(data_dir / file_path, "rb") as f:
+def test_with_file(file_path, expected_text, assets_dir):
+    with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 
     if expected_text is None:

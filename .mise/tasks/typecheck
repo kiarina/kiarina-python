@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Type check *"
-
-set -euo pipefail
-
-while IFS= read -r package; do
-    mise run package:typecheck "$package"
-done < <(mise run get-packages)

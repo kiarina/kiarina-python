@@ -6,6 +6,10 @@ from kiarina.i18n import catalog
 from kiarina.i18n_pydantic import translate_pydantic_model
 
 
+def _set_module(model: type[BaseModel], module: str = "hoge.fields") -> None:
+    model.__module__ = module
+
+
 def test_translate_pydantic_model_basic():
     """Test basic translation of Pydantic model field descriptions."""
 
@@ -16,6 +20,8 @@ def test_translate_pydantic_model_basic():
 
         name: str = Field(description="Your Name")
         age: int = Field(description="Your Age")
+
+    _set_module(Hoge)
 
     # Configure catalog
     catalog.add_from_dict(
@@ -30,7 +36,7 @@ def test_translate_pydantic_model_basic():
     )
 
     # Translate model
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Check translated descriptions
     assert HogeJa.model_fields["name"].description == "あなたの名前"
@@ -45,6 +51,8 @@ def test_translate_pydantic_model_preserves_types():
         age: int = Field(description="Your Age")
         active: bool = Field(default=True, description="Is Active")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -57,7 +65,7 @@ def test_translate_pydantic_model_preserves_types():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Check field types are preserved
     assert HogeJa.model_fields["name"].annotation is str
@@ -72,6 +80,8 @@ def test_translate_pydantic_model_preserves_defaults():
         name: str = Field(default="Anonymous", description="Your Name")
         age: int = Field(default=0, description="Your Age")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -83,7 +93,7 @@ def test_translate_pydantic_model_preserves_defaults():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Check defaults are preserved
     assert HogeJa.model_fields["name"].default == "Anonymous"
@@ -102,6 +112,8 @@ def test_translate_pydantic_model_fallback_to_original():
         name: str = Field(description="Your Name")
         age: int = Field(description="Your Age")
 
+    _set_module(Hoge)
+
     # Only translate 'name', not 'age'
     catalog.add_from_dict(
         {
@@ -113,7 +125,7 @@ def test_translate_pydantic_model_fallback_to_original():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # 'name' should be translated
     assert HogeJa.model_fields["name"].description == "名前"
@@ -128,6 +140,8 @@ def test_translate_pydantic_model_validation_works():
         name: str = Field(min_length=1, description="Your Name")
         age: int = Field(ge=0, description="Your Age")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -139,7 +153,7 @@ def test_translate_pydantic_model_validation_works():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Valid instance
     instance = HogeJa(name="Alice", age=30)
@@ -162,6 +176,8 @@ def test_translate_pydantic_model_json_schema():
         name: str = Field(description="Your Name")
         age: int = Field(description="Your Age")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -173,7 +189,7 @@ def test_translate_pydantic_model_json_schema():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Get JSON schema
     schema = HogeJa.model_json_schema()
@@ -189,6 +205,8 @@ def test_translate_pydantic_model_multiple_languages():
     class Hoge(BaseModel):
         name: str = Field(description="Your Name")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {"hoge.fields": {"name": "名前"}},
@@ -197,9 +215,9 @@ def test_translate_pydantic_model_multiple_languages():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
-    HogeFr = translate_pydantic_model(Hoge, "fr", "hoge.fields")
-    HogeEs = translate_pydantic_model(Hoge, "es", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
+    HogeFr = translate_pydantic_model(Hoge, "fr")
+    HogeEs = translate_pydantic_model(Hoge, "es")
 
     assert HogeJa.model_fields["name"].description == "名前"
     assert HogeFr.model_fields["name"].description == "Votre nom"
@@ -214,9 +232,11 @@ def test_translate_pydantic_model_preserves_model_config():
 
         name: str = Field(description="Your Name")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict({"ja": {"hoge.fields": {"name": "名前"}}})
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Check model config is preserved
     assert HogeJa.model_config.get("frozen") is True
@@ -255,40 +275,19 @@ def test_translate_pydantic_model_with_i18n_subclass():
     assert HogeI18nJa.model_fields["age"].description == "あなたの年齢"
 
 
-def test_translate_pydantic_model_with_i18n_subclass_explicit_scope():
-    """Test that explicit scope overrides I18n subclass scope."""
-    from kiarina.i18n import I18n
-
-    class HogeI18n(I18n, scope="hoge.i18n"):
-        name: str = "Your Name"
-
-    catalog.add_from_dict(
-        {
-            "ja": {
-                "hoge.i18n": {"name": "I18nスコープ"},
-                "custom.scope": {"name": "カスタムスコープ"},
-            }
-        }
-    )
-
-    # With explicit scope (should override model._scope)
-    HogeI18nJa = translate_pydantic_model(HogeI18n, "ja", "custom.scope")
-
-    # Should use custom scope, not model._scope
-    assert HogeI18nJa.model_fields["name"].description == "カスタムスコープ"
-
-
-def test_translate_pydantic_model_without_scope_raises_error():
-    """Test that omitting scope for non-I18n model raises error."""
+def test_translate_pydantic_model_base_model_uses_public_module_scope():
+    """Test translating regular BaseModel with scope resolved from module path."""
 
     class Hoge(BaseModel):
         name: str = Field(description="Your Name")
 
-    catalog.add_from_dict({"ja": {"hoge.fields": {"name": "名前"}}})
+    _set_module(Hoge, "hoge.fuga._schemas.args")
 
-    # Should raise ValueError when scope is omitted for non-I18n model
-    with pytest.raises(ValueError, match="scope parameter is required"):
-        translate_pydantic_model(Hoge, "ja")  # type: ignore
+    catalog.add_from_dict({"ja": {"hoge.fuga": {"name": "名前"}}})
+
+    HogeJa = translate_pydantic_model(Hoge, "ja")
+
+    assert HogeJa.model_fields["name"].description == "名前"
 
 
 def test_translate_pydantic_model_i18n_with_auto_scope():
@@ -329,6 +328,8 @@ def test_translate_pydantic_model_translates_docstring():
 
         name: str = Field(description="Your Name")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -340,7 +341,7 @@ def test_translate_pydantic_model_translates_docstring():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Check translated __doc__
     assert HogeJa.__doc__ == "テスト用のHogeモデル。"
@@ -355,6 +356,8 @@ def test_translate_pydantic_model_docstring_fallback():
 
         name: str = Field(description="Your Name")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -366,7 +369,7 @@ def test_translate_pydantic_model_docstring_fallback():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Should fall back to original __doc__
     assert HogeJa.__doc__ == "Original documentation."
@@ -379,6 +382,8 @@ def test_translate_pydantic_model_without_docstring():
     class Hoge(BaseModel):
         name: str = Field(description="Your Name")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -390,7 +395,7 @@ def test_translate_pydantic_model_without_docstring():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Should use translated __doc__ even if original is None
     assert HogeJa.__doc__ == "追加されたドキュメント"
@@ -479,8 +484,8 @@ def test_translate_pydantic_model_nested_i18n_dict():
     assert value_type.model_fields["value"].description == "設定値"
 
 
-def test_translate_pydantic_model_nested_with_explicit_scope():
-    """Test that explicit scope is inherited to nested models."""
+def test_translate_pydantic_model_nested_base_model_uses_own_module_scope():
+    """Test that regular parent models use their own resolved scope."""
     from kiarina.i18n import I18n
 
     class Inner(I18n, scope="inner"):
@@ -489,25 +494,26 @@ def test_translate_pydantic_model_nested_with_explicit_scope():
     class Outer(BaseModel):
         items: list[Inner] = Field(description="Items")
 
-    # Use single scope for all translations
+    _set_module(Outer, "outer.scope")
+
     catalog.add_from_dict(
         {
             "ja": {
-                "unified.scope": {
+                "outer.scope": {
                     "items": "アイテム",
+                },
+                "inner": {
                     "name": "名前",
-                }
+                },
             }
         }
     )
 
-    # Translate with explicit scope (should override Inner._scope)
-    OuterJa = translate_pydantic_model(Outer, "ja", "unified.scope")
+    OuterJa = translate_pydantic_model(Outer, "ja")
 
     # Check parent field is translated
     assert OuterJa.model_fields["items"].description == "アイテム"
 
-    # Check nested model uses inherited scope
     items_annotation = OuterJa.model_fields["items"].annotation
     args = get_args(items_annotation)
     nested_model = args[0]
@@ -613,6 +619,8 @@ def test_translate_pydantic_model_preserves_default_factory():
         tags: list[str] = Field(default_factory=list, description="Tags")
         metadata: dict[str, str] = Field(default_factory=dict, description="Metadata")
 
+    _set_module(Hoge)
+
     catalog.add_from_dict(
         {
             "ja": {
@@ -625,7 +633,7 @@ def test_translate_pydantic_model_preserves_default_factory():
         }
     )
 
-    HogeJa = translate_pydantic_model(Hoge, "ja", "hoge.fields")
+    HogeJa = translate_pydantic_model(Hoge, "ja")
 
     # Check translated descriptions
     assert HogeJa.model_fields["name"].description == "名前"

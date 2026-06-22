@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-i18n**: Change `get_system_language()` return type annotation to `Language`.
+- **kiarina-i18n**: Allow `get_i18n()` to omit `language` and automatically use `get_system_language()`.
+- **kiarina-i18n**: Allow `get_i18n()` to accept regular Pydantic `BaseModel` classes and derive their scope from the public module path.
+- **kiarina-i18n**: Move the module-level `catalog` singleton into the `_instances` layer.
+- Add a `package` mise task and `make package` shortcut for choosing package workflows with fzf.
+- Allow `package:*` mise tasks to select a package with fzf when no package name is provided.
+- Rename the setup mise tasks to `setup` and `download-test-assets`.
+- Replace the `setup:upgrade` mise task with the `make upgrade` shortcut for dependency upgrades.
+- Move setup, dependency upgrade, changelog, and version mise tasks under namespaced task groups.
+- Move shared test files from tracked `tests/data` paths to downloaded `tests/assets` paths.
+- Move all-package mise tasks under the `all:` namespace and expose Makefile shortcuts for common workflows.
+- Rename the root mise default task to `check` for a clearer verification command.
+- Rename the package mise default task to `package:check` for explicit package verification.
+- Merge the mise `lint-fix` task into `format` and the `typecheck` task into `lint`.
+- Add an optional `--unsafe` flag to mise `format` tasks for applying Ruff unsafe fixes.
+
 ## [2.0.0] - 2026-06-10
 
 ### Changed (BREAKING)

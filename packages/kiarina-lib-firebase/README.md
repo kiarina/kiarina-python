@@ -1,5 +1,7 @@
 # kiarina-lib-firebase
 
+[English](README.md) | [日本語](README.ja.md)
+
 Firebase authentication library with REST API integration and automatic token management.
 
 ## Purpose

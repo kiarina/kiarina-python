@@ -1,5 +1,7 @@
 # kiarina-lib-google
 
+[English](README.md) | [日本語](README.ja.md)
+
 A Python library for Google Cloud authentication with configuration management using pydantic-settings-manager.
 
 ## Features
@@ -305,7 +307,7 @@ export KIARINA_LIB_GOOGLE_TEST_SETTINGS_FILE="packages/kiarina-lib-google/test_s
 
 ```bash
 # Run all checks
-mise run package kiarina-lib-google
+mise run package:check kiarina-lib-google
 
 # Run tests with coverage
 mise run package:test kiarina-lib-google --coverage

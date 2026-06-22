@@ -24,15 +24,15 @@ def test_main(raw_data, expected_encoding):
 @pytest.mark.parametrize(
     "file_path, expected_encoding",
     [
-        ("small/miineko_256x256_799b.png", None),
-        ("large/shape_animation_1600x900_24fps_13s_4400kb.mp4", None),
-        ("large/utf-8_1027line_125kb.txt", "utf-8"),
-        ("large/ascii_code_docs_1600kb.txt", "utf-8"),
+        ("png/miineko_256x256_799b.png", None),
+        ("mp4/shape_animation_1600x900_24fps_13s_4400kb.mp4", None),
+        ("txt/utf-8_1027line_125kb.txt", "utf-8"),
+        ("txt/ascii_code_docs_1600kb.txt", "utf-8"),
     ],
 )
 # fmt: on
-def test_with_file(file_path, expected_encoding, data_dir):
-    with open(data_dir / file_path, "rb") as f:
+def test_with_file(file_path, expected_encoding, assets_dir):
+    with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 
     assert detect_with_fallback(raw_data) == expected_encoding

@@ -6,6 +6,7 @@ from .._services.catalog import Catalog
 from .._types.i18n_key import I18nKey
 from .._types.i18n_scope import I18nScope
 from .._types.language import Language
+from .._utils.normalize_language_tag import normalize_language_tag
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class Translator:
         catalog: Catalog instance for managing translation data.
         language: Target language for translation.
         scope: Scope for translation keys (e.g., "kiarina.app.greeting").
-        fallback_language: Fallback language when translation is not found.
+        default_language: Default language when translation is not found.
 
     Example:
         >>> from kiarina.i18n import catalog, Translator
@@ -39,28 +40,21 @@ class Translator:
         catalog: Catalog,
         language: Language,
         scope: I18nScope,
-        fallback_language: Language = "en",
+        default_language: Language = "en",
     ) -> None:
         self.catalog = catalog
-        self.language = language
+        self.language = normalize_language_tag(language)
         self.scope = scope
-        self.fallback_language = fallback_language
+        self.default_language = normalize_language_tag(default_language)
 
     def __call__(self, key: I18nKey, default: str | None = None, **kwargs: Any) -> str:
-        """Translate a key to the target language.
+        text = None
 
-        Args:
-            key: Translation key.
-            default: Default text to use if translation is not found.
-            **kwargs: Template variables for substitution.
+        for language in _get_language_fallbacks(self.language, self.default_language):
+            text = self.catalog.get_text(language, self.scope, key)
 
-        Returns:
-            Translated text with template variables substituted.
-        """
-        text = self.catalog.get_text(self.language, self.scope, key)
-
-        if text is None and self.language != self.fallback_language:
-            text = self.catalog.get_text(self.fallback_language, self.scope, key)
+            if text is not None:
+                break
 
         if text is None:
             text = default
@@ -77,3 +71,25 @@ class Translator:
             return Template(text).safe_substitute(**kwargs)
 
         return text
+
+
+def _get_language_fallbacks(
+    language: Language,
+    default_language: Language = "en",
+) -> list[Language]:
+    languages: list[Language] = []
+
+    for candidate in (
+        *_get_language_parents(language),
+        *_get_language_parents(default_language),
+    ):
+        if candidate not in languages:
+            languages.append(candidate)
+
+    return languages
+
+
+def _get_language_parents(language: Language) -> list[Language]:
+    language_tag = normalize_language_tag(language)
+    parts = language_tag.split("-")
+    return ["-".join(parts[:index]) for index in range(len(parts), 0, -1)]

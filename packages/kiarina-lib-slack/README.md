@@ -1,5 +1,7 @@
 # kiarina-lib-slack
 
+[English](README.md) | [日本語](README.ja.md)
+
 A Python library for Slack API integration with configuration management using pydantic-settings-manager.
 
 ## Features
@@ -321,7 +323,7 @@ mise run setup
 
 ```bash
 # Run format, lint, type checks and tests
-mise run package kiarina-lib-slack
+mise run package:check kiarina-lib-slack
 
 # Coverage report
 mise run package:test kiarina-lib-slack --coverage

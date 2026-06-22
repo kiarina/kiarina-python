@@ -1,5 +1,7 @@
 # kiarina-lib-redisearch
 
+[English](README.md) | [日本語](README.ja.md)
+
 A comprehensive Python client library for [RediSearch](https://redis.io/docs/interact/search-and-query/) with advanced configuration management, schema definition, and both full-text and vector search capabilities.
 
 ## Features

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Update tests to read sample files from shared `tests/assets` paths.
+
 ## [2.0.0] - 2026-06-10
 
 ### Changed

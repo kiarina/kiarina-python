@@ -2,8 +2,8 @@ from typing import TypeAlias
 
 Language: TypeAlias = str
 """
-A language code for internationalization (i18n) translations.
+A language tag for internationalization (i18n) translations.
 
-ISO 639-1 code.
-Example: "en" (English), "ja" (Japanese)
+BCP 47 language tag.
+Examples: "en", "ja", "en-US", "pt-BR", "zh-Hant", "zh-Hant-TW"
 """

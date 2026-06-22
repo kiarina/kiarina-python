@@ -44,19 +44,19 @@ def test_no_hint(raw_data, expected):
 @pytest.mark.parametrize(
     "file_path,expected",
     [
-        ("small/monthly_temperature_13row_141b.csv", None),  # CSV not detected by puremagic
-        ("small/apple_1024x1024_138kb.jpg", "image/jpeg"),
-        ("small/user_list_5row_1kb.json", None),  # JSON not detected by puremagic
-        ("small/simple_160b.html", "text/html"),
-        ("small/text_only_portrait_1p_17kb.pdf", "application/pdf"),
-        ("small/hello_world_11b.txt", None),  # only `hello world` in the file
-        ("small/tone_2s_16kb.mp3", "audio/mpeg"),
-        ("large/shape_animation_1600x900_24fps_13s_4400kb.mp4", "video/mp4"),
+        ("csv/monthly_temperature_13row_141b.csv", None),  # CSV not detected by puremagic
+        ("jpg/apple_1024x1024_138kb.jpg", "image/jpeg"),
+        ("json/user_list_5row_1kb.json", None),  # JSON not detected by puremagic
+        ("html/simple_160b.html", "text/html"),
+        ("pdf/text_only_portrait_1p_17kb.pdf", "application/pdf"),
+        ("txt/hello_world_11b.txt", None),  # only `hello world` in the file
+        ("mp3/tone_2s_16kb.mp3", "audio/mpeg"),
+        ("mp4/shape_animation_1600x900_24fps_13s_4400kb.mp4", "video/mp4"),
     ],
 )
 # fmt: on
-def test_with_file(file_path, expected, data_dir):
-    with open(data_dir / file_path, "rb") as f:
+def test_with_file(file_path, expected, assets_dir):
+    with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 
     assert detect_with_puremagic(raw_data=raw_data) == expected

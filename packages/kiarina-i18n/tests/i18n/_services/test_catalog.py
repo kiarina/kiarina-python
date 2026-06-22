@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from kiarina.i18n._services.catalog import Catalog
+from kiarina.i18n import Catalog
 
 
 @pytest.fixture
@@ -51,6 +51,22 @@ def test_catalog_add_from_dict_deep_merge(catalog_instance: Catalog) -> None:
     assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
 
 
+def test_catalog_add_from_dict_normalizes_language_tags(
+    catalog_instance: Catalog,
+) -> None:
+    """Test adding catalog data normalizes language keys."""
+    catalog_instance.add_from_dict(
+        {
+            "en_US": {"app": {"title": "Howdy"}},
+            "zh_hant_tw": {"app": {"title": "繁體中文"}},
+        }
+    )
+
+    assert catalog_instance.get_text("en-US", "app", "title") == "Howdy"
+    assert catalog_instance.get_text("en_US", "app", "title") == "Howdy"
+    assert catalog_instance.get_text("zh-Hant-TW", "app", "title") == "繁體中文"
+
+
 def test_catalog_add_from_file(catalog_instance: Catalog) -> None:
     """Test adding catalog data from YAML file."""
     yaml_content = """
@@ -79,6 +95,135 @@ ja:
         Path(temp_path).unlink()
 
 
+def test_catalog_add_from_language_file_without_top_level_language(
+    catalog_instance: Catalog,
+) -> None:
+    """Test adding catalog data from language-named YAML file."""
+    temp_dir = Path(tempfile.mkdtemp())
+    temp_path = temp_dir / "ja.yaml"
+    temp_path.write_text(
+        """
+app:
+  title: "マイアプリ"
+  description: "マイ説明"
+""",
+        encoding="utf-8",
+    )
+
+    try:
+        catalog_instance.add_from_file(str(temp_path))
+
+        assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
+        assert catalog_instance.get_text("ja", "app", "description") == "マイ説明"
+    finally:
+        import shutil
+
+        shutil.rmtree(temp_dir)
+
+
+def test_catalog_add_from_bcp47_language_file_without_top_level_language(
+    catalog_instance: Catalog,
+) -> None:
+    """Test adding catalog data from BCP 47 language-named YAML file."""
+    temp_dir = Path(tempfile.mkdtemp())
+    temp_path = temp_dir / "zh-Hant.yaml"
+    temp_path.write_text(
+        """
+app:
+  title: "繁體中文"
+""",
+        encoding="utf-8",
+    )
+
+    try:
+        catalog_instance.add_from_file(str(temp_path))
+
+        assert catalog_instance.get_text("zh-Hant", "app", "title") == "繁體中文"
+    finally:
+        import shutil
+
+        shutil.rmtree(temp_dir)
+
+
+def test_catalog_add_from_non_language_file_does_not_wrap(
+    catalog_instance: Catalog,
+) -> None:
+    """Test non-language file names require top-level language keys."""
+    temp_dir = Path(tempfile.mkdtemp())
+    temp_path = temp_dir / "messages.yaml"
+    temp_path.write_text(
+        """
+en:
+  app:
+    title: "My App"
+""",
+        encoding="utf-8",
+    )
+
+    try:
+        catalog_instance.add_from_file(str(temp_path))
+
+        assert catalog_instance.get_text("en", "app", "title") == "My App"
+    finally:
+        import shutil
+
+        shutil.rmtree(temp_dir)
+
+
+def test_catalog_add_from_language_file_keeps_explicit_top_level_language(
+    catalog_instance: Catalog,
+) -> None:
+    """Test language-named YAML files can still include explicit language keys."""
+    temp_dir = Path(tempfile.mkdtemp())
+    temp_path = temp_dir / "ja.yaml"
+    temp_path.write_text(
+        """
+ja:
+  app:
+    title: "マイアプリ"
+en:
+  app:
+    title: "My App"
+""",
+        encoding="utf-8",
+    )
+
+    try:
+        catalog_instance.add_from_file(str(temp_path))
+
+        assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
+        assert catalog_instance.get_text("en", "app", "title") == "My App"
+    finally:
+        import shutil
+
+        shutil.rmtree(temp_dir)
+
+
+def test_catalog_add_from_language_file_matches_explicit_language_case_insensitively(
+    catalog_instance: Catalog,
+) -> None:
+    """Test explicit language keys are matched after normalization."""
+    temp_dir = Path(tempfile.mkdtemp())
+    temp_path = temp_dir / "en-us.yaml"
+    temp_path.write_text(
+        """
+en-US:
+  app:
+    title: "Howdy"
+""",
+        encoding="utf-8",
+    )
+
+    try:
+        catalog_instance.add_from_file(str(temp_path))
+
+        assert catalog_instance.get_text("en-US", "app", "title") == "Howdy"
+    finally:
+        import shutil
+
+        shutil.rmtree(temp_dir)
+
+
 def test_catalog_add_from_file_empty_yaml(catalog_instance: Catalog) -> None:
     """Test adding catalog data from empty YAML file."""
     yaml_content = ""
@@ -105,16 +250,20 @@ def test_catalog_add_from_dir(catalog_instance: Catalog) -> None:
         # Create YAML files
         (temp_dir / "en.yaml").write_text(
             """
-en:
-  app:
-    title: "My App"
+app:
+  title: "My App"
 """
         )
         (temp_dir / "ja.yml").write_text(
             """
-ja:
-  app:
-    title: "マイアプリ"
+app:
+  title: "マイアプリ"
+"""
+        )
+        (temp_dir / "en-US.yaml").write_text(
+            """
+app:
+  title: "Howdy"
 """
         )
 
@@ -123,9 +272,8 @@ ja:
         subdir.mkdir()
         (subdir / "fr.yaml").write_text(
             """
-fr:
-  app:
-    title: "Mon App"
+app:
+  title: "Mon App"
 """
         )
 
@@ -134,6 +282,7 @@ fr:
 
         # Verify all files were loaded
         assert catalog_instance.get_text("en", "app", "title") == "My App"
+        assert catalog_instance.get_text("en-US", "app", "title") == "Howdy"
         assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
         assert catalog_instance.get_text("fr", "app", "title") == "Mon App"
     finally:
@@ -177,15 +326,11 @@ def test_catalog_add_from_package_file(catalog_instance: Catalog) -> None:
     (package_dir / "__init__.py").write_text("")
 
     # Create catalog file
-    catalog_file = package_dir / "translations.yaml"
+    catalog_file = package_dir / "en.yaml"
     catalog_file.write_text(
         """
-en:
-  app:
-    title: "My App"
-ja:
-  app:
-    title: "マイアプリ"
+app:
+  title: "My App"
 """
     )
 
@@ -194,11 +339,10 @@ ja:
 
     try:
         # Load from package resource
-        catalog_instance.add_from_package_file("test_i18n_package", "translations.yaml")
+        catalog_instance.add_from_package_file("test_i18n_package", "en.yaml")
 
         # Verify data was loaded
         assert catalog_instance.get_text("en", "app", "title") == "My App"
-        assert catalog_instance.get_text("ja", "app", "title") == "マイアプリ"
 
     finally:
         # Cleanup
@@ -251,16 +395,14 @@ def test_catalog_add_from_package_dir(catalog_instance: Catalog) -> None:
     # Create catalog files
     (package_dir / "en.yaml").write_text(
         """
-en:
-  app:
-    title: "My App"
+app:
+  title: "My App"
 """
     )
     (package_dir / "ja.yml").write_text(
         """
-ja:
-  app:
-    title: "マイアプリ"
+app:
+  title: "マイアプリ"
 """
     )
 
@@ -353,28 +495,3 @@ def test_catalog_get_text_not_found(catalog_instance: Catalog) -> None:
     assert catalog_instance.get_text("en", "app", "nonexistent") is None
     assert catalog_instance.get_text("nonexistent", "app", "title") is None
     assert catalog_instance.get_text("en", "nonexistent", "title") is None
-
-
-def test_catalog_singleton_behavior() -> None:
-    """Test that catalog behaves as a singleton at module level."""
-    from kiarina.i18n._services.catalog import catalog as catalog1
-    from kiarina.i18n._services.catalog import catalog as catalog2
-
-    # Should be the same instance
-    assert catalog1 is catalog2
-
-    # Clear for clean state
-    catalog1.clear()
-
-    # Add data via catalog1
-    catalog1.add_from_dict(
-        {
-            "en": {"test": {"key": "value"}},
-        }
-    )
-
-    # Should be accessible via catalog2
-    assert catalog2.get_text("en", "test", "key") == "value"
-
-    # Clear for next tests
-    catalog1.clear()

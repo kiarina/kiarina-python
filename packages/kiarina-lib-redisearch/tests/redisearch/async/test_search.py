@@ -14,16 +14,16 @@ def fields():
 
 
 @pytest.fixture
-def data_rows(data_dir):
+def data_rows(assets_dir):
     return kf.read_json_list(
-        data_dir / "small" / "id_title_content_embedding_3row_apple_car_dog.json"
+        assets_dir / "json" / "id_title_content_embedding_3row_apple_car_dog.json"
     )
 
 
 @pytest.fixture
-def data_query(data_dir):
+def data_query(assets_dir):
     return kf.read_json_dict(
-        data_dir / "small" / "query_embedding_tell_me_about_dogs_not_apples.json"
+        assets_dir / "json" / "query_embedding_tell_me_about_dogs_not_apples.json"
     )
 
 

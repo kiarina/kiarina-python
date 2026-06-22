@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#MISE description="Format and auto-fix lint issues for all packages"
+#USAGE flag "--unsafe" help="Apply Ruff unsafe fixes"
+
+set -euo pipefail
+
+unsafe="${usage_unsafe:-false}"
+
+while IFS= read -r package; do
+    if [ "$unsafe" = "true" ]; then
+        mise run package:format "$package" --unsafe
+    else
+        mise run package:format "$package"
+    fi
+done < <(mise run get-packages)
