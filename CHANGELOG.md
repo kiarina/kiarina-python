@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-06-22
+
 ### Changed
 - **kiarina-i18n**: Change `get_system_language()` return type annotation to `Language`.
 - **kiarina-i18n**: Allow `get_i18n()` to omit `language` and automatically use `get_system_language()`.

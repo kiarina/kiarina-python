@@ -751,7 +751,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-currency" },
@@ -792,7 +792,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-currency"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-currency" }
 dependencies = [
     { name = "httpx" },
@@ -826,7 +826,7 @@ wheels = [
 
 [[package]]
 name = "kiarina-i18n"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-i18n" }
 dependencies = [
     { name = "pydantic" },
@@ -845,7 +845,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-anthropic"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-anthropic" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -860,7 +860,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-cloudflare"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-cloudflare" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -875,7 +875,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-cloudflare-d1"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-cloudflare-d1" }
 dependencies = [
     { name = "httpx" },
@@ -894,7 +894,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-falkordb"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-falkordb" }
 dependencies = [
     { name = "kiarina-falkordb" },
@@ -913,7 +913,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-firebase"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-firebase" }
 dependencies = [
     { name = "httpx" },
@@ -959,7 +959,7 @@ wheels = [
 
 [[package]]
 name = "kiarina-lib-firebase-rtdb"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-firebase-rtdb" }
 dependencies = [
     { name = "httpx" },
@@ -992,7 +992,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-google"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-google" }
 dependencies = [
     { name = "google-api-python-client" },
@@ -1009,7 +1009,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-openai"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-openai" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -1024,7 +1024,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-redis"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-redis" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -1041,7 +1041,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-redisearch"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-redisearch" }
 dependencies = [
     { name = "numpy" },
@@ -1062,7 +1062,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-slack"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-lib-slack" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -1077,7 +1077,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-python"
-version = "2.0.0"
+version = "2.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "kiarina" },
@@ -1158,12 +1158,12 @@ test = [
 
 [[package]]
 name = "kiarina-utils-common"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-utils-common" }
 
 [[package]]
 name = "kiarina-utils-file"
-version = "2.0.0"
+version = "2.1.0"
 source = { editable = "packages/kiarina-utils-file" }
 dependencies = [
     { name = "aiofiles" },

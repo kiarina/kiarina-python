@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-06-22
+
 ### Added
 - Add BCP 47 language tag normalization, validation, and fallback chain support.
 - Allow language-named catalog files such as `en.yaml`, `en-US.yaml`, and `zh-Hant.yaml` to omit the top-level language key.
