@@ -67,6 +67,7 @@
       ".mise/tasks/*": "shellscript",
       ".mise/tasks/**/*": "shellscript",
       "format": "shellscript",
+      "list": "shellscript",
       "version": "shellscript"
     }
   }

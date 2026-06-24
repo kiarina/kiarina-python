@@ -4,34 +4,38 @@
 
 kiarina-python を PyPI にリリースするための手順です。
 
-このガイドでは、バージョン 1.0.0 を例にリリース手順を説明します。
+このガイドでは、バージョン 2.2.0 を例にリリース手順を説明します。
 
-## v1.0.0 Release Procedure
+## v2.2.0 Release Procedure
 
 ### 1. Update Version
 
+version を更新する前に、次の `Unreleased` セクションへリリース内容を追加します。
+
+- ルート `CHANGELOG.md`: 全パッケージの変更概要
+- `packages/kiarina/CHANGELOG.md`: `kiarina` メタパッケージ用の同じ概要
+- `packages/<package-name>/CHANGELOG.md`: 変更された各パッケージの詳細
+
 ```sh
-# Update all packages to version 1.0.0
-mise run version:update 1.0.0
+# Update the root, kiarina, and packages with unreleased changes
+mise run pyproject:bump-version 2.2.0
 ```
+
+ルートプロジェクトと `kiarina` メタパッケージは常に更新されます。その他の
+パッケージは、`Unreleased` セクションに変更内容がある場合だけ更新されます。
+対象パッケージについては、メタパッケージの依存version下限も更新されます。
 
 ### 2. Update CHANGELOG
 
-ルートと各パッケージの `CHANGELOG.md` ファイルを確認し、更新します。
-
-まず、次の `CHANGELOG.md` ファイルの `Unreleased` セクションに更新内容を追加します。
-
-- ルート `CHANGELOG.md`: 全パッケージの変更概要（変更ごとに 1 行）
-- `packages/kiarina/CHANGELOG.md`: kiarina メタパッケージ用に、ルートと同じ内容
-- `packages/<package-name>/CHANGELOG.md`: 各パッケージの詳細な変更内容
-
-次に、以下の mise task を実行し、CHANGELOG の `Unreleased` セクションを `v1.0.0` セクションに置き換えます。
+ルートと、version が `2.2.0` に一致するパッケージについて、`Unreleased` を
+リリースversionへ置き換えます。
 
 ```sh
-mise run changelog:update 1.0.0
+mise run changelog:bump-version 2.2.0
 ```
 
-この task は、更新がないパッケージに対して自動的に `No changes` エントリを追加します。
+version がリリースversionと一致しないパッケージは変更されません。対象パッケージの
+changelog に内容がない場合、task は失敗します。
 
 ### 3. Review Changes
 
@@ -52,10 +56,10 @@ mise run ci
 ```sh
 # Commit changes
 git add .
-git commit -m "chore: bump version to 1.0.0"
+git commit -m "chore: bump version to 2.2.0"
 
 # Create annotated tag
-git tag -s v1.0.0 -m "Release v1.0.0"
+git tag -s v2.2.0 -m "Release v2.2.0"
 
 # Push with tags
 git push --tags
@@ -67,4 +71,5 @@ git push --tags
 
 1. **CI Checks**: lint、test、build を実行します
 2. **GitHub Release**: release notes 付きの GitHub Release を自動作成します
-3. **PyPI Publication**: すべてのパッケージを PyPI に公開します（`PYPI_API_TOKEN` が設定されている場合）
+3. **Release Build**: tag とversionが一致するパッケージだけをbuildします
+4. **PyPI Publication**: すべてのリリース対象パッケージを一度の処理で公開します（`PYPI_API_TOKEN` が設定されている場合）

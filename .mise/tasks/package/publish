@@ -9,7 +9,7 @@ package="${usage_package:-}"
 test_pypi="${usage_test:-false}"
 
 if [ -z "$package" ]; then
-    package="$(mise run select-package --all)"
+    package="$(mise run package:select --all)"
 fi
 
 # Package name validation

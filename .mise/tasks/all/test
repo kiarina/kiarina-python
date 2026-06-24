@@ -26,7 +26,7 @@ while IFS= read -r package; do
     else
         mise run package:test "$package"
     fi
-done < <(mise run get-packages)
+done < <(mise run package:list)
 
 # Generate coverage reports
 if [ "$coverage" = "true" ]; then

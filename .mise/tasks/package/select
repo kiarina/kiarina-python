@@ -12,17 +12,15 @@ if ! command -v fzf >/dev/null 2>&1; then
     exit 1
 fi
 
+list_args=()
 if [ "$include_all" = "true" ]; then
-    package="$(
-        mise run get-packages --all |
-            fzf --prompt="Package> " --height=40% --border
-    )"
-else
-    package="$(
-        mise run get-packages |
-            fzf --prompt="Package> " --height=40% --border
-    )"
+    list_args+=(--all)
 fi
+
+package="$(
+    mise run package:list "${list_args[@]}" |
+        fzf --prompt="Package> " --height=40% --border
+)"
 
 if [ -z "$package" ]; then
     echo "❌ No package selected." >&2

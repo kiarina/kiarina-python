@@ -5,4 +5,4 @@ set -euo pipefail
 
 while IFS= read -r package; do
     mise run package:build "$package"
-done < <(mise run get-packages --all)
+done < <(mise run package:list --all)

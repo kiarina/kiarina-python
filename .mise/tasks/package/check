@@ -7,7 +7,7 @@ set -euo pipefail
 package="${usage_package:-}"
 
 if [ -z "$package" ]; then
-    package="$(mise run select-package)"
+    package="$(mise run package:select)"
 fi
 
 package="$(basename "$package")"

@@ -204,7 +204,7 @@ make clean
 #### 個別のパッケージ (Individual Packages)
 
 ```bash
-# package task を選択し、その後 package を fzf で選択
+# package を選択し、その後 task を fzf で選択
 make package
 
 # 特定のパッケージでの作業

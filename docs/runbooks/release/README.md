@@ -4,29 +4,38 @@
 
 Procedure for releasing kiarina-python to PyPI.
 
-This guide explains the release procedure using version 1.0.0 as an example.
+This guide explains the release procedure using version 2.2.0 as an example.
 
-## v1.0.0 Release Procedure
+## v2.2.0 Release Procedure
 
 ### 1. Update Version
+
+Before updating versions, add release details to the `Unreleased` section of:
+
+- Root `CHANGELOG.md`: Summary of changes for all packages
+- `packages/kiarina/CHANGELOG.md`: Same summary for the `kiarina` meta-package
+- `packages/<package-name>/CHANGELOG.md`: Detailed changes for each changed package
+
 ```sh
-# Update all packages to version 1.0.0
-mise run version:update 1.0.0
+# Update the root, kiarina, and packages with unreleased changes
+mise run pyproject:bump-version 2.2.0
 ```
+
+The root project and `kiarina` meta-package are always updated. Other packages
+are updated only when their `Unreleased` section contains changes. The
+meta-package dependency lower bounds are also updated for those packages.
 
 ### 2. Update CHANGELOG
-Review and update the `CHANGELOG.md` files in the root and each package.
 
-First, add the update details to the `Unreleased` section of the following `CHANGELOG.md` files:
-- Root `CHANGELOG.md`: Summary of changes for all packages (one line per change)
-- `packages/kiarina/CHANGELOG.md`: Same content as root for the kiarina meta-package
-- `packages/<package-name>/CHANGELOG.md`: Detailed changes for each package
+Replace `Unreleased` with the release version in the root and packages whose
+version matches `2.2.0`:
 
-Next, run the following mise task to replace the `Unreleased` section in the CHANGELOG with the `v1.0.0` section:
 ```sh
-mise run changelog:update 1.0.0
+mise run changelog:bump-version 2.2.0
 ```
-This task automatically adds `No changes` entries for packages without updates.
+
+Packages whose version does not match the release version are left unchanged.
+The task fails if a selected package has no changelog content.
 
 ### 3. Review Changes
 ```sh
@@ -44,10 +53,10 @@ mise run ci
 ```sh
 # Commit changes
 git add .
-git commit -m "chore: bump version to 1.0.0"
+git commit -m "chore: bump version to 2.2.0"
 
 # Create annotated tag
-git tag -s v1.0.0 -m "Release v1.0.0"
+git tag -s v2.2.0 -m "Release v2.2.0"
 
 # Push with tags
 git push --tags
@@ -59,4 +68,5 @@ When you push a tag, the `.github/workflows/release.yml` workflow in GitHub Acti
 
 1. **CI Checks**: Runs lint, test, and build
 2. **GitHub Release**: Automatically creates a GitHub Release with release notes
-3. **PyPI Publication**: Publishes all packages to PyPI (if `PYPI_API_TOKEN` is configured)
+3. **Release Build**: Builds only packages whose version matches the tag
+4. **PyPI Publication**: Publishes all release packages in a single operation (if `PYPI_API_TOKEN` is configured)

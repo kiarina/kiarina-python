@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+#MISE description="List packages"
+#USAGE flag "--all" help="Include all packages (including meta-packages)"
+#USAGE flag "--release <version>" help="List packages selected for a release"
+
+set -euo pipefail
+
+include_all="${usage_all:-false}"
+release_version="${usage_release:-}"
+
+if [ "$include_all" = "true" ] && [ -n "$release_version" ]; then
+    echo "❌ --all and --release cannot be used together" >&2
+    exit 1
+fi
+
+if [ -n "$release_version" ] && ! [[ "$release_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
+    echo "❌ Invalid version format: $release_version" >&2
+    exit 1
+fi
+
+get_project_version() {
+    awk -F'"' '/^version = "/ { print $2; exit }' "$1"
+}
+
+has_unreleased_changes() {
+    local changelog_file="$1"
+
+    awk '
+        /^## \[Unreleased\]/ { in_unreleased = 1; next }
+        in_unreleased && /^## \[/ { exit }
+        in_unreleased && NF && $0 !~ /^### / { found = 1 }
+        END { exit found ? 0 : 1 }
+    ' "$changelog_file"
+}
+
+if [ -n "$release_version" ]; then
+    root_version="$(get_project_version pyproject.toml)"
+    if [ "$root_version" != "$release_version" ]; then
+        echo "❌ Root version $root_version does not match release version $release_version" >&2
+        exit 1
+    fi
+fi
+
+meta_packages=("kiarina")
+release_meta_package=""
+
+for package_dir in packages/*/; do
+    if [ ! -f "$package_dir/pyproject.toml" ]; then
+        continue
+    fi
+
+    package_name="$(basename "$package_dir")"
+
+    if [ -n "$release_version" ]; then
+        package_version="$(get_project_version "$package_dir/pyproject.toml")"
+        if [ "$package_version" != "$release_version" ]; then
+            if has_unreleased_changes "$package_dir/CHANGELOG.md"; then
+                echo "❌ $package_name has unreleased changes but version $package_version does not match $release_version" >&2
+                exit 1
+            fi
+            continue
+        fi
+
+        if [ "$package_name" = "kiarina" ]; then
+            release_meta_package="$package_name"
+        else
+            echo "$package_name"
+        fi
+        continue
+    fi
+
+    is_meta=false
+    if [ "$include_all" = "false" ]; then
+        for meta_package in "${meta_packages[@]}"; do
+            if [ "$package_name" = "$meta_package" ]; then
+                is_meta=true
+                break
+            fi
+        done
+    fi
+
+    if [ "$is_meta" = "false" ]; then
+        echo "$package_name"
+    fi
+done
+
+if [ -n "$release_version" ]; then
+    if [ -z "$release_meta_package" ]; then
+        echo "❌ Meta-package kiarina must match release version $release_version" >&2
+        exit 1
+    fi
+
+    echo "$release_meta_package"
+fi

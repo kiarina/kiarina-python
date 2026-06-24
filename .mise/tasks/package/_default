@@ -4,12 +4,20 @@
 set -euo pipefail
 
 if ! command -v fzf >/dev/null 2>&1; then
-    echo "❌ fzf is required to select a package task interactively." >&2
+    echo "❌ fzf is required to select a package and task interactively." >&2
     exit 1
 fi
 
+package="$(mise run package:select --all)"
+
+if [ "$package" = "kiarina" ]; then
+    tasks=(build clean publish)
+else
+    tasks=(build check clean format lint publish test)
+fi
+
 task="$(
-    printf '%s\n' build check clean format lint publish test |
+    printf '%s\n' "${tasks[@]}" |
         fzf --prompt="Package task> " --height=40% --border
 )"
 
@@ -23,4 +31,4 @@ if [[ "$task" == *$'\n'* ]]; then
     exit 1
 fi
 
-mise run "package:$task"
+mise run "package:$task" "$package"

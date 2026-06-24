@@ -50,6 +50,11 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         MISE_GITHUB_ATTESTATIONS: "false"
+
+    - name: Build release packages
+      run: |
+        VERSION=${GITHUB_REF_NAME#v}
+        mise run release:build "$VERSION"
     
     - name: Extract release notes from CHANGELOG
       id: changelog
@@ -81,10 +86,9 @@ jobs:
         draft: false
         prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
     
-    # Publish all packages to PyPI from the root dist directory
-    - name: Publish all packages to PyPI
+    - name: Publish release packages to PyPI
+      if: ${{ hashFiles('dist/*') != '' }}
       uses: pypa/gh-action-pypi-publish@release/v1
-      continue-on-error: true
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}

@@ -15,7 +15,7 @@ uv sync --all-packages --all-extras --all-groups
 
 echo ""
 echo "📥 Step 3/3: Downloading test assets..."
-mise run download-test-assets
+mise run test-assets:download
 
 echo ""
 echo "✅ Development environment setup complete!"

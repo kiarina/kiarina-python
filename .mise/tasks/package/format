@@ -9,7 +9,7 @@ package="${usage_package:-}"
 unsafe="${usage_unsafe:-false}"
 
 if [ -z "$package" ]; then
-    package="$(mise run select-package)"
+    package="$(mise run package:select)"
 fi
 
 # Package name validation

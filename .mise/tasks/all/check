@@ -6,4 +6,4 @@ set -euo pipefail
 while IFS= read -r package; do
     mise run package:format "$package"
     mise run package:lint "$package"
-done < <(mise run get-packages)
+done < <(mise run package:list)

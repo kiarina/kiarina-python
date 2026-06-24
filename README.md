@@ -204,7 +204,7 @@ The underlying mise tasks are namespaced under `all:`, such as `mise run all:for
 #### Individual Packages
 
 ```bash
-# Choose a package task, then choose the package with fzf
+# Choose a package, then choose its task with fzf
 make package
 
 # Work with specific packages

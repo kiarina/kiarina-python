@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Update CHANGELOG.md files for all packages with version entry"
+#MISE description="Bump version in CHANGELOG.md files selected for a release"
 #USAGE arg "<version>" help="Version to add (e.g. '1.1.1')"
 
 set -euo pipefail
@@ -20,7 +20,17 @@ current_date=$(date +%Y-%m-%d)
 
 updated_files=()
 skipped_files=()
-failed_files=()
+
+has_unreleased_changes() {
+    local changelog_file="$1"
+
+    awk '
+        /^## \[Unreleased\]/ { in_unreleased = 1; next }
+        in_unreleased && /^## \[/ { exit }
+        in_unreleased && NF && $0 !~ /^### / { found = 1 }
+        END { exit found ? 0 : 1 }
+    ' "$changelog_file"
+}
 
 # Function to update a single CHANGELOG.md file
 update_changelog() {
@@ -29,7 +39,6 @@ update_changelog() {
     
     if [ ! -f "$changelog_file" ]; then
         echo "  ❌ $display_name (CHANGELOG.md not found)"
-        failed_files+=("$display_name")
         return 1
     fi
     
@@ -42,9 +51,13 @@ update_changelog() {
     
     # Check if Unreleased section exists
     if ! grep -q "^## \[Unreleased\]" "$changelog_file"; then
-        echo "  ⚠️  $display_name (no Unreleased section found, skipping)"
-        skipped_files+=("$display_name")
-        return 0
+        echo "  ❌ $display_name (no Unreleased section found)"
+        return 1
+    fi
+
+    if ! has_unreleased_changes "$changelog_file"; then
+        echo "  ❌ $display_name (Unreleased section has no changes)"
+        return 1
     fi
     
     # Create temporary file for the updated changelog
@@ -76,28 +89,9 @@ update_changelog() {
         print "## [Unreleased]"
         print ""
         
-        # Check if we have meaningful content
-        has_content = 0
+        print "## [" version "] - " date
         for (i = 0; i < unreleased_count; i++) {
-            if (unreleased_lines[i] !~ /^[[:space:]]*$/) {
-                has_content = 1
-                break
-            }
-        }
-        
-        if (has_content) {
-            # Has content - convert Unreleased to version
-            print "## [" version "] - " date
-            for (i = 0; i < unreleased_count; i++) {
-                print unreleased_lines[i]
-            }
-        } else {
-            # No content - add "No changes"
-            print "## [" version "] - " date
-            print ""
-            print "### Changed"
-            print "- No changes"
-            print ""
+            print unreleased_lines[i]
         }
         
         # Print current line (next version section)
@@ -118,27 +112,9 @@ update_changelog() {
             print "## [Unreleased]"
             print ""
             
-            # Check if we have meaningful content
-            has_content = 0
+            print "## [" version "] - " date
             for (i = 0; i < unreleased_count; i++) {
-                if (unreleased_lines[i] !~ /^[[:space:]]*$/) {
-                    has_content = 1
-                    break
-                }
-            }
-            
-            if (has_content) {
-                # Has content - convert Unreleased to version
-                print "## [" version "] - " date
-                for (i = 0; i < unreleased_count; i++) {
-                    print unreleased_lines[i]
-                }
-            } else {
-                # No content - add "No changes"
-                print "## [" version "] - " date
-                print ""
-                print "### Changed"
-                print "- No changes"
+                print unreleased_lines[i]
             }
         }
     }
@@ -156,23 +132,37 @@ update_changelog() {
         return 0
     else
         echo "  ❌ $display_name (failed to update file)"
-        failed_files+=("$display_name")
         rm -f "$temp_file"
         return 1
     fi
 }
 
-# Update root CHANGELOG.md first
-echo ""
-echo "📄 Updating root CHANGELOG.md..."
-update_changelog "CHANGELOG.md" "root"
-
-# Update package CHANGELOGs
-echo ""
-echo "📦 Updating package CHANGELOG.md files..."
+release_packages=()
 while IFS= read -r package; do
+    release_packages+=("$package")
+done < <(mise run package:list --release "$version")
+
+echo ""
+echo "🔍 Validating selected CHANGELOG.md files..."
+if ! has_unreleased_changes "CHANGELOG.md"; then
+    echo "❌ root Unreleased section has no changes"
+    exit 1
+fi
+
+for package in "${release_packages[@]}"; do
+    changelog_file="packages/$package/CHANGELOG.md"
+    if [ ! -f "$changelog_file" ] || ! has_unreleased_changes "$changelog_file"; then
+        echo "❌ $package Unreleased section has no changes"
+        exit 1
+    fi
+done
+
+echo ""
+echo "📄 Updating selected CHANGELOG.md files..."
+update_changelog "CHANGELOG.md" "root"
+for package in "${release_packages[@]}"; do
     update_changelog "packages/$package/CHANGELOG.md" "$package"
-done < <(mise run get-packages --all)
+done
 
 echo ""
 echo "📊 Summary:"
@@ -188,18 +178,11 @@ if [ ${#skipped_files[@]} -gt 0 ]; then
     printf "     - %s\n" "${skipped_files[@]}"
 fi
 
-if [ ${#failed_files[@]} -gt 0 ]; then
-    echo "  ❌ Failed files: ${#failed_files[@]}"
-    printf "     - %s\n" "${failed_files[@]}"
-    exit 1
-fi
-
 echo ""
 echo "💡 Next steps:"
 echo "   1. Review changes: git diff"
-echo "   2. Edit specific CHANGELOGs if they have actual changes"
-echo "   3. Test the changes: mise run ci"
-echo "   4. Commit: git add . && git commit -m 'docs: update CHANGELOG.md for v$version'"
+echo "   2. Test the changes: mise run ci"
+echo "   3. Commit: git add . && git commit -m 'chore: bump version to $version'"
 
 echo ""
 echo "✅ CHANGELOG update completed!"
