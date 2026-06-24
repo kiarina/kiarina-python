@@ -1,6 +1,6 @@
 # Test Settings
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 `test-settings:upload` と `test-settings:download` mise task を準備して使用するための手順です。
 

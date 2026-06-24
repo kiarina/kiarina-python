@@ -1,6 +1,6 @@
 # kiarina-lib-redis
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 kiarina namespace 向けの Redis client library です。
 

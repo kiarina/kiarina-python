@@ -1,6 +1,6 @@
 # kiarina-lib-cloudflare-d1
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 A Python client library for [Cloudflare D1](https://developers.cloudflare.com/d1/) with configuration management using [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager).
 

@@ -1,6 +1,6 @@
 # Development Flow
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 開発依頼または修正依頼を受けてから、開発、テスト、Pull Request 作成までを行うプロセスです。
 

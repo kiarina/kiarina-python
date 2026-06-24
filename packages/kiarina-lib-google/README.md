@@ -1,6 +1,6 @@
 # kiarina-lib-google
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 A Python library for Google Cloud authentication with configuration management using pydantic-settings-manager.
 

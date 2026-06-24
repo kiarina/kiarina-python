@@ -1,6 +1,6 @@
 # kiarina-lib-firebase-rtdb
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)

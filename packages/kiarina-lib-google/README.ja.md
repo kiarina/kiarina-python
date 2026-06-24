@@ -1,6 +1,6 @@
 # kiarina-lib-google
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 kiarina namespace 向けの Google Cloud authentication / credentials library です。
 

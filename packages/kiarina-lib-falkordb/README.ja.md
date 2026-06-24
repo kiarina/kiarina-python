@@ -1,6 +1,6 @@
 # kiarina-lib-falkordb
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 kiarina namespace 向けの FalkorDB client library です。
 

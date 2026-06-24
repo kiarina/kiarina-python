@@ -1,6 +1,6 @@
 # kiarina-lib-openai
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 pydantic-settings-manager による設定管理を備えた OpenAI API 連携用 Python library です。
 

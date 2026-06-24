@@ -1,6 +1,6 @@
 # Release
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 kiarina-python を PyPI にリリースするための手順です。
 

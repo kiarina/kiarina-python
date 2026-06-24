@@ -1,6 +1,6 @@
 # kiarina-lib-anthropic
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 A Python library for Anthropic API integration with configuration management using pydantic-settings-manager.
 

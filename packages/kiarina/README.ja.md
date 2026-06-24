@@ -1,6 +1,6 @@
 # kiarina
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![PyPI version](https://badge.fury.io/py/kiarina.svg)](https://badge.fury.io/py/kiarina)

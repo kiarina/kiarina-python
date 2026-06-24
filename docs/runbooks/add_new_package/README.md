@@ -1,6 +1,6 @@
 # Add New Package
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 Procedure for adding a namespace package to the uv workspace.
 

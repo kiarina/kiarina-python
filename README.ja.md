@@ -1,6 +1,6 @@
 # kiarina-python
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-latest-green.svg)](https://github.com/astral-sh/uv)
@@ -10,27 +10,27 @@
 
 > 🚀 **kiarina-python** - クオリア（意識の質感）を持つ LLM エージェントを開発するための土台となる、包括的なPythonモジュール群。
 
-## 🌟 概要 (Overview)
+## 🌟 Overview
 
 `kiarina-python` は、「クオリアを持つ LLM エージェント」という高度なAIシステムを構築するための土台となるフレームワークを構成するモジュール群です。
 
 単なる汎用ユーティリティの集まりではなく、LLMの自律的な思考、記憶の永続化（FalkorDB, Redis）、外部環境との相互作用（ファイル操作、各種クラウド・AI API連携）を支えるための基盤として設計されています。
 
-## 🏗️ 設計思想 (Design Philosophy)
+## 🏗️ Design Philosophy
 
 - **モノレポ構成**: すべてのモジュールは `kiarina.*` 名前空間パッケージとして整理され、モダンなPythonのプラクティスと [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/) を用いたモノレポ構成により堅牢に管理されています。
 - **結晶アーキテクチャ**: 本プロジェクトは [結晶アーキテクチャ (Crystal Architecture)](https://github.com/kiarina/crystal-architecture) を採用しており、高度にモジュール化され、保守性とスケーラビリティに優れたコードベースを実現しています。
 - **設定の注入 (Configuration Injection)**: [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) を活用することで、設定という依存の宣言を各モジュールに局所化しつつ、システム全体として統合した際にも一元的に管理できる仕組みを実現しています。
 
-## 📦 パッケージ (Packages)
+## 📦 Packages
 
-### 📦 メタパッケージ (Meta Package)
+### 📦 Meta Package
 
 - **[kiarina](packages/kiarina/)** - 簡単なインストールのためのメタパッケージ
   - 1つのコマンドですべての kiarina パッケージをインストール: `pip install kiarina`
   - すべてのユーティリティとライブラリを1つのパッケージに集約
 
-### 🌍 国際化とローカリゼーション (Internationalization & Localization)
+### 🌍 Internationalization & Localization
 
 - **[kiarina-i18n](packages/kiarina-i18n/)** - シンプルな国際化 (i18n) ユーティリティ
   - フォールバック対応の軽量な翻訳
@@ -43,7 +43,7 @@
   - 静的およびリアルタイム (Frankfurter API) レートプロバイダー
   - ISO 4217 通貨コードのサポート
 
-### 🔧 ユーティリティ (Utilities)
+### 🔧 Utilities
 
 - **[kiarina-utils-common](packages/kiarina-utils-common/)** - 共通ユーティリティとヘルパー関数
   - ネストされたキーと配列インデックスを持つ設定文字列のパース
@@ -54,7 +54,7 @@
   - YAMLフロントマターのパース付きMarkdownファイルのサポート
   - アトミック操作による同期および非同期APIのサポート
 
-### 🗄️ データベースライブラリ (Database Libraries)
+### 🗄️ Database Libraries
 
 - **[kiarina-lib-falkordb](packages/kiarina-lib-falkordb/)** - FalkorDB 連携
   - 設定ベースの接続管理
@@ -66,7 +66,7 @@
   - 検索スキーマ管理とクエリビルダー
   - Redis用のフルテキスト検索ユーティリティ
 
-### ☁️ クラウドサービス (Cloud Services)
+### ☁️ Cloud Services
 
 - **[kiarina-lib-anthropic](packages/kiarina-lib-anthropic/)** - Anthropic API 連携
   - SecretStrを用いた安全なAPIキー管理
@@ -103,9 +103,9 @@
   - エージェントと人間のユーザーが対話するためのインターフェース
   - 設定ベースのセキュアなBotトークン管理
 
-## 🚀 クイックスタート (Quick Start)
+## 🚀 Quick Start
 
-### インストール (Installation)
+### Installation
 
 メタパッケージを使用してすべてのパッケージを一度にインストールします：
 
@@ -146,11 +146,11 @@ uv add kiarina-utils-common kiarina-utils-file
 ```
 
 
-## 🏗️ 開発 (Development)
+## 🏗️ Development
 
 このプロジェクトは、モノレポ管理に [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/) を、タスク自動化に [mise](https://mise.jdx.dev/) を使用したモダンなPython開発スタックを使用しています。
 
-### 前提条件 (Prerequisites)
+### Prerequisites
 
 - **Python 3.12+**
 - **[uv](https://github.com/astral-sh/uv)** - 高速なPythonパッケージマネージャー
@@ -159,7 +159,7 @@ uv add kiarina-utils-common kiarina-utils-file
 - **[age](https://age-encryption.org/)** - 共有テスト設定の暗号化
 - **[Google Cloud CLI](https://cloud.google.com/sdk/docs/install)** - private なテスト設定バケットへのアクセス
 
-### 開発環境のセットアップ (Setup Development Environment)
+### Setup Development Environment
 
 ```bash
 # リポジトリのクローン
@@ -173,11 +173,11 @@ mise run setup
 mise run ci
 ```
 
-### 開発ワークフロー (Development Workflow)
+### Development Workflow
 
 このプロジェクトでは、すべての開発操作に [mise File Tasks](https://mise.jdx.dev/tasks/file-tasks.html) を使用しています：
 
-#### すべてのパッケージ (All Packages)
+#### All Packages
 
 全パッケージ向けのよく使うワークフローには Makefile のショートカットを使用します：
 
@@ -203,7 +203,7 @@ make clean
 
 内部の mise task は `all:` 名前空間に整理されています。例：`mise run all:format`、`mise run all:test`、`mise run all:build`
 
-#### 個別のパッケージ (Individual Packages)
+#### Individual Packages
 
 ```bash
 # package を選択し、その後 task を fzf で選択
@@ -225,7 +225,7 @@ mise run package:publish kiarina-utils-common
 mise run package:publish kiarina-lib-redis --test  # Test PyPIへの公開
 ```
 
-#### ユーティリティタスク (Utility Tasks)
+#### Utility Tasks
 
 ```bash
 # 開発環境をゼロからセットアップ
@@ -269,7 +269,7 @@ mise run test-settings:download --force
 
 upload task は age recipient のみを使用します。download task は age identity を必要とし、ファイルをアトミックに配置して permission を `0600` に設定します。upload はリモートオブジェクトを自動削除しません。
 
-### プロジェクト構造 (Project Structure)
+### Project Structure
 
 ```
 kiarina-python/
@@ -297,7 +297,7 @@ kiarina-python/
 └── README.md                  # このファイル
 ```
 
-### 技術スタック (Technology Stack)
+### Technology Stack
 
 - **言語**: Python 3.12+
 - **パッケージ管理**: [uv](https://github.com/astral-sh/uv) (ワークスペース対応)
@@ -309,7 +309,7 @@ kiarina-python/
 - **CI/CD**: GitHub Actions
 - **リポジトリスタイル**: uv workspace を使用したモノレポ
 
-### uv ワークスペース構成 (uv Workspace Configuration)
+### uv Workspace Configuration
 
 このプロジェクトは効率的なモノレポ管理のために [uv workspace](https://docs.astral.sh/uv/concepts/workspaces/) を活用しています：
 
@@ -324,7 +324,7 @@ kiarina-python/
 - ワークスペースパッケージの自動編集可能インストール
 - パッケージソースが分離された共有仮想環境
 
-### テスト (Testing)
+### Testing
 
 このプロジェクトには、特別な考慮事項を含む包括的なテストが含まれています：
 
@@ -337,7 +337,7 @@ kiarina-python/
 - `tests/fixtures/` - フィクスチャ用の小さな JSON/YAML ファイル
 - `tests/assets/` - テストで使用されるサンプルファイル
 
-### CI/CD パイプライン (CI/CD Pipeline)
+### CI/CD Pipeline
 
 GitHub Actions を使用した自動化されたワークフロー：
 
@@ -346,17 +346,17 @@ GitHub Actions を使用した自動化されたワークフロー：
 - **Dependency Updates**: 毎週の自動依存関係アップデート
 - **Security Audit**: 毎日のセキュリティ脆弱性スキャン
 
-## 🤝 コントリビューション (Contributing)
+## 🤝 Contributing
 
 これは主に個人的なプロジェクトですが、コントリビューションは歓迎します！ 🙂
 
-### 貢献する方法 (How to Contribute)
+### How to Contribute
 
 - **Issues**: バグや機能リクエストについてお気軽にIssueを開いてください
 - **Pull Requests**: PRは歓迎しますが、サイドプロジェクトのため対応に時間がかかる場合があります
 - **Discussions**: 質問や一般的な議論には GitHub Discussions を使用してください
 
-### 開発ガイドライン (Development Guidelines)
+### Development Guidelines
 
 - 既存のコードスタイルに従うこと (ruffで強制)
 - 新機能にはテストを追加すること
@@ -365,11 +365,11 @@ GitHub Actions を使用した自動化されたワークフロー：
 
 厳格な貢献ガイドラインはありません - テストに合格し、コードが適切にフォーマットされていることを確認してください。
 
-## 📄 ライセンス (License)
+## 📄 License
 
 このプロジェクトは MIT License の下でライセンスされています。詳細については [LICENSE](LICENSE) ファイルを参照してください。
 
-## 🙏 謝辞 (Acknowledgments)
+## 🙏 Acknowledgments
 
 - **[uv](https://github.com/astral-sh/uv)**: モダンなPythonパッケージ管理とワークスペースサポート
 - **[mise](https://mise.jdx.dev/)**: 開発環境とタスク管理

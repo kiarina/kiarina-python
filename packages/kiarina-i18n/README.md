@@ -1,6 +1,6 @@
 # kiarina-i18n
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 Simple internationalization (i18n) utilities for Python applications.
 

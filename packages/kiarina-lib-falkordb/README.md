@@ -1,6 +1,6 @@
 # kiarina-lib-falkordb
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 A Python client library for [FalkorDB](https://falkordb.com/) with configuration management and connection pooling.
 

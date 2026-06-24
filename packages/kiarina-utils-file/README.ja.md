@@ -1,6 +1,6 @@
 # kiarina-utils-file
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 自動エンコーディング検出、MIME type 検出、複数ファイル形式に対応した包括的な Python file I/O library です。
 

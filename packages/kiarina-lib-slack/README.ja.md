@@ -1,6 +1,6 @@
 # kiarina-lib-slack
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 kiarina namespace 向けの Slack API client 設定 library です。
 

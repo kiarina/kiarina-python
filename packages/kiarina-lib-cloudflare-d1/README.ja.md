@@ -1,6 +1,6 @@
 # kiarina-lib-cloudflare-d1
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 kiarina namespace 向けの Cloudflare D1 database client library です。
 

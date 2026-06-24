@@ -1,6 +1,6 @@
 # uv Workspace Operations
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 Operational rules for projects using uv workspace.
 

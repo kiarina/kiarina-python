@@ -1,6 +1,6 @@
 # kiarina-utils-file
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 A comprehensive Python library for file I/O operations with automatic encoding detection, MIME type detection, and support for various file formats.
 

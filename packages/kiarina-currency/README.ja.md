@@ -1,6 +1,6 @@
 # kiarina-currency
 
-[English](README.md) | [日本語](README.ja.md)
+[English](README.md) | 日本語
 
 kiarina namespace 向けの、為替レート対応つき通貨ユーティリティです。
 

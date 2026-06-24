@@ -1,6 +1,6 @@
 # kiarina-lib-redis
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 A Python client library for [Redis](https://redis.io/) with configuration management and connection pooling.
 

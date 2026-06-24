@@ -1,6 +1,6 @@
 # kiarina-utils-common
 
-[English](README.md) | [日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 [![PyPI version](https://badge.fury.io/py/kiarina-utils-common.svg)](https://badge.fury.io/py/kiarina-utils-common)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-common.svg)](https://pypi.org/project/kiarina-utils-common/)
