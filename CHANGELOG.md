@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-06-24
+
 ### Added
 - **kiarina-utils-common**: Add a component registry with aliases, presets, custom import paths, runtime registration, and configuration string resolution.
 - **kiarina-utils-common**: Add a config registry with aliases, presets, runtime registration, immutable resolution, and Pydantic model support.
+- **kiarina-utils-common**: Add an object registry with configuration-based creation, aliases, runtime registration, and cached object resolution.
 - Add `test-settings:upload` and `test-settings:download` mise tasks for sharing age-encrypted `.env` and `test_settings.yaml` files through private Google Cloud Storage.
 - Add a Test Settings runbook covering age key generation, private Cloud Storage setup, IAM, environment configuration, operation, and key rotation.
 

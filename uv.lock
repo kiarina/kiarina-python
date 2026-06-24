@@ -751,7 +751,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.1.0"
+version = "2.2.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-currency" },
@@ -1077,7 +1077,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-python"
-version = "2.1.0"
+version = "2.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "kiarina" },
@@ -1158,7 +1158,7 @@ test = [
 
 [[package]]
 name = "kiarina-utils-common"
-version = "2.1.0"
+version = "2.2.0"
 source = { editable = "packages/kiarina-utils-common" }
 dependencies = [
     { name = "pydantic" },

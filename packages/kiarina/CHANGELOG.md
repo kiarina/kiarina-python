@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-06-24
+
+### Added
+- **kiarina-utils-common**: Add a component registry with aliases, presets, custom import paths, runtime registration, and configuration string resolution.
+- **kiarina-utils-common**: Add a config registry with aliases, presets, runtime registration, immutable resolution, and Pydantic model support.
+- **kiarina-utils-common**: Add an object registry with configuration-based creation, aliases, runtime registration, and cached object resolution.
+
 ### Changed
+- **kiarina-utils-common**: Streamline the package README, clarify its description, and document the config, component, and object registry APIs.
 - Release only packages whose version matches the release version, while always updating the `kiarina` meta-package.
 
 ## [2.1.0] - 2026-06-22

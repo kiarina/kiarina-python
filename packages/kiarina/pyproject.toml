@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "2.1.0"
+version = "2.2.0"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"
@@ -48,7 +48,7 @@ dependencies = [
     "kiarina-lib-redis>=1.0.1",
     "kiarina-lib-redisearch>=1.0.1",
     "kiarina-lib-slack>=1.31.0",
-    "kiarina-utils-common>=1.0.1",
+    "kiarina-utils-common>=2.2.0",
     "kiarina-utils-file>=1.0.1",
 ]
 
