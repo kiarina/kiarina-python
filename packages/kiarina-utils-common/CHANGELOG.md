@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add a component registry with aliases, presets, custom import paths, runtime registration, and configuration string resolution.
+
 ## [2.1.0] - 2026-06-22
 
 ### Changed

@@ -40,7 +40,7 @@ make
 また、修正したパッケージのテストが通るか確認してください。
 
 ```bash
-make package:test <package_name>
+mise run package:test <package_name>
 ```
 
 全体のテストは下記で実行できます。
