@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-06-25
+
+### Added
+- **kiarina-lib-google**: Add `CredentialsJSONString` and `SelfSignedJWT` type aliases to clarify string-based API contracts.
+
+### Changed (BREAKING)
+- **kiarina-lib-google**: Change the default OAuth scopes to an empty list, reuse stored user-account scopes when none are specified, and require explicit scopes for service account impersonation.
+
 ## [2.2.0] - 2026-06-24
 
 ### Added
