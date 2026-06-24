@@ -1160,6 +1160,12 @@ test = [
 name = "kiarina-utils-common"
 version = "2.1.0"
 source = { editable = "packages/kiarina-utils-common" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pydantic", specifier = ">=2.0.0" }]
 
 [[package]]
 name = "kiarina-utils-file"

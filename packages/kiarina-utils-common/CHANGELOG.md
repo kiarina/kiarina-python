@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add a component registry with aliases, presets, custom import paths, runtime registration, and configuration string resolution.
+- Add a config registry with aliases, presets, runtime registration, immutable resolution, and Pydantic model support.
 
 ## [2.1.0] - 2026-06-22
 
