@@ -156,6 +156,8 @@ This project uses a modern Python development stack with [uv workspace](https://
 - **[uv](https://github.com/astral-sh/uv)** - Fast Python package manager
 - **[mise](https://mise.jdx.dev/)** - Development environment manager
 - **Docker & Docker Compose** - For database testing (FalkorDB, Redis)
+- **[age](https://age-encryption.org/)** - Encryption for shared test settings
+- **[Google Cloud CLI](https://cloud.google.com/sdk/docs/install)** - Access to the private test settings bucket
 
 ### Setup Development Environment
 
@@ -235,6 +237,37 @@ make update
 # Upgrade dependencies and sync the environment
 make upgrade
 ```
+
+#### Test Settings
+
+Ignored `.env` and `test_settings.yaml` files can be encrypted with age and shared through a private Google Cloud Storage prefix.
+
+See the [Test Settings runbook](docs/runbooks/test_settings/README.md) for age key generation, bucket creation, IAM configuration, environment setup, daily operation, and key rotation.
+
+Set the following variables in your shell or another secret store. Do not put the age identity in a repository `.env` file because `.env` is itself managed by these tasks.
+
+```bash
+export KIARINA_TEST_SETTINGS_GCS_URI="gs://your-private-bucket/kiarina-python"
+export KIARINA_TEST_SETTINGS_AGE_RECIPIENT="age1..."
+export KIARINA_TEST_SETTINGS_AGE_IDENTITY="AGE-SECRET-KEY-1..."
+```
+
+Upload every ignored `.env` and `test_settings.yaml` file:
+
+```bash
+mise run test-settings:upload --dry-run
+mise run test-settings:upload
+```
+
+Download and decrypt all managed files. Existing files are preserved unless `--force` is specified.
+
+```bash
+mise run test-settings:download --dry-run
+mise run test-settings:download
+mise run test-settings:download --force
+```
+
+The upload task uses only the age recipient. The download task requires the age identity, writes files atomically, and sets their permissions to `0600`. Upload never deletes remote objects automatically.
 
 ### Project Structure
 

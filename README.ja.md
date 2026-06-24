@@ -156,6 +156,8 @@ uv add kiarina-utils-common kiarina-utils-file
 - **[uv](https://github.com/astral-sh/uv)** - 高速なPythonパッケージマネージャー
 - **[mise](https://mise.jdx.dev/)** - 開発環境マネージャー
 - **Docker & Docker Compose** - データベースのテスト用（FalkorDB, Redis）
+- **[age](https://age-encryption.org/)** - 共有テスト設定の暗号化
+- **[Google Cloud CLI](https://cloud.google.com/sdk/docs/install)** - private なテスト設定バケットへのアクセス
 
 ### 開発環境のセットアップ (Setup Development Environment)
 
@@ -235,6 +237,37 @@ make update
 # 依存関係をアップグレードし、環境を同期
 make upgrade
 ```
+
+#### Test Settings
+
+gitignore されている `.env` と `test_settings.yaml` は、age で暗号化し、private な Google Cloud Storage prefix を通じて共有できます。
+
+age key の生成、bucket 作成、IAM 設定、環境設定、日常運用、key rotation については [Test Settings runbook](docs/runbooks/test_settings/README.ja.md) を参照してください。
+
+次の環境変数を shell または別の secret store に設定します。`.env` 自体がこの task の管理対象になるため、age identity をリポジトリ内の `.env` に保存しないでください。
+
+```bash
+export KIARINA_TEST_SETTINGS_GCS_URI="gs://your-private-bucket/kiarina-python"
+export KIARINA_TEST_SETTINGS_AGE_RECIPIENT="age1..."
+export KIARINA_TEST_SETTINGS_AGE_IDENTITY="AGE-SECRET-KEY-1..."
+```
+
+gitignore されているすべての `.env` と `test_settings.yaml` をアップロードします。
+
+```bash
+mise run test-settings:upload --dry-run
+mise run test-settings:upload
+```
+
+管理対象ファイルをすべてダウンロードして復号します。`--force` を指定しない限り、既存ファイルは保持されます。
+
+```bash
+mise run test-settings:download --dry-run
+mise run test-settings:download
+mise run test-settings:download --force
+```
+
+upload task は age recipient のみを使用します。download task は age identity を必要とし、ファイルをアトミックに配置して permission を `0600` に設定します。upload はリモートオブジェクトを自動削除しません。
 
 ### プロジェクト構造 (Project Structure)
 

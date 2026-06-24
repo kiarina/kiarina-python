@@ -3,6 +3,8 @@
 #--------------------------------------------------
 init:
 	mise run setup
+list:
+	uv pip list
 update:
 	uv sync --all-packages --all-extras --all-groups
 	uv pip list --outdated

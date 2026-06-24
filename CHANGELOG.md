@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add `test-settings:upload` and `test-settings:download` mise tasks for sharing age-encrypted `.env` and `test_settings.yaml` files through private Google Cloud Storage.
+- Add a Test Settings runbook covering age key generation, private Cloud Storage setup, IAM, environment configuration, operation, and key rotation.
+
 ### Changed
 - Publish all release packages to PyPI in a single operation instead of treating the `kiarina` meta-package separately.
 - Move the test asset download mise task to `test-assets:download`.
