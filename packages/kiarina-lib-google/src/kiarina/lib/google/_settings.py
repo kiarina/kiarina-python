@@ -26,13 +26,7 @@ class GoogleSettings(BaseSettings):
     Note that this required permission is not included in the roles/owner role.
     """
 
-    scopes: list[str] = Field(
-        default_factory=lambda: [
-            "https://www.googleapis.com/auth/cloud-platform",  # All GCP resources
-            "https://www.googleapis.com/auth/drive",  # Google Drive resources
-            "https://www.googleapis.com/auth/spreadsheets",  # Google Sheets resources
-        ]
-    )
+    scopes: list[str] = Field(default_factory=list)
     """
     List of scopes to request during the authentication
 

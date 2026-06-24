@@ -233,7 +233,7 @@ Get service account credentials from file or data.
 
 **Returns:** `google.oauth2.service_account.Credentials`
 
-#### `get_user_account_credentials(*, authorized_user_file=None, authorized_user_data=None, scopes, cache=None)`
+#### `get_user_account_credentials(*, authorized_user_file=None, authorized_user_data=None, scopes=None, cache=None)`
 
 Get user account credentials from file or data with optional caching.
 
@@ -252,7 +252,7 @@ Pydantic settings model for authentication configuration.
 - `authorized_user_file`: Path to authorized user file
 - `authorized_user_data`: Authorized user data (JSON string, SecretStr)
 - `impersonate_service_account`: Target service account email for impersonation
-- `scopes`: OAuth2 scopes (default: cloud-platform, drive, spreadsheets)
+- `scopes`: OAuth2 scopes (default: empty)
 - `project_id`: GCP project ID
 
 **Helper Methods:**
@@ -280,11 +280,12 @@ Uses Application Default Credentials (ADC) in this order:
 
 ### Default Scopes
 
-- `https://www.googleapis.com/auth/cloud-platform` - All GCP resources
-- `https://www.googleapis.com/auth/drive` - Google Drive
-- `https://www.googleapis.com/auth/spreadsheets` - Google Sheets
+No scopes are requested by default. Specify only the scopes required by the
+application in configuration or the function call.
 
-Override by specifying custom scopes in configuration or function call.
+User account credentials reuse scopes stored in the authorized user data when
+no scopes are specified. Service account impersonation requires at least one
+explicit scope.
 
 ## Testing
 

@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `CredentialsJSONString` and `SelfSignedJWT` type aliases to clarify string-based API contracts.
 
+### Changed (BREAKING)
+- Changed the default OAuth scopes from Cloud Platform, Drive, and Sheets to an empty list.
+- User account credentials now reuse stored scopes when none are specified.
+- Service account impersonation now requires explicit scopes.
+
 ## [2.1.0] - 2026-06-22
 
 ### Changed

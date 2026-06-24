@@ -21,6 +21,11 @@ def get_credentials(
     if settings is None:
         settings = settings_manager.get_settings(settings_key)
 
+    resolved_scopes = scopes if scopes is not None else settings.scopes
+
+    if settings.impersonate_service_account and not resolved_scopes:
+        raise ValueError("Scopes are required for service account impersonation.")
+
     credentials: Credentials
 
     if settings.type == "default":
@@ -30,14 +35,14 @@ def get_credentials(
         credentials = get_service_account_credentials(
             service_account_file=settings.service_account_file,
             service_account_data=settings.get_service_account_data(),
-            scopes=scopes or settings.scopes,
+            scopes=resolved_scopes,
         )
 
     elif settings.type == "user_account":
         credentials = get_user_account_credentials(
             authorized_user_file=settings.authorized_user_file,
             authorized_user_data=settings.get_authorized_user_data(),
-            scopes=scopes or settings.scopes,
+            scopes=resolved_scopes or None,
             cache=cache,
         )
 
@@ -48,7 +53,7 @@ def get_credentials(
         credentials = impersonated_credentials.Credentials(  # type: ignore[no-untyped-call]
             source_credentials=credentials,
             target_principal=settings.impersonate_service_account,
-            target_scopes=scopes or settings.scopes,
+            target_scopes=resolved_scopes,
         )
 
     assert isinstance(

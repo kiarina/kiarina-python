@@ -108,7 +108,7 @@ Application Default Credentials を取得します。
 
 service account credentials を取得します。
 
-#### `get_user_account_credentials(*, authorized_user_file=None, authorized_user_data=None, scopes, cache=None)`
+#### `get_user_account_credentials(*, authorized_user_file=None, authorized_user_data=None, scopes=None, cache=None)`
 
 authorized user credentials を取得します。
 
@@ -130,7 +130,12 @@ credentials cache 実装のための protocol です。
 
 ### Default Scopes
 
-必要に応じて default scopes を settings または関数引数で指定できます。
+デフォルトでは scope を要求しません。application に必要な scope のみを settings
+または関数引数で明示してください。
+
+user account credentials は scope が指定されていない場合、authorized user data
+に保存された scope を再利用します。service account impersonation では、1 つ以上の
+scope を明示する必要があります。
 
 ## Testing
 
@@ -159,4 +164,3 @@ MIT License です。詳細は [LICENSE](../../LICENSE) を参照してくださ
 
 - [kiarina-python](https://github.com/kiarina/kiarina-python)
 - [Google Cloud Authentication](https://cloud.google.com/docs/authentication)
-

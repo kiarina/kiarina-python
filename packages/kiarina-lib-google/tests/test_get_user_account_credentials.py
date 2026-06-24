@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 from google.oauth2.credentials import Credentials
 import pytest
 
@@ -23,6 +25,24 @@ def test_nonexistent_file():
             authorized_user_file="/path/to/nonexistent/file.json",
             scopes=["https://www.googleapis.com/auth/devstorage.read_only"],
         )
+
+
+def test_data_uses_stored_scopes_when_scopes_are_not_specified():
+    stored_scopes = ["https://www.googleapis.com/auth/drive"]
+    credentials = get_user_account_credentials(
+        authorized_user_data={
+            "token": "token",
+            "refresh_token": "refresh-token",
+            "client_id": "client-id",
+            "client_secret": "client-secret",
+            "expiry": (datetime.now(UTC) + timedelta(hours=1)).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
+            ),
+            "scopes": stored_scopes,
+        }
+    )
+
+    assert credentials.scopes == stored_scopes
 
 
 def test_data(load_settings):

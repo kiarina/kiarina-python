@@ -11,7 +11,7 @@ def get_user_account_credentials(
     *,
     authorized_user_file: str | os.PathLike[str] | None = None,
     authorized_user_data: dict[str, object] | None = None,
-    scopes: list[str],
+    scopes: list[str] | None = None,
     cache: CredentialsCache | None = None,
 ) -> Credentials:
     cached_credentials = _get_cached_credentials(
@@ -63,7 +63,7 @@ def get_user_account_credentials(
 
 def _get_cached_credentials(
     cache: CredentialsCache | None,
-    scopes: list[str],
+    scopes: list[str] | None,
 ) -> Credentials | None:
     if not cache:
         return None
