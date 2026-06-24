@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- **kiarina-utils-common**: Rename the public `ConfigStr` type alias to `ConfigString`.
+
 ## [2.2.1] - 2026-06-25
 
 ### Added

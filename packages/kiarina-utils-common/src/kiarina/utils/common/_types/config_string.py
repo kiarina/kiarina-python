@@ -1,4 +1,4 @@
-type ConfigStr = str
+type ConfigString = str
 """
 Configuration string for parse_config_string()
 

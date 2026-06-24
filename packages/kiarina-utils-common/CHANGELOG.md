@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- Rename the public `ConfigStr` type alias to `ConfigString`.
+
 ## [2.2.0] - 2026-06-24
 
 ### Added
