@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add a Test Settings runbook covering age key generation, private Cloud Storage setup, IAM, environment configuration, operation, and key rotation.
 
 ### Changed
+- **kiarina-utils-common**: Streamline the package README, clarify its description, and document the config, component, and object registry APIs.
 - Publish all release packages to PyPI in a single operation instead of treating the `kiarina` meta-package separately.
 - Move the test asset download mise task to `test-assets:download`.
 - Move package listing and selection mise tasks under the `package:` namespace, and expose release package filtering through `package:list --release`.
