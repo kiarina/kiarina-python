@@ -1,8 +1,9 @@
 from google.auth import jwt
 from google.auth.transport.requests import Request
 
-from .get_credentials import get_credentials
 from .._settings import GoogleSettings
+from .._types.self_signed_jwt import SelfSignedJWT
+from .get_credentials import get_credentials
 
 
 def get_self_signed_jwt(
@@ -10,10 +11,7 @@ def get_self_signed_jwt(
     *,
     settings: GoogleSettings | None = None,
     audience: str,
-) -> str:
-    """
-    Get a self-signed JWT
-    """
+) -> SelfSignedJWT:
     credentials = get_credentials(settings_key, settings=settings)
 
     jwt_creds = jwt.Credentials.from_signing_credentials(credentials, audience=audience)  # type: ignore[no-untyped-call]

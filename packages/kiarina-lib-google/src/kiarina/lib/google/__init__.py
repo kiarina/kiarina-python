@@ -9,6 +9,8 @@ if TYPE_CHECKING:
     from ._settings import GoogleSettings, settings_manager
     from ._types.credentials import Credentials
     from ._types.credentials_cache import CredentialsCache
+    from ._types.credentials_json_string import CredentialsJSONString
+    from ._types.self_signed_jwt import SelfSignedJWT
     from ._utils.get_default_credentials import get_default_credentials
     from ._utils.get_service_account_credentials import get_service_account_credentials
     from ._utils.get_user_account_credentials import get_user_account_credentials
@@ -25,6 +27,8 @@ __all__ = [
     # ._types
     "Credentials",
     "CredentialsCache",
+    "CredentialsJSONString",
+    "SelfSignedJWT",
     # ._utils
     "get_default_credentials",
     "get_service_account_credentials",
@@ -48,6 +52,8 @@ def __getattr__(name: str) -> object:
         # ._types
         "Credentials": "._types.credentials",
         "CredentialsCache": "._types.credentials_cache",
+        "CredentialsJSONString": "._types.credentials_json_string",
+        "SelfSignedJWT": "._types.self_signed_jwt",
         # ._utils
         "get_default_credentials": "._utils.get_default_credentials",
         "get_service_account_credentials": "._utils.get_service_account_credentials",
