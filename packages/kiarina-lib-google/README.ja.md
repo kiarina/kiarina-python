@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > [!NOTE] これは何？
-> Application Default Credentials、サービスアカウント、ユーザーアカウントを統一された設定から解決する Google 認証パッケージ。
+> Google の認証情報を pydantic-settings-manager で管理・供給するためのパッケージ。
 
 ## Dependencies
 
