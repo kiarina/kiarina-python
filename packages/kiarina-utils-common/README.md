@@ -219,186 +219,348 @@ assert console1 is console_registry.get()  # Return the same object
 
 ## API Reference
 
-### `import_object`
+### `kiarina.utils.common`
 
 ```python
-import_object(import_path)
-```
-
-Import and return an object from an import path.
-
-**Parameters**
-
-- `import_path` (`str`): Import path in the format `module_name:object_name`
-  - Example: `kiarina.utils.common:parse_config_string`
-
-**Returns**
-
-- The imported object (class, function, or any other object)
-
-**Raises**
-
-- `ValueError`: If import_path format is invalid
-- `ImportError`: If the module cannot be imported
-- `AttributeError`: If the object doesn't exist in the module
-
-**Examples**
-
-```python
-# Import a function
-parse_fn = import_object('kiarina.utils.common:parse_config_string')
-result = parse_fn('key=value')
-
-# Import a class
-MyClass = import_object('myapp.plugins:MyPlugin')
-instance = MyClass()
-
-# Use with type hints
-from typing import Callable
-parser: Callable = import_object('kiarina.utils.common:parse_config_string')
-```
-
-### `parse_config_string`
-
-```python
-parse_config_string(
-    config_str,
-    *,
-    separator="&",
-    key_value_separator="=",
-    nested_separator=".",
-    brackets="()",
+from kiarina.utils.common import (
+    ConfigString,
+    ImportPath,
+    import_object,
+    parse_config_string,
 )
 ```
 
-Parse configuration string into nested dictionary.
-
-**Parameters**
-
-- `config_str` (`str`): Configuration string to parse
-- `separator` (`str`, optional): Item separator. Default: `"&"`
-- `key_value_separator` (`str`, optional): Key-value separator. Default: `"="`
-- `nested_separator` (`str`, optional): Nested key separator. Default: `"."`
-- `brackets` (`str`, optional): Two-character open/close pair for quoting values that contain separator characters. Default: `"()"`. Pass `""` to disable.
-
-**Returns**
-
-- `dict[str, Any]`: Parsed configuration dictionary
-
-**Examples**
+#### `import_object`
 
 ```python
-# Basic usage
-parse_config_string("key1=value1&key2=value2")
-# {"key1": "value1", "key2": "value2"}
-
-# Nested keys
-parse_config_string("cache.enabled=true&db.port=5432")
-# {"cache": {"enabled": True}, "db": {"port": 5432}}
-
-# Flags (no value)
-parse_config_string("debug&verbose")
-# {"debug": None, "verbose": None}
-
-# Bracketed values (verbatim, type-conversion suppressed)
-parse_config_string("k=(a&b=c)&n=5")
-# {"k": "a&b=c", "n": 5}
-
-# Custom separators
-parse_config_string("a:1;b:2", separator=";", key_value_separator=":")
-# {"a": 1, "b": 2}
+def import_object(import_path: ImportPath) -> Any: ...
 ```
 
-### `ConfigRegistry`
+Import and return an object from an import path in `module_name:object_name` format.
+
+- `ValueError`: The import path format is invalid
+- `ImportError`: The module cannot be imported
+- `AttributeError`: The object does not exist in the module
+
+#### `parse_config_string`
+
+```python
+def parse_config_string(
+    config_str: ConfigString,
+    *,
+    separator: str = "&",
+    key_value_separator: str = "=",
+    nested_separator: str = ".",
+    brackets: str = "()",
+) -> dict[str, Any]: ...
+```
+
+Convert a configuration string into a nested dictionary.
+
+Values are automatically converted to `bool`, `int`, or `float`. Keys without values become `None`, and numeric nested keys are treated as list indices. Values enclosed by `brackets` may contain separator characters and are not type-converted.
+
+```python
+parse_config_string(
+    "enabled=true&ports.0=8000&ports.1=8001&plugin=(mock?delay=0.1)"
+)
+# {
+#     "enabled": True,
+#     "ports": [8000, 8001],
+#     "plugin": "mock?delay=0.1",
+# }
+```
+
+The function raises `ValueError` when `brackets` does not contain two characters, its opening and closing characters are identical, it conflicts with a separator, or brackets in the configuration string are unbalanced.
+
+#### Type aliases
+
+```python
+type ConfigString = str
+ImportPath: TypeAlias = str
+```
+
+| Type | Format |
+| --- | --- |
+| `ConfigString` | `key=value&key2=value2` |
+| `ImportPath` | `module_name:object_name` |
+
+### `kiarina.utils.config_registry`
+
+```python
+from kiarina.utils.config_registry import (
+    ConfigAlias,
+    ConfigName,
+    ConfigRegistry,
+    ConfigSpecifier,
+    ResolvedConfig,
+)
+```
+
+#### `ConfigRegistry`
 
 Manage configurations by name, alias, and default, with overrides from configuration strings or keyword arguments. Resolved configurations are deep-copied so the registered sources remain unchanged.
 
 ```python
-from kiarina.utils.config_registry import ConfigRegistry
+class ConfigRegistry(Generic[T]):
+    def __init__(
+        self,
+        *,
+        config_label: str = "Config",
+        get_default: Callable[[], ConfigSpecifier | None] | None = None,
+        get_aliases: Callable[[], dict[ConfigAlias, ConfigName]] | None = None,
+        get_presets: Callable[[], dict[ConfigName, T]] | None = None,
+        get_customs: Callable[[], dict[ConfigName, T]] | None = None,
+        configure: Callable[[T, dict[str, Any]], T] | None = None,
+    ) -> None: ...
 
-registry = ConfigRegistry[dict[str, object]](
-    get_default=lambda: "standard",
-    get_aliases=lambda: {"default": "standard"},
-    get_presets=lambda: {
-        "standard": {"model": "example", "temperature": 0.5},
-    },
-)
+    def get_default(self) -> ConfigSpecifier | None: ...
 
-config = registry.get("default?temperature=0.8")
-# {"model": "example", "temperature": 0.8}
+    def get_aliases(self) -> dict[ConfigAlias, ConfigName]: ...
 
-resolved = registry.resolve("standard")
-print(resolved.name)
-print(resolved.config)
+    def list_aliases(self) -> list[ConfigAlias]: ...
+
+    def list_names(self) -> list[ConfigName]: ...
+
+    def register(self, config_name: ConfigName, config: T) -> None: ...
+
+    def unregister(self, config_name: ConfigName) -> None: ...
+
+    def is_registered(self, config_name: ConfigName) -> bool: ...
+
+    def clear(self) -> None: ...
+
+    def get(
+        self,
+        config_specifier: ConfigSpecifier | None = None,
+        **kwargs: Any,
+    ) -> T: ...
+
+    def resolve(
+        self,
+        config_specifier: ConfigSpecifier | None = None,
+        **kwargs: Any,
+    ) -> ResolvedConfig[T]: ...
 ```
 
-**Key methods**
+`get()` and `resolve()` search runtime registrations, custom configurations, and presets in that order. Without `configure`, overrides are supported for Pydantic `BaseModel` and `dict` values. Provide `configure` to override other value types.
 
-- `register(name, config)` / `unregister(name)`: Register or remove a runtime configuration
-- `get(specifier=None, **kwargs)`: Return a resolved configuration
-- `resolve(specifier=None, **kwargs)`: Return the resolved name and configuration as `ResolvedConfig`
-- `list_names()` / `list_aliases()`: List available names and aliases
-- `clear()`: Remove runtime configurations
+#### `ResolvedConfig`
 
-### `ComponentRegistry`
+```python
+class ResolvedConfig(NamedTuple, Generic[T]):
+    name: ConfigName
+    config: T
+```
+
+Contains the resolved configuration name and value.
+
+#### Type aliases
+
+```python
+ConfigAlias: TypeAlias = str
+ConfigName: TypeAlias = str
+ConfigSpecifier: TypeAlias = str
+```
+
+`ConfigSpecifier` is a string in `{ConfigName|ConfigAlias}[?{ConfigString}]` format.
+
+### `kiarina.utils.component_registry`
+
+```python
+from kiarina.utils.component_registry import (
+    ComponentAlias,
+    ComponentFactory,
+    ComponentInput,
+    ComponentName,
+    ComponentRegistry,
+    ComponentSpecifier,
+)
+```
+
+#### `ComponentRegistry`
 
 Manage classes and factories by name and create a new instance when needed. Preset and custom components may also be defined using import paths.
 
 ```python
-from kiarina.utils.component_registry import ComponentRegistry
+class ComponentRegistry(Generic[T]):
+    def __init__(
+        self,
+        *,
+        expected_type: type[T],
+        component_label: str = "Component",
+        get_default: Callable[[], ComponentSpecifier | None] | None = None,
+        get_aliases: Callable[
+            [], dict[ComponentAlias, ComponentName]
+        ] | None = None,
+        get_presets: Callable[
+            [], dict[ComponentName, ImportPath]
+        ] | None = None,
+        get_customs: Callable[
+            [], dict[ComponentName, ImportPath]
+        ] | None = None,
+        factory_wrapper: Callable[
+            [ComponentFactory[T], ComponentName, Any], T
+        ] | None = None,
+    ) -> None: ...
 
+    def get_default(self) -> ComponentSpecifier | None: ...
 
-class Client:
-    def __init__(self, endpoint: str = "") -> None:
-        self.endpoint = endpoint
+    def get_aliases(self) -> dict[ComponentAlias, ComponentName]: ...
 
+    def list_aliases(self) -> list[ComponentAlias]: ...
 
-registry = ComponentRegistry(expected_type=Client)
-registry.register("client", Client)
+    def list_names(self) -> list[ComponentName]: ...
 
-client = registry.resolve("client?endpoint=https://example.com")
+    def register(
+        self,
+        component_name: ComponentName,
+        factory: ComponentFactory[T],
+    ) -> None: ...
+
+    def unregister(self, component_name: ComponentName) -> None: ...
+
+    def get(
+        self,
+        component_name: ComponentName,
+    ) -> ComponentFactory[T] | None: ...
+
+    def clear(self) -> None: ...
+
+    def create(
+        self,
+        component_name: ComponentName,
+        *args: Any,
+        **kwargs: Any,
+    ) -> T: ...
+
+    def resolve(
+        self,
+        component_input: ComponentInput[T] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> T: ...
 ```
 
-**Key methods**
+`create()` and `resolve()` always create a new instance and raise `ValueError` when it does not match `expected_type`. Factories are searched in runtime registrations, custom components, and presets in that order.
 
-- `register(name, factory)` / `unregister(name)`: Register or remove a component factory
-- `create(name, *args, **kwargs)`: Create a new instance by name
-- `resolve(input=None, *args, **kwargs)`: Resolve an instance or specifier
-- `get(name)`: Return a runtime-registered factory
-- `list_names()` / `list_aliases()`: List available names and aliases
-- `clear()`: Remove runtime-registered factories
+#### Type aliases
 
-### `ObjectRegistry`
+```python
+ComponentAlias: TypeAlias = str
+ComponentFactory: TypeAlias = Callable[..., T]
+ComponentInput: TypeAlias = T | ComponentSpecifier
+ComponentName: TypeAlias = str
+ComponentSpecifier: TypeAlias = str
+```
+
+`ComponentSpecifier` is a string in `{ComponentName|ComponentAlias}[?{ConfigString}]` format.
+
+### `kiarina.utils.object_registry`
+
+```python
+from kiarina.utils.object_registry import (
+    ObjectAlias,
+    ObjectFactory,
+    ObjectInput,
+    ObjectName,
+    ObjectRegistry,
+    ObjectSpecifier,
+)
+```
+
+#### `ObjectRegistry`
 
 Resolve configurations through `ConfigRegistry` and create objects from them. `get()` retains and reuses created objects, while `create()` and `resolve()` return a new object each time.
 
 ```python
-from kiarina.utils.object_registry import ObjectRegistry
+class ObjectRegistry(Generic[TObject, TConfig]):
+    def __init__(
+        self,
+        *,
+        expected_type: type[TObject],
+        object_label: str = "Object",
+        get_default: Callable[[], ObjectSpecifier | None] | None = None,
+        get_aliases: Callable[[], dict[ObjectAlias, ObjectName]] | None = None,
+        get_presets: Callable[[], dict[ObjectName, TConfig]] | None = None,
+        get_customs: Callable[[], dict[ObjectName, TConfig]] | None = None,
+        configure: Callable[[TConfig, dict[str, Any]], TConfig] | None = None,
+        factory: ObjectFactory[TObject, TConfig] | None = None,
+    ) -> None: ...
 
+    def get_default(self) -> ObjectSpecifier | None: ...
 
-class Client:
-    def __init__(self, endpoint: str = "") -> None:
-        self.endpoint = endpoint
+    def get_aliases(self) -> dict[ObjectAlias, ObjectName]: ...
 
+    def register_config(
+        self,
+        object_name: ObjectName,
+        config: TConfig,
+    ) -> None: ...
 
-registry = ObjectRegistry[Client, dict[str, object]](
-    expected_type=Client,
-    get_default=lambda: "default",
-    get_presets=lambda: {
-        "default": {"endpoint": "https://example.com"},
-    },
-)
+    def unregister_config(self, object_name: ObjectName) -> None: ...
 
-shared_client = registry.get()
-fresh_client = registry.resolve("default?endpoint=https://api.example.com")
+    def clear_configs(self) -> None: ...
+
+    def is_config_registered(self, object_name: ObjectName) -> bool: ...
+
+    def get_config(
+        self,
+        object_specifier: ObjectSpecifier | None = None,
+    ) -> TConfig: ...
+
+    def list_aliases(self) -> list[ObjectAlias]: ...
+
+    def list_names(self) -> list[ObjectName]: ...
+
+    def register(self, object_name: ObjectName, obj: TObject) -> None: ...
+
+    def unregister(self, object_name: ObjectName) -> None: ...
+
+    def clear(self) -> None: ...
+
+    def is_registered(self, object_name: ObjectName) -> bool: ...
+
+    def get(
+        self,
+        object_name: ObjectName | ObjectAlias | None = None,
+    ) -> TObject: ...
+
+    def create(
+        self,
+        object_name: ObjectName,
+        **kwargs: Any,
+    ) -> TObject: ...
+
+    def resolve(
+        self,
+        object_input: ObjectInput[TObject] | None = None,
+        **kwargs: Any,
+    ) -> TObject: ...
 ```
 
-**Key methods**
+`register()` and object creation validate that the value matches `expected_type`. `get()` does not accept a specifier containing a `ConfigString`. Use `create()` or `resolve()` to create a new object with configuration overrides.
 
-- `register(name, object)` / `unregister(name)`: Register or remove an object
-- `get(name=None)`: Return an object, creating and retaining it when necessary
-- `create(name, **kwargs)`: Create a new object from a configuration
-- `resolve(input=None, **kwargs)`: Resolve an instance or configuration specifier into a new object
-- `register_config(name, config)` / `unregister_config(name)`: Register or remove a runtime configuration
-- `list_names()` / `list_aliases()`: List available names and aliases
-- `clear()` / `clear_configs()`: Remove runtime objects or configurations
+#### `ObjectFactory`
+
+```python
+class ObjectFactory(Protocol[TObject_co, TConfig_contra]):
+    def __call__(
+        self,
+        object_name: ObjectName,
+        config: TConfig_contra,
+        /,
+    ) -> TObject_co: ...
+```
+
+A callable that receives the object name and configuration resolved by `ObjectRegistry` and creates an object.
+
+#### Type aliases
+
+```python
+ObjectAlias: TypeAlias = str
+ObjectInput: TypeAlias = TObject | ObjectSpecifier
+ObjectName: TypeAlias = str
+ObjectSpecifier: TypeAlias = str
+```
+
+`ObjectSpecifier` is a string in `{ObjectName|ObjectAlias}[?{ConfigString}]` format.

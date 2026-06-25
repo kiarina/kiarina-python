@@ -10,6 +10,7 @@ This document defines the standard heading structure for each package's `README.
 - Use the same English headings, hierarchy, and order in both files.
 - Organize headings so readers can understand the package's dependencies, installation, primary use cases, and public APIs in that order.
 - Document public APIs by the public import paths used by consumers, not by the internal file structure.
+- Document every public API signature, including parameters, parameter types, defaults, and return types.
 - Omit headings that have no package-specific content instead of leaving them empty.
 
 ## Standard Structure
@@ -36,7 +37,9 @@ English | [日本語](README.ja.md)
 
 ## API Reference
 
-### `<Public API>`
+### `<Public Import Path>`
+
+#### `<Public API>`
 ```
 
 Use the following language switcher in the Japanese version.
@@ -109,15 +112,40 @@ Import from public APIs in code examples and keep their prerequisites minimal.
 
 ### API Reference
 
-Document the package's public APIs by public element, such as functions, classes, and instances.
+Document the package's public APIs under the public import paths used by consumers.
+For modules that define `__all__`, use its contents as the public API boundary.
+
+Cover all of the following public elements:
+
+- Functions
+- Class constructors
+- All public class methods and properties
+- Public instances
+- Public data types and fields, including data classes and `NamedTuple`
+- Type aliases
+- Callable and interface types such as `Protocol`
+
+For every function, constructor, method, property, and callable, include the complete signature with parameter names, parameter types, defaults, and return types. Minimal usage without type annotations does not replace the signature.
 
 ````markdown
 ## API Reference
 
-### `<Public API>`
+### `<Public Import Path>`
 
 ```python
-<signature or minimal usage>
+from <public.import.path> import (
+    <PublicAPI>,
+)
+```
+
+#### `<Public API>`
+
+```python
+def <function>(
+    <argument>: <type>,
+    *,
+    <optional_argument>: <type> = <default>,
+) -> <return_type>: ...
 ```
 
 <Summary>
@@ -142,4 +170,22 @@ Document the package's public APIs by public element, such as functions, classes
 ````
 
 Omit items that do not apply.
-As a general ordering rule, list basic functions first, followed by primary classes and supporting types or instances.
+Add descriptions, exceptions, and examples only when they help consumers understand the API.
+Within each public import path, list basic functions first, followed by primary classes and supporting types or instances.
+
+Class constructors and all public methods may be documented together.
+
+```python
+class Registry(Generic[T]):
+    def __init__(
+        self,
+        *,
+        expected_type: type[T],
+    ) -> None: ...
+
+    def get(self, name: str | None = None) -> T: ...
+
+    def clear(self) -> None: ...
+```
+
+Keep signatures and the executable content of code examples identical between `README.md` and `README.ja.md`; translate only explanatory prose and comments.
