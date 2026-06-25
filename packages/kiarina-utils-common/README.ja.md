@@ -6,12 +6,166 @@
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-common.svg)](https://pypi.org/project/kiarina-utils-common/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-kiarina namespace 内で、最も汎用的なユーティリティを提供するパッケージ。
+> [!NOTE] これは何？
+> 軽量な設定解決・動的 import・registry 基盤を提供するパッケージ。
 
 ## Installation
 
 ```bash
 pip install kiarina-utils-common
+```
+
+## Features
+
+### Implementing a Plugin System
+
+ComponentRegistry を使うと、設定された import path から実装を選択・生成するプラグイン機構を構築できます。
+
+```sh
+sample/
+  hoge/
+    _instances/
+      hoge_registry.py
+    _types/
+      hoge.py
+      hoge_name.py
+      hoge_alias.py
+      hoge_specifier.py
+    __init__.py
+    _settings.py
+  hoge_impl/
+    vanilla/
+      _helpers/
+        create_vanilla_hoge.py
+      _services/
+        vanilla_hoge.py
+      __init__.py
+      _settings.py
+```
+
+**抽象を定義:**
+```python
+# sample/hoge/_types/hoge_name.py
+HogeName: TypeAlias = str
+
+# sample/hoge/_types/hoge_alias.py
+HogeAlias: TypeAlias = str
+
+# sample/hoge/_types/hoge_specifier.py
+HogeSpecifier: TypeAlias = str
+"""{HogeName}[?{ConfigString}]"""
+
+# sample/hoge/_types/hoge.py
+@runtime_checkable
+class Hoge(Protocol):
+    name: HogeName
+    def hello(self) -> None: ...
+
+# sample/hoge/_settings.py
+class HogeSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="SAMPLE_HOGE_",
+        extra="ignore",
+    )
+
+    default: HogeSpecifier = "vanilla"
+
+    aliases: dict[HogeAlias, HogeName] = Field(default_factory=dict)
+
+    presets: dict[HogeName, ImportPath] = Field(
+        default_factory=lambda: {
+            "vanilla": "sample.hoge_impl.vanilla:create_vanilla_hoge",
+        }
+    )
+
+    customs: dict[HogeName, ImportPath] = Field(default_factory=dict)
+
+settings_manager = SettingsManager(HogeSettings)
+
+# sample/hoge/_instances/hoge_registry.py
+def _factory_wrapper(
+    factory: ComponentFactory[Hoge],
+    component_name: str,
+    *args: Any,
+    **kwargs: Any,
+) -> Hoge:
+    instance = factory(*args, **kwargs)
+    instance.name = component_name
+    return instance
+
+hoge_registry = ComponentRegistry[Hoge](
+    expected_type=cast(type[Hoge], Hoge),
+    component_label="Hoge",
+    get_default=lambda: settings_manager.settings.default,
+    get_aliases=lambda: settings_manager.settings.aliases,
+    get_presets=lambda: settings_manager.settings.presets,
+    get_customs=lambda: settings_manager.settings.customs,
+    factory_wrapper=_factory_wrapper,
+)
+
+# sample/hoge/__init__.py
+__all__ = [
+    "Hoge",
+    "HogeName",
+    "HogeAlias",
+    "HogeSpecifier",
+    "settings_manager",
+    "hoge_registry",
+]
+```
+
+**実装を定義:**
+```python
+# sample/hoge_impl/vanilla/_settings.py
+class VanillaHogeSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="SAMPLE_HOGE_VANILLA_",
+        extra="ignore",
+    )
+    message: str = "Hello from VanillaHoge!"
+
+settings_manager = SettingsManager(VanillaHogeSettings)
+
+# sample/hoge_impl/vanilla/_services/vanilla_hoge.py
+class VanillaHoge(Hoge):
+    def __init__(self, settings: VanillaHogeSettings) -> None:
+        self.settings: VanillaHogeSettings = settings
+        self._name: HogeName | None = None
+
+    @property
+    def name(self) -> HogeName:
+        if self._name is None:
+            raise ValueError("name is not set")
+        return self._name
+
+    @name.setter
+    def name(self, value: HogeName) -> None:
+        self._name = value
+
+    def hello(self) -> None:
+        print(self.settings.message)
+
+# sample/hoge_impl/vanilla/_helpers/create_vanilla_hoge.py
+def create_vanilla_hoge(**kwargs: Any) -> VanillaHoge:
+    settings = settings_manager.get_settings()
+
+    if kwargs:
+        settings = VanillaHogeSettings.model_validate(
+            {**settings.model_dump(), **kwargs}
+        )
+
+    return VanillaHoge(settings)
+
+# sample/hoge_impl/vanilla/__init__.py
+__all__ = ["create_vanilla_hoge", "VanillaHoge", "settings_manager"]
+```
+
+**使い方:**
+```python
+hoge = hoge_registry.resolve()  # default を取得
+hoge = hoge_registry.resolve("vanilla")  # preset を取得
+hoge = hoge_registry.resolve("vanilla?message=Bye")  # ConfigString で上書き
+hoge.hello()
 ```
 
 ## API Reference
