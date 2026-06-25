@@ -9,6 +9,12 @@
 > [!NOTE] これは何？
 > 軽量な設定解決・動的 import・registry 基盤を提供するパッケージ。
 
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.0.0` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+
 ## Installation
 
 ```bash

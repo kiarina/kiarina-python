@@ -9,6 +9,12 @@ English | [日本語](README.ja.md)
 > [!NOTE] What is this?
 > A package providing lightweight configuration resolution, dynamic imports, and registry foundations.
 
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.0.0` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+
 ## Installation
 
 ```bash
