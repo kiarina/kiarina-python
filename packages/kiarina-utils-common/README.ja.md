@@ -20,6 +20,7 @@ pip install kiarina-utils-common
 ### Implementing a Plugin System
 
 ComponentRegistry を使うと、設定された import path から実装を選択・生成するプラグイン機構を構築できます。
+下記の例では、[pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) を使用しています。
 
 ```sh
 sample/

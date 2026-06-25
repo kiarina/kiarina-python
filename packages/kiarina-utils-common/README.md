@@ -20,6 +20,7 @@ pip install kiarina-utils-common
 ### Implementing a Plugin System
 
 ComponentRegistry can be used to build a plugin system that selects and creates implementations from configured import paths.
+The following example uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager).
 
 ```sh
 sample/
