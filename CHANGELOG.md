@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-lib-google**: Restructure the package README, correct configuration examples, and document all public APIs.
+
 ### Changed (BREAKING)
 - **kiarina-utils-common**: Rename the public `ConfigStr` type alias to `ConfigString`.
 

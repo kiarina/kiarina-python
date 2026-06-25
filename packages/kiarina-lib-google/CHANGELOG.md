@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Restructured the package README, corrected pydantic-settings-manager v3 configuration examples, and documented all public APIs.
+
 ## [2.2.1] - 2026-06-25
 
 ### Added
