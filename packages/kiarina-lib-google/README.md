@@ -35,6 +35,8 @@ pip install kiarina-lib-google
   Create short-lived credentials for a target service account from source credentials.
 - **Managing Multiple Configurations**
   Centrally manage multiple authentication configurations with pydantic-settings-manager.
+- **Integrating Authentication into Service Implementations**
+  Inject an authentication settings key into a service that requires Google authentication and resolve credentials when creating its client.
 - **Generating a Self-Signed JWT**
   Generate a self-signed JWT for a target service from signing credentials.
 
@@ -200,6 +202,47 @@ export KIARINA_LIB_GOOGLE_SERVICE_ACCOUNT_FILE="~/key.json"
 export KIARINA_LIB_GOOGLE_PROJECT_ID="your-project-id"
 export KIARINA_LIB_GOOGLE_SCOPES='["https://www.googleapis.com/auth/cloud-platform"]'
 ```
+
+### Integrating Authentication into Service Implementations
+
+When implementing a service that requires Google authentication, such as Google Cloud Storage, add `google_settings_key` to the service-specific settings. The service does not retain the details of the Google authentication configuration; it passes the settings key to `get_credentials` when creating the client.
+
+```python
+# _settings.py
+from pydantic_settings import BaseSettings
+from pydantic_settings_manager import SettingsManager
+
+
+class GCSSettings(BaseSettings):
+    google_settings_key: str | None = None
+
+
+settings_manager = SettingsManager(GCSSettings)
+
+# _services/my_service.py
+from google.cloud.storage import Client
+
+from kiarina.lib.google import get_credentials
+
+from .._settings import GCSSettings
+
+
+class MyService:
+    def __init__(self, settings: GCSSettings) -> None:
+        self.settings: GCSSettings = settings
+        self._client: Client | None = None
+
+    @property
+    def client(self) -> Client:
+        if self._client is None:
+            self._client = Client(
+                credentials=get_credentials(self.settings.google_settings_key)
+            )
+
+        return self._client
+```
+
+This pattern lets the service settings select only the authentication configuration to use, while authentication methods, key files, and scopes remain separated in `kiarina.lib.google`. When `google_settings_key=None`, the default configuration from `settings_manager` is used.
 
 ### Generating a Self-Signed JWT
 

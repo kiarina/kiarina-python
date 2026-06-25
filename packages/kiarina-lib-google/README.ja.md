@@ -35,6 +35,8 @@ pip install kiarina-lib-google
   元の認証情報から、指定したサービスアカウントの短期認証情報を生成できます。
 - **Managing Multiple Configurations**
   pydantic-settings-manager で複数の認証設定を一元管理できます。
+- **Integrating Authentication into Service Implementations**
+  Google 認証が必要な service の設定へ認証設定キーを注入し、client の生成時に認証情報を解決できます。
 - **Generating a Self-Signed JWT**
   署名可能な認証情報から、対象サービス向けの自己署名 JWT を生成できます。
 
@@ -200,6 +202,47 @@ export KIARINA_LIB_GOOGLE_SERVICE_ACCOUNT_FILE="~/key.json"
 export KIARINA_LIB_GOOGLE_PROJECT_ID="your-project-id"
 export KIARINA_LIB_GOOGLE_SCOPES='["https://www.googleapis.com/auth/cloud-platform"]'
 ```
+
+### Integrating Authentication into Service Implementations
+
+Google Cloud Storage など、Google 認証を必要とする service を実装する場合は、service 固有の設定に `google_settings_key` を持たせます。service は Google 認証設定の詳細を保持せず、client を生成するときに `get_credentials` へ設定キーを渡します。
+
+```python
+# _settings.py
+from pydantic_settings import BaseSettings
+from pydantic_settings_manager import SettingsManager
+
+
+class GCSSettings(BaseSettings):
+    google_settings_key: str | None = None
+
+
+settings_manager = SettingsManager(GCSSettings)
+
+# _services/my_service.py
+from google.cloud.storage import Client
+
+from kiarina.lib.google import get_credentials
+
+from .._settings import GCSSettings
+
+
+class MyService:
+    def __init__(self, settings: GCSSettings) -> None:
+        self.settings: GCSSettings = settings
+        self._client: Client | None = None
+
+    @property
+    def client(self) -> Client:
+        if self._client is None:
+            self._client = Client(
+                credentials=get_credentials(self.settings.google_settings_key)
+            )
+
+        return self._client
+```
+
+このパターンでは、service の設定が利用する認証設定だけを選択し、認証方式・鍵ファイル・scope などは `kiarina.lib.google` 側へ分離できます。`google_settings_key=None` の場合は、`settings_manager` の default 設定が使用されます。
 
 ### Generating a Self-Signed JWT
 
