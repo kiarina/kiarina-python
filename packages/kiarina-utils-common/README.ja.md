@@ -23,6 +23,11 @@ pip install kiarina-utils-common
 
 ## Features
 
+- **Implementing a Plugin System**
+  設定された import path から実装を選択し、動的に生成するプラグインシステムを構築できます。
+- **Managing a Singleton**
+  設定を解決して生成した object を保持し、再利用することができます。
+
 ### Implementing a Plugin System
 
 ComponentRegistry を使うと、設定された import path から実装を選択・生成するプラグイン機構を構築できます。
@@ -173,6 +178,42 @@ hoge = hoge_registry.resolve()  # default を取得
 hoge = hoge_registry.resolve("vanilla")  # preset を取得
 hoge = hoge_registry.resolve("vanilla?message=Bye")  # ConfigString で上書き
 hoge.hello()
+```
+
+### Managing a Singleton
+
+ObjectRegistry を使うと、設定を解決して生成した object を保持し、再利用することができます。
+
+レジストリを定義:
+```python
+from typing import Any
+
+from kiarina.utils.object_registry import ObjectRegistry
+from rich.console import Console
+
+
+def _factory(name: str, config: dict[str, Any]) -> Console:
+    return Console(**config)
+
+console_registry = ObjectRegistry[Console, dict[str, Any]](
+    expected_type=Console,
+    object_label="Console",
+    get_default=lambda: "default",
+    get_presets=lambda: {
+        "default": {"stderr": True, "highlight": False},
+    },
+    factory=_factory,
+)
+```
+
+使い方:
+```python
+console1 = console_registry.get()  # default を取得
+console2 = console_registry.get("default")  # preset を取得
+console3 = console_registry.resolve("default?highlight=True")  # ConfigString で上書き
+
+console1.print("Hello, World!")
+assert console1 is console_registry.get()  # 同じ object を返す
 ```
 
 ## API Reference

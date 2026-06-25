@@ -23,6 +23,11 @@ pip install kiarina-utils-common
 
 ## Features
 
+- **Implementing a Plugin System**
+  Build a plugin system that selects and dynamically creates implementations from configured import paths.
+- **Managing a Singleton**
+  Retain and reuse an object created from resolved configuration.
+
 ### Implementing a Plugin System
 
 ComponentRegistry can be used to build a plugin system that selects and creates implementations from configured import paths.
@@ -173,6 +178,43 @@ hoge = hoge_registry.resolve()  # Get the default
 hoge = hoge_registry.resolve("vanilla")  # Get a preset
 hoge = hoge_registry.resolve("vanilla?message=Bye")  # Override with ConfigString
 hoge.hello()
+```
+
+### Managing a Singleton
+
+ObjectRegistry can retain and reuse an object created from resolved configuration.
+
+**Define the registry:**
+```python
+from typing import Any
+
+from kiarina.utils.object_registry import ObjectRegistry
+from rich.console import Console
+
+
+def _factory(name: str, config: dict[str, Any]) -> Console:
+    return Console(**config)
+
+
+console_registry = ObjectRegistry[Console, dict[str, Any]](
+    expected_type=Console,
+    object_label="Console",
+    get_default=lambda: "default",
+    get_presets=lambda: {
+        "default": {"stderr": True, "highlight": False},
+    },
+    factory=_factory,
+)
+```
+
+**Usage:**
+```python
+console1 = console_registry.get()  # Get the default
+console2 = console_registry.get("default")  # Get a preset
+console3 = console_registry.resolve("default?highlight=True")  # Override with ConfigString
+
+console1.print("Hello, World!")
+assert console1 is console_registry.get()  # Return the same object
 ```
 
 ## API Reference
