@@ -24,9 +24,27 @@ members = [
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-lib-slack",
-    "kiarina-python",
     "kiarina-utils-common",
     "kiarina-utils-file",
+]
+
+[manifest.dependency-groups]
+dev = [
+    { name = "mypy", specifier = ">=1.17.0" },
+    { name = "pre-commit", specifier = ">=4.3.0" },
+    { name = "pytest", specifier = ">=8.4.0" },
+    { name = "pytest-asyncio", specifier = ">=1.1.0" },
+    { name = "pytest-cov", specifier = ">=6.2.0" },
+    { name = "pytest-mock", specifier = ">=3.14.0" },
+    { name = "ruff", specifier = ">=0.12.0" },
+    { name = "types-aiofiles", specifier = ">=24.1.0.20250809" },
+    { name = "types-pyyaml", specifier = ">=6.0.12.20250809" },
+]
+test = [
+    { name = "pytest", specifier = ">=8.4.0" },
+    { name = "pytest-asyncio", specifier = ">=1.1.0" },
+    { name = "pytest-cov", specifier = ">=6.2.0" },
+    { name = "pytest-mock", specifier = ">=3.14.0" },
 ]
 
 [[package]]
@@ -1073,87 +1091,6 @@ dependencies = [
 requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
-]
-
-[[package]]
-name = "kiarina-python"
-version = "2.2.1"
-source = { virtual = "." }
-dependencies = [
-    { name = "kiarina" },
-    { name = "kiarina-currency" },
-    { name = "kiarina-i18n" },
-    { name = "kiarina-lib-anthropic" },
-    { name = "kiarina-lib-cloudflare" },
-    { name = "kiarina-lib-cloudflare-d1" },
-    { name = "kiarina-lib-falkordb" },
-    { name = "kiarina-lib-firebase" },
-    { name = "kiarina-lib-firebase-rtdb" },
-    { name = "kiarina-lib-google" },
-    { name = "kiarina-lib-openai" },
-    { name = "kiarina-lib-redis" },
-    { name = "kiarina-lib-redisearch" },
-    { name = "kiarina-lib-slack" },
-    { name = "kiarina-utils-common" },
-    { name = "kiarina-utils-file" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "pytest-mock" },
-    { name = "ruff" },
-    { name = "types-aiofiles" },
-    { name = "types-pyyaml" },
-]
-test = [
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "pytest-mock" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "kiarina", editable = "packages/kiarina" },
-    { name = "kiarina-currency", editable = "packages/kiarina-currency" },
-    { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
-    { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
-    { name = "kiarina-lib-cloudflare", editable = "packages/kiarina-lib-cloudflare" },
-    { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
-    { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
-    { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },
-    { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
-    { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
-    { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
-    { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
-    { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
-    { name = "kiarina-lib-slack", editable = "packages/kiarina-lib-slack" },
-    { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
-    { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "mypy", specifier = ">=1.17.0" },
-    { name = "pre-commit", specifier = ">=4.3.0" },
-    { name = "pytest", specifier = ">=8.4.0" },
-    { name = "pytest-asyncio", specifier = ">=1.1.0" },
-    { name = "pytest-cov", specifier = ">=6.2.0" },
-    { name = "pytest-mock", specifier = ">=3.14.0" },
-    { name = "ruff", specifier = ">=0.12.0" },
-    { name = "types-aiofiles", specifier = ">=24.1.0.20250809" },
-    { name = "types-pyyaml", specifier = ">=6.0.12.20250809" },
-]
-test = [
-    { name = "pytest", specifier = ">=8.4.0" },
-    { name = "pytest-asyncio", specifier = ">=1.1.0" },
-    { name = "pytest-cov", specifier = ">=6.2.0" },
-    { name = "pytest-mock", specifier = ">=3.14.0" },
 ]
 
 [[package]]

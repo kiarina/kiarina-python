@@ -34,7 +34,7 @@ has_unreleased_changes() {
 }
 
 if [ -n "$release_version" ]; then
-    root_version="$(get_project_version pyproject.toml)"
+    root_version="$(cat VERSION)"
     if [ "$root_version" != "$release_version" ]; then
         echo "❌ Root version $root_version does not match release version $release_version" >&2
         exit 1

@@ -82,7 +82,7 @@ while IFS= read -r package; do
 done < "$changed_packages_file"
 
 echo "📝 Updating root and meta-package versions..."
-update_project_version pyproject.toml
+echo "$new_version" > VERSION
 update_project_version packages/kiarina/pyproject.toml
 
 echo ""
