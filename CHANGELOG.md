@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **kiarina-lib-google**: Restructure the package README, correct configuration examples, document all public APIs, and add a service integration pattern.
+- Convert the repository root into a uv virtual workspace by removing the non-distributable `[project]` table from the root `pyproject.toml`. The repository version is now tracked in a `VERSION` file, read and written by the `package:list` and `pyproject:bump-version` tasks.
 
 ### Changed (BREAKING)
 - **kiarina-utils-common**: Rename the public `ConfigStr` type alias to `ConfigString`.
