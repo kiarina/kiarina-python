@@ -101,8 +101,8 @@ Firebase test project と `.env` を用意して統合テストを実行しま�
 ### Run Tests
 
 ```bash
-mise run package:test kiarina-lib-firebase-rtdb
-mise run package:test kiarina-lib-firebase-rtdb --coverage
+mise run test kiarina-lib-firebase-rtdb
+mise run test kiarina-lib-firebase-rtdb --coverage
 ```
 
 ## Dependencies

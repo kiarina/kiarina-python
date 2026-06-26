@@ -92,8 +92,8 @@ Cloudflare 認証情報は `kiarina-lib-cloudflare` の settings を利用しま
 ## Testing
 
 ```bash
-mise run package:check kiarina-lib-cloudflare-d1
-mise run package:test kiarina-lib-cloudflare-d1 --coverage
+cd packages/kiarina-lib-cloudflare-d1 && make check
+mise run test kiarina-lib-cloudflare-d1 --coverage
 ```
 
 ## Dependencies

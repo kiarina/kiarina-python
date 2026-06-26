@@ -143,8 +143,8 @@ mise run setup
 ### Running Tests
 
 ```bash
-mise run package:check kiarina-lib-slack
-mise run package:test kiarina-lib-slack --coverage
+cd packages/kiarina-lib-slack && make check
+mise run test kiarina-lib-slack --coverage
 ```
 
 ## Dependencies

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+#MISE description="Lint and type check (all, or a single [package])"
+#USAGE arg "[package]" help="Package name (default: current package, or all at repo root)"
+
+set -euo pipefail
+
+target="${usage_package:-$(cd "${MISE_ORIGINAL_CWD:-$PWD}" && mise run package:current)}"
+
+# Resolve "all" by recursing once per package (meta-packages excluded).
+if [ "$target" = "all" ]; then
+    while IFS= read -r package; do
+        mise run lint "$package"
+    done < <(mise run package:list)
+    exit 0
+fi
+
+# Single-package lint.
+if [ ! -d "packages/$target" ]; then
+    echo "❌ Package not found: $target" >&2
+    exit 1
+fi
+
+echo "⚙️ Running linting for $target..."
+
+paths=()
+if [ -d "packages/$target/src" ]; then
+    paths+=("packages/$target/src/")
+fi
+
+if [ -d "packages/$target/tests" ]; then
+    paths+=("packages/$target/tests/")
+fi
+
+if [ ${#paths[@]} -eq 0 ]; then
+    echo "⚠️  No src or tests directories found for $target"
+    exit 0
+fi
+
+status=0
+
+# Run ruff check
+echo "🔧 Running ruff check..."
+uv run --group dev ruff check "${paths[@]}" || status=1
+
+# Run ruff format check
+echo "🔧 Running ruff format check..."
+uv run --group dev ruff format --check "${paths[@]}" || status=1
+
+# Run mypy
+if [ -d "packages/$target/src" ]; then
+    echo "🔍 Running mypy..."
+    uv run --group dev mypy "packages/$target/src/" || status=1
+fi
+
+if [ $status -ne 0 ]; then
+    echo "❌ Linting failed for $target"
+    exit $status
+fi

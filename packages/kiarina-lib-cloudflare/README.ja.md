@@ -123,8 +123,8 @@ mise run setup
 ### Running Tests
 
 ```bash
-mise run package:check kiarina-lib-cloudflare
-mise run package:test kiarina-lib-cloudflare --coverage
+cd packages/kiarina-lib-cloudflare && make check
+mise run test kiarina-lib-cloudflare --coverage
 ```
 
 ## Dependencies

@@ -132,8 +132,8 @@ mise run setup
 ### Running Tests
 
 ```bash
-mise run package:check kiarina-lib-anthropic
-mise run package:test kiarina-lib-anthropic --coverage
+cd packages/kiarina-lib-anthropic && make check
+mise run test kiarina-lib-anthropic --coverage
 ```
 
 ## Dependencies

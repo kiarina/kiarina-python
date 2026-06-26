@@ -381,10 +381,10 @@ uv sync --group dev
 
 ```bash
 # Run all tests
-mise run package:test kiarina-utils-file
+mise run test kiarina-utils-file
 
 # Run with coverage
-mise run package:test kiarina-utils-file --coverage
+mise run test kiarina-utils-file --coverage
 
 # Run specific test files
 uv run --group test pytest tests/file/test_kiarina_utils_file_sync.py
@@ -395,13 +395,13 @@ uv run --group test pytest tests/file/test_kiarina_utils_file_async.py
 
 ```bash
 # Format code
-mise run package:format kiarina-utils-file
+mise run format kiarina-utils-file
 
 # Run linting and type checking
-mise run package:lint kiarina-utils-file
+mise run lint kiarina-utils-file
 
 # Run all checks
-mise run package:check kiarina-utils-file
+cd packages/kiarina-utils-file && make check
 ```
 
 ## Performance

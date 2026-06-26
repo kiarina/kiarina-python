@@ -112,8 +112,8 @@ RediSearch module が有効な Redis が必要です。
 
 ```bash
 docker compose up -d redis
-mise run package:test kiarina-lib-redisearch
-mise run package:test kiarina-lib-redisearch --coverage
+mise run test kiarina-lib-redisearch
+mise run test kiarina-lib-redisearch --coverage
 ```
 
 ## Dependencies

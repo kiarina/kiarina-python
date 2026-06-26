@@ -194,16 +194,16 @@ mise run setup
 ### Running Tests
 
 ```bash
-mise run package:test kiarina-utils-file
-mise run package:test kiarina-utils-file --coverage
+mise run test kiarina-utils-file
+mise run test kiarina-utils-file --coverage
 ```
 
 ### Code Quality
 
 ```bash
-mise run package:format kiarina-utils-file
-mise run package:lint kiarina-utils-file
-mise run package:check kiarina-utils-file
+mise run format kiarina-utils-file
+mise run lint kiarina-utils-file
+cd packages/kiarina-utils-file && make check
 ```
 
 ## Performance

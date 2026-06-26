@@ -27,7 +27,7 @@ Commit the implementation on the development branch.
 Implement tests.
 
 Execute the following to run Lint (auto fix), Format, Type Check, and Test, and confirm there are no issues.
-`mise run package:check $package_name`
+`cd packages/$package_name && make check`
 
 Run tests for all packages and confirm there are no issues.
 `mise run ci`

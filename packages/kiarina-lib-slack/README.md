@@ -323,10 +323,10 @@ mise run setup
 
 ```bash
 # Run format, lint, type checks and tests
-mise run package:check kiarina-lib-slack
+cd packages/kiarina-lib-slack && make check
 
 # Coverage report
-mise run package:test kiarina-lib-slack --coverage
+mise run test kiarina-lib-slack --coverage
 ```
 
 ## Dependencies

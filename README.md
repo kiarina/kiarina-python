@@ -201,28 +201,29 @@ make ci
 make clean
 ```
 
-The underlying mise tasks are namespaced under `all:`, such as `mise run all:format`, `mise run all:test`, and `mise run all:build`.
+The Makefile shortcuts run the underlying mise tasks (`mise run format`, `mise run test`, `mise run build`, …) without a package argument, which targets every package.
 
 #### Individual Packages
 
+Every task accepts an optional package name. Without one, it targets the package of the current directory (or all packages at the repository root):
+
 ```bash
-# Choose a package, then choose its task with fzf
-make package
-
 # Work with specific packages
-mise run package:format kiarina-utils-file
-mise run package:lint kiarina-utils-common
-mise run package:build kiarina-lib-redis
-
-# Omit the package name to choose one with fzf
-mise run package:format
+mise run format kiarina-utils-file
+mise run lint kiarina-utils-common
+mise run build kiarina-lib-redis
 
 # Test with coverage
-mise run package:test kiarina-utils-file --coverage
+mise run test kiarina-utils-file --coverage
 
 # Publish to PyPI
-mise run package:publish kiarina-utils-common
-mise run package:publish kiarina-lib-redis --test  # Test PyPI
+mise run publish kiarina-utils-common
+mise run publish kiarina-lib-redis --test  # Test PyPI
+
+# Or cd into a package and omit the name; each package has its own Makefile
+cd packages/kiarina-utils-file
+make format      # equivalent to: mise run format kiarina-utils-file
+make check       # format + lint + test with coverage
 ```
 
 #### Utility Tasks

@@ -1,4 +1,4 @@
-.PHONY: init update upgrade format lint check test build clean package ci
+.PHONY: init list update upgrade format lint check test build clean ci
 .DEFAULT_GOAL := check
 #--------------------------------------------------
 init:
@@ -11,20 +11,19 @@ update:
 upgrade:
 	uv sync --upgrade --all-packages --all-extras --all-groups
 clean:
-	mise run all:clean
+	mise run clean
 #--------------------------------------------------
 format:
-	mise run all:format
+	mise run format
 lint:
-	mise run all:lint
+	mise run lint
 test:
-	mise run all:test
+	mise run test
 build:
-	mise run all:build
+	mise run build
 #--------------------------------------------------
-package:
-	mise run package
 check:
-	mise run all:check
+	mise run format
+	mise run lint
 ci:
 	mise run ci
