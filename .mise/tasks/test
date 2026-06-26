@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+#MISE description="Run tests (all, or a single [package])"
+#USAGE arg "[package]" help="Package name (default: current package, or all at repo root)"
+#USAGE flag "-v --verbose" help="Verbose output"
+#USAGE flag "-c --coverage" help="Run with coverage"
+#USAGE flag "--no-clean" help="Skip cleaning previous coverage data (for CI)"
+#USAGE flag "--no-docker" help="Skip Docker Compose up/down (only used when running all)"
+
+set -euo pipefail
+
+target="${usage_package:-$(cd "${MISE_ORIGINAL_CWD:-$PWD}" && mise run package:current)}"
+verbose="${usage_verbose:-false}"
+coverage="${usage_coverage:-false}"
+no_clean="${usage_no_clean:-false}"
+no_docker="${usage_no_docker:-false}"
+
+# Resolve "all": orchestrate Docker, run every package with coverage appended,
+# then generate aggregate coverage reports (meta-packages excluded).
+if [ "$target" = "all" ]; then
+    if [ "$no_docker" = "false" ]; then
+        echo "🐳 Starting Docker services..."
+        docker compose up -d
+    fi
+
+    if [ "$coverage" = "true" ]; then
+        echo "🧹 Cleaning previous coverage data..."
+        rm -f .coverage .coverage.*
+    fi
+
+    while IFS= read -r package; do
+        test_args=("$package")
+        [ "$verbose" = "true" ] && test_args+=(--verbose)
+        if [ "$coverage" = "true" ]; then
+            test_args+=(--coverage --no-clean)
+        fi
+        mise run test "${test_args[@]}"
+    done < <(mise run package:list)
+
+    if [ "$coverage" = "true" ]; then
+        echo ""
+        echo "📊 Generating coverage reports..."
+
+        echo "📋 Generating coverage report..."
+        uv run --group test coverage report
+
+        echo "📄 Generating XML coverage report..."
+        uv run --group test coverage xml
+
+        echo "✅ Coverage reports generated:"
+        echo "   - Terminal report: shown above"
+        echo "   - XML report: coverage.xml"
+    fi
+
+    if [ "$no_docker" = "false" ]; then
+        echo "🐳 Stopping Docker services..."
+        docker compose down
+    fi
+
+    exit 0
+fi
+
+# Single-package test.
+if [ ! -d "packages/$target" ]; then
+    echo "❌ Package not found: $target" >&2
+    exit 1
+fi
+
+echo "🧪 Testing $target..."
+
+# Clean previous coverage data (unless --no-clean is specified)
+if [ "$coverage" = "true" ] && [ "$no_clean" = "false" ]; then
+    echo "🧹 Cleaning previous coverage data..."
+    rm -f .coverage .coverage.*
+fi
+
+# Test command construction
+test_cmd="uv run --group test pytest packages/$target/tests/"
+
+if [ "$verbose" = "true" ]; then
+    test_cmd="$test_cmd -v"
+fi
+
+if [ "$coverage" = "true" ]; then
+    echo "🔍 Running with coverage..."
+
+    # Detect all module paths by finding py.typed files
+    # This handles packages with multiple modules (e.g., kiarina-utils-file has file, ext, encoding, mime)
+    module_paths=$(find "packages/$target/src" -name "py.typed" -exec dirname {} \; | sed "s|packages/$target/src/||" | tr '/' '.')
+
+    if [ -z "$module_paths" ]; then
+        echo "❌ Could not detect module paths for $target (no py.typed found)"
+        exit 1
+    fi
+
+    # Add --cov for each module
+    while IFS= read -r module; do
+        test_cmd="$test_cmd --cov=$module"
+    done <<< "$module_paths"
+
+    # Append to existing coverage data when --no-clean is used
+    if [ "$no_clean" = "true" ]; then
+        test_cmd="$test_cmd --cov-append"
+    fi
+fi
+
+# Test execution
+eval "$test_cmd"

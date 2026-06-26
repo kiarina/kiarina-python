@@ -121,10 +121,10 @@ kiarina.currency.rate_provider:
 ## Testing
 
 ```bash
-mise run package:test kiarina-currency
+mise run test kiarina-currency
 
 export KIARINA_CURRENCY_RATE_PROVIDER_IMPL_FRANKFURTER_TEST_ENABLED=1
-mise run package:test kiarina-currency
+mise run test kiarina-currency
 ```
 
 ## Dependencies

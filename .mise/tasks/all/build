@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Build all packages"
-
-set -euo pipefail
-
-while IFS= read -r package; do
-    mise run package:build "$package"
-done < <(mise run package:list --all)

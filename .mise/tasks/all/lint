@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Lint and type check all packages"
-
-set -euo pipefail
-
-while IFS= read -r package; do
-    mise run package:lint "$package"
-done < <(mise run package:list)

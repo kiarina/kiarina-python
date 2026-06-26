@@ -205,8 +205,8 @@ catalog loading や default language など、application 側の設定に合わ�
 ## Testing
 
 ```bash
-mise run package:test kiarina-i18n
-mise run package:test kiarina-i18n --coverage
+mise run test kiarina-i18n
+mise run test kiarina-i18n --coverage
 ```
 
 ## Dependencies

@@ -71,8 +71,8 @@ kiarina.lib.redis:
 
 ```bash
 docker compose up -d redis
-mise run package:test kiarina-lib-redis
-mise run package:test kiarina-lib-redis --coverage
+mise run test kiarina-lib-redis
+mise run test kiarina-lib-redis --coverage
 ```
 
 ## Dependencies

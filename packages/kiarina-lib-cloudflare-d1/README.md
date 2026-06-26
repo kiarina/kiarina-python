@@ -296,10 +296,10 @@ Run tests:
 
 ```bash
 # Run all checks
-mise run package:check kiarina-lib-cloudflare-d1
+cd packages/kiarina-lib-cloudflare-d1 && make check
 
 # Run tests with coverage
-mise run package:test kiarina-lib-cloudflare-d1 --coverage
+mise run test kiarina-lib-cloudflare-d1 --coverage
 ```
 
 Tests will be skipped if credentials are not configured.

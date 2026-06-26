@@ -31,7 +31,7 @@ development branch に実装を commit します。
 
 次を実行して Lint（auto fix）、Format、Type Check、Test を行い、問題がないことを確認します。
 
-`mise run package:check $package_name`
+`cd packages/$package_name && make check`
 
 すべてのパッケージのテストを実行し、問題がないことを確認します。
 

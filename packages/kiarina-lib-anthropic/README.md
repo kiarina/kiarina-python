@@ -225,10 +225,10 @@ mise run setup
 
 ```bash
 # Run format, lint, type checks and tests
-mise run package:check kiarina-lib-anthropic
+cd packages/kiarina-lib-anthropic && make check
 
 # Coverage report
-mise run package:test kiarina-lib-anthropic --coverage
+mise run test kiarina-lib-anthropic --coverage
 ```
 
 ## Dependencies

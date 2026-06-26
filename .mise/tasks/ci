@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Run CI checks (setup, all:lint, all:test, all:build)"
+#MISE description="Run CI checks (setup, lint, test, build)"
 #USAGE flag "--no-setup" help="Skip setup step (useful when environment is already prepared)"
 #USAGE flag "--no-docker" help="Skip Docker Compose up/down during testing"
 
@@ -21,19 +21,19 @@ fi
 
 echo ""
 echo "🔍 Step 2/4: Lint check..."
-mise run all:lint
+mise run lint
 
 echo ""
 echo "🧪 Step 3/4: Test..."
 if [ "$no_docker" = "true" ]; then
-    mise run all:test --coverage --no-docker
+    mise run test --coverage --no-docker
 else
-    mise run all:test --coverage
+    mise run test --coverage
 fi
 
 echo ""
 echo "🏗️  Step 4/4: Build check..."
-mise run all:build
+mise run build
 
 echo ""
 echo "✅ All CI checks passed!"

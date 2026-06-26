@@ -308,10 +308,10 @@ client.migrate_index()
 docker compose up -d redis
 
 # Run all tests for this package
-mise run package:test kiarina-lib-redisearch
+mise run test kiarina-lib-redisearch
 
 # Run with coverage
-mise run package:test kiarina-lib-redisearch --coverage
+mise run test kiarina-lib-redisearch --coverage
 ```
 
 ## Dependencies

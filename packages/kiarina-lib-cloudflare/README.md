@@ -213,10 +213,10 @@ mise run setup
 
 ```bash
 # Run format, lint, type checks and tests
-mise run package:check kiarina-lib-cloudflare
+cd packages/kiarina-lib-cloudflare && make check
 
 # Coverage report
-mise run package:test kiarina-lib-cloudflare --coverage
+mise run test kiarina-lib-cloudflare --coverage
 ```
 
 ## Dependencies

@@ -136,8 +136,8 @@ mise run setup
 ### Running Tests
 
 ```bash
-mise run package:check kiarina-lib-openai
-mise run package:test kiarina-lib-openai --coverage
+cd packages/kiarina-lib-openai && make check
+mise run test kiarina-lib-openai --coverage
 ```
 
 ## Dependencies

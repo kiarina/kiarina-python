@@ -201,28 +201,29 @@ make ci
 make clean
 ```
 
-内部の mise task は `all:` 名前空間に整理されています。例：`mise run all:format`、`mise run all:test`、`mise run all:build`
+Makefile のショートカットは、内部の mise task（`mise run format`、`mise run test`、`mise run build` など）をパッケージ引数なしで実行し、全パッケージを対象にします。
 
 #### Individual Packages
 
+各 task はパッケージ名を任意で受け取ります。省略した場合は、カレントディレクトリのパッケージ（リポジトリルートでは全パッケージ）を対象にします：
+
 ```bash
-# package を選択し、その後 task を fzf で選択
-make package
-
 # 特定のパッケージでの作業
-mise run package:format kiarina-utils-file
-mise run package:lint kiarina-utils-common
-mise run package:build kiarina-lib-redis
-
-# パッケージ名を省略すると fzf で選択できます
-mise run package:format
+mise run format kiarina-utils-file
+mise run lint kiarina-utils-common
+mise run build kiarina-lib-redis
 
 # カバレッジ付きのテスト
-mise run package:test kiarina-utils-file --coverage
+mise run test kiarina-utils-file --coverage
 
 # PyPIへの公開
-mise run package:publish kiarina-utils-common
-mise run package:publish kiarina-lib-redis --test  # Test PyPIへの公開
+mise run publish kiarina-utils-common
+mise run publish kiarina-lib-redis --test  # Test PyPIへの公開
+
+# または、パッケージに cd して名前を省略できます。各パッケージは独自の Makefile を持ちます
+cd packages/kiarina-utils-file
+make format      # mise run format kiarina-utils-file と同等
+make check       # format + lint + カバレッジ付きの test
 ```
 
 #### Utility Tasks

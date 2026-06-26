@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#MISE description="Print the current package target (\"all\" at repository root)"
+
+set -euo pipefail
+
+# At the repository root there is no specific package in context, so the
+# resolution target is "all". Inside a package directory this task is shadowed
+# by packages/<package>/.mise/tasks/package/current, which prints that package.
+echo "all"

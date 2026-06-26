@@ -147,10 +147,10 @@ All settings can be configured via environment variables with the `KIARINA_LIB_F
 docker compose up -d falkordb
 
 # Run tests
-mise run package:test kiarina-lib-falkordb
+mise run test kiarina-lib-falkordb
 
 # With coverage
-mise run package:test kiarina-lib-falkordb --coverage
+mise run test kiarina-lib-falkordb --coverage
 ```
 
 ## Dependencies

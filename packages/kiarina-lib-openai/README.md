@@ -265,10 +265,10 @@ mise run setup
 
 ```bash
 # Run format, lint, type checks and tests
-mise run package:check kiarina-lib-openai
+cd packages/kiarina-lib-openai && make check
 
 # Coverage report
-mise run package:test kiarina-lib-openai --coverage
+mise run test kiarina-lib-openai --coverage
 ```
 
 ## Dependencies

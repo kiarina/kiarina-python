@@ -165,10 +165,10 @@ export KIARINA_LIB_REDIS_SOCKET_TIMEOUT="10.0"
 docker compose up -d redis
 
 # Run tests
-mise run package:test kiarina-lib-redis
+mise run test kiarina-lib-redis
 
 # With coverage
-mise run package:test kiarina-lib-redis --coverage
+mise run test kiarina-lib-redis --coverage
 ```
 
 ## Dependencies

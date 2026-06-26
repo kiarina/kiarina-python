@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#MISE description="Clean build/cache artifacts (all, or a single [package])"
+#USAGE arg "[package]" help="Package name (default: current package, or all at repo root)"
+
+set -euo pipefail
+
+target="${usage_package:-$(cd "${MISE_ORIGINAL_CWD:-$PWD}" && mise run package:current)}"
+
+# Resolve "all" by recursing once per package (meta-packages included),
+# then clean root-level caches.
+if [ "$target" = "all" ]; then
+    while IFS= read -r package; do
+        mise run clean "$package"
+    done < <(mise run package:list --all)
+
+    if [ -d ".mypy_cache" ]; then
+        echo "🔍 Removing root-level .mypy_cache/"
+        rm -rf ".mypy_cache"
+    fi
+
+    if [ -d ".pytest_cache" ]; then
+        echo "🧪 Removing root-level .pytest_cache/"
+        rm -rf ".pytest_cache"
+    fi
+
+    if [ -d "dist" ]; then
+        echo "📦 Removing root-level dist/"
+        rm -rf "dist"
+    fi
+
+    exit 0
+fi
+
+# Single-package clean.
+if [ ! -d "packages/$target" ]; then
+    echo "❌ Package not found: $target" >&2
+    exit 1
+fi
+
+echo "🧹 Cleaning artifacts for $target..."
+
+package_dir="packages/$target"
+
+# Remove build directories
+for dir in "$package_dir/build/" "$package_dir/dist/" "$package_dir"/*.egg-info/ "$package_dir/src/"*.egg-info/; do
+    if [ -d "$dir" ]; then
+        echo "  📦 Removing $(basename "$dir")"
+        rm -rf "$dir"
+    fi
+done
+
+# Clean Python cache files in package directory
+echo "🐍 Removing Python cache files..."
+find "$package_dir" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+find "$package_dir" -type f -name "*.pyc" -delete 2>/dev/null || true
+find "$package_dir" -type f -name "*.pyo" -delete 2>/dev/null || true
+
+# Clean ruff cache
+if [ -d "$package_dir/.ruff_cache" ]; then
+    echo "🔧 Removing .ruff_cache/"
+    rm -rf "$package_dir/.ruff_cache"
+fi
+
+# Clean mypy cache
+if [ -d "$package_dir/.mypy_cache" ]; then
+    echo "🔍 Removing .mypy_cache/"
+    rm -rf "$package_dir/.mypy_cache"
+fi
+
+# Clean pytest cache
+if [ -d "$package_dir/.pytest_cache" ]; then
+    echo "🧪 Removing .pytest_cache/"
+    rm -rf "$package_dir/.pytest_cache"
+fi
