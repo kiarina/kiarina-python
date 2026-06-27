@@ -38,6 +38,8 @@ sample/
   hoge/
     _instances/
       hoge_registry.py
+    _services/
+      base_hoge.py
     _types/
       hoge.py
       hoge_name.py
@@ -72,6 +74,21 @@ HogeSpecifier: TypeAlias = str
 class Hoge(Protocol):
     name: HogeName
     def hello(self) -> None: ...
+
+# sample/hoge/_services/base_hoge.py
+class BaseHoge(Hoge):
+    def __init__(self) -> None:
+        self._name: HogeName | None = None
+
+    @property
+    def name(self) -> HogeName:
+        if self._name is None:
+            raise ValueError("name is not set")
+        return self._name
+
+    @name.setter
+    def name(self, value: HogeName) -> None:
+        self._name = value
 
 # sample/hoge/_settings.py
 class HogeSettings(BaseSettings):
@@ -117,6 +134,7 @@ hoge_registry = ComponentRegistry[Hoge](
 
 # sample/hoge/__init__.py
 __all__ = [
+    "BaseHoge",
     "Hoge",
     "HogeName",
     "HogeAlias",
@@ -139,20 +157,10 @@ class VanillaHogeSettings(BaseSettings):
 settings_manager = SettingsManager(VanillaHogeSettings)
 
 # sample/hoge_impl/vanilla/_services/vanilla_hoge.py
-class VanillaHoge(Hoge):
+class VanillaHoge(BaseHoge):
     def __init__(self, settings: VanillaHogeSettings) -> None:
+        super().__init__()
         self.settings: VanillaHogeSettings = settings
-        self._name: HogeName | None = None
-
-    @property
-    def name(self) -> HogeName:
-        if self._name is None:
-            raise ValueError("name is not set")
-        return self._name
-
-    @name.setter
-    def name(self, value: HogeName) -> None:
-        self._name = value
 
     def hello(self) -> None:
         print(self.settings.message)
