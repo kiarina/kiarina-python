@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 #MISE description="Download and decrypt test settings from Google Cloud Storage"
+#USAGE long_about "Download and decrypt test settings from Google Cloud Storage.\n\nSee https://github.com/kiarina/test-settings for details."
 #USAGE flag "--force" help="Replace existing local test settings"
 #USAGE flag "--dry-run" help="Show remote files and local destinations without downloading"
 
@@ -8,50 +9,25 @@ set -euo pipefail
 force="${usage_force:-false}"
 dry_run="${usage_dry_run:-false}"
 
-require_env() {
-    local name="$1"
-
-    if [ -z "${!name:-}" ]; then
-        echo "❌ Environment variable $name is required." >&2
-        exit 1
-    fi
-}
-
-require_command() {
-    local name="$1"
-
-    if ! command -v "$name" >/dev/null 2>&1; then
-        echo "❌ Required command not found: $name" >&2
-        exit 1
-    fi
-}
-
-require_env "KIARINA_TEST_SETTINGS_GCS_URI"
-require_command "gcloud"
-
-gcs_uri="${KIARINA_TEST_SETTINGS_GCS_URI%/}"
-
-if ! [[ "$gcs_uri" =~ ^gs://[^/]+(/.*)?$ ]]; then
-    echo "❌ KIARINA_TEST_SETTINGS_GCS_URI must contain a bucket name." >&2
+if ! command -v gcloud >/dev/null 2>&1; then
+    echo "❌ Required command not found: gcloud" >&2
     exit 1
 fi
 
-case "$gcs_uri" in
-    *'*'*|*'?'*|*'['*)
-        echo "❌ KIARINA_TEST_SETTINGS_GCS_URI must not contain wildcards." >&2
-        exit 1
-        ;;
-esac
-
-gcs_path="${gcs_uri#gs://}"
-if [[ "$gcs_path" == *'//'* ]]; then
-    echo "❌ KIARINA_TEST_SETTINGS_GCS_URI contains an empty path segment." >&2
-    exit 1
-fi
+gcs_uri="$(mise run test-settings:resolve_gcs_uri)"
 
 if [ "$dry_run" = "false" ]; then
-    require_env "KIARINA_TEST_SETTINGS_AGE_IDENTITY"
-    require_command "age"
+    if ! command -v age >/dev/null 2>&1; then
+        echo "❌ Required command not found: age" >&2
+        exit 1
+    fi
+
+    key_file="${TEST_SETTINGS_AGE_KEYS_PATH:-$HOME/.config/test-settings/age/keys.txt}"
+    if [ ! -f "$key_file" ]; then
+        echo "❌ age key not found: $key_file" >&2
+        echo "   Run 'mise run age:init' or 'mise run secret-manager:download' first." >&2
+        exit 1
+    fi
 fi
 
 repository_root="$(git rev-parse --show-toplevel)"
@@ -157,10 +133,6 @@ if [ "$dry_run" = "true" ]; then
     exit 0
 fi
 
-identity_file="$staging_dir/identity"
-printf '%s\n' "$KIARINA_TEST_SETTINGS_AGE_IDENTITY" >"$identity_file"
-chmod 600 "$identity_file"
-
 for index in "${!remote_uris[@]}"; do
     remote_uri="${remote_uris[$index]}"
     relative_path="${relative_paths[$index]}"
@@ -174,7 +146,7 @@ for index in "${!remote_uris[@]}"; do
 
     if ! age \
         --decrypt \
-        --identity "$identity_file" \
+        --identity "$key_file" \
         --output "$temporary_path" \
         "$encrypted_path"; then
         rm -f "$temporary_path"
