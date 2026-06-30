@@ -163,9 +163,11 @@ class Catalog:
                     if item.is_file() and item.name.endswith((".yaml", ".yml")):
                         yaml_files.append(item)
 
-            except (FileNotFoundError, OSError):
+            except (FileNotFoundError, OSError) as e:
                 # Package directory doesn't exist or can't be accessed
-                raise FileNotFoundError(f"Package directory not accessible: {package}")
+                raise FileNotFoundError(
+                    f"Package directory not accessible: {package}"
+                ) from e
 
             if not yaml_files:
                 raise FileNotFoundError(f"No YAML files found in package: {package}")

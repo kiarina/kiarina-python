@@ -36,10 +36,10 @@ def marshal_mappings(
         elif field.type == "numeric":
             try:
                 marshaled[key] = float(value)
-            except (TypeError, ValueError):
+            except (TypeError, ValueError) as e:
                 raise ValueError(
                     f"Field '{key}' requires a numeric value. Got: {value}"
-                )
+                ) from e
 
         elif field.type == "text":
             marshaled[key] = str(value)

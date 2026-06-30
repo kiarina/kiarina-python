@@ -35,10 +35,10 @@ async def test_before_get_id_token(api_key, token_data):
     )
 
     with pytest.raises(AssertionError, match="Refresh token is not set\\."):
-        manager.refresh_token
+        _ = manager.refresh_token
 
     with pytest.raises(AssertionError, match="Token data is not set\\."):
-        manager.token_data
+        _ = manager.token_data
 
 
 async def test_happy_path(api_key, token_data):

@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from kiarina.i18n import I18n
 
@@ -39,7 +40,7 @@ def test_i18n_immutable():
     i18n = MyI18n()
 
     # Should raise error when trying to modify
-    with pytest.raises(Exception):  # ValidationError or AttributeError
+    with pytest.raises(ValidationError):
         i18n.title = "New Title"  # type: ignore
 
 
@@ -50,7 +51,7 @@ def test_i18n_forbid_extra_fields():
         title: str = "My Title"
 
     # Should raise error when passing extra fields
-    with pytest.raises(Exception):  # ValidationError
+    with pytest.raises(ValidationError):
         MyI18n(extra_field="value")  # type: ignore
 
 

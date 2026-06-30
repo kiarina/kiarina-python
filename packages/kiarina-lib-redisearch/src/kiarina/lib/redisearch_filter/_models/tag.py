@@ -130,8 +130,8 @@ class Tag(BaseFieldFilter):
         if isinstance(other, (list, set, tuple)):
             try:
                 return [str(val) for val in other if val]
-            except ValueError:
-                raise ValueError("All tags within collection must be strings")
+            except ValueError as e:
+                raise ValueError("All tags within collection must be strings") from e
 
         elif not other:
             return []

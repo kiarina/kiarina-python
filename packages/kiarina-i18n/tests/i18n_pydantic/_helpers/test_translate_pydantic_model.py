@@ -1,7 +1,7 @@
 from typing import get_args
 
 import pytest
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 from kiarina.i18n import catalog
 from kiarina.i18n_pydantic import translate_pydantic_model
@@ -162,11 +162,11 @@ def test_translate_pydantic_model_validation_works():
     assert instance.age == 30
 
     # Invalid: empty name
-    with pytest.raises(Exception):  # ValidationError
+    with pytest.raises(ValidationError):
         HogeJa(name="", age=30)
 
     # Invalid: negative age
-    with pytest.raises(Exception):  # ValidationError
+    with pytest.raises(ValidationError):
         HogeJa(name="Alice", age=-1)
 
 
@@ -245,7 +245,7 @@ def test_translate_pydantic_model_preserves_model_config():
 
     # Test frozen behavior
     instance = HogeJa(name="Alice")
-    with pytest.raises(Exception):  # ValidationError
+    with pytest.raises(ValidationError):
         instance.name = "Bob"  # type: ignore
 
 

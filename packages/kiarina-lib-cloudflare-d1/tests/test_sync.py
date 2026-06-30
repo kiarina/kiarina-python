@@ -18,7 +18,7 @@ def test_error(load_settings) -> None:
     assert len(result.errors) > 0
 
     with pytest.raises(ValueError, match="No results available"):
-        result.first
+        _ = result.first
 
     with pytest.raises(RuntimeError, match="Query failed:"):
         result.raise_for_status()
