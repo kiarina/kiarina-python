@@ -1,4 +1,4 @@
-name: Release
+name: Release PyPI
 
 on:
   push:
@@ -8,9 +8,12 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
     permissions:
       contents: write
-    
+      id-token: write
+
     services:
       redis:
         image: redis:latest
@@ -90,8 +93,6 @@ jobs:
       if: ${{ hashFiles('dist/*') != '' }}
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
         packages-dir: dist/
         skip-existing: true
         verbose: true
