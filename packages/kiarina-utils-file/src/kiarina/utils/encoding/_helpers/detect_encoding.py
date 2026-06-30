@@ -2,7 +2,7 @@ from .._operations.detect_with_charset_normalizer import detect_with_charset_nor
 from .._operations.detect_with_fallback import detect_with_fallback
 from .._operations.detect_with_nkf import detect_with_nkf
 from .._operations.should_use_nkf import should_use_nkf
-from ..settings import settings_manager
+from .._settings import settings_manager
 
 
 def detect_encoding(

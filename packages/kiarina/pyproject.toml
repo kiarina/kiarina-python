@@ -48,6 +48,7 @@ dependencies = [
     "kiarina-lib-redis>=1.0.1",
     "kiarina-lib-redisearch>=1.0.1",
     "kiarina-lib-slack>=1.31.0",
+    "kiarina-utils-app>=0.1.0",
     "kiarina-utils-common>=2.2.0",
     "kiarina-utils-file>=1.0.1",
 ]

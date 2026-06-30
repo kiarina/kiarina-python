@@ -10,7 +10,7 @@ from kiarina.utils.encoding import (
 )
 from kiarina.utils.ext import detect_extension
 
-from ..settings import settings_manager
+from .._settings import settings_manager
 
 logger = logging.getLogger(__name__)
 

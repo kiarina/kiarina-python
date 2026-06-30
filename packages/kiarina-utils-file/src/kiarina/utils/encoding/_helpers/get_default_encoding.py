@@ -1,4 +1,4 @@
-from ..settings import settings_manager
+from .._settings import settings_manager
 
 
 def get_default_encoding() -> str:

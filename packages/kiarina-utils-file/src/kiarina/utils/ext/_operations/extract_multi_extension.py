@@ -2,7 +2,7 @@ import os
 import pathlib
 
 from .._utils.clean_url_path import clean_url_path
-from ..settings import settings_manager
+from .._settings import settings_manager
 
 
 def extract_multi_extension(

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from ._helpers.get_default_encoding import get_default_encoding
     from ._helpers.is_binary import is_binary
     from ._utils.normalize_newlines import normalize_newlines
-    from .settings import settings_manager
+    from ._settings import settings_manager
 
 __version__ = "1.0.0"
 
@@ -33,7 +33,7 @@ __all__ = [
     "detect_encoding",
     "get_default_encoding",
     "is_binary",
-    # .settings
+    # ._settings
     "settings_manager",
     # .utils
     "normalize_newlines",
@@ -52,8 +52,8 @@ def __getattr__(name: str) -> object:
         "detect_encoding": "._helpers.detect_encoding",
         "get_default_encoding": "._helpers.get_default_encoding",
         "is_binary": "._helpers.is_binary",
-        # .settings
-        "settings_manager": ".settings",
+        # ._settings
+        "settings_manager": "._settings",
         # .utils
         "normalize_newlines": "._utils.normalize_newlines",
     }
