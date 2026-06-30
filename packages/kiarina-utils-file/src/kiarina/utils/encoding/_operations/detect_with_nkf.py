@@ -2,7 +2,7 @@ import logging
 import subprocess
 import threading
 
-from ..settings import settings_manager
+from .._settings import settings_manager
 
 logger = logging.getLogger(__name__)
 

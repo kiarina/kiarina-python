@@ -3,7 +3,7 @@ import os
 
 import kiarina.utils.ext as ke
 
-from ..settings import settings_manager
+from .._settings import settings_manager
 
 logger = logging.getLogger(__name__)
 

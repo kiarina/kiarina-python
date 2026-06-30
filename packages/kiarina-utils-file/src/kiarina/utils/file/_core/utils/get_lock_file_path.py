@@ -9,7 +9,7 @@ from unicodedata import normalize
 
 from filelock import FileLock, Timeout
 
-from ...settings import settings_manager
+from ..._settings import settings_manager
 
 
 def get_lock_file_path(file_path: str | os.PathLike[str]) -> str:

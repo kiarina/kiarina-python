@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Rename internal `settings` module to `_settings` to mark it as private.
+
 ## [2.1.0] - 2026-06-22
 
 ### Changed
