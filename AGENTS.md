@@ -7,6 +7,7 @@
 あらゆるタスクを開始する前に、下記を必ず把握してください。
 - `pyproject.toml`
 - `README.md`
+- `mise.toml`
 - `.mise/tasks/`
 - `Makefile`
 
@@ -18,6 +19,9 @@
 
 pydantic-settings に関連したタスクを行う場合は、先に下記を把握してください。
 - https://github.com/kiarina/pydantic-settings-manager
+
+新しいパッケージを追加する際は、作業前に下記を把握してください。
+- docs/runbooks/add_new_package/README.md
 
 リリースする際は、作業前に下記を把握してください。
 - docs/runbooks/release/README.md
