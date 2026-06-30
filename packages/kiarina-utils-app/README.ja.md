@@ -93,3 +93,134 @@ try:
 finally:
     single_instance.release()
 ```
+
+## API Reference
+
+### `kiarina.utils.app`
+
+```python
+from kiarina.utils.app import (
+    configure,
+    reset,
+    single_instance,
+    user_directory,
+    AppSettings,
+    settings_manager,
+    AlreadyRunningError,
+    AppAlreadyConfiguredError,
+    AppNotConfiguredError,
+)
+```
+
+#### `configure`
+
+```python
+def configure(app_name: str, app_author: str) -> None: ...
+```
+
+起動時に一度だけアプリケーションの識別子を設定します。アプリ名と作者は、ユーザーディレクトリやロックファイルの名前空間として使われます。
+
+**Parameters**
+
+- `app_name` (`str`): アプリケーション名。
+- `app_author` (`str`): アプリケーションの作者。
+
+**Raises**
+
+- `AppAlreadyConfiguredError`: アプリ名または作者がすでに設定済みの場合。
+
+#### `reset`
+
+```python
+def reset() -> None: ...
+```
+
+設定済みのアプリ名と作者をクリアします。テストでの利用を想定しています。
+
+#### `single_instance`
+
+`single_instance` サービスモジュールは、ユーザーキャッシュディレクトリ配下に置いた OS レベルのアドバイザリロックファイルを使って、重複起動を防ぎます。
+
+```python
+def acquire(*, timeout: float = 10.0) -> None: ...
+
+def release() -> None: ...
+```
+
+- `acquire` は最大 `timeout` 秒まで待機してロックの取得を試み、すでに他のインスタンスが保持している場合は `AlreadyRunningError` を送出します。
+- `release` は現在ロックを保持している場合に解放します。
+
+**Parameters**
+
+- `timeout` (`float`): ロック取得を待つ最大秒数（既定値: `10.0`）。
+
+**Raises**
+
+- `AlreadyRunningError`: 他のインスタンスがすでにロックを保持している場合。
+
+#### `user_directory`
+
+`user_directory` サービスモジュールは、設定値による上書き、`XDG_*` 環境変数、プラットフォーム既定値の順に尊重しながら、ユーザー固有のディレクトリを `Path` で解決します。
+
+```python
+def get_user_cache_dir() -> Path: ...
+
+def get_user_config_dir() -> Path: ...
+
+def get_user_data_dir() -> Path: ...
+```
+
+**Returns**
+
+- `Path`: 解決されたユーザーキャッシュ・設定・データディレクトリ。
+
+**Raises**
+
+- `AppNotConfiguredError`: アプリ名または作者が未設定の場合（プラットフォーム既定値にフォールバックするとき）。
+
+#### `AppSettings`
+
+```python
+class AppSettings(BaseSettings):
+    user_cache_dir: str | None = None
+    user_config_dir: str | None = None
+    user_data_dir: str | None = None
+```
+
+ディレクトリ上書き用の Pydantic 設定モデルです。`KIARINA_UTILS_APP_` プレフィックスの環境変数を読み込みます。
+
+**Fields**
+
+- `user_cache_dir` (`str | None`): ユーザーキャッシュディレクトリの上書き（既定値: `None`）。
+- `user_config_dir` (`str | None`): ユーザー設定ディレクトリの上書き（既定値: `None`）。
+- `user_data_dir` (`str | None`): ユーザーデータディレクトリの上書き（既定値: `None`）。
+
+#### `settings_manager`
+
+```python
+settings_manager: SettingsManager[AppSettings]
+```
+
+[pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) が提供する、`AppSettings` 用のグローバルな設定マネージャーインスタンスです。アクティブな設定には `settings_manager.settings` でアクセスします。
+
+```python
+from kiarina.utils.app import settings_manager
+
+settings_manager.user_config = {
+    "user_cache_dir": "~/.cache/kiapi",
+}
+```
+
+#### Exceptions
+
+```python
+class AppNotConfiguredError(RuntimeError): ...
+class AppAlreadyConfiguredError(RuntimeError): ...
+class AlreadyRunningError(RuntimeError): ...
+```
+
+| Exception | Raised when |
+| --- | --- |
+| `AppNotConfiguredError` | 設定前にアプリ名または作者へアクセスしたとき。 |
+| `AppAlreadyConfiguredError` | アプリ名または作者の設定後に `configure()` を呼び出したとき。 |
+| `AlreadyRunningError` | 他のインスタンスがロックを保持していて `single_instance.acquire()` が失敗したとき。 |

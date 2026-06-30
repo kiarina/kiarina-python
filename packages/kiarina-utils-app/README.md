@@ -93,3 +93,134 @@ try:
 finally:
     single_instance.release()
 ```
+
+## API Reference
+
+### `kiarina.utils.app`
+
+```python
+from kiarina.utils.app import (
+    configure,
+    reset,
+    single_instance,
+    user_directory,
+    AppSettings,
+    settings_manager,
+    AlreadyRunningError,
+    AppAlreadyConfiguredError,
+    AppNotConfiguredError,
+)
+```
+
+#### `configure`
+
+```python
+def configure(app_name: str, app_author: str) -> None: ...
+```
+
+Set the application identity once at startup. The name and author are used as the namespace for user directories and lock files.
+
+**Parameters**
+
+- `app_name` (`str`): Application name.
+- `app_author` (`str`): Application author.
+
+**Raises**
+
+- `AppAlreadyConfiguredError`: The name or author has already been set.
+
+#### `reset`
+
+```python
+def reset() -> None: ...
+```
+
+Clear the configured application name and author. Intended for use in tests.
+
+#### `single_instance`
+
+The `single_instance` service module prevents duplicate instances using an OS-level advisory lock file placed under the user cache directory.
+
+```python
+def acquire(*, timeout: float = 10.0) -> None: ...
+
+def release() -> None: ...
+```
+
+- `acquire` attempts to take the lock, waiting up to `timeout` seconds, and raises `AlreadyRunningError` if another instance already holds it.
+- `release` releases the lock if it is currently held.
+
+**Parameters**
+
+- `timeout` (`float`): Maximum seconds to wait for the lock (default: `10.0`).
+
+**Raises**
+
+- `AlreadyRunningError`: Another instance already holds the lock.
+
+#### `user_directory`
+
+The `user_directory` service module resolves user-specific directories as `Path` objects, honoring settings overrides, `XDG_*` environment variables, and platform defaults in that order.
+
+```python
+def get_user_cache_dir() -> Path: ...
+
+def get_user_config_dir() -> Path: ...
+
+def get_user_data_dir() -> Path: ...
+```
+
+**Returns**
+
+- `Path`: The resolved user cache, config, or data directory.
+
+**Raises**
+
+- `AppNotConfiguredError`: The application name or author has not been configured (when falling back to platform defaults).
+
+#### `AppSettings`
+
+```python
+class AppSettings(BaseSettings):
+    user_cache_dir: str | None = None
+    user_config_dir: str | None = None
+    user_data_dir: str | None = None
+```
+
+Pydantic settings model for directory overrides. Reads environment variables with the prefix `KIARINA_UTILS_APP_`.
+
+**Fields**
+
+- `user_cache_dir` (`str | None`): Override for the user cache directory (default: `None`).
+- `user_config_dir` (`str | None`): Override for the user config directory (default: `None`).
+- `user_data_dir` (`str | None`): Override for the user data directory (default: `None`).
+
+#### `settings_manager`
+
+```python
+settings_manager: SettingsManager[AppSettings]
+```
+
+Global settings manager instance for `AppSettings`, provided by [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager). Access the active settings via `settings_manager.settings`.
+
+```python
+from kiarina.utils.app import settings_manager
+
+settings_manager.user_config = {
+    "user_cache_dir": "~/.cache/kiapi",
+}
+```
+
+#### Exceptions
+
+```python
+class AppNotConfiguredError(RuntimeError): ...
+class AppAlreadyConfiguredError(RuntimeError): ...
+class AlreadyRunningError(RuntimeError): ...
+```
+
+| Exception | Raised when |
+| --- | --- |
+| `AppNotConfiguredError` | The application name or author is accessed before being configured. |
+| `AppAlreadyConfiguredError` | `configure()` is called after the name or author has already been set. |
+| `AlreadyRunningError` | `single_instance.acquire()` fails because another instance holds the lock. |
