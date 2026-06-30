@@ -19,7 +19,7 @@ class RedisSettings(BaseSettings):
     Example:
     - redis://[[username]:[password]]@localhost:6379
     - rediss://[[username]:[password]]@localhost:6379
-    
+
     Note: This field uses SecretStr to prevent accidental exposure of credentials in logs.
     """
 

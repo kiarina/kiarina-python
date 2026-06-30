@@ -13,14 +13,14 @@ from kiarina.utils.ext._operations.detect_with_mimetypes import detect_with_mime
         ("text/plain", ".txt", ".txt"),
         ("application/json", ".json", ".json"),
         ("image/png", ".png", ".png"),
-        
+
         # Test case: mimetypes returns None (unknown MIME type)
         ("application/unknown", None, None),
         ("text/nonexistent", None, None),
-        
+
         # Test case: MIME type with parameters (should be normalized)
         ("text/html; charset=utf-8", ".html", ".html"),
-        
+
         # Test case: empty MIME type
         ("", None, None),
     ],
@@ -28,16 +28,16 @@ from kiarina.utils.ext._operations.detect_with_mimetypes import detect_with_mime
 def test_detect_with_mimetypes(mime_type, mock_guess_extension_return, expected):
     """
     Test detect_with_mimetypes function behavior.
-    
+
     This test focuses on how the function processes the return value from
     mimetypes.guess_extension(), rather than testing the mimetypes module itself.
     """
     with patch('kiarina.utils.ext._operations.detect_with_mimetypes.guess_extension') as mock_guess_extension:
         mock_guess_extension.return_value = mock_guess_extension_return
-        
+
         result = detect_with_mimetypes(mime_type)
         assert result == expected
-        
+
         # Verify that guess_extension was called with correct parameters
         # The function should normalize the MIME type (remove parameters)
         expected_normalized = mime_type.split(";")[0].strip().lower() if mime_type else ""

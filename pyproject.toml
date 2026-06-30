@@ -60,6 +60,7 @@ kiarina-utils-file = { workspace = true }
 [tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
     "F",   # pyflakes
     "I",   # isort
     "UP",  # pyupgrade
