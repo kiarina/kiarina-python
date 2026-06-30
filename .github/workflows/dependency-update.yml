@@ -50,7 +50,7 @@ jobs:
         MISE_GITHUB_ATTESTATIONS: "false"
 
     - name: Setup development environment
-      run: mise run setup:init
+      run: mise run setup
       env:
         GH_TOKEN: ${{ github.token }}
         MISE_GITHUB_ATTESTATIONS: "false"
