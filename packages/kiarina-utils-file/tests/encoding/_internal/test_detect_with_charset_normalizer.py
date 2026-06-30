@@ -9,10 +9,10 @@ from kiarina.utils.encoding._operations.detect_with_charset_normalizer import (
 @pytest.mark.parametrize(
     "raw_data, expected_encoding",
     [
-        ("こんにちは世界".encode('utf-8'), "utf-8"),
+        ("こんにちは世界".encode(), "utf-8"),
         ("Hello ASCII".encode('ascii'), "ascii"),
         (b"", None),
-        ("こんにちは世界🌍️".encode('utf-8'), "utf-8"),
+        ("こんにちは世界🌍️".encode(), "utf-8"),
     ]
 )
 # fmt: on

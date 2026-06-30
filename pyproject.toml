@@ -62,6 +62,7 @@ select = [
     "E",   # pycodestyle errors
     "F",   # pyflakes
     "I",   # isort
+    "UP",  # pyupgrade
 ]
 ignore = [
     "E501", # line too long: let the formatter handle it (ignore long strings/comments)

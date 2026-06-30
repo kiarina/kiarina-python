@@ -2,7 +2,8 @@ import asyncio
 import logging
 import os
 import tempfile
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 import aiofiles
 from filelock import AsyncFileLock, FileLock

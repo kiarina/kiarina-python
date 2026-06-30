@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Callable, Generic, TypeVar, cast
+from collections.abc import Callable
+from typing import Any, Generic, TypeVar, cast
 
 from kiarina.utils.common import ImportPath, import_object, parse_config_string
 

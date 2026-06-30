@@ -1,5 +1,6 @@
 import logging
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from ..schemas.redisearch_context import RedisearchContext
 from .create_index import create_index

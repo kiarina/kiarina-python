@@ -1,4 +1,5 @@
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from ..schemas.redisearch_context import RedisearchContext
 from .get_key import get_key

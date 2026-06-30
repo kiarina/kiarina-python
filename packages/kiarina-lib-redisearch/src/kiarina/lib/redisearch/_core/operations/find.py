@@ -1,4 +1,5 @@
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from redis.commands.search.query import Query
 from redis.commands.search.result import Result

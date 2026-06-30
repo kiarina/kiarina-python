@@ -1,5 +1,6 @@
 import os
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from .write_binary import write_binary
 

@@ -1,6 +1,7 @@
 import json
 import os
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from .write_text import write_text
 

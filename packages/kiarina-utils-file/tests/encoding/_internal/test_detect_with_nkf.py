@@ -10,12 +10,12 @@ from kiarina.utils.encoding._operations.detect_with_nkf import detect_with_nkf
 @pytest.mark.parametrize(
     "raw_data, expected_encoding",
     [
-        ("こんにちは世界".encode('utf-8'), "utf-8"),
+        ("こんにちは世界".encode(), "utf-8"),
         ("こんにちは世界".encode('shift_jis'), "shift_jis"),
         ("こんにちは世界".encode('euc-jp'), "euc-jp"),
         ("Hello ASCII".encode('ascii'), "ascii"),
         (b"", None),
-        ("こんにちは世界🌍️".encode('utf-8'), "utf-8"),
+        ("こんにちは世界🌍️".encode(), "utf-8"),
     ]
 )
 # fmt: on

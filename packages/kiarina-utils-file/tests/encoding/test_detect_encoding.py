@@ -10,12 +10,12 @@ from kiarina.utils.encoding import detect_encoding
 @pytest.mark.parametrize(
     "raw_data, expected_encoding",
     [
-        pytest.param("こんにちは世界".encode('utf-8'), "utf-8", id="utf-8"),
+        pytest.param("こんにちは世界".encode(), "utf-8", id="utf-8"),
         pytest.param("こんにちは世界".encode('shift_jis'), "shift_jis", id="shift_jis"),  # Detected as cp932
         pytest.param("こんにちは世界".encode('euc-jp'), "euc-jp", id="euc-jp"),        # Detected as big5
         pytest.param("Hello ASCII".encode('ascii'), "ascii", id="ascii"),
         pytest.param(b"", None, id="empty"),
-        pytest.param("こんにちは世界🌍️".encode('utf-8'), "utf-8", id="utf-8-emoji"),
+        pytest.param("こんにちは世界🌍️".encode(), "utf-8", id="utf-8-emoji"),
     ]
 )
 # fmt: on

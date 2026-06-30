@@ -10,12 +10,12 @@ from kiarina.utils.encoding import decode_binary_to_text
 @pytest.mark.parametrize(
     "raw_data, expected_text",
     [
-        pytest.param("こんにちは世界".encode('utf-8'), "こんにちは世界", id="utf-8"),
+        pytest.param("こんにちは世界".encode(), "こんにちは世界", id="utf-8"),
         pytest.param("こんにちは世界".encode('shift_jis'), "こんにちは世界", id="shift_jis"),
         pytest.param("こんにちは世界".encode('euc-jp'), "こんにちは世界", id="euc-jp"),
         pytest.param("Hello ASCII".encode('ascii'), "Hello ASCII", id="ascii"),
         pytest.param(b"", "", id="empty"),
-        pytest.param("こんにちは世界🌍️".encode('utf-8'), "こんにちは世界🌍️", id="utf-8-emoji"),
+        pytest.param("こんにちは世界🌍️".encode(), "こんにちは世界🌍️", id="utf-8-emoji"),
     ]
 )
 # fmt: on

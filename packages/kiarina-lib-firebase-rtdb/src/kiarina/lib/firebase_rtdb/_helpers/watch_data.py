@@ -1,7 +1,8 @@
 import asyncio
 import json
 import logging
-from typing import Any, AsyncIterator, Literal, cast
+from collections.abc import AsyncIterator
+from typing import Any, Literal, cast
 
 import httpx
 

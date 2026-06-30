@@ -1,5 +1,3 @@
-from typing import Dict, List, Set, Tuple, Union
-
 from .._decorators.check_operator_misuse import check_operator_misuse
 from .._enums.redisearch_filter_operator import RedisearchFilterOperator
 from .._utils.escape_token import escape_token
@@ -16,14 +14,14 @@ class Tag(BaseFieldFilter):
     # Class Variables
     # --------------------------------------------------
 
-    OPERATORS: Dict[RedisearchFilterOperator, str] = {
+    OPERATORS: dict[RedisearchFilterOperator, str] = {
         RedisearchFilterOperator.EQ: "==",
         RedisearchFilterOperator.NE: "!=",
         RedisearchFilterOperator.IN: "==",
     }
     """Supported operators"""
 
-    OPERATOR_MAP: Dict[RedisearchFilterOperator, str] = {
+    OPERATOR_MAP: dict[RedisearchFilterOperator, str] = {
         RedisearchFilterOperator.EQ: "@%s:{%s}",
         RedisearchFilterOperator.NE: "(-@%s:{%s})",
         RedisearchFilterOperator.IN: "@%s:{%s}",
@@ -64,7 +62,7 @@ class Tag(BaseFieldFilter):
 
     @check_operator_misuse
     def __eq__(
-        self, other: Union[List[str], Set[str], Tuple[str], str]
+        self, other: list[str] | set[str] | tuple[str] | str
     ) -> RedisearchFilter:
         """
         Create an equality filter expression for tags.
@@ -87,7 +85,7 @@ class Tag(BaseFieldFilter):
 
     @check_operator_misuse
     def __ne__(
-        self, other: Union[List[str], Set[str], Tuple[str], str]
+        self, other: list[str] | set[str] | tuple[str] | str
     ) -> RedisearchFilter:
         """
         Create a not-equal filter expression for tags.
@@ -113,8 +111,8 @@ class Tag(BaseFieldFilter):
     # --------------------------------------------------
 
     def _normalize_tag_value(
-        self, other: Union[List[str], Set[str], Tuple[str], str]
-    ) -> List[str]:
+        self, other: list[str] | set[str] | tuple[str] | str
+    ) -> list[str]:
         """
         Normalize the tag value to a list of strings.
 

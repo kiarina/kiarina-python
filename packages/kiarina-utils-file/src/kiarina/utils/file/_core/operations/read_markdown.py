@@ -1,5 +1,6 @@
 import os
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from ..types.markdown_content import MarkdownContent
 from ..utils.read_text import read_text

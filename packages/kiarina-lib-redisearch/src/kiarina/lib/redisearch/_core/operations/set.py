@@ -1,4 +1,5 @@
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from ..schemas.redisearch_context import RedisearchContext
 from ..utils.marshal_mappings import marshal_mappings

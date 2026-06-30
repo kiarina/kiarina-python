@@ -1,5 +1,6 @@
 import os
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 import yaml
 

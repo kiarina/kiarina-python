@@ -1,4 +1,5 @@
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from redis.commands.search.index_definition import IndexDefinition, IndexType
 
