@@ -14,7 +14,7 @@
 | Package | Version | License |
 | --- | --- | --- |
 | [platformdirs](https://github.com/tox-dev/platformdirs) | `>=4.10.0` | [MIT](https://github.com/tox-dev/platformdirs/blob/main/LICENSE) |
-| [filelock](https://github.com/tox-dev/filelock) | `>=3.19.1` | [Unlicense](https://github.com/tox-dev/filelock/blob/main/LICENSE) |
+| [filelock](https://github.com/tox-dev/filelock) | `>=3.19.1` | [MIT](https://github.com/tox-dev/filelock/blob/main/LICENSE) |
 | [Pydantic](https://github.com/pydantic/pydantic) | `>=2.11.7` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
 | [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
 | [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
