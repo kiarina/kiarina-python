@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-07-01
+
 ### Added
 - Initial release of `kiarina-utils-app`.
 - `configure()` / `reset()` for setting the application identity (name and author) at startup, raising `AppAlreadyConfiguredError` on reconfiguration and `AppNotConfiguredError` when accessed before configuration.

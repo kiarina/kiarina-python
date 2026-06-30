@@ -770,7 +770,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.2.1"
+version = "2.3.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-currency" },
@@ -881,7 +881,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-cloudflare"
-version = "2.1.0"
+version = "2.3.0"
 source = { editable = "packages/kiarina-lib-cloudflare" }
 dependencies = [
     { name = "pydantic-settings" },
@@ -1013,7 +1013,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-google"
-version = "2.2.1"
+version = "2.3.0"
 source = { editable = "packages/kiarina-lib-google" }
 dependencies = [
     { name = "google-api-python-client" },
@@ -1098,7 +1098,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-utils-app"
-version = "0.1.0"
+version = "2.3.0"
 source = { editable = "packages/kiarina-utils-app" }
 dependencies = [
     { name = "filelock" },
@@ -1119,7 +1119,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-utils-common"
-version = "2.2.0"
+version = "2.3.0"
 source = { editable = "packages/kiarina-utils-common" }
 dependencies = [
     { name = "pydantic" },
@@ -1130,7 +1130,7 @@ requires-dist = [{ name = "pydantic", specifier = ">=2.0.0" }]
 
 [[package]]
 name = "kiarina-utils-file"
-version = "2.1.0"
+version = "2.3.0"
 source = { editable = "packages/kiarina-utils-file" }
 dependencies = [
     { name = "aiofiles" },

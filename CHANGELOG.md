@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-07-01
+
 ### Added
 - **kiarina-utils-app**: Add a new package providing application foundation utilities: startup identity configuration (`configure()` / `reset()`), user directory resolution (`user_directory`) honoring `XDG_*` on all platforms with `platformdirs` fallbacks, and single-instance control (`single_instance`) via an OS-level file lock.
 - Add `test-settings:resolve_gcs_uri` and `test-settings:delete` mise tasks. `resolve_gcs_uri` derives the storage prefix from the `origin` remote and `TEST_SETTINGS_BUCKET_NAME`/`TEST_SETTINGS_PROJECT_ID`, and `delete` removes all encrypted objects under that prefix.
