@@ -3,7 +3,6 @@ import pytest
 import kiarina.utils.ext as ke
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "mime_type, expected",
     [
@@ -22,7 +21,6 @@ import kiarina.utils.ext as ke
         ("", None),
     ],
 )
-# fmt: on
 def test_detect_extension(mime_type, expected):
     result = ke.detect_extension(
         mime_type=mime_type,

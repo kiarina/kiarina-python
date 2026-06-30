@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from .._decorators.check_operator_misuse import check_operator_misuse
 from .._enums.redisearch_filter_operator import RedisearchFilterOperator
 from .._utils.escape_token import escape_token
@@ -14,14 +16,14 @@ class Tag(BaseFieldFilter):
     # Class Variables
     # --------------------------------------------------
 
-    OPERATORS: dict[RedisearchFilterOperator, str] = {
+    OPERATORS: ClassVar[dict[RedisearchFilterOperator, str]] = {
         RedisearchFilterOperator.EQ: "==",
         RedisearchFilterOperator.NE: "!=",
         RedisearchFilterOperator.IN: "==",
     }
     """Supported operators"""
 
-    OPERATOR_MAP: dict[RedisearchFilterOperator, str] = {
+    OPERATOR_MAP: ClassVar[dict[RedisearchFilterOperator, str]] = {
         RedisearchFilterOperator.EQ: "@%s:{%s}",
         RedisearchFilterOperator.NE: "(-@%s:{%s})",
         RedisearchFilterOperator.IN: "@%s:{%s}",

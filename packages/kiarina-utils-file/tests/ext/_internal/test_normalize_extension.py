@@ -3,7 +3,6 @@ import pytest
 from kiarina.utils.ext._utils.normalize_extension import normalize_extension
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "extension,expected",
     [
@@ -35,6 +34,5 @@ from kiarina.utils.ext._utils.normalize_extension import normalize_extension
         ("  .  ", "."),
     ],
 )
-# fmt: on
 def test_normalize_extension(extension, expected):
     assert normalize_extension(extension) == expected

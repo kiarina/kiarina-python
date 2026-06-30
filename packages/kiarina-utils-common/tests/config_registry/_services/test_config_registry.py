@@ -128,7 +128,7 @@ def test_unsupported_config_type() -> None:
         get_presets=lambda: {"test1": 1},
     )
 
-    with raises(TypeError, match="Pass configure=... to ConfigRegistry"):
+    with raises(TypeError, match="Pass configure=\\.\\.\\. to ConfigRegistry"):
         registry.get("test1?value=2")
 
     def configure(config: int, values: dict[str, Any]) -> int:

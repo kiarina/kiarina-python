@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from .._decorators.check_operator_misuse import check_operator_misuse
 from .._enums.redisearch_filter_operator import RedisearchFilterOperator
 from .base_field_filter import BaseFieldFilter
@@ -13,7 +15,7 @@ class Numeric(BaseFieldFilter):
     # Class Variables
     # --------------------------------------------------
 
-    OPERATORS: dict[RedisearchFilterOperator, str] = {
+    OPERATORS: ClassVar[dict[RedisearchFilterOperator, str]] = {
         RedisearchFilterOperator.EQ: "==",
         RedisearchFilterOperator.NE: "!=",
         RedisearchFilterOperator.LT: "<",
@@ -23,7 +25,7 @@ class Numeric(BaseFieldFilter):
     }
     """Supported operators"""
 
-    OPERATOR_MAP: dict[RedisearchFilterOperator, str] = {
+    OPERATOR_MAP: ClassVar[dict[RedisearchFilterOperator, str]] = {
         RedisearchFilterOperator.EQ: "@%s:[%s %s]",
         RedisearchFilterOperator.NE: "(-@%s:[%s %s])",
         RedisearchFilterOperator.GT: "@%s:[(%s +inf]",

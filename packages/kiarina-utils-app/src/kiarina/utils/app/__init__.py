@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from ._exceptions.app_not_configured_error import AppNotConfiguredError
     from ._helpers.configure import configure
     from ._helpers.reset import reset
-    from ._services import single_instance, user_directory  # noqa: F401
+    from ._services import single_instance, user_directory
     from ._settings import AppSettings, settings_manager
 
 __version__ = version("kiarina-utils-app")

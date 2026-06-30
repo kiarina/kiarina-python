@@ -43,6 +43,6 @@ from kiarina.utils.ext._operations.extract_multi_extension import (
         ("file.", None),
     ],
 )
-# fmt: on
 def test_main(file_name_hint, expected):
     assert extract_multi_extension(file_name_hint) == expected
+# fmt: on

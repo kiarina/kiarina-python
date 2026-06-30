@@ -63,10 +63,12 @@ select = [
     "F",   # pyflakes
     "I",   # isort
     "UP",  # pyupgrade
+    "RUF", # ruff-specific rules
 ]
 ignore = [
-    "E501", # line too long: let the formatter handle it (ignore long strings/comments)
-    "B008", # function call in argument defaults: required for FastAPI Depends()
+    "E501",   # line too long: let the formatter handle it (ignore long strings/comments)
+    "B008",   # function call in argument defaults: required for FastAPI Depends()
+    "RUF022", # unsorted __all__: keep intentional comment-based grouping
 ]
 
 [tool.ruff.lint.isort]

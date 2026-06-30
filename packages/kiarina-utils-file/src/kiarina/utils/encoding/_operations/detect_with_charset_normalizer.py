@@ -36,7 +36,7 @@ def detect_with_charset_normalizer(
         )
 
     # charset_normalizer's detect() automatically samples data for efficiency
-    # (default: 5 chunks × 512 bytes = max 2,560 bytes)
+    # (default: 5 chunks x 512 bytes = max 2,560 bytes)
     result = detect(raw_data)
 
     if (

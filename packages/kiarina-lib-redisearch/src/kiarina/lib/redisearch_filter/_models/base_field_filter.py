@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any, ClassVar, Self
 
 from .._enums.redisearch_filter_operator import RedisearchFilterOperator
 
@@ -8,7 +8,7 @@ class BaseFieldFilter:
     Base class for field filters.
     """
 
-    OPERATORS: dict[RedisearchFilterOperator, str] = {}
+    OPERATORS: ClassVar[dict[RedisearchFilterOperator, str]] = {}
     """Supported operators"""
 
     def __init__(self, field_name: str):

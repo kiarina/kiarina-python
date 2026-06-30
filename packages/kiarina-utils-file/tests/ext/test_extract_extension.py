@@ -3,7 +3,6 @@ import pytest
 import kiarina.utils.ext as ke
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "file_name_hint,expected",
     [
@@ -34,6 +33,5 @@ import kiarina.utils.ext as ke
         ("Document.PDF", ".pdf"),
     ],
 )
-# fmt: on
 def test_extract_extension(file_name_hint, expected):
     assert ke.extract_extension(file_name_hint) == expected

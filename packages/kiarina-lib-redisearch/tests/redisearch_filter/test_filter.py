@@ -39,9 +39,9 @@ from kiarina.lib.redisearch_schema import RedisearchSchema
         ),
     ],
 )
-# fmt: on
 def test_redisearch_filter(filter, query):
     assert str(filter) == query
+# fmt: on
 
 
 # fmt: off
@@ -72,7 +72,6 @@ def test_redisearch_filter(filter, query):
         ),
     ],
 )
-# fmt: on
 def test_create_redisearch_filter(conditions, expected):
     schema = RedisearchSchema.model_validate(
         {
@@ -97,6 +96,7 @@ def test_create_redisearch_filter(conditions, expected):
     assert (
         str(rf.create_redisearch_filter(filter=conditions, schema=schema)) == expected
     )
+# fmt: on
 
 
 # fmt: off
@@ -123,6 +123,6 @@ def test_create_redisearch_filter(conditions, expected):
         (".,!$", "\\.\\,\\!\\$"),
     ],
 )
-# fmt: on
 def test_escape_token(input_str, expected):
     assert escape_token(input_str) == expected
+# fmt: on

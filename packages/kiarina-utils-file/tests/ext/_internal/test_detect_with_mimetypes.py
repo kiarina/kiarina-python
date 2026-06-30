@@ -25,7 +25,6 @@ from kiarina.utils.ext._operations.detect_with_mimetypes import detect_with_mime
         ("", None, None),
     ],
 )
-# fmt: on
 def test_detect_with_mimetypes(mime_type, mock_guess_extension_return, expected):
     """
     Test detect_with_mimetypes function behavior.
@@ -43,21 +42,22 @@ def test_detect_with_mimetypes(mime_type, mock_guess_extension_return, expected)
         # The function should normalize the MIME type (remove parameters)
         expected_normalized = mime_type.split(";")[0].strip().lower() if mime_type else ""
         mock_guess_extension.assert_called_once_with(expected_normalized, strict=False)
+# fmt: on
 
 
 def test_detect_with_mimetypes_integration():
     """
     Integration test that verifies the function works with the actual mimetypes module.
-    
+
     This test ensures the function doesn't crash and handles real mimetypes results properly.
     """
     # Test with a MIME type that should be recognized by most systems
     result = detect_with_mimetypes("text/plain")
-    
+
     # We don't assert specific values due to environment differences,
     # but we ensure the result is either None or a valid extension string
     assert result is None or (isinstance(result, str) and result.startswith("."))
-    
+
     # Test with unknown MIME type
     result_unknown = detect_with_mimetypes("application/unknown-mime-type")
     assert result_unknown is None

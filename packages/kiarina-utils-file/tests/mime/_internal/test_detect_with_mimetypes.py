@@ -19,7 +19,6 @@ from kiarina.utils.mime._operations.detect_with_mimetypes import detect_with_mim
         ((None, "gzip"), None),  # encoding without MIME type
     ],
 )
-# fmt: on
 def test_detect_with_mimetypes(mock_guess_type_return, expected):
     """
     Test detect_with_mimetypes function behavior.
@@ -35,21 +34,22 @@ def test_detect_with_mimetypes(mock_guess_type_return, expected):
         
         # Verify that guess_type was called with correct parameters
         mock_guess_type.assert_called_once_with("any_filename.ext", strict=False)
+# fmt: on
 
 
 def test_detect_with_mimetypes_integration():
     """
     Integration test that verifies the function works with the actual mimetypes module.
-    
+
     This test ensures the function doesn't crash and handles real mimetypes results properly.
     """
     # Test with a filename that should be recognized by most systems
     result = detect_with_mimetypes("test.txt")
-    
+
     # We don't assert specific values due to environment differences,
     # but we ensure the result is either None or a valid MIME type string
     assert result is None or (isinstance(result, str) and "/" in result)
-    
+
     # Test with unknown extension
     result_unknown = detect_with_mimetypes("unknown.unknownext")
     assert result_unknown is None
