@@ -1,0 +1,2 @@
+class AppAlreadyConfiguredError(RuntimeError):
+    pass

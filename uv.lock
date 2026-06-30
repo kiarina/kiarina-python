@@ -24,6 +24,7 @@ members = [
     "kiarina-lib-redis",
     "kiarina-lib-redisearch",
     "kiarina-lib-slack",
+    "kiarina-utils-app",
     "kiarina-utils-common",
     "kiarina-utils-file",
 ]
@@ -785,6 +786,7 @@ dependencies = [
     { name = "kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch" },
     { name = "kiarina-lib-slack" },
+    { name = "kiarina-utils-app" },
     { name = "kiarina-utils-common" },
     { name = "kiarina-utils-file" },
 ]
@@ -804,6 +806,7 @@ requires-dist = [
     { name = "kiarina-lib-redis", editable = "packages/kiarina-lib-redis" },
     { name = "kiarina-lib-redisearch", editable = "packages/kiarina-lib-redisearch" },
     { name = "kiarina-lib-slack", editable = "packages/kiarina-lib-slack" },
+    { name = "kiarina-utils-app", editable = "packages/kiarina-utils-app" },
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
     { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
 ]
@@ -1089,6 +1092,27 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "pydantic-settings", specifier = ">=2.10.1" },
+    { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
+]
+
+[[package]]
+name = "kiarina-utils-app"
+version = "0.1.0"
+source = { editable = "packages/kiarina-utils-app" }
+dependencies = [
+    { name = "filelock" },
+    { name = "platformdirs" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "filelock", specifier = ">=3.19.1" },
+    { name = "platformdirs", specifier = ">=4.10.0" },
+    { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
 ]
