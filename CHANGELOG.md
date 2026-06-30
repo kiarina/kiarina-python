@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `test-settings:resolve_gcs_uri` and `test-settings:delete` mise tasks. `resolve_gcs_uri` derives the storage prefix from the `origin` remote and `TEST_SETTINGS_BUCKET_NAME`/`TEST_SETTINGS_PROJECT_ID`, and `delete` removes all encrypted objects under that prefix.
 
 ### Changed
+- Enable the Ruff `I` (isort) lint rule across the workspace and sort all imports accordingly. Configure isort with `known-first-party = ["kiarina"]` and `combine-as-imports = true` to keep first-party imports in their own group and preserve combined aliased imports.
 - **kiarina-lib-google**: Restructure the package README, correct configuration examples, document all public APIs, and add a service integration pattern.
 - Rework the `test-settings:upload`/`test-settings:download` mise tasks to derive the GCS URI from `resolve_gcs_uri`, read age keys from a local key file, encrypt to every recipient in the key file, and accept arbitrary file names to upload.
 - Convert the repository root into a uv virtual workspace by removing the non-distributable `[project]` table from the root `pyproject.toml`. The repository version is now tracked in a `VERSION` file, read and written by the `package:list` and `pyproject:bump-version` tasks.

@@ -1,7 +1,6 @@
 from typing import Any, Self
 
-from pydantic import BaseModel
-from pydantic import Field as PydanticField
+from pydantic import BaseModel, Field as PydanticField
 from redis.commands.search.field import Field as RedisearchField
 
 from .._schemas.flat_vector_field_schema import FlatVectorFieldSchema

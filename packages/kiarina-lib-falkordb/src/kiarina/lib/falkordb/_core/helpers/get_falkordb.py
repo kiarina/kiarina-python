@@ -1,11 +1,12 @@
 from typing import Any, Literal, overload
 
-import falkordb  # type: ignore
-import falkordb.asyncio  # type: ignore
 import redis
 import redis.asyncio
 from redis.backoff import ExponentialBackoff
 from redis.retry import Retry
+
+import falkordb  # type: ignore
+import falkordb.asyncio  # type: ignore
 
 from ..._settings import settings_manager
 

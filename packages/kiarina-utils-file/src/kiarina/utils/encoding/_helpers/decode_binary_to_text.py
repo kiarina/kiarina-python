@@ -1,5 +1,5 @@
-from .._utils.normalize_newlines import normalize_newlines
 from .._settings import settings_manager
+from .._utils.normalize_newlines import normalize_newlines
 from .detect_encoding import detect_encoding
 
 

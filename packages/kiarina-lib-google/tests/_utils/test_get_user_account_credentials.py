@@ -1,12 +1,12 @@
 from datetime import UTC, datetime, timedelta
 
-from google.oauth2.credentials import Credentials
 import pytest
+from google.oauth2.credentials import Credentials
 
 from kiarina.lib.google import (
     CredentialsCache,
-    settings_manager,
     get_user_account_credentials,
+    settings_manager,
 )
 
 

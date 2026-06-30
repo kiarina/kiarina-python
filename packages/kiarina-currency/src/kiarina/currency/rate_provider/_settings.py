@@ -1,6 +1,7 @@
-from kiarina.utils.common import ImportPath
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
+
+from kiarina.utils.common import ImportPath
 
 from ._types.rate_provider_name import RateProviderName
 

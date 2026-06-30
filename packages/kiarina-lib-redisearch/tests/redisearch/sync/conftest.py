@@ -1,9 +1,8 @@
 import pytest
 
-from kiarina.lib.redisearch_schema import RedisearchSchema
-
 from kiarina.lib.redis import get_redis
 from kiarina.lib.redisearch import RedisearchClient, RedisearchSettings
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
 @pytest.fixture

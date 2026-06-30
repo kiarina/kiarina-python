@@ -1,9 +1,9 @@
 from typing import Any
 
-from kiarina.utils.common import ImportPath
 from pydantic_settings import BaseSettings
 from pydantic_settings_manager import SettingsManager
 
+from kiarina.utils.common import ImportPath
 from kiarina.utils.component_registry import ComponentFactory, ComponentRegistry
 
 

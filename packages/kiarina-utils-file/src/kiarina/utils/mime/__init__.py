@@ -74,8 +74,8 @@ if TYPE_CHECKING:
     from ._helpers.create_mime_blob import create_mime_blob
     from ._helpers.detect_mime_type import detect_mime_type
     from ._models.mime_blob import MIMEBlob
-    from ._types.mime_detection_options import MimeDetectionOptions
     from ._settings import settings_manager
+    from ._types.mime_detection_options import MimeDetectionOptions
 
 __version__ = "1.0.0"
 

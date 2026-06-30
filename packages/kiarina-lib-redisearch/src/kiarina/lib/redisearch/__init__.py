@@ -4,9 +4,9 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._settings import RedisearchSettings, settings_manager
     from ._sync.helpers.create_redisearch_client import create_redisearch_client
     from ._sync.models.redisearch_client import RedisearchClient
-    from ._settings import RedisearchSettings, settings_manager
 
 __version__ = version("kiarina-lib-redisearch")
 

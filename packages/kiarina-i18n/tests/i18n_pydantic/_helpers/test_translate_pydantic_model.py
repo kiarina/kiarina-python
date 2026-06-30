@@ -1,6 +1,7 @@
+from typing import get_args
+
 import pytest
 from pydantic import BaseModel, Field
-from typing import get_args
 
 from kiarina.i18n import catalog
 from kiarina.i18n_pydantic import translate_pydantic_model

@@ -3,8 +3,8 @@ import os
 import google.auth.compute_engine.credentials
 import google.oauth2.credentials
 import google.oauth2.service_account
-from google.auth import impersonated_credentials
 import pytest
+from google.auth import impersonated_credentials
 
 from kiarina.lib.google import GoogleSettings, get_credentials
 

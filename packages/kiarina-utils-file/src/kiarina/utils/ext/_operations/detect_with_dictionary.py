@@ -1,6 +1,6 @@
+from .._settings import settings_manager
 from .._utils.normalize_extension import normalize_extension
 from .._utils.normalize_mime_type import normalize_mime_type
-from .._settings import settings_manager
 
 
 def detect_with_dictionary(

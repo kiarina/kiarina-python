@@ -1,8 +1,10 @@
 import pytest
 
 from kiarina.currency.currency_error import ExchangeRateNotFoundError
-from kiarina.currency.rate_provider_impl.static import StaticRateProvider
-from kiarina.currency.rate_provider_impl.static import settings_manager
+from kiarina.currency.rate_provider_impl.static import (
+    StaticRateProvider,
+    settings_manager,
+)
 
 
 @pytest.fixture

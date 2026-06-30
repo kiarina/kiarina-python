@@ -5,7 +5,6 @@ import pytest
 from kiarina.currency.currency_error import ExchangeRateNotFoundError
 from kiarina.currency.rate_provider_impl.frankfurter import FrankfurterRateProvider
 
-
 # Skip real API calls unless explicitly enabled
 skip_unless_enabled = pytest.mark.skipif(
     not bool(os.getenv("KIARINA_CURRENCY_RATE_PROVIDER_IMPL_FRANKFURTER_TEST_ENABLED")),

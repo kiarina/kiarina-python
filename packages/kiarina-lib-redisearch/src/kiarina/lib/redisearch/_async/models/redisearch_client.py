@@ -5,7 +5,6 @@ from redis.asyncio import Redis
 from kiarina.lib.redisearch_filter import RedisearchFilter, RedisearchFilterConditions
 from kiarina.lib.redisearch_schema import RedisearchSchema
 
-from ..._core.schemas.redisearch_context import RedisearchContext
 from ..._core.operations.count import count
 from ..._core.operations.create_index import create_index
 from ..._core.operations.delete import delete
@@ -20,6 +19,7 @@ from ..._core.operations.reset_index import reset_index
 from ..._core.operations.search import search
 from ..._core.operations.set import set
 from ..._core.schemas.document import Document
+from ..._core.schemas.redisearch_context import RedisearchContext
 from ..._core.views.info_result import InfoResult
 from ..._core.views.search_result import SearchResult
 from ..._settings import RedisearchSettings

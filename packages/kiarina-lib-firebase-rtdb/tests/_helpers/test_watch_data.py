@@ -1,6 +1,5 @@
 import asyncio
 
-
 from kiarina.lib.firebase_rtdb import DataChangeEvent, watch_data
 
 

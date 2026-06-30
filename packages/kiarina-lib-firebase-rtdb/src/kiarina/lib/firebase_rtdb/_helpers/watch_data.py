@@ -4,6 +4,7 @@ import logging
 from typing import Any, AsyncIterator, Literal, cast
 
 import httpx
+
 from kiarina.lib.firebase import TokenManager
 
 from .._exceptions.rtdb_stream_cancelled_error import RTDBStreamCancelledError
