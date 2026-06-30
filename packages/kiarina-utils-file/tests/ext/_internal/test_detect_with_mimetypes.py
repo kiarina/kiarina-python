@@ -5,7 +5,6 @@ import pytest
 from kiarina.utils.ext._operations.detect_with_mimetypes import detect_with_mimetypes
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "mime_type,mock_guess_extension_return,expected",
     [
@@ -13,14 +12,11 @@ from kiarina.utils.ext._operations.detect_with_mimetypes import detect_with_mime
         ("text/plain", ".txt", ".txt"),
         ("application/json", ".json", ".json"),
         ("image/png", ".png", ".png"),
-
         # Test case: mimetypes returns None (unknown MIME type)
         ("application/unknown", None, None),
         ("text/nonexistent", None, None),
-
         # Test case: MIME type with parameters (should be normalized)
         ("text/html; charset=utf-8", ".html", ".html"),
-
         # Test case: empty MIME type
         ("", None, None),
     ],
@@ -32,7 +28,9 @@ def test_detect_with_mimetypes(mime_type, mock_guess_extension_return, expected)
     This test focuses on how the function processes the return value from
     mimetypes.guess_extension(), rather than testing the mimetypes module itself.
     """
-    with patch('kiarina.utils.ext._operations.detect_with_mimetypes.guess_extension') as mock_guess_extension:
+    with patch(
+        "kiarina.utils.ext._operations.detect_with_mimetypes.guess_extension"
+    ) as mock_guess_extension:
         mock_guess_extension.return_value = mock_guess_extension_return
 
         result = detect_with_mimetypes(mime_type)
@@ -40,9 +38,10 @@ def test_detect_with_mimetypes(mime_type, mock_guess_extension_return, expected)
 
         # Verify that guess_extension was called with correct parameters
         # The function should normalize the MIME type (remove parameters)
-        expected_normalized = mime_type.split(";")[0].strip().lower() if mime_type else ""
+        expected_normalized = (
+            mime_type.split(";")[0].strip().lower() if mime_type else ""
+        )
         mock_guess_extension.assert_called_once_with(expected_normalized, strict=False)
-# fmt: on
 
 
 def test_detect_with_mimetypes_integration():

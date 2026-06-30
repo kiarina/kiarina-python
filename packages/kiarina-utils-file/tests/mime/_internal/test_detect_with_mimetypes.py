@@ -5,7 +5,6 @@ import pytest
 from kiarina.utils.mime._operations.detect_with_mimetypes import detect_with_mimetypes
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "mock_guess_type_return,expected",
     [
@@ -13,7 +12,6 @@ from kiarina.utils.mime._operations.detect_with_mimetypes import detect_with_mim
         (("text/plain", None), "text/plain"),
         (("application/json", None), "application/json"),
         (("image/png", "gzip"), "image/png"),  # encoding is ignored
-
         # Test case: mimetypes returns None (unknown extension)
         ((None, None), None),
         ((None, "gzip"), None),  # encoding without MIME type
@@ -26,7 +24,9 @@ def test_detect_with_mimetypes(mock_guess_type_return, expected):
     This test focuses on how the function processes the return value from
     mimetypes.guess_type(), rather than testing the mimetypes module itself.
     """
-    with patch('kiarina.utils.mime._operations.detect_with_mimetypes.guess_type') as mock_guess_type:
+    with patch(
+        "kiarina.utils.mime._operations.detect_with_mimetypes.guess_type"
+    ) as mock_guess_type:
         mock_guess_type.return_value = mock_guess_type_return
 
         result = detect_with_mimetypes("any_filename.ext")
@@ -34,7 +34,6 @@ def test_detect_with_mimetypes(mock_guess_type_return, expected):
 
         # Verify that guess_type was called with correct parameters
         mock_guess_type.assert_called_once_with("any_filename.ext", strict=False)
-# fmt: on
 
 
 def test_detect_with_mimetypes_integration():
