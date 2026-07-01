@@ -2,11 +2,22 @@
 
 English | [日本語](README.ja.md)
 
-Currency utilities for the kiarina namespace with exchange rate support.
+[![PyPI](https://img.shields.io/pypi/v/kiarina-currency.svg)](https://pypi.org/project/kiarina-currency/)
+[![Python](https://img.shields.io/pypi/pyversions/kiarina-currency.svg)](https://pypi.org/project/kiarina-currency/)
+[![License](https://img.shields.io/pypi/l/kiarina-currency.svg)](../../LICENSE)
 
-## Purpose
+> [!NOTE]
+> Provides system currency detection and exchange rate retrieval through pluggable providers.
 
-Provides currency code types and exchange rate retrieval with pluggable rate providers.
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [HTTPX](https://github.com/encode/httpx) | `>=0.28.1` | [BSD-3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) |
+| [kiarina-utils-common](../kiarina-utils-common/) | `>=1.11.0` | [MIT](../../LICENSE) |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.10.6` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+| [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.7.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
 
 ## Installation
 
@@ -14,224 +25,313 @@ Provides currency code types and exchange rate retrieval with pluggable rate pro
 pip install kiarina-currency
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage
+- **Detect the system currency**
+  Resolve an ISO 4217 currency code from locale settings and environment variables.
+- **Get exchange rates**
+  Retrieve rates from configured static data or the Frankfurter API.
+- **Extend rate providers**
+  Select an implementation by provider instance, registered name, or import path.
+
+### Detecting the System Currency
 
 ```python
-from kiarina.currency import get_exchange_rate, get_system_currency
+from kiarina.currency import get_system_currency
 
-# Get system currency
 currency = get_system_currency()
-print(f"System currency: {currency}")  # e.g., "JPY" on Japanese system
-
-# Get exchange rate (uses static provider by default)
-rate = await get_exchange_rate("USD", "JPY")
-print(f"1 USD = {rate} JPY")
-
-# With default value for unsupported currencies
-rate = await get_exchange_rate("USD", "XXX", default=1.0)
 ```
 
-### Using Different Rate Providers
+Detection checks `locale.localeconv()`, the locale name, `LC_ALL`, `LC_MONETARY`, and `LANG`. It returns `"USD"` when detection fails.
+
+### Getting Exchange Rates
+
+The static provider is used by default.
 
 ```python
 from kiarina.currency import get_exchange_rate
 
-# Use Frankfurter API for real-time rates
+rate = await get_exchange_rate("USD", "JPY")
+```
+
+The static provider resolves direct rates, inverted rates, and indirect rates through the base currency, in that order. A fallback value can be provided when a rate is unavailable.
+
+```python
+rate = await get_exchange_rate("USD", "XXX", default=1.0)
+```
+
+The Frankfurter provider retrieves rates from the [Frankfurter API](https://www.frankfurter.app/).
+
+```python
 rate = await get_exchange_rate(
-    "USD", "EUR",
-    rate_options={"rate_provider": "frankfurter"}
+    "USD",
+    "EUR",
+    rate_options={"rate_provider": "frankfurter"},
 )
 ```
 
-### Custom Rate Provider
+### Configuring Providers
+
+Settings are managed by `pydantic-settings-manager`. For example, static rates can be configured at runtime.
 
 ```python
-from kiarina.currency import BaseRateProvider, get_exchange_rate
+from kiarina.currency import get_exchange_rate
+from kiarina.currency.rate_provider_impl.static import settings_manager
 
-class MyRateProvider(BaseRateProvider):
+settings_manager.cli_args = {
+    "base_currency": "USD",
+    "rates": {
+        "USD": {
+            "EUR": 0.85,
+            "JPY": 150.0,
+        },
+    },
+}
+
+rate = await get_exchange_rate("JPY", "EUR")
+```
+
+Environment variable names combine each settings class prefix with its field name.
+
+| Setting | Environment Variable |
+| --- | --- |
+| Default provider | `KIARINA_CURRENCY_RATE_PROVIDER_DEFAULT` |
+| Static provider base currency | `KIARINA_CURRENCY_RATE_PROVIDER_IMPL_STATIC_BASE_CURRENCY` |
+| Frankfurter API base URL | `KIARINA_CURRENCY_RATE_PROVIDER_IMPL_FRANKFURTER_BASE_URL` |
+| Frankfurter API timeout | `KIARINA_CURRENCY_RATE_PROVIDER_IMPL_FRANKFURTER_TIMEOUT` |
+
+### Creating a Custom Provider
+
+An instance implementing the `RateProvider` protocol can be passed directly.
+
+```python
+from kiarina.currency import CurrencyCode, get_exchange_rate
+from kiarina.currency.rate_provider import BaseRateProvider
+
+
+class CustomRateProvider(BaseRateProvider):
     async def get_rate(
         self,
-        from_currency: str,
-        to_currency: str,
+        from_currency: CurrencyCode,
+        to_currency: CurrencyCode,
         *,
         default: float | None = None,
     ) -> float:
-        # Your custom implementation
         return 1.5
 
-# Use custom provider
+
 rate = await get_exchange_rate(
-    "USD", "EUR",
-    rate_options={"rate_provider": MyRateProvider()}
+    "USD",
+    "EUR",
+    rate_options={"rate_provider": CustomRateProvider()},
 )
 ```
 
+A provider can also be created from a registered name or import path.
+
+```python
+from kiarina.currency import create_rate_provider
+
+provider = create_rate_provider("my_package.providers:CustomRateProvider")
+```
+
+When an import path omits the class name, `:RateProvider` is appended.
+
 ## API Reference
 
-### `get_system_currency()`
-
-Get system currency code from locale settings.
+### `kiarina.currency`
 
 ```python
-def get_system_currency() -> CurrencyCode
+from kiarina.currency import (
+    CurrencyCode,
+    CurrencyError,
+    ExchangeRateNotFoundError,
+    RateOptions,
+    RateProvider,
+    RateProviderName,
+    RateProviderSettings,
+    create_rate_provider,
+    get_exchange_rate,
+    get_system_currency,
+    rate_provider_settings_manager,
+)
 ```
 
-**Returns:** Currency code (ISO 4217) based on system locale. Falls back to "USD" if detection fails.
-
-**Detection Strategy:**
-1. Try to get currency from `locale.localeconv()["int_curr_symbol"]`
-2. Map locale string to currency (e.g., `ja_JP` → `JPY`, `en_US` → `USD`)
-3. Check environment variables (`LC_ALL`, `LC_MONETARY`, `LANG`)
-4. Fallback to `"USD"`
-
-**Examples:**
-```python
-from kiarina.currency import get_system_currency
-
-# On Japanese system
-currency = get_system_currency()  # Returns "JPY"
-
-# On US system
-currency = get_system_currency()  # Returns "USD"
-
-# On unknown system
-currency = get_system_currency()  # Returns "USD" (fallback)
-```
-
-### `get_exchange_rate()`
-
-Get exchange rate between two currencies.
+#### Functions
 
 ```python
+def get_system_currency() -> CurrencyCode: ...
+
 async def get_exchange_rate(
     from_currency: CurrencyCode,
     to_currency: CurrencyCode,
     *,
     default: float | None = None,
     rate_options: RateOptions | None = None,
-) -> float
+) -> float: ...
+
+def create_rate_provider(
+    provider_name: RateProviderName | ImportPath | None = None,
+    **kwargs: Any,
+) -> RateProvider: ...
 ```
 
-**Parameters:**
-- `from_currency`: Source currency code (ISO 4217)
-- `to_currency`: Target currency code (ISO 4217)
-- `default`: Default value if rate not found (raises `ExchangeRateNotFoundError` if None)
-- `rate_options`: Options for rate provider selection
+`get_system_currency` returns the system currency and falls back to `"USD"` when detection fails.
 
-**Returns:** Exchange rate as float
+`get_exchange_rate` retrieves a rate from the selected provider. It raises `ExchangeRateNotFoundError` when the rate is unavailable and no `default` is provided.
 
-**Raises:** `ExchangeRateNotFoundError` if rate not found and no default provided
+`create_rate_provider` creates a provider from a registered name or import path. It raises `TypeError` when the resulting object does not implement `RateProvider`.
 
-### Rate Providers
-
-#### Built-in Providers
-
-- **`static`** (default): Configuration-based static rates
-  - Supports direct rates, inverted rates, and indirect rates via base currency
-  - Default rates from USD to 11 major currencies (JPY, EUR, GBP, CNY, KRW, AUD, CAD, CHF, HKD, SGD, INR)
-  
-- **`frankfurter`**: Real-time rates from [Frankfurter API](https://www.frankfurter.app/)
-  - Free, open-source API for currency exchange rates
-  - Updated daily from European Central Bank
-  - Default value fallback for unsupported currencies or network errors
-
-#### Creating Custom Providers
-
-Implement the `BaseRateProvider` abstract class:
+#### `RateProvider`
 
 ```python
-from kiarina.currency import BaseRateProvider
-
-class MyRateProvider(BaseRateProvider):
+@runtime_checkable
+class RateProvider(Protocol):
     async def get_rate(
         self,
-        from_currency: str,
-        to_currency: str,
+        from_currency: CurrencyCode,
+        to_currency: CurrencyCode,
         *,
         default: float | None = None,
-    ) -> float:
-        # Your implementation
-        pass
+    ) -> float: ...
 ```
 
-## Configuration
+#### Settings
 
-### Static Rate Provider
+```python
+class RateProviderSettings(BaseSettings):
+    default: RateProviderName = "static"
+    providers: dict[RateProviderName, ImportPath] = {
+        "frankfurter": "kiarina.currency.rate_provider_impl.frankfurter:FrankfurterRateProvider",
+        "static": "kiarina.currency.rate_provider_impl.static:StaticRateProvider",
+    }
 
-Configure static exchange rates:
-
-```yaml
-kiarina.currency.rate_provider_impl.static:
-  base_currency: "USD"
-  rates:
-    USD:
-      JPY: 158.27
-      EUR: 0.86
-      GBP: 0.75
-    EUR:
-      GBP: 0.86
+rate_provider_settings_manager: SettingsManager[RateProviderSettings]
 ```
 
-**Rate Resolution:**
-1. Direct rate: `rates[from_currency][to_currency]`
-2. Inverted rate: `1.0 / rates[to_currency][from_currency]`
-3. Indirect rate via base currency: `from → base → to`
+`rate_provider_settings_manager` is an alias for `kiarina.currency.rate_provider.settings_manager`.
 
-### Frankfurter Rate Provider
+#### Types
 
-Configure Frankfurter API settings:
+```python
+CurrencyCode: TypeAlias = str
+RateProviderName: TypeAlias = str
 
-```yaml
-kiarina.currency.rate_provider_impl.frankfurter:
-  base_url: "https://api.frankfurter.app"
-  timeout: 10.0
+class RateOptions(TypedDict, total=False):
+    rate_provider: RateProvider | RateProviderName | ImportPath | None
 ```
 
-### Rate Provider Selection
+`CurrencyCode` represents an ISO 4217 currency code. `RateOptions.rate_provider` accepts a provider instance, registered name, import path, or `None`.
 
-Set default rate provider:
+#### Exceptions
 
-```yaml
-kiarina.currency.rate_provider:
-  default: "static"  # or "frankfurter"
-  providers:
-    static: "kiarina.currency.rate_provider_impl.static:StaticRateProvider"
-    frankfurter: "kiarina.currency.rate_provider_impl.frankfurter:FrankfurterRateProvider"
-    custom: "myapp.providers:CustomRateProvider"
+```python
+class CurrencyError(Exception): ...
+
+class ExchangeRateNotFoundError(CurrencyError): ...
 ```
 
-**Environment Variables:**
-- `KIARINA_CURRENCY_RATE_PROVIDER_DEFAULT`: Default provider name
-- `KIARINA_CURRENCY_RATE_PROVIDER_IMPL_STATIC_BASE_CURRENCY`: Base currency for static provider
-- `KIARINA_CURRENCY_RATE_PROVIDER_IMPL_FRANKFURTER_BASE_URL`: Frankfurter API base URL
-- `KIARINA_CURRENCY_RATE_PROVIDER_IMPL_FRANKFURTER_TIMEOUT`: Request timeout in seconds
+### `kiarina.currency.rate_provider`
 
-## Testing
-
-```bash
-# Run tests
-mise run test kiarina-currency
-
-# Enable Frankfurter API tests (requires internet connection)
-export KIARINA_CURRENCY_RATE_PROVIDER_IMPL_FRANKFURTER_TEST_ENABLED=1
-mise run test kiarina-currency
+```python
+from kiarina.currency.rate_provider import (
+    BaseRateProvider,
+    RateProvider,
+    RateProviderName,
+    RateProviderSettings,
+    create_rate_provider,
+    settings_manager,
+)
 ```
 
-## Dependencies
+#### `BaseRateProvider`
 
-- `httpx>=0.28.1` - HTTP client for API calls
-- `kiarina-utils-common>=1.11.0` - Common utilities
-- `pydantic>=2.10.6` - Data validation
-- `pydantic-settings>=2.7.1` - Settings management
-- `pydantic-settings-manager>=2.3.0` - Settings manager
+```python
+class BaseRateProvider(RateProvider, ABC):
+    def __init__(self, **kwargs: Any) -> None: ...
 
-## License
+    @abstractmethod
+    async def get_rate(
+        self,
+        from_currency: CurrencyCode,
+        to_currency: CurrencyCode,
+        *,
+        default: float | None = None,
+    ) -> float: ...
+```
 
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+Use this base class for custom providers and implement `get_rate`.
 
-## Related Projects
+```python
+settings_manager: SettingsManager[RateProviderSettings]
+```
 
-- [kiarina-python](https://github.com/kiarina/kiarina-python) - Parent monorepo
-- [Frankfurter API](https://www.frankfurter.app/) - Free currency exchange rate API
+### `kiarina.currency.rate_provider_impl.static`
+
+```python
+from kiarina.currency.rate_provider_impl.static import (
+    StaticRateProvider,
+    StaticRateProviderSettings,
+    settings_manager,
+)
+```
+
+#### `StaticRateProvider`
+
+```python
+class StaticRateProvider(BaseRateProvider):
+    async def get_rate(
+        self,
+        from_currency: CurrencyCode,
+        to_currency: CurrencyCode,
+        *,
+        default: float | None = None,
+    ) -> float: ...
+```
+
+#### Settings
+
+```python
+class StaticRateProviderSettings(BaseSettings):
+    base_currency: CurrencyCode = "USD"
+    rates: dict[CurrencyCode, dict[CurrencyCode, float]]
+
+settings_manager: SettingsManager[StaticRateProviderSettings]
+```
+
+`rates` is nested by source currency, target currency, and rate.
+
+### `kiarina.currency.rate_provider_impl.frankfurter`
+
+```python
+from kiarina.currency.rate_provider_impl.frankfurter import (
+    FrankfurterRateProvider,
+    FrankfurterRateProviderSettings,
+    settings_manager,
+)
+```
+
+#### `FrankfurterRateProvider`
+
+```python
+class FrankfurterRateProvider(BaseRateProvider):
+    async def get_rate(
+        self,
+        from_currency: CurrencyCode,
+        to_currency: CurrencyCode,
+        *,
+        default: float | None = None,
+    ) -> float: ...
+```
+
+When an HTTP error, network error, timeout, or missing rate occurs, the provider returns `default` when supplied. Otherwise, it raises `ExchangeRateNotFoundError`.
+
+#### Settings
+
+```python
+class FrankfurterRateProviderSettings(BaseSettings):
+    base_url: str = "https://api.frankfurter.app"
+    timeout: float = 10.0
+
+settings_manager: SettingsManager[FrankfurterRateProviderSettings]
+```

@@ -4,28 +4,13 @@ from kiarina.currency.currency_code import CurrencyCode
 
 
 def get_system_currency() -> CurrencyCode:
-    """
-    Get system currency code from locale settings.
-
-    Returns:
-        Currency code (ISO 4217) based on system locale.
-        Falls back to "USD" if detection fails.
-
-    Examples:
-        >>> get_system_currency()  # On Japanese system
-        'JPY'
-        >>> get_system_currency()  # On US system
-        'USD'
-    """
     try:
-        # Try to get currency from locale
         conv = locale.localeconv()
         if "int_curr_symbol" in conv:
             currency = conv["int_curr_symbol"].strip()
             if currency and len(currency) == 3:
                 return currency
 
-        # Fallback: map locale to common currencies
         try:
             loc = locale.getlocale(locale.LC_MONETARY)
             loc_str = loc[0] if loc and loc[0] else ""
@@ -34,7 +19,6 @@ def get_system_currency() -> CurrencyCode:
 
         if not loc_str:
             try:
-                # Try to get from environment variables as fallback
                 import os
 
                 for var in ("LC_ALL", "LC_MONETARY", "LANG"):
@@ -45,7 +29,6 @@ def get_system_currency() -> CurrencyCode:
                 loc_str = ""
 
         if loc_str:
-            # Common locale -> currency mappings
             currency_map = {
                 "ja": "JPY",
                 "en_US": "USD",
@@ -95,5 +78,4 @@ def get_system_currency() -> CurrencyCode:
     except Exception:
         pass
 
-    # Final fallback
     return "USD"
