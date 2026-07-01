@@ -22,50 +22,11 @@ async def watch_data(
     *,
     stop_event: asyncio.Event | None = None,
 ) -> AsyncIterator[DataChangeEvent]:
-    """
-    Watch Firebase Realtime Database data changes using Server-Sent Events.
-
-    This function automatically handles:
-    - Token refresh when authentication is revoked
-    - Network errors with exponential backoff retry
-    - Graceful shutdown via stop_event
-
-    Args:
-        database_url: Firebase database URL (e.g., "https://my-project.firebaseio.com")
-        path: Database path to watch (e.g., "/notifications/user123")
-        token_manager: TokenManager instance for automatic token refresh
-        stop_event: Optional asyncio.Event to stop watching (keyword-only)
-
-    Yields:
-        DataChangeEvent: Data change events (put/patch only)
-
-    Raises:
-        RTDBStreamCancelledError: When stream is cancelled by server
-
-    Example:
-        >>> from kiarina.lib.firebase import TokenManager
-        >>> from kiarina.lib.firebase_rtdb import watch_data
-        >>> import asyncio
-        >>>
-        >>> manager = TokenManager(refresh_token="...", api_key="...")
-        >>> stop_event = asyncio.Event()
-        >>>
-        >>> async for event in watch_data(
-        ...     "https://my-project.firebaseio.com",
-        ...     "/notifications/user123",
-        ...     manager,
-        ...     stop_event=stop_event,
-        ... ):
-        ...     print(f"Changed: {event.path} = {event.data}")
-        ...     if event.data == "stop":
-        ...         stop_event.set()  # Stop watching
-    """
     logger.debug(f"Starting watch on {path} in {database_url}")
     settings = settings_manager.get_settings()
     retry_delay = settings.initial_retry_delay
 
     while True:
-        # Check stop event
         if stop_event and stop_event.is_set():
             logger.debug("Stop event set, exiting watch loop")
             break
@@ -75,22 +36,19 @@ async def watch_data(
                 database_url, path, token_manager, stop_event
             ):
                 yield event
-                # Reset retry delay on successful event
                 retry_delay = settings.initial_retry_delay
 
-            # Stream ended normally (shouldn't happen with Firebase RTDB)
+            # Firebase normally keeps the stream open until the caller stops it.
             logger.info("Stream ended normally, exiting watch loop")
             break
 
         except _AuthRevokedError:
-            # Token expired, refresh and reconnect immediately
             logger.info("Auth revoked, refreshing token and reconnecting")
             await token_manager.refresh()
             retry_delay = settings.initial_retry_delay
             continue
 
         except (httpx.HTTPError, httpx.StreamError) as e:
-            # Network error, retry with exponential backoff
             logger.warning(
                 f"Network error during watch: {e}, retrying in {retry_delay}s"
             )
@@ -111,10 +69,8 @@ async def _watch_stream(
     token_manager: TokenManager,
     stop_event: asyncio.Event | None = None,
 ) -> AsyncIterator[DataChangeEvent]:
-    # Get current ID token
     id_token = await token_manager.get_id_token()
 
-    # Construct URL
     url = f"{database_url.rstrip('/')}{path}.json"
     params = {"auth": id_token}
     headers = {"Accept": "text/event-stream"}
@@ -125,7 +81,6 @@ async def _watch_stream(
         ) as response:
             response.raise_for_status()
 
-            # Process SSE stream
             async for event in _parse_sse_stream(response, stop_event):
                 yield event
 
@@ -134,15 +89,9 @@ async def _parse_sse_stream(
     response: httpx.Response,
     stop_event: asyncio.Event | None = None,
 ) -> AsyncIterator[DataChangeEvent]:
-    """
-    Parse Server-Sent Events stream.
-
-    See: https://firebase.google.com/docs/reference/rest/database
-    """
     buffer = ""
 
     async for chunk in response.aiter_text():
-        # Check stop event
         if stop_event and stop_event.is_set():
             logger.debug("Stop event set during stream parsing")
             return
@@ -150,11 +99,9 @@ async def _parse_sse_stream(
         buffer += chunk
         lines = buffer.split("\n")
 
-        # Keep the last incomplete line in buffer
         buffer = lines[-1]
         lines = lines[:-1]
 
-        # Process complete lines
         event_type: str | None = None
         event_data: str | None = None
 
@@ -162,14 +109,13 @@ async def _parse_sse_stream(
             line = line.strip()
 
             if not line:
-                # Empty line indicates end of event
+                # An empty line terminates an SSE event.
                 if event_type is not None:
                     event = _handle_sse_event(event_type, event_data)
 
                     if event is not None:
                         yield event
 
-                    # Reset for next event
                     event_type = None
                     event_data = None
 

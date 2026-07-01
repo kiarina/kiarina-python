@@ -964,27 +964,12 @@ dev = [
 ]
 
 [[package]]
-name = "kiarina-lib-firebase-auth"
-version = "1.37.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "httpx" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "pydantic-settings-manager" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/5c/bd9a62e5cc558111ccaa1a23cebcc514d44887e7af26bd8e3613116e563d/kiarina_lib_firebase_auth-1.37.0.tar.gz", hash = "sha256:f2ce5de1bbe2e6197c83e0fad74859b6092f36125493f35c4f50d2f786993e54", size = 9696, upload-time = "2026-05-27T04:02:20.332Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/37/93/f7ed01037c186d4f56d42f007e6e47e043a22f083c31f647727ad2424b27/kiarina_lib_firebase_auth-1.37.0-py3-none-any.whl", hash = "sha256:76af7d64bad4b2ccbeee5c74c524b13f0a29b56dcb6347eefa29035009e50275", size = 12128, upload-time = "2026-05-27T04:02:04.453Z" },
-]
-
-[[package]]
 name = "kiarina-lib-firebase-rtdb"
 version = "2.1.0"
 source = { editable = "packages/kiarina-lib-firebase-rtdb" }
 dependencies = [
     { name = "httpx" },
-    { name = "kiarina-lib-firebase-auth" },
+    { name = "kiarina-lib-firebase" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -999,7 +984,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "kiarina-lib-firebase-auth", specifier = ">=1.33.0" },
+    { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },

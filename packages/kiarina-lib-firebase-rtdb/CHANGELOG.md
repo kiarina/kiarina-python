@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improved the package documentation and simplified comments and docstrings
+- Replaced the obsolete `kiarina-lib-firebase-auth` dependency with `kiarina-lib-firebase`
+
 ## [2.1.0] - 2026-06-22
 
 ### Changed

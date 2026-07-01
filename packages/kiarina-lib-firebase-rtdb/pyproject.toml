@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28.1",
-    "kiarina-lib-firebase-auth>=1.33.0",
+    "kiarina-lib-firebase>=2.1.0",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.10.1",
     "pydantic-settings-manager>=3.2.0",
