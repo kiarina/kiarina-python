@@ -2,21 +2,21 @@
 
 English | [日本語](README.ja.md)
 
-Firebase authentication library with REST API integration and automatic token management.
+[![PyPI version](https://badge.fury.io/py/kiarina-lib-firebase.svg)](https://badge.fury.io/py/kiarina-lib-firebase)
+[![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-firebase.svg)](https://pypi.org/project/kiarina-lib-firebase/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Purpose
+> [!NOTE] What is this?
+> An asynchronous package for exchanging Firebase custom tokens and refreshing ID tokens.
 
-`kiarina-lib-firebase` provides a simple and secure way to manage Firebase authentication using REST APIs. This library enables custom token exchange and automatic ID token lifecycle management with configuration management using pydantic-settings-manager.
+## Dependencies
 
-Key features:
-- Custom token exchange for refresh/ID tokens via Firebase REST API
-- Automatic ID token lifecycle management with `TokenManager`
-- Token refresh 5 minutes before expiration
-- Thread-safe token refresh with `asyncio.Lock`
-- Secure API key management with SecretStr
-- Multi-configuration support for different projects/environments
-- Async-only API for modern Python applications
-- Environment variable configuration
+| Package | Version | License |
+| --- | --- | --- |
+| [HTTPX](https://github.com/encode/httpx) | `>=0.28.1` | [BSD-3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.10.6` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+| [Pydantic Settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
 
 ## Installation
 
@@ -24,323 +24,327 @@ Key features:
 pip install kiarina-lib-firebase
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage
+- **Exchanging a Custom Token**
+  Exchange a Firebase custom token for an ID token and refresh token.
+- **Refreshing an ID Token**
+  Retrieve a new ID token from a refresh token.
+- **Managing the Token Lifecycle**
+  Refresh an ID token before expiration and serialize concurrent refreshes.
+- **Persisting Token Data**
+  Restore tokens from an application-specific cache and save refreshed values.
+- **Managing Multiple Configurations**
+  Manage multiple Firebase configurations with pydantic-settings-manager.
+
+### Exchanging a Custom Token
+
+Exchange a custom token issued by the Firebase Admin SDK or another trusted environment.
 
 ```python
-from kiarina.lib.firebase import (
-    TokenManager,
-    exchange_custom_token,
-    settings_manager,
+from kiarina.lib.firebase import exchange_custom_token
+
+token_data = await exchange_custom_token(
+    custom_token="firebase-custom-token",
+    api_key="firebase-web-api-key",
 )
-
-# Configure settings
-settings_manager.user_config = {
-    "default": {
-        "project_id": "your-project-id",
-        "api_key": "your-firebase-api-key",
-    }
-}
-
-# Get settings
-settings = settings_manager.get_settings()
-api_key = settings.api_key.get_secret_value()
-
-# Exchange custom token for ID and refresh tokens
-custom_token = "your_custom_token_here"
-token_data = await exchange_custom_token(custom_token, api_key)
-
-# Create token manager for automatic token refresh
-manager = TokenManager(
-    api_key=api_key,
-    token_data=token_data,
-)
-
-# Get ID token (automatically refreshes when needed)
-id_token = await manager.get_id_token()
-print(f"ID Token: {id_token}")
-
-# Use the ID token for Firebase API calls
-# The token will be automatically refreshed 5 minutes before expiration
 ```
 
-### Manual Token Refresh
+An invalid custom token raises `InvalidCustomTokenError`. Other Firebase API errors and communication failures raise `FirebaseAPIError`.
+
+### Refreshing an ID Token
+
+Use an existing refresh token to retrieve a new token set.
 
 ```python
 from kiarina.lib.firebase import refresh_id_token
 
-# Manually refresh ID token using refresh token
 token_data = await refresh_id_token(
-    refresh_token="your_refresh_token",
-    api_key="your_api_key",
-)
-
-print(f"New ID Token: {token_data.id_token}")
-print(f"Expires at: {token_data.expires_at}")
-```
-
-## API Reference
-
-### Settings
-
-#### `FirebaseSettings`
-
-Configuration for Firebase authentication.
-
-```python
-from pydantic import SecretStr
-from kiarina.lib.firebase import FirebaseSettings
-
-settings = FirebaseSettings(
-    project_id="your-project-id",
-    api_key=SecretStr("your-firebase-api-key"),
+    refresh_token="firebase-refresh-token",
+    api_key="firebase-web-api-key",
 )
 ```
 
-**Fields:**
-- `project_id: str` - Firebase project ID
-- `api_key: SecretStr` - Firebase Web API Key (obtain from Firebase Console)
+An invalid or expired refresh token raises `InvalidRefreshTokenError`.
 
-### Functions
+### Managing the Token Lifecycle
 
-#### `exchange_custom_token(custom_token: str, api_key: str) -> TokenData`
-
-Exchange a Firebase custom token for an ID token and refresh token.
-
-**Parameters:**
-- `custom_token: str` - Firebase custom token (JWT)
-- `api_key: str` - Firebase Web API Key
-
-**Returns:**
-- `TokenData` - Contains `refresh_token`, `id_token`, and `expires_at`
-
-**Raises:**
-- `InvalidCustomTokenError` - If the custom token is invalid or expired
-- `FirebaseAPIError` - If Firebase API returns an error
-
-#### `refresh_id_token(refresh_token: str, api_key: str) -> TokenData`
-
-Refresh ID token using refresh token.
-
-**Parameters:**
-- `refresh_token: str` - Firebase refresh token
-- `api_key: str` - Firebase Web API Key
-
-**Returns:**
-- `TokenData` - Contains new `refresh_token`, `id_token`, and `expires_at`
-
-**Raises:**
-- `InvalidRefreshTokenError` - If refresh token is invalid or expired
-- `FirebaseAPIError` - If Firebase API returns an error
-
-### Classes
-
-#### `TokenManager`
-
-Service class for automatic ID token lifecycle management.
+`TokenManager` refreshes an ID token before it expires. By default, it refreshes when no more than 300 seconds remain.
 
 ```python
-from kiarina.lib.firebase import TokenManager, TokenData
+from kiarina.lib.firebase import TokenManager
 
-# Option 1: With token_data (recommended)
 manager = TokenManager(
-    api_key="your_api_key",
+    api_key="firebase-web-api-key",
     token_data=token_data,
-    refresh_buffer_seconds=300,  # Default: 5 minutes
 )
 
-# Option 2: With refresh_token only
-manager = TokenManager(
-    api_key="your_api_key",
-    refresh_token="your_refresh_token",
-    refresh_buffer_seconds=300,  # Default: 5 minutes
-)
-
-# Option 3: With token_data_cache for persistent storage
-manager = TokenManager(
-    api_key="your_api_key",
-    token_data_cache=my_cache_implementation,
-    refresh_buffer_seconds=300,  # Default: 5 minutes
-)
+id_token = await manager.get_id_token()
 ```
 
-**Constructor Parameters (all keyword-only):**
-- `api_key: str` - **Required.** Firebase Web API Key
-- `refresh_token: str | None` - Firebase refresh token (at least one of `refresh_token`, `token_data`, or `token_data_cache` is required)
-- `token_data: TokenData | None` - Initial token data (at least one of `refresh_token`, `token_data`, or `token_data_cache` is required)
-- `token_data_cache: TokenDataCache | None` - Cache implementation for persistent token storage (at least one of `refresh_token`, `token_data`, or `token_data_cache` is required)
-- `refresh_buffer_seconds: int` - Refresh buffer time in seconds (default: 300)
+Provide at least one of `refresh_token`, `token_data`, or `token_data_cache`.
 
-**Methods:**
-- `async get_id_token() -> str` - Get current ID token (auto-refreshes if needed)
-- `async refresh() -> TokenData` - Manually refresh ID token
+### Persisting Token Data
 
-**Properties:**
-- `id_token: str` - Current ID token
-- `expires_at: datetime` - Token expiration time (UTC)
-
-#### `TokenData`
-
-Schema for Firebase authentication token data.
-
-**Fields:**
-- `refresh_token: str` - Refresh token for getting new ID tokens
-- `id_token: str` - Firebase ID token (JWT)
-- `expires_at: datetime` - ID token expiration time (UTC)
-
-**Class Methods:**
-- `from_api_response(id_token: str, refresh_token: str, expires_in: int, *, issued_at: datetime | None = None) -> TokenData` - Create TokenData from Firebase API response
-
-#### `TokenDataCache`
-
-Protocol for token data cache implementations.
-
-Implementations should provide persistent storage for `TokenData`, allowing `TokenManager` to automatically save and restore token state.
+Implement `TokenDataCache` to let `TokenManager` restore tokens and save refreshed values.
 
 ```python
-from kiarina.lib.firebase import TokenDataCache, TokenData
+from kiarina.lib.firebase import TokenData, TokenDataCache, TokenManager
 
-class MyTokenCache(TokenDataCache):
+
+class InMemoryTokenCache(TokenDataCache):
+    def __init__(self, token_data: TokenData) -> None:
+        self._token_data = token_data
+
     async def get(self) -> TokenData:
-        # Load token data from persistent storage
-        ...
-    
-    async def set(self, token_data: TokenData) -> None:
-        # Save token data to persistent storage
-        ...
+        return self._token_data
 
-# Use with TokenManager
+    async def set(self, token_data: TokenData) -> None:
+        self._token_data = token_data
+
+
 manager = TokenManager(
-    api_key="your_api_key",
-    token_data_cache=MyTokenCache(),
+    api_key="firebase-web-api-key",
+    token_data_cache=InMemoryTokenCache(token_data),
 )
+id_token = await manager.get_id_token()
 ```
 
-**Methods:**
-- `async get() -> TokenData` - Retrieve cached token data
-- `async set(token_data: TokenData) -> None` - Store token data in cache
+### Managing Multiple Configurations
 
-### Exceptions
-
-#### `FirebaseAuthError`
-
-Base exception for Firebase Auth errors.
-
-#### `InvalidCustomTokenError`
-
-Raised when custom token is invalid or expired.
-
-#### `InvalidRefreshTokenError`
-
-Raised when refresh token is invalid or expired.
-
-#### `FirebaseAPIError`
-
-Raised when Firebase API returns an error response.
-
-**Attributes:**
-- `status_code: int | None` - HTTP status code
-- `error_code: str | None` - Firebase error code
-
-## Configuration
-
-### YAML Configuration
+`settings_manager` uses multi-configuration mode. In the pydantic-settings-manager v3 structured format, named settings are placed under `configs`.
 
 ```yaml
 kiarina.lib.firebase:
-  default:
-    project_id: your-project-id
-    api_key: your-firebase-api-key
-
-  production:
-    project_id: prod-project-id
-    api_key: ${FIREBASE_API_KEY}  # From environment variable
+  default: production
+  configs:
+    development:
+      project_id: development-project
+      api_key: development-api-key
+    production:
+      project_id: production-project
+      api_key: production-api-key
 ```
 
-### Environment Variables
+Load the configuration during application bootstrap.
 
-Settings can be configured via environment variables with the `KIARINA_LIB_FIREBASE_` prefix:
+```python
+import yaml
+from pydantic_settings_manager import load_user_configs
 
-```bash
-export KIARINA_LIB_FIREBASE_PROJECT_ID=your-project-id
-export KIARINA_LIB_FIREBASE_API_KEY=your-firebase-api-key
+from kiarina.lib.firebase import settings_manager
+
+with open("config.yaml", encoding="utf-8") as file:
+    load_user_configs(yaml.safe_load(file) or {})
+
+settings = settings_manager.get_settings("production")
 ```
 
-### Multi-Configuration Support
+To configure only this package directly, assign the structured format to `settings_manager.user_config`.
 
 ```python
 from kiarina.lib.firebase import settings_manager
 
-# Configure multiple environments
 settings_manager.user_config = {
-    "development": {
-        "project_id": "dev-project",
-        "api_key": "dev-api-key",
-    },
-    "production": {
-        "project_id": "prod-project",
-        "api_key": "prod-api-key",
+    "default": "production",
+    "configs": {
+        "development": {
+            "project_id": "development-project",
+            "api_key": "development-api-key",
+        },
+        "production": {
+            "project_id": "production-project",
+            "api_key": "production-api-key",
+        },
     },
 }
 
-# Get settings for specific environment
-dev_settings = settings_manager.get_settings("development")
-prod_settings = settings_manager.get_settings("production")
+settings = settings_manager.get_settings()
 ```
 
-## Testing
-
-This package includes integration tests that require Firebase Admin SDK and Google Cloud authentication.
-
-### Setup
-
-1. Create a test settings file:
-
-```yaml
-# test_settings.yaml
-kiarina.lib.google:
-  default:
-    type: service_account
-    project_id: your-project-id
-    service_account_email: your-service-account@your-project.iam.gserviceaccount.com
-    service_account_file: ~/.gcp/service-account/your-project/key.json
-
-kiarina.lib.firebase:
-  default:
-    project_id: your-project-id
-    api_key: your-firebase-api-key
-```
-
-2. Set environment variable:
+A single configuration can also be supplied through environment variables.
 
 ```bash
-export KIARINA_LIB_FIREBASE_TEST_SETTINGS_FILE=/path/to/test_settings.yaml
+export KIARINA_LIB_FIREBASE_PROJECT_ID="your-project-id"
+export KIARINA_LIB_FIREBASE_API_KEY="your-api-key"
 ```
 
-3. Run tests:
+## API Reference
 
-```bash
-pytest tests/
+### `kiarina.lib.firebase`
+
+```python
+from kiarina.lib.firebase import (
+    FirebaseAPIError,
+    FirebaseAuthError,
+    FirebaseSettings,
+    InvalidCustomTokenError,
+    InvalidRefreshTokenError,
+    TokenData,
+    TokenDataCache,
+    TokenManager,
+    exchange_custom_token,
+    refresh_id_token,
+    settings_manager,
+)
 ```
 
-## Dependencies
+#### `exchange_custom_token`
 
-- `httpx>=0.28.1` - Async HTTP client for Firebase REST API
-- `pydantic>=2.10.6` - Data validation and settings management
-- `pydantic-settings>=2.10.1` - Settings management from environment
-- `pydantic-settings-manager>=2.3.0` - Multi-configuration settings management
+```python
+async def exchange_custom_token(
+    custom_token: str,
+    api_key: str,
+) -> TokenData: ...
+```
 
-### Development Dependencies
+Exchange a Firebase custom token for an ID token and refresh token.
 
-- `firebase-admin>=6.6.0` - Firebase Admin SDK (for testing)
-- `kiarina-lib-google>=1.22.0` - Google Cloud authentication (for testing)
+- `InvalidCustomTokenError`: The custom token is invalid
+- `FirebaseAPIError`: The Firebase API returns another error or communication fails
 
-## License
+#### `refresh_id_token`
 
-This project is licensed under the MIT License.
+```python
+async def refresh_id_token(
+    refresh_token: str,
+    api_key: str,
+) -> TokenData: ...
+```
 
-## Related Projects
+Retrieve a new ID token with a refresh token.
 
-- [kiarina-lib-google](https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-lib-google) - Google Cloud authentication library
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Multi-configuration settings management
+- `InvalidRefreshTokenError`: The refresh token is invalid or expired
+- `FirebaseAPIError`: The Firebase API returns another error or communication fails
+
+#### `TokenManager`
+
+```python
+class TokenManager:
+    api_key: str
+
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        refresh_token: str | None = None,
+        token_data: TokenData | None = None,
+        token_data_cache: TokenDataCache | None = None,
+        refresh_buffer_seconds: int = 300,
+    ) -> None: ...
+
+    @property
+    def refresh_token(self) -> str: ...
+
+    @property
+    def token_data(self) -> TokenData: ...
+
+    @property
+    def id_token(self) -> str: ...
+
+    @property
+    def expires_at(self) -> datetime: ...
+
+    async def get_id_token(self) -> str: ...
+
+    async def refresh(self) -> TokenData: ...
+```
+
+Hold an ID token and refresh it when no more than `refresh_buffer_seconds` remain. Token loading and refreshes are serialized with a lock when multiple coroutines use the manager concurrently.
+
+- `ValueError`: No token source is provided to the constructor
+- `AssertionError`: An unset `refresh_token` or `token_data`, or a dependent property, is accessed before token retrieval
+
+#### `TokenData`
+
+```python
+class TokenData(BaseModel):
+    refresh_token: str
+    id_token: str
+    expires_at: datetime
+
+    @classmethod
+    def from_api_response(
+        cls,
+        id_token: str,
+        refresh_token: str,
+        expires_in: int,
+        *,
+        issued_at: datetime | None = None,
+    ) -> TokenData: ...
+```
+
+A Firebase Authentication token set. `from_api_response` calculates the UTC expiration time from `issued_at` and the lifetime in seconds. It uses the current time when `issued_at` is omitted.
+
+#### `TokenDataCache`
+
+```python
+class TokenDataCache(Protocol):
+    async def get(self) -> TokenData: ...
+
+    async def set(self, token_data: TokenData) -> None: ...
+```
+
+An interface for reading and writing a persistent token set.
+
+#### `FirebaseSettings`
+
+```python
+class FirebaseSettings(BaseSettings):
+    project_id: str
+    api_key: SecretStr
+```
+
+Firebase Authentication settings that support environment variables with the `KIARINA_LIB_FIREBASE_` prefix.
+
+#### `settings_manager`
+
+```python
+settings_manager: SettingsManager[FirebaseSettings] = SettingsManager(
+    FirebaseSettings,
+    multi=True,
+)
+```
+
+The public instance that manages multiple named `FirebaseSettings`.
+
+#### `FirebaseAuthError`
+
+```python
+class FirebaseAuthError(Exception): ...
+```
+
+The base class for Firebase Authentication exceptions raised by this package.
+
+#### `InvalidCustomTokenError`
+
+```python
+class InvalidCustomTokenError(FirebaseAuthError): ...
+```
+
+Raised when a custom token is invalid.
+
+#### `InvalidRefreshTokenError`
+
+```python
+class InvalidRefreshTokenError(FirebaseAuthError): ...
+```
+
+Raised when a refresh token is invalid or expired.
+
+#### `FirebaseAPIError`
+
+```python
+class FirebaseAPIError(FirebaseAuthError):
+    status_code: int | None
+    error_code: str | None
+
+    def __init__(
+        self,
+        message: str,
+        status_code: int | None = None,
+        error_code: str | None = None,
+    ) -> None: ...
+```
+
+Represents other Firebase API errors and communication failures. When available, the HTTP status code is stored in `status_code` and the Firebase error code is stored in `error_code`.
