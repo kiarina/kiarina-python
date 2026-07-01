@@ -12,7 +12,7 @@ __all__ = [
     "create_d1_client",
     # ._async.models
     "D1Client",
-    # .settings
+    # ._settings
     "D1Settings",
     "settings_manager",
 ]
@@ -29,9 +29,9 @@ def __getattr__(name: str) -> object:
         "create_d1_client": "._async.helpers.create_d1_client",
         # ._async.models
         "D1Client": "._async.models.d1_client",
-        # .settings
-        "D1Settings": ".settings",
-        "settings_manager": ".settings",
+        # ._settings
+        "D1Settings": "._settings",
+        "settings_manager": "._settings",
     }
 
     parent = __name__.rsplit(".", 1)[0]
