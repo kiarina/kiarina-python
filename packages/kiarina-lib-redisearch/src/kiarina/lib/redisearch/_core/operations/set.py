@@ -33,12 +33,6 @@ def set(
     *,
     id: str | None = None,
 ) -> None | Awaitable[None]:
-    """
-    Set a document in the index.
-
-    Fields not present in the schema are saved as they are.
-    Fields present in the schema are converted to the appropriate type and stored.
-    """
     if id is None:
         if "id" not in mapping:
             raise ValueError(

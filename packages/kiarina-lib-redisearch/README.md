@@ -2,18 +2,22 @@
 
 English | [日本語](README.ja.md)
 
-A comprehensive Python client library for [RediSearch](https://redis.io/docs/interact/search-and-query/) with advanced configuration management, schema definition, and both full-text and vector search capabilities.
+[![PyPI](https://img.shields.io/pypi/v/kiarina-lib-redisearch.svg)](https://pypi.org/project/kiarina-lib-redisearch/)
+[![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
-## Features
+> [!NOTE]
+> Provides synchronous and asynchronous RediSearch clients, search filters, and index schemas.
 
-- **Full-Text Search**: Advanced text search with stemming, phonetic matching, and fuzzy search
-- **Vector Search**: Similarity search using FLAT and HNSW algorithms with multiple distance metrics
-- **Schema Management**: Type-safe schema definition with automatic migration support
-- **Configuration Management**: Flexible configuration using `pydantic-settings-manager`
-- **Sync & Async**: Support for both synchronous and asynchronous operations
-- **Advanced Filtering**: Intuitive query builder with type-safe filter expressions
-- **Index Management**: Complete index lifecycle management (create, migrate, reset, drop)
-- **Type Safety**: Full type hints and Pydantic validation throughout
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [NumPy](https://github.com/numpy/numpy) | `>=2.3.2` | [BSD-3-Clause](https://github.com/numpy/numpy/blob/main/LICENSE.txt) |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.11.7` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+| [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
+| [redis-py](https://github.com/redis/redis-py) | `>=6.4.0` | [MIT](https://github.com/redis/redis-py/blob/master/LICENSE) |
 
 ## Installation
 
@@ -21,314 +25,579 @@ A comprehensive Python client library for [RediSearch](https://redis.io/docs/int
 pip install kiarina-lib-redisearch
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage (Sync)
+- **Index management**
+  Create, drop, reset, and migrate indexes.
+- **Document operations**
+  Store, retrieve, and delete documents as Redis hashes.
+- **Filtered search**
+  Build tag, numeric, and text conditions with typed objects or condition lists.
+- **Vector search**
+  Run nearest-neighbor searches against FLAT or HNSW indexes.
+- **Synchronous and asynchronous APIs**
+  Use the same operations through `kiarina.lib.redisearch` and `kiarina.lib.redisearch.asyncio`.
 
-```python
-import redis
-from kiarina.lib.redisearch import create_redisearch_client, settings_manager
+### Configuring an Index
 
-# Define your schema (part of your application code)
-schema = [
-    {"type": "tag", "name": "category"},
-    {"type": "text", "name": "title"},
-    {"type": "numeric", "name": "price", "sortable": True},
-    {"type": "vector", "name": "embedding", "algorithm": "FLAT", "dims": 1536}
-]
-
-# Configure settings (infrastructure configuration)
-settings_manager.user_config = {
-    "default": {
-        "key_prefix": "products:",
-        "index_name": "products_index"
-    }
-}
-
-# Create Redis connection (decode_responses=False is required)
-redis_client = redis.Redis(host="localhost", port=6379, decode_responses=False)
-
-# Create RediSearch client with schema
-client = create_redisearch_client(
-    "default",
-    field_dicts=schema,
-    redis=redis_client,
-)
-
-# Create index
-client.create_index()
-
-# Add documents
-client.set({
-    "category": "electronics",
-    "title": "Wireless Headphones",
-    "price": 99.99,
-    "embedding": [0.1, 0.2, 0.3, ...]
-}, id="product_1")
-
-# Full-text search
-results = client.find(
-    filter=[["category", "==", "electronics"]],
-    return_fields=["title", "price"]
-)
-
-# Vector similarity search
-results = client.search(
-    vector=[0.1, 0.2, 0.3, ...],
-    limit=10
-)
-```
-
-### Async Usage
-
-```python
-import redis.asyncio
-from kiarina.lib.redisearch.asyncio import create_redisearch_client
-
-schema = [
-    {"type": "text", "name": "title"},
-    {"type": "numeric", "name": "price", "sortable": True}
-]
-
-async def main():
-    redis_client = redis.asyncio.Redis(host="localhost", port=6379, decode_responses=False)
-    client = create_redisearch_client(field_dicts=schema, redis=redis_client)
-    
-    await client.create_index()
-    await client.set({"title": "Example", "price": 99.99}, id="doc_1")
-    results = await client.find()
-```
-
-## Schema Definition
-
-Define your search schema with type-safe field definitions:
-
-### Field Types
-
-```python
-# Tag field
-{"type": "tag", "name": "category", "separator": ",", "sortable": True}
-
-# Text field
-{"type": "text", "name": "description", "weight": 2.0, "no_stem": False}
-
-# Numeric field
-{"type": "numeric", "name": "price", "sortable": True}
-
-# Vector field (FLAT)
-{
-    "type": "vector",
-    "name": "embedding",
-    "algorithm": "FLAT",
-    "dims": 1536,
-    "datatype": "FLOAT32",
-    "distance_metric": "COSINE"
-}
-
-# Vector field (HNSW)
-{
-    "type": "vector",
-    "name": "embedding",
-    "algorithm": "HNSW",
-    "dims": 1536,
-    "datatype": "FLOAT32",
-    "distance_metric": "COSINE",
-    "m": 16,
-    "ef_construction": 200
-}
-```
-
-## Configuration
-
-### Environment Variables
+Environment variables use the `KIARINA_LIB_REDISEARCH_` prefix.
 
 ```bash
-export KIARINA_LIB_REDISEARCH_KEY_PREFIX="myapp:"
-export KIARINA_LIB_REDISEARCH_INDEX_NAME="main_index"
-export KIARINA_LIB_REDISEARCH_PROTECT_INDEX_DELETION="true"
+export KIARINA_LIB_REDISEARCH_KEY_PREFIX="article:"
+export KIARINA_LIB_REDISEARCH_INDEX_NAME="articles"
+export KIARINA_LIB_REDISEARCH_PROTECT_INDEX_DELETION="false"
 ```
 
-### YAML Configuration
+User configuration through `pydantic-settings-manager` can hold multiple named index settings.
 
 ```yaml
-# config.yaml
-redisearch:
-  development:
-    key_prefix: "dev:"
-    index_name: "dev_index"
-    protect_index_deletion: false
-  production:
-    key_prefix: "prod:"
-    index_name: "prod_index"
-    protect_index_deletion: true
+kiarina.lib.redisearch:
+  default: articles
+  configs:
+    articles:
+      key_prefix: "article:"
+      index_name: articles
+      protect_index_deletion: false
 ```
 
+### Defining a Schema
+
 ```python
-import yaml
-from kiarina.lib.redisearch import settings_manager
+from kiarina.lib.redisearch_schema import RedisearchFieldDicts
 
-with open("config.yaml") as f:
-    config = yaml.safe_load(f)
-    settings_manager.user_config = config["redisearch"]
+field_dicts: RedisearchFieldDicts = [
+    {"type": "tag", "name": "category"},
+    {"type": "text", "name": "title", "sortable": True},
+    {"type": "numeric", "name": "price", "sortable": True},
+    {
+        "type": "vector",
+        "name": "embedding",
+        "algorithm": "HNSW",
+        "dims": 1536,
+        "distance_metric": "COSINE",
+    },
+]
+```
 
-settings_manager.active_key = "production"
+`decode_responses=False` is required because Redis stores vectors as bytes.
+
+### Using the Synchronous Client
+
+```python
+from redis import Redis
+
+from kiarina.lib.redisearch import create_redisearch_client
+
+redis = Redis.from_url("redis://localhost:6379", decode_responses=False)
+client = create_redisearch_client(field_dicts=field_dicts, redis=redis)
+
+client.create_index()
+client.set(
+    {
+        "id": "1",
+        "category": "news",
+        "title": "Example",
+        "price": 100,
+        "embedding": [0.1] * 1536,
+    }
+)
+result = client.find(return_fields=["category", "title", "price"])
+```
+
+### Using the Asynchronous Client
+
+```python
+from redis.asyncio import Redis
+
+from kiarina.lib.redisearch.asyncio import create_redisearch_client
+
+redis = Redis.from_url("redis://localhost:6379", decode_responses=False)
+client = create_redisearch_client(field_dicts=field_dicts, redis=redis)
+
+await client.create_index()
+result = await client.find(return_fields=["category", "title", "price"])
+```
+
+### Filtering Documents
+
+```python
+from kiarina.lib.redisearch_filter import Numeric, Tag, Text
+
+filter = (Tag("category") == "news") & (Numeric("price") < 1000)
+result = client.find(filter=filter)
+
+filter = Text("title") % "python*"
+result = client.find(filter=filter)
+
+filter = (Tag("color") == "blue") & (Numeric("price") < 100)
+print(str(filter))
+# (@color:{blue} @price:[-inf (100])
+```
+
+Conditions in a list are joined with AND.
+
+```python
+result = client.find(
+    filter=[
+        ["category", "in", ["news", "guide"]],
+        ["price", "<", 1000],
+        ["title", "like", "python*"],
+    ]
+)
+```
+
+### Searching by Vector
+
+```python
+result = client.search(
+    vector=[0.1] * 1536,
+    filter=Tag("category") == "news",
+    limit=10,
+    return_fields=["title", "price"],
+)
 ```
 
 ## API Reference
 
-### Index Operations
+### `kiarina.lib.redisearch`
 
 ```python
-# Check if index exists
-exists = client.exists_index()
-
-# Create index
-client.create_index()
-
-# Drop index
-client.drop_index(delete_documents=True)
-
-# Reset index (drop and recreate)
-client.reset_index()
-
-# Migrate index (auto-detect schema changes)
-client.migrate_index()
-
-# Get index information
-info = client.get_info()
-```
-
-### Document Operations
-
-```python
-# Set document
-client.set({"title": "Example", "price": 99.99}, id="doc_1")
-
-# Get document
-doc = client.get("doc_1")
-
-# Delete document
-client.delete("doc_1")
-
-# Get Redis key
-key = client.get_key("doc_1")  # Returns "prefix:doc_1"
-```
-
-### Search Operations
-
-```python
-# Count documents
-count_result = client.count(filter=[["category", "==", "electronics"]])
-
-# Full-text search
-results = client.find(
-    filter=[["category", "==", "electronics"], ["price", "<", 500]],
-    sort_by="price",
-    sort_desc=False,
-    offset=0,
-    limit=20,
-    return_fields=["title", "price"]
-)
-
-# Vector similarity search
-results = client.search(
-    vector=[0.1, 0.2, ...],
-    filter=[["category", "==", "electronics"]],
-    offset=0,
-    limit=10,
-    return_fields=["title", "distance"]
+from kiarina.lib.redisearch import (
+    RedisearchClient,
+    RedisearchSettings,
+    create_redisearch_client,
+    settings_manager,
 )
 ```
 
-### Advanced Filtering
+#### `create_redisearch_client`
 
 ```python
-import kiarina.lib.redisearch_filter as rf
+def create_redisearch_client(
+    settings_key: str | None = None,
+    *,
+    field_dicts: RedisearchFieldDicts,
+    redis: redis.Redis,
+) -> RedisearchClient: ...
+```
 
-# Using filter API
-filter_expr = (
-    (rf.Tag("category") == "electronics") &
-    (rf.Numeric("price") < 500) &
-    (rf.Text("title") % "*wireless*")
+Creates a client from a settings key, field definitions, and a synchronous Redis client.
+
+#### `RedisearchClient`
+
+```python
+class RedisearchClient:
+    def __init__(
+        self,
+        settings: RedisearchSettings,
+        *,
+        schema: RedisearchSchema,
+        redis: redis.Redis,
+    ) -> None: ...
+
+    def exists_index(self) -> bool: ...
+    def create_index(self) -> None: ...
+    def drop_index(self, *, delete_documents: bool = False) -> bool: ...
+    def reset_index(self) -> None: ...
+    def migrate_index(self) -> None: ...
+    def get_info(self) -> InfoResult: ...
+
+    def set(self, mapping: dict[str, Any], *, id: str | None = None) -> None: ...
+    def delete(self, id: str) -> None: ...
+    def get(self, id: str) -> Document | None: ...
+
+    def count(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+    ) -> SearchResult: ...
+
+    def find(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        sort_by: str | None = None,
+        sort_desc: bool = False,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+
+    def search(
+        self,
+        *,
+        vector: list[float],
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+
+    def get_key(self, id: str) -> str: ...
+```
+
+`drop_index` returns `True` when the index is dropped. With `protect_index_deletion=True`, it leaves the index unchanged and returns `False`. When `id` is omitted from `set`, `mapping["id"]` is required. When `return_fields` is omitted from `find`, results contain IDs only.
+
+#### `RedisearchSettings`
+
+```python
+class RedisearchSettings(BaseSettings):
+    key_prefix: str = ""
+    index_name: str = "default"
+    protect_index_deletion: bool = False
+```
+
+#### `settings_manager`
+
+```python
+settings_manager: SettingsManager[RedisearchSettings]
+```
+
+Manages multiple named settings.
+
+### `kiarina.lib.redisearch.asyncio`
+
+```python
+from kiarina.lib.redisearch.asyncio import (
+    RedisearchClient,
+    RedisearchSettings,
+    create_redisearch_client,
+    settings_manager,
 )
-results = client.find(filter=filter_expr)
+```
 
-# Using condition lists
-conditions = [
-    ["category", "==", "electronics"],
-    ["price", "<", 500],
-    ["title", "like", "*wireless*"]
+#### `create_redisearch_client`
+
+```python
+def create_redisearch_client(
+    settings_key: str | None = None,
+    *,
+    field_dicts: RedisearchFieldDicts,
+    redis: redis.asyncio.Redis,
+) -> RedisearchClient: ...
+```
+
+#### `RedisearchClient`
+
+The asynchronous client uses the same arguments and return values as the synchronous client. Only methods that perform Redis I/O are `async`.
+
+```python
+class RedisearchClient:
+    def __init__(
+        self,
+        settings: RedisearchSettings,
+        *,
+        schema: RedisearchSchema,
+        redis: redis.asyncio.Redis,
+    ) -> None: ...
+
+    async def exists_index(self) -> bool: ...
+    async def create_index(self) -> None: ...
+    async def drop_index(self, *, delete_documents: bool = False) -> bool: ...
+    async def reset_index(self) -> None: ...
+    async def migrate_index(self) -> None: ...
+    async def get_info(self) -> InfoResult: ...
+    async def set(
+        self,
+        mapping: dict[str, Any],
+        *,
+        id: str | None = None,
+    ) -> None: ...
+    async def delete(self, id: str) -> None: ...
+    async def get(self, id: str) -> Document | None: ...
+    async def count(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+    ) -> SearchResult: ...
+    async def find(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        sort_by: str | None = None,
+        sort_desc: bool = False,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+    async def search(
+        self,
+        *,
+        vector: list[float],
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+    def get_key(self, id: str) -> str: ...
+```
+
+`RedisearchSettings` and `settings_manager` are the same objects exported by the synchronous API.
+
+### `kiarina.lib.redisearch_filter`
+
+```python
+from kiarina.lib.redisearch_filter import (
+    Numeric,
+    RedisearchFilter,
+    RedisearchFilterConditions,
+    Tag,
+    Text,
+    create_redisearch_filter,
+)
+```
+
+#### `create_redisearch_filter`
+
+```python
+def create_redisearch_filter(
+    *,
+    filter: RedisearchFilter | RedisearchFilterConditions,
+    schema: RedisearchSchema,
+) -> RedisearchFilter | None: ...
+```
+
+Validates a condition list and converts it to filters joined with AND. Returns `None` for an empty list.
+
+#### `Tag`
+
+```python
+class Tag:
+    def __init__(self, field_name: str) -> None: ...
+    def __eq__(
+        self,
+        other: list[str] | set[str] | tuple[str, ...] | str,
+    ) -> RedisearchFilter: ...
+    def __ne__(
+        self,
+        other: list[str] | set[str] | tuple[str, ...] | str,
+    ) -> RedisearchFilter: ...
+```
+
+Creates equality and inequality conditions for single or multiple tag values.
+
+```python
+str(Tag("color") == "blue")          # @color:{blue}
+str(Tag("color") == ["blue", "red"]) # @color:{blue|red}
+str(Tag("color") != "blue")          # (-@color:{blue})
+str(Tag("color") != ["blue", "red"]) # (-@color:{blue|red})
+```
+
+#### `Numeric`
+
+```python
+class Numeric:
+    def __init__(self, field_name: str) -> None: ...
+    def __eq__(self, other: int | float) -> RedisearchFilter: ...
+    def __ne__(self, other: int | float) -> RedisearchFilter: ...
+    def __gt__(self, other: int | float) -> RedisearchFilter: ...
+    def __lt__(self, other: int | float) -> RedisearchFilter: ...
+    def __ge__(self, other: int | float) -> RedisearchFilter: ...
+    def __le__(self, other: int | float) -> RedisearchFilter: ...
+```
+
+Supports every numeric comparison operator.
+
+```python
+str(Numeric("price") == 100) # @price:[100 100]
+str(Numeric("price") != 100) # (-@price:[100 100])
+str(Numeric("price") > 100)  # @price:[(100 +inf]
+str(Numeric("price") < 100)  # @price:[-inf (100]
+str(Numeric("price") >= 100) # @price:[100 +inf]
+str(Numeric("price") <= 100) # @price:[-inf 100]
+```
+
+#### `Text`
+
+```python
+class Text:
+    def __init__(self, field_name: str) -> None: ...
+    def __eq__(self, other: str) -> RedisearchFilter: ...
+    def __ne__(self, other: str) -> RedisearchFilter: ...
+    def __mod__(self, other: str) -> RedisearchFilter: ...
+```
+
+`==` and `!=` create exact-match conditions. `%` accepts a RediSearch text query, including wildcards.
+
+```python
+str(Text("title") == "hello") # @title:("hello")
+str(Text("title") != "hello") # (-@title:"hello")
+str(Text("title") % "*hello*") # @title:(*hello*)
+```
+
+#### `RedisearchFilter`
+
+```python
+class RedisearchFilter:
+    def __init__(
+        self,
+        query: str | None = None,
+        *,
+        left: RedisearchFilter | None = None,
+        operator: RedisearchFilterOperator | None = None,
+        right: RedisearchFilter | None = None,
+    ) -> None: ...
+    def __and__(self, other: RedisearchFilter) -> RedisearchFilter: ...
+    def __or__(self, other: RedisearchFilter) -> RedisearchFilter: ...
+    def __str__(self) -> str: ...
+```
+
+`&` joins conditions with AND, while `|` joins them with OR.
+
+```python
+color = Tag("color") == "blue"
+price = Numeric("price") < 100
+
+str(color & price) # (@color:{blue} @price:[-inf (100])
+str(color | price) # (@color:{blue} | @price:[-inf (100])
+```
+
+#### `RedisearchFilterConditions`
+
+```python
+RedisearchFilterConditions: TypeAlias = list[list[Any]]
+```
+
+Each condition contains `[field_name, operator, value]`. Multiple conditions are joined with AND.
+
+```python
+conditions: RedisearchFilterConditions = [
+    ["color", "in", ["blue", "red"]],
+    ["price", "<", 1000],
+    ["title", "like", "*hello*"],
 ]
-results = client.find(filter=conditions)
 ```
 
-### Filter Operators
-
-**Tag filters:**
-- `==` or `in`: Match tags
-- `!=` or `not in`: Exclude tags
-
-**Numeric filters:**
-- `==`, `!=`, `>`, `<`, `>=`, `<=`: Numeric comparisons
-
-**Text filters:**
-- `==`: Exact match
-- `!=`: Not equal
-- `%` or `like`: Pattern matching (wildcards, fuzzy search)
-
-## Schema Migration
+The following operators are available for each field type.
 
 ```python
-# Update schema in code
-new_schema = [
-    {"type": "tag", "name": "category"},
-    {"type": "text", "name": "title"},
-    {"type": "numeric", "name": "rating", "sortable": True},  # New field
+tag_conditions: RedisearchFilterConditions = [
+    ["color", "==", "blue"],
+    ["color", "!=", "blue"],
+    ["color", "in", ["blue", "red"]],
+    ["color", "not in", ["blue", "red"]],
 ]
 
-# Create client with new schema
-client = create_redisearch_client(field_dicts=new_schema, redis=redis_client)
+numeric_conditions: RedisearchFilterConditions = [
+    ["price", "==", 1000],
+    ["price", "!=", 1000],
+    ["price", ">", 1000],
+    ["price", "<", 1000],
+    ["price", ">=", 1000],
+    ["price", "<=", 1000],
+]
 
-# Migrate (auto-detects changes and recreates index)
-client.migrate_index()
+text_conditions: RedisearchFilterConditions = [
+    ["title", "==", "hello"],
+    ["title", "!=", "hello"],
+    ["title", "like", "*hello*"],
+]
 ```
 
-## Testing
+### `kiarina.lib.redisearch_schema`
 
-### Prerequisites
-
-- Python 3.12+
-- Redis with RediSearch module
-- Docker (for running Redis in tests)
-
-### Running Tests
-
-```bash
-# Start Redis with RediSearch
-docker compose up -d redis
-
-# Run all tests for this package
-mise run test kiarina-lib-redisearch
-
-# Run with coverage
-mise run test kiarina-lib-redisearch --coverage
+```python
+from kiarina.lib.redisearch_schema import (
+    FieldSchema,
+    FlatVectorFieldSchema,
+    HNSWVectorFieldSchema,
+    NumericFieldSchema,
+    RedisearchFieldDicts,
+    RedisearchSchema,
+    TagFieldSchema,
+    TextFieldSchema,
+)
 ```
 
-## Dependencies
+#### `RedisearchSchema`
 
-- [redis](https://github.com/redis/redis-py) - Redis client for Python
-- [numpy](https://numpy.org/) - Numerical computing (for vector operations)
-- [pydantic](https://docs.pydantic.dev/) - Data validation and settings management
-- [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) - Settings management
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Advanced settings management
+```python
+class RedisearchSchema(BaseModel):
+    fields: list[FieldSchema] = []
 
-## License
+    @property
+    def field_names(self) -> list[str]: ...
+    @property
+    def vector_field(self) -> FlatVectorFieldSchema | HNSWVectorFieldSchema: ...
+    def get_field(self, name: str) -> FieldSchema | None: ...
+    def to_fields(self) -> list[redis.commands.search.field.Field]: ...
+    @classmethod
+    def from_field_dicts(cls, field_dicts: RedisearchFieldDicts) -> Self: ...
+```
 
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+`vector_field` returns the first vector field and raises `ValueError` when none exists.
 
-## Related Projects
+#### Field Schemas
 
-- [kiarina-python](https://github.com/kiarina/kiarina-python) - The main monorepo containing this package
-- [RediSearch](https://redis.io/docs/interact/search-and-query/) - The search and query engine this library connects to
-- [kiarina-lib-redis](../kiarina-lib-redis/) - Redis client library for basic Redis operations
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Configuration management library used by this package
+```python
+class NumericFieldSchema(BaseModel):
+    name: str
+    type: Literal["numeric"] = "numeric"
+    no_index: bool = False
+    sortable: bool | None = False
+    def to_field(self) -> NumericField: ...
+
+class TagFieldSchema(BaseModel):
+    name: str
+    type: Literal["tag"] = "tag"
+    separator: str = ","
+    case_sensitive: bool = False
+    no_index: bool = False
+    sortable: bool | None = False
+    multiple: bool = False
+    def to_field(self) -> TagField: ...
+
+class TextFieldSchema(BaseModel):
+    name: str
+    type: Literal["text"] = "text"
+    weight: float = 1
+    no_stem: bool = False
+    phonetic_matcher: str | None = None
+    withsuffixtrie: bool = False
+    no_index: bool = False
+    sortable: bool | None = False
+    def to_field(self) -> TextField: ...
+```
+
+`multiple` is a library-specific field used to decode stored values as multiple tags. It is not included in the RediSearch schema.
+
+```python
+class FlatVectorFieldSchema(BaseModel):
+    name: str
+    type: Literal["vector"] = "vector"
+    dims: int
+    datatype: Literal["FLOAT32", "FLOAT64"] = "FLOAT32"
+    distance_metric: Literal["L2", "COSINE", "IP"] = "COSINE"
+    initial_cap: int | None = None
+    algorithm: Literal["FLAT"] = "FLAT"
+    block_size: int | None = None
+    def to_field(self) -> VectorField: ...
+
+class HNSWVectorFieldSchema(BaseModel):
+    name: str
+    type: Literal["vector"] = "vector"
+    dims: int
+    datatype: Literal["FLOAT32", "FLOAT64"] = "FLOAT32"
+    distance_metric: Literal["L2", "COSINE", "IP"] = "COSINE"
+    initial_cap: int | None = None
+    algorithm: Literal["HNSW"] = "HNSW"
+    m: int = 16
+    ef_construction: int = 200
+    ef_runtime: int = 10
+    epsilon: float = 0.01
+    def to_field(self) -> VectorField: ...
+```
+
+#### Types
+
+```python
+FieldSchema: TypeAlias = (
+    NumericFieldSchema
+    | TagFieldSchema
+    | TextFieldSchema
+    | FlatVectorFieldSchema
+    | HNSWVectorFieldSchema
+)
+
+RedisearchFieldDicts: TypeAlias = list[dict[str, Any]]
+```

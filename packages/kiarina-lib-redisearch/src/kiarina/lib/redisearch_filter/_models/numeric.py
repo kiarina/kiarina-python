@@ -7,10 +7,6 @@ from .redisearch_filter import RedisearchFilter
 
 
 class Numeric(BaseFieldFilter):
-    """
-    Filter for numeric fields.
-    """
-
     # --------------------------------------------------
     # Class Variables
     # --------------------------------------------------
@@ -23,7 +19,6 @@ class Numeric(BaseFieldFilter):
         RedisearchFilterOperator.LE: "<=",
         RedisearchFilterOperator.GE: ">=",
     }
-    """Supported operators"""
 
     OPERATOR_MAP: ClassVar[dict[RedisearchFilterOperator, str]] = {
         RedisearchFilterOperator.EQ: "@%s:[%s %s]",
@@ -33,21 +28,14 @@ class Numeric(BaseFieldFilter):
         RedisearchFilterOperator.GE: "@%s:[%s +inf]",
         RedisearchFilterOperator.LE: "@%s:[-inf %s]",
     }
-    """Operator and query mapping"""
 
     SUPPORTED_VALUE_TYPES = (int, float, type(None))
-    """Supported value types"""
 
     # --------------------------------------------------
     # Magic Methods
     # --------------------------------------------------
 
     def __str__(self) -> str:
-        """
-        Stringification
-
-        Converting filter expressions into query strings
-        """
         if self._value is None:
             return "*"
 
@@ -65,16 +53,6 @@ class Numeric(BaseFieldFilter):
 
     @check_operator_misuse
     def __eq__(self, other: int | float) -> RedisearchFilter:
-        """
-        Create a numerical equivalence filter expression.
-
-        Args:
-            other (int | float): Value to filter by
-
-        Example:
-            >>> import kiarina.lib.redisearch.field as rf
-            >>> filter = rf.Numeric("zipcode") == 90210
-        """
         self._set(
             operator=RedisearchFilterOperator.EQ,
             value=other,
@@ -85,16 +63,6 @@ class Numeric(BaseFieldFilter):
 
     @check_operator_misuse
     def __ne__(self, other: int | float) -> RedisearchFilter:
-        """
-        Create a numerical inequality filter expression.
-
-        Args:
-            other (int | float): Value to filter by
-
-        Example:
-            >>> import kiarina.lib.redisearch.field as rf
-            >>> filter = rf.Numeric("zipcode") != 90210
-        """
         self._set(
             operator=RedisearchFilterOperator.NE,
             value=other,
@@ -104,16 +72,6 @@ class Numeric(BaseFieldFilter):
         return RedisearchFilter(str(self))
 
     def __gt__(self, other: int | float) -> RedisearchFilter:
-        """
-        Create a numerical "greater than" filter expression.
-
-        Args:
-            other (int | float): Value to filter by
-
-        Example:
-            >>> import kiarina.lib.redisearch.field as rf
-            >>> filter = rf.Numeric("age") > 18
-        """
         self._set(
             operator=RedisearchFilterOperator.GT,
             value=other,
@@ -123,16 +81,6 @@ class Numeric(BaseFieldFilter):
         return RedisearchFilter(str(self))
 
     def __lt__(self, other: int | float) -> RedisearchFilter:
-        """
-        Create a numerical "less than" filter expression.
-
-        Args:
-            other (int | float): Value to filter by
-
-        Example:
-            >>> import kiarina.lib.redisearch.field as rf
-            >>> filter = rf.Numeric("age") < 18
-        """
         self._set(
             operator=RedisearchFilterOperator.LT,
             value=other,
@@ -142,16 +90,6 @@ class Numeric(BaseFieldFilter):
         return RedisearchFilter(str(self))
 
     def __ge__(self, other: int | float) -> RedisearchFilter:
-        """
-        Create a numerical "greater than or equal to" filter expression.
-
-        Args:
-            other (int | float): Value to filter by
-
-        Example:
-            >>> import kiarina.lib.redisearch.field as rf
-            >>> filter = rf.Numeric("age") >= 18
-        """
         self._set(
             operator=RedisearchFilterOperator.GE,
             value=other,
@@ -161,16 +99,6 @@ class Numeric(BaseFieldFilter):
         return RedisearchFilter(str(self))
 
     def __le__(self, other: int | float) -> RedisearchFilter:
-        """
-        Create a numerical "less than or equal to" filter expression.
-
-        Args:
-            other (int | float): Value to filter by
-
-        Example:
-            >>> import kiarina.lib.redisearch.field as rf
-            >>> filter = rf.Numeric("age") <= 18
-        """
         self._set(
             operator=RedisearchFilterOperator.LE,
             value=other,

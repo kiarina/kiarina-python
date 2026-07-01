@@ -34,9 +34,6 @@ def count(
     ctx: RedisearchContext,
     filter: RedisearchFilter | RedisearchFilterConditions | None = None,
 ) -> SearchResult | Awaitable[SearchResult]:
-    """
-    Count documents matching the filter.
-    """
     if filter is not None:
         filter = create_redisearch_filter(filter=filter, schema=ctx.schema)
 

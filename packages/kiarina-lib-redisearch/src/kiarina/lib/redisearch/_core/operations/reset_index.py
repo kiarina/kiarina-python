@@ -28,9 +28,6 @@ def reset_index(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
 ) -> None | Awaitable[None]:
-    """
-    Reset the search index.
-    """
 
     def _log_delete_index() -> None:
         logger.info("Deleting existing index '%s'", ctx.settings.index_name)

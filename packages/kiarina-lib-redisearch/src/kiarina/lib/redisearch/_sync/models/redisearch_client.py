@@ -26,10 +26,6 @@ from ..._settings import RedisearchSettings
 
 
 class RedisearchClient:
-    """
-    Redisearch client
-    """
-
     def __init__(
         self,
         settings: RedisearchSettings,
@@ -38,7 +34,7 @@ class RedisearchClient:
         redis: Redis,
     ) -> None:
         if redis.get_encoder().decode_responses:
-            # As the vector field in Redisearch is expected to be handled as bytes in redis-py,
+            # redis-py requires byte responses for vector fields.
             raise ValueError("Redis client must have decode_responses=False")
 
         self.ctx: RedisearchContext = RedisearchContext(
@@ -52,39 +48,21 @@ class RedisearchClient:
     # --------------------------------------------------
 
     def exists_index(self) -> bool:
-        """
-        Check if the index exists.
-        """
         return exists_index("sync", self.ctx)
 
     def create_index(self) -> None:
-        """
-        Create the search index.
-        """
         create_index("sync", self.ctx)
 
     def drop_index(self, *, delete_documents: bool = False) -> bool:
-        """
-        Delete the index.
-        """
         return drop_index("sync", self.ctx, delete_documents=delete_documents)
 
     def reset_index(self) -> None:
-        """
-        Reset the search index.
-        """
         reset_index("sync", self.ctx)
 
     def migrate_index(self) -> None:
-        """
-        Migrate the search index.
-        """
         migrate_index("sync", self.ctx)
 
     def get_info(self) -> InfoResult:
-        """
-        Get index information using FT.INFO command.
-        """
         return get_info("sync", self.ctx)
 
     # --------------------------------------------------
@@ -92,23 +70,12 @@ class RedisearchClient:
     # --------------------------------------------------
 
     def set(self, mapping: dict[str, Any], *, id: str | None = None) -> None:
-        """
-        Set a hash value.
-
-        If no id is specified, the mapping must contain an "id" field.
-        """
         set("sync", self.ctx, mapping, id=id)
 
     def delete(self, id: str) -> None:
-        """
-        Delete a document from the index.
-        """
         delete("sync", self.ctx, id)
 
     def get(self, id: str) -> Document | None:
-        """
-        Get a document from the index.
-        """
         return get("sync", self.ctx, id)
 
     # --------------------------------------------------
@@ -120,9 +87,6 @@ class RedisearchClient:
         *,
         filter: RedisearchFilter | RedisearchFilterConditions | None = None,
     ) -> SearchResult:
-        """
-        Count documents matching the filter.
-        """
         return count("sync", self.ctx, filter=filter)
 
     def find(
@@ -135,9 +99,6 @@ class RedisearchClient:
         limit: int | None = None,
         return_fields: list[str] | None = None,
     ) -> SearchResult:
-        """
-        Find documents matching the filter criteria.
-        """
         return find(
             "sync",
             self.ctx,
@@ -158,9 +119,6 @@ class RedisearchClient:
         limit: int | None = None,
         return_fields: list[str] | None = None,
     ) -> SearchResult:
-        """
-        Search documents using vector similarity search.
-        """
         return search(
             "sync",
             self.ctx,
@@ -176,7 +134,4 @@ class RedisearchClient:
     # --------------------------------------------------
 
     def get_key(self, id: str) -> str:
-        """
-        Get the Redis key for a given Redisearch ID.
-        """
         return get_key(self.ctx, id)

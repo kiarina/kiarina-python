@@ -10,12 +10,13 @@ from .._types.redisearch_field_dicts import RedisearchFieldDicts
 
 
 class RedisearchSchema(BaseModel):
-    """
-    Redisearch index schema
-    """
+    """A RediSearch index schema."""
 
-    fields: list[FieldSchema] = PydanticField(default_factory=list)
-    """All fields"""
+    fields: list[FieldSchema] = PydanticField(
+        default_factory=list,
+        title="Fields",
+        description="Fields in the index.",
+    )
 
     # --------------------------------------------------
     # Properties
@@ -23,20 +24,11 @@ class RedisearchSchema(BaseModel):
 
     @property
     def field_names(self) -> list[str]:
-        """
-        Obtain the names of all fields in the schema
-        """
         return [field.name for field in self.fields if field.name]
 
     @property
     def vector_field(self) -> FlatVectorFieldSchema | HNSWVectorFieldSchema:
-        """
-        Obtain the vector field from the schema
-
-        Even if there are two or more vector fields, the first one is returned.
-        The vector field used for vector search is assumed to exist only once,
-        if at all, within the schema.
-        """
+        """Return the first vector field."""
         for field in self.fields:
             if field.type == "vector":
                 return field
@@ -51,7 +43,6 @@ class RedisearchSchema(BaseModel):
         if not isinstance(other, RedisearchSchema):
             return False
 
-        # Ignore fields not output by model_dump() when comparing
         return self.model_dump() == other.model_dump()
 
     # --------------------------------------------------
@@ -59,15 +50,6 @@ class RedisearchSchema(BaseModel):
     # --------------------------------------------------
 
     def get_field(self, name: str) -> FieldSchema | None:
-        """
-        Get a field by its name
-
-        Args:
-            name (str): Field name
-
-        Returns:
-            FieldSchema | None: The field if found, otherwise None
-        """
         for field in self.fields:
             if field.name == name:
                 return field
@@ -75,9 +57,6 @@ class RedisearchSchema(BaseModel):
         return None
 
     def to_fields(self) -> list[RedisearchField]:
-        """
-        Convert the schema model to a list of Redisearch fields
-        """
         return [field.to_field() for field in self.fields]
 
     # --------------------------------------------------

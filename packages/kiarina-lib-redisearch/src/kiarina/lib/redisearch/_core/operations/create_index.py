@@ -24,9 +24,6 @@ def create_index(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
 ) -> None | Awaitable[None]:
-    """
-    Create the index.
-    """
     fields = ctx.schema.to_fields()
 
     definition = IndexDefinition(  # type: ignore[no-untyped-call]

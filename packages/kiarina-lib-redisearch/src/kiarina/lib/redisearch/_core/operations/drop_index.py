@@ -28,9 +28,6 @@ def drop_index(
     *,
     delete_documents: bool = False,
 ) -> bool | Awaitable[bool]:
-    """
-    Delete the index.
-    """
 
     def _sync() -> bool:
         if ctx.settings.protect_index_deletion:

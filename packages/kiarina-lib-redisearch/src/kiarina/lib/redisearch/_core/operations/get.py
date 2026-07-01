@@ -28,9 +28,6 @@ def get(
     ctx: RedisearchContext,
     id: str,
 ) -> Document | None | Awaitable[Document | None]:
-    """
-    Get a document from the index.
-    """
     key = get_key(ctx, id)
 
     def _after(mapping: dict[bytes, bytes]) -> Document | None:

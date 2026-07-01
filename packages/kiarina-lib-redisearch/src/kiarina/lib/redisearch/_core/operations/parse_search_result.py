@@ -17,7 +17,6 @@ def parse_search_result(
     documents: list[Document] = []
 
     for doc in result.docs:
-        # key
         key: str = doc.id
 
         if not key.startswith(key_prefix):
@@ -25,10 +24,8 @@ def parse_search_result(
                 f"Document ID {doc.id} does not start with key prefix {key_prefix}"
             )
 
-        # id
         id = key[len(key_prefix) :]
 
-        # mapping
         mapping = doc.__dict__
 
         if "id" in mapping:
@@ -39,7 +36,6 @@ def parse_search_result(
 
         mapping.pop("payload", None)
 
-        # score
         score = 0.0
 
         if distance := mapping.pop("distance", None):

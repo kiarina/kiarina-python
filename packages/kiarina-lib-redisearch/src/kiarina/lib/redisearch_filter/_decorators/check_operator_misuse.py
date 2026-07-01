@@ -4,9 +4,6 @@ from typing import Any
 
 
 def check_operator_misuse(func: Callable[..., Any]) -> Callable[..., Any]:
-    """
-    Decorator to check misuse of the equality operator
-    """
 
     @wraps(func)
     def wrapper(instance: Any, *args: Any, **kwargs: Any) -> Any:

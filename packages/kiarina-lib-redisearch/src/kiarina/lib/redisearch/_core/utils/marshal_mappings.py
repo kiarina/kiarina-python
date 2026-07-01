@@ -10,9 +10,6 @@ def marshal_mappings(
     schema: RedisearchSchema,
     mapping: dict[str, Any],
 ) -> dict[str, Any]:
-    """
-    Convert the mapping to the appropriate format based on the schema
-    """
     marshaled: dict[str, Any] = {}
 
     for key, value in mapping.items():

@@ -2,17 +2,12 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class BaseFieldSchema(BaseModel):
-    """
-    Base class of the field schema
-    """
+    """Base schema for a RediSearch field."""
 
-    name: str = Field(...)
-    """
-    RediSearch field name
-
-    The field names `payload` and `distance` cannot be used.
-    If `id` is used as a field name, it will be treated as the same value as the document ID.
-    """
+    name: str = Field(
+        title="Field Name",
+        description="Field name. 'payload' and 'distance' are reserved.",
+    )
 
     @field_validator("name")
     @classmethod

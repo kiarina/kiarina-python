@@ -50,25 +50,18 @@ def search(
     limit: int | None = None,
     return_fields: list[str] | None = None,
 ) -> SearchResult | Awaitable[SearchResult]:
-    """
-    Search documents using vector similarity search.
-    """
-    # filter_query
     if filter is not None:
         filter = create_redisearch_filter(filter=filter, schema=ctx.schema)
 
     filter_query = "*" if filter is None else str(filter)
 
-    # vector_field_name
     vector_field_name = ctx.schema.vector_field.name
 
-    # return_fields
     return_fields = return_fields or []
 
     if "distance" not in return_fields:
         return_fields.append("distance")
 
-    # params
     params: dict[str, str | int | float | bytes] = {
         "vector": np.array(vector).astype(ctx.schema.vector_field.dtype).tobytes()
     }

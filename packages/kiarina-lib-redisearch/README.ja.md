@@ -2,16 +2,22 @@
 
 [English](README.md) | 日本語
 
-kiarina namespace 向けの RediSearch client library です。
+[![PyPI](https://img.shields.io/pypi/v/kiarina-lib-redisearch.svg)](https://pypi.org/project/kiarina-lib-redisearch/)
+[![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
-## Features
+> [!NOTE]
+> 同期・非同期の RediSearch クライアント、検索フィルター、インデックススキーマを提供します。
 
-- schema definition と index management
-- full-text search
-- vector similarity search
-- sync / async API
-- schema migration helper
-- Redis JSON document 操作
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [NumPy](https://github.com/numpy/numpy) | `>=2.3.2` | [BSD-3-Clause](https://github.com/numpy/numpy/blob/main/LICENSE.txt) |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.11.7` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+| [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
+| [redis-py](https://github.com/redis/redis-py) | `>=6.4.0` | [MIT](https://github.com/redis/redis-py/blob/master/LICENSE) |
 
 ## Installation
 
@@ -19,117 +25,579 @@ kiarina namespace 向けの RediSearch client library です。
 pip install kiarina-lib-redisearch
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage (Sync)
+- **インデックスの管理**
+  インデックスの作成、削除、再作成、スキーマ移行を行います。
+- **ドキュメントの操作**
+  Redis Hash としてドキュメントを保存、取得、削除します。
+- **フィルター検索**
+  タグ、数値、テキスト条件を型付きオブジェクトまたは条件リストで組み立てます。
+- **ベクトル検索**
+  FLAT または HNSW インデックスで近似近傍検索を行います。
+- **同期・非同期 API**
+  同じ操作を `kiarina.lib.redisearch` と `kiarina.lib.redisearch.asyncio` から利用できます。
 
-```python
-from redis import Redis
-from kiarina.lib.redisearch import RediSearch, Schema, TextField, VectorField
+### Configuring an Index
 
-schema = Schema(
-    fields=[
-        TextField(name="title"),
-        VectorField(name="embedding", dims=1536),
-    ],
-)
+環境変数は `KIARINA_LIB_REDISEARCH_` で始まります。
 
-redis = Redis.from_url("redis://localhost:6379", decode_responses=False)
-client = RediSearch(redis=redis, index_name="idx:docs", schema=schema)
-
-client.create_index()
-client.set_document("doc:1", {"title": "Hello", "embedding": embedding_bytes})
-results = client.search("hello")
+```bash
+export KIARINA_LIB_REDISEARCH_KEY_PREFIX="article:"
+export KIARINA_LIB_REDISEARCH_INDEX_NAME="articles"
+export KIARINA_LIB_REDISEARCH_PROTECT_INDEX_DELETION="false"
 ```
 
-### Async Usage
-
-async Redis client と async RediSearch client を使って同じ操作を await できます。
-
-## Schema Definition
-
-### Field Types
-
-Tag、Text、Numeric、Vector (FLAT / HNSW) field を定義できます。
-
-```python
-from kiarina.lib.redisearch import NumericField, TagField, TextField
-
-fields = [
-    TagField(name="category"),
-    TextField(name="body"),
-    NumericField(name="created_at"),
-]
-```
-
-## Configuration
-
-### Environment Variables
-
-`KIARINA_LIB_REDISEARCH_` prefix の環境変数で設定できます。
-
-### YAML Configuration
+`pydantic-settings-manager` のユーザー設定では、複数のインデックス設定を名前で管理できます。
 
 ```yaml
 kiarina.lib.redisearch:
-  index_name: "idx:docs"
-  key_prefix: "doc:"
+  default: articles
+  configs:
+    articles:
+      key_prefix: "article:"
+      index_name: articles
+      protect_index_deletion: false
+```
+
+### Defining a Schema
+
+```python
+from kiarina.lib.redisearch_schema import RedisearchFieldDicts
+
+field_dicts: RedisearchFieldDicts = [
+    {"type": "tag", "name": "category"},
+    {"type": "text", "name": "title", "sortable": True},
+    {"type": "numeric", "name": "price", "sortable": True},
+    {
+        "type": "vector",
+        "name": "embedding",
+        "algorithm": "HNSW",
+        "dims": 1536,
+        "distance_metric": "COSINE",
+    },
+]
+```
+
+`Redis` はベクトルをバイト列として扱うため、`decode_responses=False` が必要です。
+
+### Using the Synchronous Client
+
+```python
+from redis import Redis
+
+from kiarina.lib.redisearch import create_redisearch_client
+
+redis = Redis.from_url("redis://localhost:6379", decode_responses=False)
+client = create_redisearch_client(field_dicts=field_dicts, redis=redis)
+
+client.create_index()
+client.set(
+    {
+        "id": "1",
+        "category": "news",
+        "title": "Example",
+        "price": 100,
+        "embedding": [0.1] * 1536,
+    }
+)
+result = client.find(return_fields=["category", "title", "price"])
+```
+
+### Using the Asynchronous Client
+
+```python
+from redis.asyncio import Redis
+
+from kiarina.lib.redisearch.asyncio import create_redisearch_client
+
+redis = Redis.from_url("redis://localhost:6379", decode_responses=False)
+client = create_redisearch_client(field_dicts=field_dicts, redis=redis)
+
+await client.create_index()
+result = await client.find(return_fields=["category", "title", "price"])
+```
+
+### Filtering Documents
+
+```python
+from kiarina.lib.redisearch_filter import Numeric, Tag, Text
+
+filter = (Tag("category") == "news") & (Numeric("price") < 1000)
+result = client.find(filter=filter)
+
+filter = Text("title") % "python*"
+result = client.find(filter=filter)
+
+filter = (Tag("color") == "blue") & (Numeric("price") < 100)
+print(str(filter))
+# (@color:{blue} @price:[-inf (100])
+```
+
+条件リストは AND で結合されます。
+
+```python
+result = client.find(
+    filter=[
+        ["category", "in", ["news", "guide"]],
+        ["price", "<", 1000],
+        ["title", "like", "python*"],
+    ]
+)
+```
+
+### Searching by Vector
+
+```python
+result = client.search(
+    vector=[0.1] * 1536,
+    filter=Tag("category") == "news",
+    limit=10,
+    return_fields=["title", "price"],
+)
 ```
 
 ## API Reference
 
-### Index Operations
+### `kiarina.lib.redisearch`
 
-index の存在確認、作成、削除、reset、migration、info 取得を提供します。
-
-### Document Operations
-
-document の set / get / delete と Redis key 生成を提供します。
-
-### Search Operations
-
-document count、full-text search、vector similarity search を提供します。
-
-### Advanced Filtering
-
-filter API または condition list により、tag / numeric などの条件を組み立てられます。
-
-### Filter Operators
-
-field type に応じた filter operator を利用できます。
-
-## Schema Migration
-
-schema を code 上で更新したあと `migrate_index()` を呼び出すことで、差分検出に基づいて index を再作成できます。
-
-## Testing
-
-### Prerequisites
-
-RediSearch module が有効な Redis が必要です。
-
-### Running Tests
-
-```bash
-docker compose up -d redis
-mise run test kiarina-lib-redisearch
-mise run test kiarina-lib-redisearch --coverage
+```python
+from kiarina.lib.redisearch import (
+    RedisearchClient,
+    RedisearchSettings,
+    create_redisearch_client,
+    settings_manager,
+)
 ```
 
-## Dependencies
+#### `create_redisearch_client`
 
-- `numpy`
-- `pydantic`
-- `pydantic-settings`
-- `pydantic-settings-manager`
-- `redis`
+```python
+def create_redisearch_client(
+    settings_key: str | None = None,
+    *,
+    field_dicts: RedisearchFieldDicts,
+    redis: redis.Redis,
+) -> RedisearchClient: ...
+```
 
-## License
+設定名、フィールド定義、同期 Redis クライアントからクライアントを作成します。
 
-MIT License です。詳細は [LICENSE](../../LICENSE) を参照してください。
+#### `RedisearchClient`
 
-## Related Projects
+```python
+class RedisearchClient:
+    def __init__(
+        self,
+        settings: RedisearchSettings,
+        *,
+        schema: RedisearchSchema,
+        redis: redis.Redis,
+    ) -> None: ...
 
-- [kiarina-python](https://github.com/kiarina/kiarina-python)
-- [Redis Stack / RediSearch](https://redis.io/docs/latest/develop/interact/search-and-query/)
+    def exists_index(self) -> bool: ...
+    def create_index(self) -> None: ...
+    def drop_index(self, *, delete_documents: bool = False) -> bool: ...
+    def reset_index(self) -> None: ...
+    def migrate_index(self) -> None: ...
+    def get_info(self) -> InfoResult: ...
 
+    def set(self, mapping: dict[str, Any], *, id: str | None = None) -> None: ...
+    def delete(self, id: str) -> None: ...
+    def get(self, id: str) -> Document | None: ...
+
+    def count(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+    ) -> SearchResult: ...
+
+    def find(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        sort_by: str | None = None,
+        sort_desc: bool = False,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+
+    def search(
+        self,
+        *,
+        vector: list[float],
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+
+    def get_key(self, id: str) -> str: ...
+```
+
+`drop_index` は削除できた場合に `True` を返します。`protect_index_deletion=True` の場合は削除せず `False` を返します。`set` で `id` を省略する場合、`mapping["id"]` が必要です。`find` で `return_fields` を省略すると、結果には ID のみが含まれます。
+
+#### `RedisearchSettings`
+
+```python
+class RedisearchSettings(BaseSettings):
+    key_prefix: str = ""
+    index_name: str = "default"
+    protect_index_deletion: bool = False
+```
+
+#### `settings_manager`
+
+```python
+settings_manager: SettingsManager[RedisearchSettings]
+```
+
+複数の名前付き設定を管理します。
+
+### `kiarina.lib.redisearch.asyncio`
+
+```python
+from kiarina.lib.redisearch.asyncio import (
+    RedisearchClient,
+    RedisearchSettings,
+    create_redisearch_client,
+    settings_manager,
+)
+```
+
+#### `create_redisearch_client`
+
+```python
+def create_redisearch_client(
+    settings_key: str | None = None,
+    *,
+    field_dicts: RedisearchFieldDicts,
+    redis: redis.asyncio.Redis,
+) -> RedisearchClient: ...
+```
+
+#### `RedisearchClient`
+
+非同期クライアントは、同期クライアントと同じ引数および戻り値を使用します。Redis と I/O を行うメソッドのみ `async` です。
+
+```python
+class RedisearchClient:
+    def __init__(
+        self,
+        settings: RedisearchSettings,
+        *,
+        schema: RedisearchSchema,
+        redis: redis.asyncio.Redis,
+    ) -> None: ...
+
+    async def exists_index(self) -> bool: ...
+    async def create_index(self) -> None: ...
+    async def drop_index(self, *, delete_documents: bool = False) -> bool: ...
+    async def reset_index(self) -> None: ...
+    async def migrate_index(self) -> None: ...
+    async def get_info(self) -> InfoResult: ...
+    async def set(
+        self,
+        mapping: dict[str, Any],
+        *,
+        id: str | None = None,
+    ) -> None: ...
+    async def delete(self, id: str) -> None: ...
+    async def get(self, id: str) -> Document | None: ...
+    async def count(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+    ) -> SearchResult: ...
+    async def find(
+        self,
+        *,
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        sort_by: str | None = None,
+        sort_desc: bool = False,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+    async def search(
+        self,
+        *,
+        vector: list[float],
+        filter: RedisearchFilter | RedisearchFilterConditions | None = None,
+        offset: int | None = None,
+        limit: int | None = None,
+        return_fields: list[str] | None = None,
+    ) -> SearchResult: ...
+    def get_key(self, id: str) -> str: ...
+```
+
+`RedisearchSettings` と `settings_manager` は同期 API と同じインスタンスです。
+
+### `kiarina.lib.redisearch_filter`
+
+```python
+from kiarina.lib.redisearch_filter import (
+    Numeric,
+    RedisearchFilter,
+    RedisearchFilterConditions,
+    Tag,
+    Text,
+    create_redisearch_filter,
+)
+```
+
+#### `create_redisearch_filter`
+
+```python
+def create_redisearch_filter(
+    *,
+    filter: RedisearchFilter | RedisearchFilterConditions,
+    schema: RedisearchSchema,
+) -> RedisearchFilter | None: ...
+```
+
+条件リストを検証し、AND で結合したフィルターへ変換します。空のリストでは `None` を返します。
+
+#### `Tag`
+
+```python
+class Tag:
+    def __init__(self, field_name: str) -> None: ...
+    def __eq__(
+        self,
+        other: list[str] | set[str] | tuple[str, ...] | str,
+    ) -> RedisearchFilter: ...
+    def __ne__(
+        self,
+        other: list[str] | set[str] | tuple[str, ...] | str,
+    ) -> RedisearchFilter: ...
+```
+
+タグの単一値と複数値に対して、等価・非等価条件を作成できます。
+
+```python
+str(Tag("color") == "blue")          # @color:{blue}
+str(Tag("color") == ["blue", "red"]) # @color:{blue|red}
+str(Tag("color") != "blue")          # (-@color:{blue})
+str(Tag("color") != ["blue", "red"]) # (-@color:{blue|red})
+```
+
+#### `Numeric`
+
+```python
+class Numeric:
+    def __init__(self, field_name: str) -> None: ...
+    def __eq__(self, other: int | float) -> RedisearchFilter: ...
+    def __ne__(self, other: int | float) -> RedisearchFilter: ...
+    def __gt__(self, other: int | float) -> RedisearchFilter: ...
+    def __lt__(self, other: int | float) -> RedisearchFilter: ...
+    def __ge__(self, other: int | float) -> RedisearchFilter: ...
+    def __le__(self, other: int | float) -> RedisearchFilter: ...
+```
+
+すべての数値比較演算子を利用できます。
+
+```python
+str(Numeric("price") == 100) # @price:[100 100]
+str(Numeric("price") != 100) # (-@price:[100 100])
+str(Numeric("price") > 100)  # @price:[(100 +inf]
+str(Numeric("price") < 100)  # @price:[-inf (100]
+str(Numeric("price") >= 100) # @price:[100 +inf]
+str(Numeric("price") <= 100) # @price:[-inf 100]
+```
+
+#### `Text`
+
+```python
+class Text:
+    def __init__(self, field_name: str) -> None: ...
+    def __eq__(self, other: str) -> RedisearchFilter: ...
+    def __ne__(self, other: str) -> RedisearchFilter: ...
+    def __mod__(self, other: str) -> RedisearchFilter: ...
+```
+
+`==` と `!=` は完全一致条件を作成します。`%` はワイルドカードなどを含む RediSearch のテキストクエリを受け取ります。
+
+```python
+str(Text("title") == "hello") # @title:("hello")
+str(Text("title") != "hello") # (-@title:"hello")
+str(Text("title") % "*hello*") # @title:(*hello*)
+```
+
+#### `RedisearchFilter`
+
+```python
+class RedisearchFilter:
+    def __init__(
+        self,
+        query: str | None = None,
+        *,
+        left: RedisearchFilter | None = None,
+        operator: RedisearchFilterOperator | None = None,
+        right: RedisearchFilter | None = None,
+    ) -> None: ...
+    def __and__(self, other: RedisearchFilter) -> RedisearchFilter: ...
+    def __or__(self, other: RedisearchFilter) -> RedisearchFilter: ...
+    def __str__(self) -> str: ...
+```
+
+`&` は AND、`|` は OR で条件を結合します。
+
+```python
+color = Tag("color") == "blue"
+price = Numeric("price") < 100
+
+str(color & price) # (@color:{blue} @price:[-inf (100])
+str(color | price) # (@color:{blue} | @price:[-inf (100])
+```
+
+#### `RedisearchFilterConditions`
+
+```python
+RedisearchFilterConditions: TypeAlias = list[list[Any]]
+```
+
+各条件は `[field_name, operator, value]` の3要素です。複数の条件は AND で結合されます。
+
+```python
+conditions: RedisearchFilterConditions = [
+    ["color", "in", ["blue", "red"]],
+    ["price", "<", 1000],
+    ["title", "like", "*hello*"],
+]
+```
+
+フィールド型ごとに次の演算子を利用できます。
+
+```python
+tag_conditions: RedisearchFilterConditions = [
+    ["color", "==", "blue"],
+    ["color", "!=", "blue"],
+    ["color", "in", ["blue", "red"]],
+    ["color", "not in", ["blue", "red"]],
+]
+
+numeric_conditions: RedisearchFilterConditions = [
+    ["price", "==", 1000],
+    ["price", "!=", 1000],
+    ["price", ">", 1000],
+    ["price", "<", 1000],
+    ["price", ">=", 1000],
+    ["price", "<=", 1000],
+]
+
+text_conditions: RedisearchFilterConditions = [
+    ["title", "==", "hello"],
+    ["title", "!=", "hello"],
+    ["title", "like", "*hello*"],
+]
+```
+
+### `kiarina.lib.redisearch_schema`
+
+```python
+from kiarina.lib.redisearch_schema import (
+    FieldSchema,
+    FlatVectorFieldSchema,
+    HNSWVectorFieldSchema,
+    NumericFieldSchema,
+    RedisearchFieldDicts,
+    RedisearchSchema,
+    TagFieldSchema,
+    TextFieldSchema,
+)
+```
+
+#### `RedisearchSchema`
+
+```python
+class RedisearchSchema(BaseModel):
+    fields: list[FieldSchema] = []
+
+    @property
+    def field_names(self) -> list[str]: ...
+    @property
+    def vector_field(self) -> FlatVectorFieldSchema | HNSWVectorFieldSchema: ...
+    def get_field(self, name: str) -> FieldSchema | None: ...
+    def to_fields(self) -> list[redis.commands.search.field.Field]: ...
+    @classmethod
+    def from_field_dicts(cls, field_dicts: RedisearchFieldDicts) -> Self: ...
+```
+
+`vector_field` は最初のベクトルフィールドを返し、存在しない場合は `ValueError` を送出します。
+
+#### Field Schemas
+
+```python
+class NumericFieldSchema(BaseModel):
+    name: str
+    type: Literal["numeric"] = "numeric"
+    no_index: bool = False
+    sortable: bool | None = False
+    def to_field(self) -> NumericField: ...
+
+class TagFieldSchema(BaseModel):
+    name: str
+    type: Literal["tag"] = "tag"
+    separator: str = ","
+    case_sensitive: bool = False
+    no_index: bool = False
+    sortable: bool | None = False
+    multiple: bool = False
+    def to_field(self) -> TagField: ...
+
+class TextFieldSchema(BaseModel):
+    name: str
+    type: Literal["text"] = "text"
+    weight: float = 1
+    no_stem: bool = False
+    phonetic_matcher: str | None = None
+    withsuffixtrie: bool = False
+    no_index: bool = False
+    sortable: bool | None = False
+    def to_field(self) -> TextField: ...
+```
+
+`multiple` は保存値を複数タグとして復元するためのライブラリ固有フィールドで、RediSearch のスキーマには出力されません。
+
+```python
+class FlatVectorFieldSchema(BaseModel):
+    name: str
+    type: Literal["vector"] = "vector"
+    dims: int
+    datatype: Literal["FLOAT32", "FLOAT64"] = "FLOAT32"
+    distance_metric: Literal["L2", "COSINE", "IP"] = "COSINE"
+    initial_cap: int | None = None
+    algorithm: Literal["FLAT"] = "FLAT"
+    block_size: int | None = None
+    def to_field(self) -> VectorField: ...
+
+class HNSWVectorFieldSchema(BaseModel):
+    name: str
+    type: Literal["vector"] = "vector"
+    dims: int
+    datatype: Literal["FLOAT32", "FLOAT64"] = "FLOAT32"
+    distance_metric: Literal["L2", "COSINE", "IP"] = "COSINE"
+    initial_cap: int | None = None
+    algorithm: Literal["HNSW"] = "HNSW"
+    m: int = 16
+    ef_construction: int = 200
+    ef_runtime: int = 10
+    epsilon: float = 0.01
+    def to_field(self) -> VectorField: ...
+```
+
+#### Types
+
+```python
+FieldSchema: TypeAlias = (
+    NumericFieldSchema
+    | TagFieldSchema
+    | TextFieldSchema
+    | FlatVectorFieldSchema
+    | HNSWVectorFieldSchema
+)
+
+RedisearchFieldDicts: TypeAlias = list[dict[str, Any]]
+```

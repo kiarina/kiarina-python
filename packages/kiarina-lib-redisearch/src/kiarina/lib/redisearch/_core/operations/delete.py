@@ -26,9 +26,6 @@ def delete(
     ctx: RedisearchContext,
     id: str,
 ) -> None | Awaitable[None]:
-    """
-    Delete a document from the index.
-    """
     key = get_key(ctx, id)
 
     def _sync() -> None:

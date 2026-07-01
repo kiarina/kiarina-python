@@ -23,9 +23,6 @@ def exists_index(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
 ) -> bool | Awaitable[bool]:
-    """
-    Check if the index exists.
-    """
 
     def _handle_exception(e: Exception) -> bool:
         msg = str(e)

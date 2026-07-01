@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Remove empty `__init__.py` files from internal directories.
+- Rewrite the package documentation and simplify comments and docstrings.
+- Add Pydantic field titles and descriptions to public settings and schemas.
 
 ## [2.1.0] - 2026-06-22
 
