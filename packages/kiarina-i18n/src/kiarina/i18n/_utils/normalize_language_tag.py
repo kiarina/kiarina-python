@@ -9,7 +9,6 @@ _VARIANT_RE = re.compile(r"^(?:[A-Za-z0-9]{5,8}|[0-9][A-Za-z0-9]{3})$")
 
 
 def normalize_language_tag(language: str) -> Language:
-    """Normalize a practical subset of BCP 47 language tags."""
     normalized = _strip_locale_suffixes(language.strip())
 
     if normalized in {"C", "POSIX"}:

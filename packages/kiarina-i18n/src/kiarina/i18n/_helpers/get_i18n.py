@@ -11,39 +11,6 @@ T = TypeVar("T", bound=BaseModel)
 
 
 def get_i18n(model_class: type[T], language: Language | None = None) -> T:
-    """
-    Get translated Pydantic model instance.
-
-    This function creates an instance of the given model class with all fields
-    translated to the specified language.
-
-    Args:
-        model_class: Pydantic model class to instantiate (not instance!)
-        language: Target BCP 47 language tag (e.g., "en", "ja-JP").
-            If omitted, the system language is detected automatically.
-
-    Returns:
-        Translated model instance with all fields translated
-
-    Example:
-        ```python
-        from pydantic import BaseModel
-        from kiarina.i18n import I18n, get_i18n
-
-        class MyI18n(I18n, scope="my.module"):
-            title: str = "My Title"
-            description: str = "My Description"
-
-        class PublicModel(BaseModel):
-            title: str = "My Title"
-            description: str = "My Description"
-
-        # Get translated instance
-        t = get_i18n(MyI18n, "ja")
-        print(t.title)  # Translated title in Japanese
-        print(t.description)  # Translated description in Japanese
-        ```
-    """
     scope = resolve_i18n_scope(model_class)
     target_language = language or get_system_language()
 

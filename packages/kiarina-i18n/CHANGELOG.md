@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Expand the package guide and API reference, align the English and Japanese documentation, and simplify comments and docstrings.
+
 ## [2.1.0] - 2026-06-22
 
 ### Added
