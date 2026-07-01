@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Clarified settings metadata, streamlined comments and docstrings, and documented ADC credential search order and all settings fields.
+
 ## [2.3.0] - 2026-07-01
 
 ### Changed

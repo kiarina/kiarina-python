@@ -8,74 +8,106 @@ from pydantic_settings_manager import SettingsManager
 
 
 class GoogleSettings(BaseSettings):
+    """Google authentication settings."""
+
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_GOOGLE_")
 
-    type: Literal["default", "service_account", "user_account", "api_key"] = "default"
+    type: Literal["default", "service_account", "user_account", "api_key"] = Field(
+        default="default",
+        title="Authentication Type",
+        description="Authentication method to use.",
+    )
 
     # --------------------------------------------------
     # Fields (common)
     # --------------------------------------------------
 
-    project_id: str | None = None
+    project_id: str | None = Field(
+        default=None,
+        title="Project ID",
+        description="Google Cloud project ID.",
+    )
 
-    impersonate_service_account: str | None = None
-    """
-    Email address of the service account to impersonate
+    impersonate_service_account: str | None = Field(
+        default=None,
+        title="Service Account to Impersonate",
+        description=(
+            "Email address of the service account to impersonate. The source "
+            "principal requires roles/iam.serviceAccountTokenCreator."
+        ),
+    )
 
-    The source principal requires the roles/iam.serviceAccountTokenCreator role.
-    Note that this required permission is not included in the roles/owner role.
-    """
-
-    scopes: list[str] = Field(default_factory=list)
-    """
-    List of scopes to request during the authentication
-
-    Specify the scopes required for impersonation authentication.
-    Specify the scopes required for user account authentication.
-    """
+    scopes: list[str] = Field(
+        default_factory=list,
+        title="Scopes",
+        description="OAuth scopes to request.",
+    )
 
     # --------------------------------------------------
     # Fields (service_account)
     # --------------------------------------------------
 
-    service_account_email: str | None = None
+    service_account_email: str | None = Field(
+        default=None,
+        title="Service Account Email",
+        description="Service account email address.",
+    )
 
-    service_account_file: str | None = None
-    """Path to the service account key file"""
+    service_account_file: str | None = Field(
+        default=None,
+        title="Service Account File",
+        description="Path to a service account key file.",
+    )
 
-    service_account_data: SecretStr | None = None
-    """Service account key data in JSON format"""
+    service_account_data: SecretStr | None = Field(
+        default=None,
+        title="Service Account Data",
+        description="Service account key data as a JSON string.",
+    )
 
     # --------------------------------------------------
     # Fields (user_account)
     # --------------------------------------------------
 
-    user_account_email: str | None = None
+    user_account_email: str | None = Field(
+        default=None,
+        title="User Account Email",
+        description="User account email address.",
+    )
 
-    client_secret_file: str | None = None
-    """Path to the client secret file"""
+    client_secret_file: str | None = Field(
+        default=None,
+        title="Client Secret File",
+        description="Path to an OAuth client secret file.",
+    )
 
-    client_secret_data: SecretStr | None = None
-    """Client secret data in JSON format"""
+    client_secret_data: SecretStr | None = Field(
+        default=None,
+        title="Client Secret Data",
+        description="OAuth client secret data as a JSON string.",
+    )
 
-    authorized_user_file: str | None = None
-    """Path to the authorized user file"""
+    authorized_user_file: str | None = Field(
+        default=None,
+        title="Authorized User File",
+        description="Path to an authorized user credentials file.",
+    )
 
-    authorized_user_data: SecretStr | None = None
-    """
-    Authorized user data in JSON format
-
-    If expired, retrieve from cache.
-    If cache is not available, use for refresh.
-    Refreshed credentials will be cached.
-    """
+    authorized_user_data: SecretStr | None = Field(
+        default=None,
+        title="Authorized User Data",
+        description="Authorized user credentials as a JSON string.",
+    )
 
     # --------------------------------------------------
     # Fields (api_key)
     # --------------------------------------------------
 
-    api_key: SecretStr | None = None
-    """API key for accessing Google APIs"""
+    api_key: SecretStr | None = Field(
+        default=None,
+        title="API Key",
+        description="API key for Google APIs.",
+    )
 
     # --------------------------------------------------
     # Validators
@@ -115,3 +147,4 @@ class GoogleSettings(BaseSettings):
 
 
 settings_manager = SettingsManager(GoogleSettings, multi=True)
+"""Manager for named Google authentication settings."""

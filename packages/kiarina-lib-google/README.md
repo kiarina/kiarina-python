@@ -44,6 +44,14 @@ pip install kiarina-lib-google
 
 ADC searches the runtime environment for available credentials, including `GOOGLE_APPLICATION_CREDENTIALS`, local gcloud credentials, and the Google Cloud metadata server.
 
+Credentials are searched in this order:
+
+1. The credentials file referenced by `GOOGLE_APPLICATION_CREDENTIALS`
+2. The local credentials file created by `gcloud auth application-default login`
+3. The service account attached to the runtime, returned by the Google Cloud metadata server
+
+See Google Cloud's [How Application Default Credentials works](https://cloud.google.com/docs/authentication/application-default-credentials) for details.
+
 ```python
 from kiarina.lib.google import get_credentials
 
@@ -385,6 +393,26 @@ class GoogleSettings(BaseSettings):
 ```
 
 An authentication settings model that supports environment variables with the `KIARINA_LIB_GOOGLE_` prefix. The file fields expand `~` during model validation, and the data-field helper methods convert JSON held in `SecretStr` to dictionaries.
+
+| Field | Description |
+| --- | --- |
+| `type` | Authentication method to use |
+| `project_id` | Google Cloud project ID |
+| `impersonate_service_account` | Email address of the service account to impersonate |
+| `scopes` | OAuth scopes to request |
+| `service_account_email` | Service account email address |
+| `service_account_file` | Path to a service account key file |
+| `service_account_data` | Service account key data as a JSON string |
+| `user_account_email` | User account email address |
+| `client_secret_file` | Path to an OAuth client secret file |
+| `client_secret_data` | OAuth client secret data as a JSON string |
+| `authorized_user_file` | Path to an authorized user credentials file |
+| `authorized_user_data` | Authorized user credentials as a JSON string |
+| `api_key` | Google API key |
+
+`get_service_account_data`, `get_client_secret_data`, and `get_authorized_user_data` convert their corresponding JSON strings to dictionaries. They return `None` when no value is configured and raise `json.JSONDecodeError` for invalid JSON.
+
+`get_credentials` uses `type`, `impersonate_service_account`, `scopes`, `service_account_file`, `service_account_data`, `authorized_user_file`, and `authorized_user_data` to create credentials. The remaining fields can retain related values for services that share this settings model.
 
 `type="api_key"` and `api_key` can securely retain an API key in settings, but `get_credentials` does not convert API keys into Google credentials and raises `ValueError`.
 

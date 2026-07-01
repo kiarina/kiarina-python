@@ -93,4 +93,4 @@ def test_cache(load_settings):
     assert isinstance(credentials2, Credentials)
     assert credentials2.valid is True
     assert credentials2.token == credentials.token
-    assert set_counter == 1  # Cache should be used, so set() not called
+    assert set_counter == 1

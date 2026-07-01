@@ -44,6 +44,14 @@ pip install kiarina-lib-google
 
 ADC は `GOOGLE_APPLICATION_CREDENTIALS`、ローカルの gcloud 認証情報、Google Cloud のメタデータサーバーなど、実行環境から利用可能な認証情報を探索します。
 
+認証情報は、次の順序で探索されます。
+
+1. `GOOGLE_APPLICATION_CREDENTIALS` が参照する認証情報ファイル
+2. `gcloud auth application-default login` が作成したローカル認証情報ファイル
+3. Google Cloud のメタデータサーバーが返す、実行環境に接続されたサービスアカウント
+
+詳細は、Google Cloud の [Application Default Credentials の仕組み](https://cloud.google.com/docs/authentication/application-default-credentials?hl=ja) を参照してください。
+
 ```python
 from kiarina.lib.google import get_credentials
 
@@ -385,6 +393,26 @@ class GoogleSettings(BaseSettings):
 ```
 
 `KIARINA_LIB_GOOGLE_` prefix の環境変数に対応する認証設定モデルです。file フィールドの `~` は model validation 時に展開され、data フィールドの helper method は `SecretStr` 内の JSON を dictionary に変換します。
+
+| Field | Description |
+| --- | --- |
+| `type` | 使用する認証方式 |
+| `project_id` | Google Cloud のプロジェクト ID |
+| `impersonate_service_account` | 権限を借用するサービスアカウントのメールアドレス |
+| `scopes` | 要求する OAuth スコープ |
+| `service_account_email` | サービスアカウントのメールアドレス |
+| `service_account_file` | サービスアカウントキーファイルのパス |
+| `service_account_data` | サービスアカウントキーの JSON 文字列 |
+| `user_account_email` | ユーザーアカウントのメールアドレス |
+| `client_secret_file` | OAuth クライアントシークレットファイルのパス |
+| `client_secret_data` | OAuth クライアントシークレットの JSON 文字列 |
+| `authorized_user_file` | 認証済みユーザー情報ファイルのパス |
+| `authorized_user_data` | 認証済みユーザー情報の JSON 文字列 |
+| `api_key` | Google API キー |
+
+`get_service_account_data`、`get_client_secret_data`、`get_authorized_user_data` は、対応する JSON 文字列を dictionary に変換します。値がない場合は `None` を返し、不正な JSON の場合は `json.JSONDecodeError` を送出します。
+
+`get_credentials` が認証情報の生成に使用するフィールドは、`type`、`impersonate_service_account`、`scopes`、`service_account_file`、`service_account_data`、`authorized_user_file`、`authorized_user_data` です。その他のフィールドは、この設定モデルを共有する関連サービスから参照できます。
 
 `type="api_key"` と `api_key` は API key を安全に設定へ保持するために使用できますが、`get_credentials` は API key を Google credentials へ変換せず、`ValueError` を送出します。
 
