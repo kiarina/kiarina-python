@@ -27,17 +27,6 @@ def write_file(
     file_blob: FileBlob,
     file_path: str | os.PathLike[str] | None = None,
 ) -> None | Awaitable[None]:
-    """
-    Write a FileBlob to a file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_blob (FileBlob): The FileBlob instance to write
-        file_path (str | os.PathLike[str] | None): Path to the file to write. If None, uses the FileBlob's path
-
-    Returns:
-        Awaitable[None] | None: None if successful, or an awaitable if in async mode
-    """
     if file_path is None:
         file_path = file_blob.file_path
 

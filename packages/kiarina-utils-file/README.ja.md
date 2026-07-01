@@ -2,36 +2,23 @@
 
 [English](README.md) | 日本語
 
-自動エンコーディング検出、MIME type 検出、複数ファイル形式に対応した包括的な Python file I/O library です。
+[![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+> [!NOTE]
+> sync / async の file I/O と、encoding、MIME type、拡張子の検出を提供します。
 
-## Features
+## Dependencies
 
-### 🚀 **Comprehensive File I/O**
-
-- Text、binary、JSON、YAML を扱えます。
-- sync / async API の両方を提供します。
-- 一時ファイルと lock を使った atomic write に対応します。
-
-### 🔍 **Smart Detection**
-
-- nkf サポートを含む自動エンコーディング検出
-- 複数手法による MIME type 検出
-- `.tar.gz` のような複合拡張子の扱い
-
-### 📦 **Data Containers**
-
-- **FileBlob**: path と metadata を持つ統一的な file container
-- **MIMEBlob**: MIME type つき binary data container
-- content hash による名前付け
-
-### 🛡️ **Production Ready**
-
-- default 値による missing file の扱い
-- non-blocking I/O と cache を活用した実装
-- type hints とテスト
+| Package | Version | License |
+| --- | --- | --- |
+| [aiofiles](https://github.com/Tinche/aiofiles) | `>=24.1.0` | [Apache-2.0](https://github.com/Tinche/aiofiles/blob/main/LICENSE) |
+| [Charset Normalizer](https://github.com/jawah/charset_normalizer) | `>=3.4.3` | [MIT](https://github.com/jawah/charset_normalizer/blob/master/LICENSE) |
+| [filelock](https://github.com/tox-dev/py-filelock) | `>=3.19.1` | [Unlicense](https://github.com/tox-dev/py-filelock/blob/main/LICENSE) |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.11.7` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+| [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
+| [PyYAML](https://github.com/yaml/pyyaml) | `>=6.0.2` | [MIT](https://github.com/yaml/pyyaml/blob/main/LICENSE) |
 
 ## Installation
 
@@ -39,202 +26,119 @@
 pip install kiarina-utils-file
 ```
 
-### Optional Dependencies
+content による MIME type 検出には optional dependency を追加します。
 
 ```bash
-pip install kiarina-utils-file[mime]
-pip install kiarina-utils-file[all]
+pip install "kiarina-utils-file[mime]"
 ```
 
-## Quick Start
+## Features
 
-### Basic File Operations
+- Text、binary、JSON、YAML、Markdown の sync / async I/O
+- lock と atomic replace を使う file write
+- encoding、MIME type、複合拡張子の検出
+- file data を扱う `FileBlob` と `MIMEBlob`
 
 ```python
-import kiarina.utils.file as kf
+from kiarina.utils.file import read_json_dict, write_text
 
-text = kf.read_text("document.txt", default="")
-kf.write_text("output.txt", "Hello, World!")
-
-data = kf.read_binary("image.jpg")
-if data:
-    kf.write_binary("copy.jpg", data)
-
-config = kf.read_json_dict("config.json", default={})
-kf.write_json_dict("output.json", {"key": "value"})
+config = read_json_dict("config.json", default={})
+write_text("output.txt", "Hello")
 ```
 
-### High-Level FileBlob Operations
+async API は `kiarina.utils.file.asyncio` から import します。
 
 ```python
-import kiarina.utils.file as kf
+from kiarina.utils.file.asyncio import read_text
 
-blob = kf.read_file("document.pdf")
-if blob:
-    print(blob.file_path)
-    print(blob.mime_type)
-    print(len(blob.raw_data))
+text = await read_text("input.txt", default="")
 ```
-
-### Async Operations
-
-```python
-import kiarina.utils.file.asyncio as kfa
-
-async def process_files():
-    text = await kfa.read_text("large_file.txt")
-    await kfa.write_json_dict("result.json", {"processed": True})
-```
-
-### MIME Type and Extension Detection
-
-```python
-import kiarina.utils.ext as ke
-import kiarina.utils.mime as km
-
-mime_type = km.detect_mime_type(file_name_hint="document.md", raw_data=file_data)
-extension = ke.extract_extension("archive.tar.gz")
-```
-
-### Encoding Detection
-
-```python
-import kiarina.utils.encoding as kenc
-
-encoding = kenc.detect_encoding(raw_data)
-text = kenc.decode_binary_to_text(raw_data)
-```
-
-## Advanced Usage
-
-### Custom Configuration
-
-環境変数でエンコーディング検出、file lock、MIME type 検出などの挙動を調整できます。
-
-### Error Handling
-
-`default` を指定すると、missing file を `None` check なしで扱いやすくできます。JSON decode error などは通常の例外として処理します。
-
-### Performance Considerations
-
-大量の I/O では async API を使うと、待ち時間を効率よく扱えます。
 
 ## API Reference
 
-### File Operations
+### `kiarina.utils.file`
 
-#### Synchronous API (`kiarina.utils.file`)
+```python
+class FileBlob:
+    def __init__(
+        self,
+        file_path: str | os.PathLike[str],
+        mime_blob: MIMEBlob | None = None,
+        *,
+        mime_type: str | None = None,
+        raw_data: bytes | None = None,
+        raw_text: str | None = None,
+    ) -> None: ...
 
-`read_file`、`write_file`、`read_text`、`write_text`、`read_binary`、`write_binary`、JSON/YAML read/write、`remove_file` を提供します。
+class MarkdownContent(NamedTuple):
+    content: str
+    metadata: dict[str, Any]
 
-#### Asynchronous API (`kiarina.utils.file.asyncio`)
+    @classmethod
+    def from_text(cls, text: str) -> MarkdownContent: ...
 
-sync API と同等の async 関数を提供します。
-
-### Data Containers
-
-#### FileBlob
-
-file path、MIMEBlob、MIME type、raw data/text などをまとめて扱う container です。
-
-#### MIMEBlob
-
-MIME type つきの binary data container です。
-
-### Utility Functions
-
-#### MIME Type Detection (`kiarina.utils.mime`)
-
-content または file name hint から MIME type を検出します。
-
-#### Extension Detection (`kiarina.utils.ext`)
-
-MIME type や file name から拡張子を扱います。
-
-#### Encoding Detection (`kiarina.utils.encoding`)
-
-binary data の文字エンコーディング検出と text decode を提供します。
-
-## Configuration
-
-### Environment Variables
-
-#### Encoding Detection
-
-`KIARINA_UTILS_ENCODING_*`
-
-#### File Operations
-
-`KIARINA_UTILS_FILE_*`
-
-#### MIME Type Detection
-
-`KIARINA_UTILS_MIME_*`
-
-#### Extension Detection
-
-`KIARINA_UTILS_EXT_*`
-
-## Requirements
-
-Python 3.12 以上が必要です。
-
-## Development
-
-### Prerequisites
-
-Python 3.12+、uv、mise が必要です。
-
-### Setup
-
-```bash
-mise run setup
+def read_file(...) -> FileBlob | None: ...
+def read_markdown(...) -> MarkdownContent | None: ...
+def write_file(...) -> None: ...
+def read_binary(...) -> bytes | None: ...
+def read_text(...) -> str | None: ...
+def read_json_dict(...) -> dict[str, Any] | None: ...
+def read_json_list(...) -> list[Any] | None: ...
+def read_yaml_dict(...) -> dict[str, Any] | None: ...
+def read_yaml_list(...) -> list[Any] | None: ...
+def remove_file(...) -> None: ...
+def write_binary(...) -> None: ...
+def write_text(...) -> None: ...
+def write_json_dict(...) -> None: ...
+def write_json_list(...) -> None: ...
+def write_yaml_dict(...) -> None: ...
+def write_yaml_list(...) -> None: ...
 ```
 
-### Running Tests
+`FileBlob` は `file_path`、`mime_blob`、`mime_type`、`raw_data`、`raw_text`、`raw_base64_str`、`raw_base64_url`、`hash_string`、`ext`、`hashed_file_name` property と、`is_binary()`、`is_text()`、`replace()` を提供します。
 
-```bash
-mise run test kiarina-utils-file
-mise run test kiarina-utils-file --coverage
+### `kiarina.utils.file.asyncio`
+
+`kiarina.utils.file` と同じ read / write / remove API の async 版を提供します。
+
+### `kiarina.utils.mime`
+
+```python
+class MIMEBlob:
+    def __init__(
+        self,
+        mime_type: str,
+        raw_data: bytes | None = None,
+        *,
+        raw_text: str | None = None,
+    ) -> None: ...
+
+def apply_mime_alias(mime_type: str, *, mime_aliases: dict[str, str] | None = None) -> str: ...
+def create_mime_blob(raw_data: bytes, *, fallback_mime_type: str = "application/octet-stream") -> MIMEBlob: ...
+def detect_mime_type(...) -> str | None: ...
 ```
 
-### Code Quality
+`MIMEBlob` は `mime_type`、`raw_data`、`raw_text`、`raw_base64_str`、`raw_base64_url`、`hash_string`、`ext`、`hashed_file_name` property と、`is_binary()`、`is_text()`、`replace()` を提供します。
 
-```bash
-mise run format kiarina-utils-file
-mise run lint kiarina-utils-file
-cd packages/kiarina-utils-file && make check
+### `kiarina.utils.ext`
+
+```python
+def detect_extension(mime_type: str, *, custom_extensions: dict[str, str] | None = None, default: str | None = None) -> str | None: ...
+def extract_extension(file_name_hint: str, *, default: str | None = None, **kwargs: Unpack[MimeDetectionOptions]) -> str | None: ...
 ```
 
-## Performance
+### `kiarina.utils.encoding`
 
-### Benchmarks
+```python
+def decode_binary_to_text(raw_data: bytes, *, use_nkf: bool | None = None, **kwargs: Any) -> str: ...
+def detect_encoding(raw_data: bytes, *, use_nkf: bool | None = None, **kwargs: Any) -> str | None: ...
+def get_default_encoding() -> str: ...
+def is_binary(raw_data: bytes, *, use_nkf: bool | None = None, **kwargs: Any) -> bool: ...
+def normalize_newlines(text: str) -> str: ...
+```
 
-I/O intensive な処理では async API の利用を推奨します。
-
-### Memory Usage
-
-大きな binary を扱う場合は、必要な範囲で FileBlob / MIMEBlob を保持してください。
+各検出 module は `settings_manager` を公開します。設定には `KIARINA_UTILS_ENCODING_`、`KIARINA_UTILS_EXT_`、`KIARINA_UTILS_FILE_`、`KIARINA_UTILS_MIME_` prefix の環境変数を使用できます。
 
 ## License
 
-MIT License です。詳細は [LICENSE](../../LICENSE) を参照してください。
-
-## Contributing
-
-### Guidelines
-
-issue や pull request は歓迎します。
-
-## Related Projects
-
-- [kiarina-python](https://github.com/kiarina/kiarina-python)
-
-## Changelog
-
-変更履歴は [CHANGELOG.md](CHANGELOG.md) を参照してください。
-
-## Support
-
-質問や不具合報告は GitHub Issues を利用してください。
-
+[MIT License](../../LICENSE)

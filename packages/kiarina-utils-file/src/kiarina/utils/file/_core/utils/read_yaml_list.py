@@ -31,17 +31,6 @@ def read_yaml_list(
     *,
     default: list[Any] | None = None,
 ) -> list[Any] | None | Awaitable[list[Any] | None]:
-    """
-    Read YAML list file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (list[Any] | None): Default value to return if file doesn't exist
-
-    Returns:
-        list[Any] | None: File content. Returns default if file doesn't exist
-    """
 
     def _after(raw_text: str | None) -> list[Any] | None:
         if raw_text is None:
@@ -52,7 +41,6 @@ def read_yaml_list(
 
         data = yaml.safe_load(raw_text)
 
-        # Handle comment-only YAML files (yaml.safe_load returns None)
         if data is None:
             return [] if default is None else default
 

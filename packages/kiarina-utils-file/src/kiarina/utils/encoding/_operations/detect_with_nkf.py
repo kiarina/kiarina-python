@@ -7,25 +7,11 @@ from .._settings import settings_manager
 logger = logging.getLogger(__name__)
 
 _nkf_available: bool | None = None
-"""Whether nkf command is available"""
 
 _nkf_lock = threading.Lock()
-"""Lock for thread-safe access to _nkf_available"""
 
 
 def detect_with_nkf(raw_data: bytes) -> str | None:
-    """
-    Detect encoding using the nkf command
-
-    For large files, only a sample from the beginning is used for efficiency.
-    The sample size can be configured via settings.
-
-    Args:
-        raw_data (bytes): Binary data to detect encoding from
-
-    Returns:
-        (str | None): Detected encoding name (lowercase), or None if detection fails
-    """
     global _nkf_available
 
     with _nkf_lock:
@@ -35,7 +21,6 @@ def detect_with_nkf(raw_data: bytes) -> str | None:
     if not raw_data:
         return None
 
-    # Use sample for large files to improve performance
     max_size = settings_manager.settings.max_sample_size
 
     if len(raw_data) > max_size:
@@ -56,8 +41,6 @@ def detect_with_nkf(raw_data: bytes) -> str | None:
             if _nkf_available is None:
                 _nkf_available = True
 
-        # Text files with BOM or emoji may also be detected as BINARY
-        # Therefore, treat BINARY detection as undetectable
         if detected != "BINARY":
             return detected.lower()
 

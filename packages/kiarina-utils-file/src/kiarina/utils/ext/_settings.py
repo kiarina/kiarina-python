@@ -4,9 +4,7 @@ from pydantic_settings_manager import SettingsManager
 
 
 class ExtSettings(BaseSettings):
-    """
-    Extension Settings
-    """
+    """Settings for file extensions."""
 
     model_config = SettingsConfigDict(env_prefix="KIARINA_UTILS_EXT_")
 
@@ -17,16 +15,10 @@ class ExtSettings(BaseSettings):
             "text/html": ".html",
             "text/plain": ".txt",
             "text/xml": ".xml",
-        }
+        },
+        title="Custom extensions",
+        description="MIME types mapped to file extensions.",
     )
-    """
-    Custom extension dictionary
-
-    Dictionary for obtaining extensions based on MIME types.
-
-    - Key: MIME type
-    - Value: Extension
-    """
 
     multi_extensions: set[str] = Field(
         default_factory=lambda: {
@@ -41,14 +33,10 @@ class ExtSettings(BaseSettings):
             ".tar.gz.gpg",
             ".tar.bz2.gpg",
             ".tar.xz.gpg",
-        }
+        },
+        title="Multi-part extensions",
+        description="Recognized multi-part file extensions.",
     )
-    """
-    Set of recognized multi-part extensions
-
-    List of extensions recognized as multi-part extensions when extracting extensions from file paths.
-    Includes double extensions (.tar.gz) and triple extensions (.tar.gz.gpg).
-    """
 
     compression_extensions: set[str] = Field(
         default_factory=lambda: {
@@ -60,19 +48,28 @@ class ExtSettings(BaseSettings):
             ".lzma",
             ".lzo",
             ".zst",
-        }
+        },
+        title="Compression extensions",
+        description="File extensions used for compression.",
     )
-    """Set of compression-related extensions"""
 
-    archive_extensions: set[str] = Field(default_factory=lambda: {".tar"})
-    """Set of archive-related extensions"""
+    archive_extensions: set[str] = Field(
+        default_factory=lambda: {".tar"},
+        title="Archive extensions",
+        description="File extensions used for archives.",
+    )
 
-    encryption_extensions: set[str] = Field(default_factory=lambda: {".gpg", ".pgp"})
-    """Set of encryption-related extensions"""
+    encryption_extensions: set[str] = Field(
+        default_factory=lambda: {".gpg", ".pgp"},
+        title="Encryption extensions",
+        description="File extensions used for encryption.",
+    )
 
-    max_multi_extension_parts: int = Field(default=4)
-    """Maximum number of parts for multi-extension detection (e.g., 4 for .tar.gz.gpg)"""
+    max_multi_extension_parts: int = Field(
+        default=4,
+        title="Maximum multi-part extension parts",
+        description="Maximum number of parts in a detected extension.",
+    )
 
 
 settings_manager = SettingsManager(ExtSettings)
-"""Ext settings manager"""

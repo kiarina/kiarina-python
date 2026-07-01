@@ -19,14 +19,4 @@ async def read_json_dict(
 async def read_json_dict(
     file_path: str | os.PathLike[str], *, default: dict[str, Any] | None = None
 ) -> dict[str, Any] | None:
-    """
-    Read JSON dictionary file asynchronously
-
-    Args:
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (dict[str, Any] | None): Default value to return if the file does not exist
-
-    Returns:
-        dict[str, Any] | None: File content. Returns default if the file does not exist
-    """
     return await _read_json_dict("async", file_path, default=default)

@@ -28,30 +28,16 @@ def write_binary(
 def write_binary(
     mode: Literal["sync", "async"], file_path: str | os.PathLike[str], raw_data: bytes
 ) -> None | Awaitable[None]:
-    """
-    Write binary data to a file
-
-    Args:
-        model (Literal["async", "sync"]): Execution mode, either "async" or "sync"
-        file_path (str | os.PathLike[str]): Path to the file to write
-        raw_data (bytes): Binary data to write
-    """
-    # Normalize the file path and resolve symlinks
     file_path = os.path.expanduser(os.path.expandvars(os.fspath(file_path)))
 
-    # Resolve symlinks to get the actual file path
-    # This ensures that locks are taken on the real file, not the symlink
     if os.path.lexists(file_path):  # Check if path exists (including broken symlinks)
         file_path = os.path.realpath(file_path)
 
-    # Ensure the directory exists
     if dirname := os.path.dirname(file_path):
         os.makedirs(dirname, exist_ok=True)
 
-    # Define the lock file path
     lock_file_path = get_lock_file_path(file_path)
 
-    # Create a temporary file in the same directory to achieve atomic operation
     fd, temp_file_path = tempfile.mkstemp(
         dir=dirname if dirname else None,
         prefix=".write_binary_",
@@ -59,7 +45,6 @@ def write_binary(
     )
     os.close(fd)
 
-    # Function to clean up temporary file
     def _cleanup_temp_file() -> None:
         if os.path.exists(temp_file_path):
             try:
@@ -67,15 +52,12 @@ def write_binary(
             except Exception:
                 pass
 
-    # Function to preserve file permissions
     def _preserve_permissions() -> None:
         if os.path.exists(file_path):
             try:
                 original_stat = os.stat(file_path)
                 os.chmod(temp_file_path, original_stat.st_mode)
 
-                # Windows does not support os.chown
-                # On Windows, consider using pywin32's ReplaceFile for atomic replacement.
                 if hasattr(os, "chown"):
                     try:
                         os.chown(
@@ -89,44 +71,36 @@ def write_binary(
             except (OSError, FileNotFoundError):
                 pass
 
-    # Synchronous version of the function
     def _sync() -> None:
         lock = FileLock(lock_file_path)
 
         try:
             with lock:
-                # Write to the temporary file
                 with open(temp_file_path, "wb") as temp_file:
                     temp_file.write(raw_data)
                     temp_file.flush()
                     os.fsync(temp_file.fileno())
 
-                # Preserve original file permissions
                 _preserve_permissions()
 
-                # Atomic replace
                 os.replace(temp_file_path, file_path)
 
         except Exception:
             _cleanup_temp_file()
             raise
 
-    # Asynchronous version of the function
     async def _async() -> None:
         lock = AsyncFileLock(lock_file_path)
 
         try:
             async with lock:
-                # Write to the temporary file
                 async with aiofiles.open(temp_file_path, "wb") as temp_file:
                     await temp_file.write(raw_data)
                     await temp_file.flush()
                     await asyncio.to_thread(os.fsync, temp_file.fileno())
 
-                # Preserve original file permissions
                 _preserve_permissions()
 
-                # Atomic replace
                 os.replace(temp_file_path, file_path)
 
         except Exception:

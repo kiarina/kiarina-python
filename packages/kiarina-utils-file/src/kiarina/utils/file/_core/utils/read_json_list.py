@@ -30,17 +30,6 @@ def read_json_list(
     *,
     default: list[Any] | None = None,
 ) -> list[Any] | None | Awaitable[list[Any] | None]:
-    """
-    Read JSON list file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (list[Any] | None): Default value to return if file doesn't exist
-
-    Returns:
-        list[Any] | None: File content. Returns default if file doesn't exist
-    """
 
     def _after(raw_text: str | None) -> list[Any] | None:
         if raw_text is None:

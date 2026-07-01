@@ -1,65 +1,3 @@
-"""
-File I/O utilities for reading and writing various file formats.
-
-This module provides comprehensive synchronous file I/O operations with support for:
-- **Multiple file formats**: Text, binary, JSON, YAML
-- **Automatic encoding detection**: Smart handling of various text encodings
-- **MIME type detection**: Automatic content type identification
-- **Atomic operations**: Safe file writing with temporary files and locking
-- **FileBlob container**: Unified file data container with metadata
-
-Key Features:
-    - **Format-specific readers/writers**: Dedicated functions for JSON, YAML, text, and binary
-    - **High-level file operations**: `read_file()` and `write_file()` with FileBlob containers
-    - **Encoding safety**: Automatic encoding detection and proper Unicode handling
-    - **Thread safety**: File locking mechanisms prevent concurrent access issues
-    - **Error handling**: Graceful handling of missing files with configurable defaults
-
-Examples:
-    >>> import kiarina.utils.file as kf
-    >>>
-    >>> # High-level file operations with FileBlob
-    >>> blob = kf.read_file("document.txt")
-    >>> if blob:
-    >>>     print(f"Content: {blob.raw_text}")
-    >>>     print(f"MIME type: {blob.mime_type}")
-    >>>
-    >>> # Format-specific operations
-    >>> data = kf.read_json_dict("config.json", default={})
-    >>> kf.write_yaml_dict("output.yaml", {"key": "value"})
-    >>>
-    >>> # Binary operations
-    >>> raw_data = kf.read_binary("image.jpg")
-    >>> if raw_data:
-    >>>     kf.write_binary("copy.jpg", raw_data)
-
-Available Functions:
-    **High-level operations:**
-    - `read_file()`, `write_file()`: FileBlob-based operations with MIME detection
-
-    **Text operations:**
-    - `read_text()`, `write_text()`: Plain text with encoding detection
-
-    **Binary operations:**
-    - `read_binary()`, `write_binary()`: Raw binary data
-
-    **JSON operations:**
-    - `read_json_dict()`, `write_json_dict()`: JSON dictionaries
-    - `read_json_list()`, `write_json_list()`: JSON arrays
-
-    **YAML operations:**
-    - `read_yaml_dict()`, `write_yaml_dict()`: YAML dictionaries
-    - `read_yaml_list()`, `write_yaml_list()`: YAML arrays
-
-    **File management:**
-    - `remove_file()`: Safe file deletion
-
-Note:
-    For async operations, use `kiarina.utils.file.asyncio` module which provides
-    the same API with async/await support and non-blocking I/O.
-"""
-
-# pip install kiarina-utils-file
 import logging
 from importlib import import_module
 from importlib.metadata import version
@@ -88,15 +26,11 @@ if TYPE_CHECKING:
 __version__ = version("kiarina-utils-file")
 
 __all__ = [
-    # ._core.models
     "FileBlob",
-    # ._core.types
     "MarkdownContent",
-    # ._sync.helpers
     "read_file",
     "read_markdown",
     "write_file",
-    # ._sync.utils
     "read_binary",
     "read_json_dict",
     "read_json_list",
@@ -120,15 +54,11 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
-        # ._core.models
         "FileBlob": "._core.models.file_blob",
-        # ._core.types
         "MarkdownContent": "._core.types.markdown_content",
-        # ._sync.helpers
         "read_file": "._sync.helpers.read_file",
         "read_markdown": "._sync.helpers.read_markdown",
         "write_file": "._sync.helpers.write_file",
-        # ._sync.utils
         "read_binary": "._sync.utils.read_binary",
         "read_json_dict": "._sync.utils.read_json_dict",
         "read_json_list": "._sync.utils.read_json_list",

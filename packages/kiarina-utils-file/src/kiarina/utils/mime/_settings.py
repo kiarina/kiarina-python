@@ -4,9 +4,7 @@ from pydantic_settings_manager import SettingsManager
 
 
 class MIMESettings(BaseSettings):
-    """
-    MIME Settings
-    """
+    """Settings for MIME type detection."""
 
     model_config = SettingsConfigDict(env_prefix="KIARINA_UTILS_MIME_")
 
@@ -18,34 +16,24 @@ class MIMESettings(BaseSettings):
             ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             ".yaml": "application/yaml",
             ".yml": "application/yaml",
-        }
+        },
+        title="Custom MIME types",
+        description="File extensions mapped to MIME types.",
     )
-    """
-    Custom MIME types mapping.
-
-    Dictionary for obtaining MIME types based on file extensions.
-
-    - Key: File extension
-    - Value: MIME type
-    """
 
     mime_aliases: dict[str, str] = Field(
         default_factory=lambda: {
             "application/x-yaml": "application/yaml",  # RFC 9512
-        }
+        },
+        title="MIME aliases",
+        description="MIME types mapped to their preferred aliases.",
     )
-    """
-    MIME type aliases.
 
-    Dictionary for obtaining alternative MIME types based on existing types.
-
-    - Key: Original MIME type (values returned by puremagic or mimetypes)
-    - Value: Alternative MIME type
-    """
-
-    hash_algorithm: str = "sha256"
-    """Hash algorithm"""
+    hash_algorithm: str = Field(
+        default="sha256",
+        title="Hash algorithm",
+        description="Hash algorithm for content-based file names.",
+    )
 
 
 settings_manager = SettingsManager(MIMESettings)
-"""MIME settings manager"""

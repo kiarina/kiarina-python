@@ -31,17 +31,6 @@ def read_text(
     *,
     default: str | None = None,
 ) -> str | None | Awaitable[str | None]:
-    """
-    Read text file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (str | None): Default value to return if file doesn't exist
-
-    Returns:
-        str | None: File content. Returns default if file doesn't exist
-    """
 
     def _after(raw_data: bytes | None) -> str | None:
         if raw_data is None:

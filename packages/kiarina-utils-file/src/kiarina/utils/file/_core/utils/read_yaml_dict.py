@@ -31,17 +31,6 @@ def read_yaml_dict(
     *,
     default: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]:
-    """
-    Read YAML dictionary file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (dict[str, Any] | None): Default value to return if file doesn't exist
-
-    Returns:
-        dict[str, Any] | None: File content. Returns default if file doesn't exist
-    """
 
     def _after(raw_text: str | None) -> dict[str, Any] | None:
         if raw_text is None:
@@ -52,7 +41,6 @@ def read_yaml_dict(
 
         data = yaml.safe_load(raw_text)
 
-        # Handle comment-only YAML files (yaml.safe_load returns None)
         if data is None:
             return {} if default is None else default
 

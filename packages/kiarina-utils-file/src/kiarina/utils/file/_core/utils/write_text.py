@@ -24,13 +24,6 @@ def write_text(
 def write_text(
     mode: Literal["sync", "async"], file_path: str | os.PathLike[str], raw_text: str
 ) -> None | Awaitable[None]:
-    """
-    Write text to a file
-
-    Args:
-        file_path (str | os.PathLike[str]): Path to the file to write
-        raw_text (str): Text to write
-    """
     raw_data = raw_text.encode("utf-8", errors="replace")
 
     def _sync() -> None:

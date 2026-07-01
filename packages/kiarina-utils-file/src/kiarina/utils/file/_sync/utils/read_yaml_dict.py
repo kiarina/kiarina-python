@@ -17,14 +17,4 @@ def read_yaml_dict(
 def read_yaml_dict(
     file_path: str | os.PathLike[str], *, default: dict[str, Any] | None = None
 ) -> dict[str, Any] | None:
-    """
-    Read YAML dictionary file
-
-    Args:
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (dict[str, Any] | None): Default value to return if file doesn't exist
-
-    Returns:
-        dict[str, Any] | None: File content. Returns default if file doesn't exist
-    """
     return _read_yaml_dict("sync", file_path, default=default)
