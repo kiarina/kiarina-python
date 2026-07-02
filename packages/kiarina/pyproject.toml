@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "2.3.0"
+version = "2.3.1"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"
@@ -35,22 +35,22 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "kiarina-currency>=1.27.0",
-    "kiarina-i18n>=1.15.1",
-    "kiarina-lib-anthropic>=1.10.0",
-    "kiarina-lib-cloudflare>=2.3.0",
-    "kiarina-lib-cloudflare-d1>=1.6.0",
-    "kiarina-lib-falkordb>=1.0.1",
-    "kiarina-lib-firebase>=1.32.0",
-    "kiarina-lib-firebase-rtdb>=1.33.0",
-    "kiarina-lib-google>=2.3.0",
-    "kiarina-lib-openai>=1.10.0",
-    "kiarina-lib-redis>=1.0.1",
-    "kiarina-lib-redisearch>=1.0.1",
-    "kiarina-lib-slack>=1.31.0",
+    "kiarina-currency>=2.3.1",
+    "kiarina-i18n>=2.3.1",
+    "kiarina-lib-anthropic>=2.3.1",
+    "kiarina-lib-cloudflare>=2.3.1",
+    "kiarina-lib-cloudflare-d1>=2.3.1",
+    "kiarina-lib-falkordb>=2.3.1",
+    "kiarina-lib-firebase>=2.3.1",
+    "kiarina-lib-firebase-rtdb>=2.3.1",
+    "kiarina-lib-google>=2.3.1",
+    "kiarina-lib-openai>=2.3.1",
+    "kiarina-lib-redis>=2.3.1",
+    "kiarina-lib-redisearch>=2.3.1",
+    "kiarina-lib-slack>=2.3.1",
     "kiarina-utils-app>=2.3.0",
     "kiarina-utils-common>=2.3.0",
-    "kiarina-utils-file>=2.3.0",
+    "kiarina-utils-file>=2.3.1",
 ]
 
 [project.urls]

@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-google"
-version = "2.3.0"
+version = "2.3.1"
 description = "Google Cloud client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"

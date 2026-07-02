@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-firebase"
-version = "2.1.0"
+version = "2.3.1"
 description = "Firebase authentication library for kiarina namespace"
 readme = "README.md"
 license = "MIT"

@@ -7,8 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-07-02
+
 ### Changed
-- Streamlined the README and documented all included packages as dependencies.
+- Streamline the repository README files and organize the package catalog, installation, development, and documentation guidance.
+- Standardize README headers so status badges appear before language links.
+- Replace the duplicate Test Settings runbook with a reference to `kiarina/test-settings`.
+- **kiarina**: Streamline the meta-package README and document all included packages as dependencies.
+- **kiarina-currency, kiarina-lib-firebase**: Improve package documentation, comments, docstrings, and settings metadata.
+- **kiarina-i18n, kiarina-utils-file**: Expand and refine package documentation and simplify comments and docstrings.
+- **kiarina-lib-cloudflare-d1**: Improve documentation, comments, and docstrings, and fix lazy imports for settings from the asynchronous API.
+- **kiarina-lib-firebase-rtdb**: Improve documentation, simplify comments and docstrings, and replace the obsolete `kiarina-lib-firebase-auth` dependency.
+- **kiarina-lib-google**: Clarify settings metadata, streamline comments and docstrings, and document ADC credential search order and all settings fields.
+- **kiarina-lib-redis**: Clarify settings metadata, streamline comments and docstrings, and document all public APIs and client behavior.
+- **kiarina-lib-redisearch**: Remove empty internal package initializers, improve documentation, and add metadata to public Pydantic fields.
+- **kiarina-lib-anthropic, kiarina-lib-cloudflare, kiarina-lib-falkordb, kiarina-lib-openai, kiarina-lib-slack**: Clarify settings metadata, streamline comments and docstrings, and document all public APIs and configuration behavior.
 
 ## [2.3.0] - 2026-07-01
 
