@@ -13,9 +13,6 @@ def get_falkordb(
     url: str | None = None,
     **kwargs: Any,
 ) -> FalkorDB:
-    """
-    Get a FalkorDB client.
-    """
     return _get_falkordb(
         "sync",
         settings_key,

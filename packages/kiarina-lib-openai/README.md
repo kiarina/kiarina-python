@@ -2,16 +2,21 @@
 
 English | [日本語](README.ja.md)
 
-A Python library for OpenAI API integration with configuration management using pydantic-settings-manager.
+[![PyPI version](https://badge.fury.io/py/kiarina-lib-openai.svg)](https://badge.fury.io/py/kiarina-lib-openai)
+[![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-openai.svg)](https://pypi.org/project/kiarina-lib-openai/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+> [!NOTE] What is this?
+> A package for managing OpenAI API credentials and endpoints with pydantic-settings-manager.
 
-- **Configuration Management**: Use `pydantic-settings-manager` for flexible configuration
-- **Type Safety**: Full type hints and Pydantic validation
-- **Secure Credential Handling**: API keys are protected using `SecretStr`
-- **Multiple Configurations**: Support for multiple named configurations (e.g., different projects/environments)
-- **Environment Variable Support**: Configure via environment variables with `KIARINA_LIB_OPENAI_` prefix
-- **Custom Base URL**: Support for custom OpenAI-compatible API endpoints
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [Pydantic Settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
+
+The OpenAI Python SDK is not included as a dependency. Add it to the application that creates the client.
 
 ## Installation
 
@@ -19,272 +24,158 @@ A Python library for OpenAI API integration with configuration management using 
 pip install kiarina-lib-openai
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage
+- **Configuring an OpenAI Client**
+  Generate OpenAI SDK client arguments from settings.
+- **Managing Multiple Configurations**
+  Switch between named settings for multiple projects or environments.
+- **Loading Environment Variables**
+  Load environment variables with the `KIARINA_LIB_OPENAI_` prefix.
+- **Using Compatible APIs**
+  Set an OpenAI-compatible API endpoint with `base_url`.
+- **Protecting API Keys**
+  Store the API key as `SecretStr`.
+
+### Configuring an OpenAI Client
+
+`to_client_kwargs()` converts only configured values to OpenAI SDK argument names.
 
 ```python
-from kiarina.lib.openai import OpenAISettings, settings_manager
+from openai import OpenAI
 
-# Configure OpenAI API
-settings_manager.user_config = {
-    "default": {
-        "api_key": "sk-your-api-key-here"
-    }
-}
+from kiarina.lib.openai import OpenAISettings
 
-# Get settings
-settings = settings_manager.settings
-print(f"API Key configured: {settings.api_key.get_secret_value()[:10]}...")
+settings = OpenAISettings(api_key="sk-...")
+client = OpenAI(**settings.to_client_kwargs())
 ```
 
-### Using with OpenAI Client
+`organization_id` becomes `organization`. When `api_key`, `organization_id`, and `base_url` are all `None`, the method returns an empty `dict`.
+
+### Managing Multiple Configurations
+
+`settings_manager` uses multiple-settings mode. Place named settings under `configs`.
+
+```yaml
+kiarina.lib.openai:
+  default: production
+  configs:
+    development:
+      api_key: sk-development
+    production:
+      api_key: sk-production
+      organization_id: org-production
+```
 
 ```python
-from openai import AsyncOpenAI
+import yaml
+from pydantic_settings_manager import load_user_configs
+
 from kiarina.lib.openai import settings_manager
 
-# Configure settings
-settings_manager.user_config = {
-    "default": {
-        "api_key": "sk-your-api-key-here",
-        "organization_id": "org-your-org-id",
-        "base_url": "https://api.openai.com/v1"
-    }
-}
+with open("config.yaml", encoding="utf-8") as file:
+    load_user_configs(yaml.safe_load(file) or {})
 
-# Get client initialization arguments
-settings = settings_manager.settings
-client_kwargs = settings.to_client_kwargs()
-
-# Initialize OpenAI client
-client = AsyncOpenAI(**client_kwargs)
+settings = settings_manager.get_settings("production")
 ```
 
-### Environment Variable Configuration
-
-Configure authentication using environment variables:
-
-```bash
-export KIARINA_LIB_OPENAI_API_KEY="sk-your-api-key-here"
-export KIARINA_LIB_OPENAI_ORGANIZATION_ID="org-your-org-id"  # Optional
-```
-
-```python
-from kiarina.lib.openai import settings_manager
-
-# Settings are automatically loaded from environment variables
-settings = settings_manager.settings
-print(f"API Key configured: {settings.api_key.get_secret_value()[:10]}...")
-```
-
-### Multiple Configurations
-
-Manage multiple OpenAI configurations (e.g., different projects or environments):
+To configure only this package directly, assign `settings_manager.user_config`.
 
 ```python
 from kiarina.lib.openai import settings_manager
 
-# Configure multiple projects
 settings_manager.user_config = {
-    "project_a": {
-        "api_key": "sk-project-a-key",
-        "organization_id": "org-project-a"
+    "default": "development",
+    "configs": {
+        "development": {"api_key": "sk-development"},
+        "production": {
+            "api_key": "sk-production",
+            "organization_id": "org-production",
+        },
     },
-    "project_b": {
-        "api_key": "sk-project-b-key",
-        "organization_id": "org-project-b"
-    }
 }
-
-# Switch between configurations
-settings_manager.active_key = "project_a"
-project_a_settings = settings_manager.settings
-print(f"Project A Org: {project_a_settings.organization_id}")
-
-settings_manager.active_key = "project_b"
-project_b_settings = settings_manager.settings
-print(f"Project B Org: {project_b_settings.organization_id}")
 ```
 
-### Custom Base URL
+### Loading Environment Variables
 
-Use with OpenAI-compatible APIs (e.g., Azure OpenAI, local models):
-
-```python
-from kiarina.lib.openai import settings_manager
-
-settings_manager.user_config = {
-    "azure": {
-        "api_key": "your-azure-key",
-        "base_url": "https://your-resource.openai.azure.com/openai/deployments/your-deployment"
-    }
-}
-
-settings = settings_manager.settings
-print(f"Base URL: {settings.base_url}")
-```
-
-## Configuration
-
-This library uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) for flexible configuration management.
-
-### OpenAISettings
-
-The `OpenAISettings` class provides the following configuration fields:
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `api_key` | `SecretStr` | Yes | OpenAI API key (masked in logs) |
-| `organization_id` | `str \| None` | No | OpenAI organization ID |
-| `base_url` | `str \| None` | No | Custom base URL for OpenAI-compatible APIs |
-
-### Environment Variables
-
-All settings can be configured via environment variables with the `KIARINA_LIB_OPENAI_` prefix:
+Load a single configuration from environment variables.
 
 ```bash
-# API Key (required)
-export KIARINA_LIB_OPENAI_API_KEY="sk-your-api-key"
-
-# Organization ID (optional)
-export KIARINA_LIB_OPENAI_ORGANIZATION_ID="org-your-org-id"
-
-# Custom Base URL (optional)
+export KIARINA_LIB_OPENAI_API_KEY="sk-..."
+export KIARINA_LIB_OPENAI_ORGANIZATION_ID="org-..."
 export KIARINA_LIB_OPENAI_BASE_URL="https://api.openai.com/v1"
 ```
 
-### Programmatic Configuration
+```python
+from kiarina.lib.openai import OpenAISettings
+
+settings = OpenAISettings()
+```
+
+### Using Compatible APIs
 
 ```python
-from pydantic import SecretStr
-from kiarina.lib.openai import OpenAISettings, settings_manager
+from openai import OpenAI
 
-# Direct settings object
+from kiarina.lib.openai import OpenAISettings
+
 settings = OpenAISettings(
-    api_key=SecretStr("sk-your-api-key"),
-    organization_id="org-your-org-id"
+    api_key="compatible-api-key",
+    base_url="https://example.com/v1",
 )
-
-# Via settings manager
-settings_manager.user_config = {
-    "default": {
-        "api_key": "sk-your-api-key",  # Automatically converted to SecretStr
-        "organization_id": "org-your-org-id"
-    }
-}
+client = OpenAI(**settings.to_client_kwargs())
 ```
 
-### Runtime Overrides
+### Protecting API Keys
 
-```python
-from kiarina.lib.openai import settings_manager
-
-# Override specific settings at runtime
-settings_manager.cli_args = {
-    "organization_id": "org-override-id"
-}
-
-settings = settings_manager.settings
-print(f"Organization ID: {settings.organization_id}")  # Uses overridden value
-```
-
-## Security
-
-### API Key Protection
-
-API keys are stored using Pydantic's `SecretStr` type, which provides the following security benefits:
-
-- **Masked in logs**: Keys are displayed as `**********` in string representations
-- **Prevents accidental exposure**: Keys won't appear in debug output or error messages
-- **Explicit access required**: Must use `.get_secret_value()` to access the actual key
-
-```python
-from kiarina.lib.openai import settings_manager
-
-settings = settings_manager.settings
-
-# API key is masked in string representation
-print(settings)  # api_key=SecretStr('**********')
-
-# Explicit access to get the actual key
-api_key = settings.api_key.get_secret_value()
-```
+`to_client_kwargs()` returns the secret value of `api_key` so it can be passed to the OpenAI SDK. Do not log the returned dictionary.
 
 ## API Reference
 
-### OpenAISettings
+### `kiarina.lib.openai`
+
+```python
+from kiarina.lib.openai import (
+    OpenAISettings,
+    settings_manager,
+)
+```
+
+#### `OpenAISettings`
 
 ```python
 class OpenAISettings(BaseSettings):
-    api_key: SecretStr
-    organization_id: str | None = None
-    base_url: str | None = None
-    
-    def to_client_kwargs(self) -> dict[str, Any]:
-        """Convert settings to OpenAI client initialization arguments."""
+    def __init__(
+        self,
+        *,
+        api_key: SecretStr | None = None,
+        organization_id: str | None = None,
+        base_url: str | None = None,
+    ) -> None: ...
+
+    def to_client_kwargs(self) -> dict[str, Any]: ...
 ```
 
-Pydantic settings model for OpenAI API configuration.
+OpenAI client settings.
 
-**Fields:**
-- `api_key` (SecretStr): OpenAI API key (protected)
-- `organization_id` (str | None): Optional organization ID
-- `base_url` (str | None): Optional custom base URL for OpenAI-compatible APIs
+**Fields**
 
-**Methods:**
-- `to_client_kwargs()` -> `dict[str, Any]`: Convert settings to OpenAI client initialization arguments. Returns a dictionary with non-None values that can be passed directly to `OpenAI()` or `AsyncOpenAI()` constructors.
+- `api_key` (`SecretStr | None`): OpenAI API key.
+- `organization_id` (`str | None`): OpenAI organization ID.
+- `base_url` (`str | None`): Base URL for the OpenAI API.
 
-### settings_manager
+##### `to_client_kwargs`
+
+Converts fields whose values are not `None` into OpenAI SDK client arguments.
+
+**Returns**
+
+- `dict[str, Any]`: A dictionary containing configured values among `api_key`, `organization`, and `base_url`.
+
+#### `settings_manager`
 
 ```python
 settings_manager: SettingsManager[OpenAISettings]
 ```
 
-Global settings manager instance for OpenAI configuration.
-See: [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager)
-
-## Development
-
-### Prerequisites
-
-- Python 3.12+
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/kiarina/kiarina-python.git
-cd kiarina-python
-
-# Setup development environment
-mise run setup
-```
-
-### Running Tests
-
-```bash
-# Run format, lint, type checks and tests
-cd packages/kiarina-lib-openai && make check
-
-# Coverage report
-mise run test kiarina-lib-openai --coverage
-```
-
-## Dependencies
-
-- [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) - Settings management
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Advanced settings management
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
-
-## Contributing
-
-This is a personal project, but contributions are welcome! Please feel free to submit issues or pull requests.
-
-## Related Projects
-
-- [kiarina-python](https://github.com/kiarina/kiarina-python) - The main monorepo containing this package
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Configuration management library used by this package
+Global instance that manages named OpenAI client settings.

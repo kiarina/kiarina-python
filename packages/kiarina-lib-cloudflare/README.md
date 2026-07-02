@@ -2,15 +2,21 @@
 
 English | [日本語](README.ja.md)
 
-A Python library for Cloudflare authentication with configuration management using pydantic-settings-manager.
+[![PyPI version](https://badge.fury.io/py/kiarina-lib-cloudflare.svg)](https://badge.fury.io/py/kiarina-lib-cloudflare)
+[![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-cloudflare.svg)](https://pypi.org/project/kiarina-lib-cloudflare/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+> [!NOTE] What is this?
+> A package for managing Cloudflare account credentials with pydantic-settings-manager.
 
-- **Configuration Management**: Use `pydantic-settings-manager` for flexible configuration
-- **Type Safety**: Full type hints and Pydantic validation
-- **Secure Credential Handling**: API tokens are protected using `SecretStr`
-- **Multiple Configurations**: Support for multiple named configurations (e.g., different accounts)
-- **Environment Variable Support**: Configure via environment variables with `KIARINA_LIB_CLOUDFLARE_` prefix
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [Pydantic Settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
+
+A Cloudflare SDK is not included as a dependency. Add one to the application that uses the credentials.
 
 ## Installation
 
@@ -18,221 +24,140 @@ A Python library for Cloudflare authentication with configuration management usi
 pip install kiarina-lib-cloudflare
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage
+- **Configuring Cloudflare Authentication**
+  Store an account ID and API token as typed settings.
+- **Managing Multiple Accounts**
+  Switch between named settings for multiple accounts.
+- **Loading Environment Variables**
+  Load environment variables with the `KIARINA_LIB_CLOUDFLARE_` prefix.
+- **Protecting API Tokens**
+  Store the API token as `SecretStr`.
 
-```python
-from kiarina.lib.cloudflare import CloudflareSettings, settings_manager
-
-# Configure Cloudflare authentication
-settings_manager.user_config = {
-    "default": {
-        "account_id": "your-account-id",
-        "api_token": "your-api-token"
-    }
-}
-
-# Get settings
-settings = settings_manager.settings
-print(f"Account ID: {settings.account_id}")
-print(f"API Token: {settings.api_token.get_secret_value()}")  # Access secret value
-```
-
-### Environment Variable Configuration
-
-Configure authentication using environment variables:
-
-```bash
-export KIARINA_LIB_CLOUDFLARE_ACCOUNT_ID="your-account-id"
-export KIARINA_LIB_CLOUDFLARE_API_TOKEN="your-api-token"
-```
+### Configuring Cloudflare Authentication
 
 ```python
-from kiarina.lib.cloudflare import settings_manager
+from kiarina.lib.cloudflare import CloudflareSettings
 
-# Settings are automatically loaded from environment variables
-settings = settings_manager.settings
-print(f"Account ID: {settings.account_id}")
-```
-
-### Multiple Configurations
-
-Manage multiple Cloudflare accounts:
-
-```python
-from kiarina.lib.cloudflare import settings_manager
-
-# Configure multiple accounts
-settings_manager.user_config = {
-    "production": {
-        "account_id": "prod-account-id",
-        "api_token": "prod-api-token"
-    },
-    "staging": {
-        "account_id": "staging-account-id",
-        "api_token": "staging-api-token"
-    }
-}
-
-# Switch between configurations
-settings_manager.active_key = "production"
-prod_settings = settings_manager.settings
-print(f"Production Account: {prod_settings.account_id}")
-
-settings_manager.active_key = "staging"
-staging_settings = settings_manager.settings
-print(f"Staging Account: {staging_settings.account_id}")
-```
-
-## Configuration
-
-This library uses [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) for flexible configuration management.
-
-### CloudflareSettings
-
-The `CloudflareSettings` class provides the following configuration fields:
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `account_id` | `str` | Yes | Cloudflare account ID |
-| `api_token` | `SecretStr` | Yes | Cloudflare API token (masked in logs) |
-
-### Environment Variables
-
-All settings can be configured via environment variables with the `KIARINA_LIB_CLOUDFLARE_` prefix:
-
-```bash
-# Account ID
-export KIARINA_LIB_CLOUDFLARE_ACCOUNT_ID="your-account-id"
-
-# API Token (will be automatically wrapped in SecretStr)
-export KIARINA_LIB_CLOUDFLARE_API_TOKEN="your-api-token"
-```
-
-### Programmatic Configuration
-
-```python
-from pydantic import SecretStr
-from kiarina.lib.cloudflare import CloudflareSettings, settings_manager
-
-# Direct settings object
 settings = CloudflareSettings(
-    account_id="your-account-id",
-    api_token=SecretStr("your-api-token")
+    account_id="0123456789abcdef",
+    api_token="secret-token",
 )
+```
 
-# Via settings manager
+Extract the token where it is needed to create a Cloudflare client.
+
+```python
+account_id = settings.account_id
+api_token = settings.api_token.get_secret_value()
+```
+
+### Managing Multiple Accounts
+
+`settings_manager` uses multiple-settings mode. Place named settings under `configs`.
+
+```yaml
+kiarina.lib.cloudflare:
+  default: production
+  configs:
+    development:
+      account_id: development-account
+      api_token: development-token
+    production:
+      account_id: production-account
+      api_token: production-token
+```
+
+```python
+import yaml
+from pydantic_settings_manager import load_user_configs
+
+from kiarina.lib.cloudflare import settings_manager
+
+with open("config.yaml", encoding="utf-8") as file:
+    load_user_configs(yaml.safe_load(file) or {})
+
+settings = settings_manager.get_settings("production")
+```
+
+To configure only this package directly, assign `settings_manager.user_config`.
+
+```python
+from kiarina.lib.cloudflare import settings_manager
+
 settings_manager.user_config = {
-    "default": {
-        "account_id": "your-account-id",
-        "api_token": "your-api-token"  # Automatically converted to SecretStr
-    }
+    "default": "development",
+    "configs": {
+        "development": {
+            "account_id": "development-account",
+            "api_token": "development-token",
+        },
+        "production": {
+            "account_id": "production-account",
+            "api_token": "production-token",
+        },
+    },
 }
 ```
 
-### Runtime Overrides
+### Loading Environment Variables
 
-```python
-from kiarina.lib.cloudflare import settings_manager
+Load a single configuration from environment variables.
 
-# Override specific settings at runtime
-settings_manager.cli_args = {
-    "account_id": "override-account-id"
-}
-
-settings = settings_manager.settings
-print(f"Account ID: {settings.account_id}")  # Uses overridden value
+```bash
+export KIARINA_LIB_CLOUDFLARE_ACCOUNT_ID="0123456789abcdef"
+export KIARINA_LIB_CLOUDFLARE_API_TOKEN="secret-token"
 ```
 
-## Security
+```python
+from kiarina.lib.cloudflare import CloudflareSettings
 
-### API Token Protection
+settings = CloudflareSettings()
+```
 
-API tokens are stored using Pydantic's `SecretStr` type, which provides the following security benefits:
+### Protecting API Tokens
 
-- **Masked in logs**: Tokens are displayed as `**********` in string representations
-- **Prevents accidental exposure**: Tokens won't appear in debug output or error messages
-- **Explicit access required**: Must use `.get_secret_value()` to access the actual token
+`api_token` is a `SecretStr`. Extract its value explicitly only where required.
 
 ```python
-from kiarina.lib.cloudflare import settings_manager
-
-settings = settings_manager.settings
-
-# Token is masked in string representation
-print(settings)  # api_token=SecretStr('**********')
-
-# Explicit access to get the actual token
-token = settings.api_token.get_secret_value()
+api_token = settings.api_token.get_secret_value()
 ```
 
 ## API Reference
 
-### CloudflareSettings
+### `kiarina.lib.cloudflare`
+
+```python
+from kiarina.lib.cloudflare import (
+    CloudflareSettings,
+    settings_manager,
+)
+```
+
+#### `CloudflareSettings`
 
 ```python
 class CloudflareSettings(BaseSettings):
-    account_id: str
-    api_token: SecretStr
+    def __init__(
+        self,
+        *,
+        account_id: str,
+        api_token: SecretStr,
+    ) -> None: ...
 ```
 
-Pydantic settings model for Cloudflare authentication.
+Cloudflare account settings.
 
-**Fields:**
-- `account_id` (str): Cloudflare account ID
-- `api_token` (SecretStr): Cloudflare API token (protected)
+**Fields**
 
-### settings_manager
+- `account_id` (`str`): Cloudflare account ID.
+- `api_token` (`SecretStr`): Cloudflare API token.
+
+#### `settings_manager`
 
 ```python
 settings_manager: SettingsManager[CloudflareSettings]
 ```
 
-Global settings manager instance for Cloudflare authentication.
-See: [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager)
-
-## Development
-
-### Prerequisites
-
-- Python 3.12+
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/kiarina/kiarina-python.git
-cd kiarina-python
-
-# Setup development environment
-mise run setup
-```
-
-### Running Tests
-
-```bash
-# Run format, lint, type checks and tests
-cd packages/kiarina-lib-cloudflare && make check
-
-# Coverage report
-mise run test kiarina-lib-cloudflare --coverage
-```
-
-## Dependencies
-
-- [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) - Settings management
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Advanced settings management
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
-
-## Contributing
-
-This is a personal project, but contributions are welcome! Please feel free to submit issues or pull requests.
-
-## Related Projects
-
-- [kiarina-python](https://github.com/kiarina/kiarina-python) - The main monorepo containing this package
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) - Configuration management library used by this package
+Global instance that manages named Cloudflare account settings.

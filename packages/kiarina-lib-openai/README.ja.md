@@ -2,16 +2,21 @@
 
 [English](README.md) | 日本語
 
-pydantic-settings-manager による設定管理を備えた OpenAI API 連携用 Python library です。
+[![PyPI version](https://badge.fury.io/py/kiarina-lib-openai.svg)](https://badge.fury.io/py/kiarina-lib-openai)
+[![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-openai.svg)](https://pypi.org/project/kiarina-lib-openai/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+> [!NOTE] これは何？
+> OpenAI API の認証情報と接続先を pydantic-settings-manager で管理するためのパッケージ。
 
-- **Configuration Management**: `pydantic-settings-manager` による柔軟な設定管理
-- **Type Safety**: type hints と Pydantic validation
-- **Secure Credential Handling**: API key を `SecretStr` で保護
-- **Multiple Configurations**: project / environment ごとの複数設定
-- **Environment Variable Support**: `KIARINA_LIB_OPENAI_` prefix の環境変数
-- **Custom Base URL**: OpenAI-compatible API endpoint の指定
+## Dependencies
+
+| Package | Version | License |
+| --- | --- | --- |
+| [Pydantic Settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
+
+OpenAI Python SDK は依存関係に含まれません。Client を生成するアプリケーション側で追加してください。
 
 ## Installation
 
@@ -19,142 +24,158 @@ pydantic-settings-manager による設定管理を備えた OpenAI API 連携用
 pip install kiarina-lib-openai
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage
+- **Configuring an OpenAI Client**
+  OpenAI SDK の client 引数を設定から生成できます。
+- **Managing Multiple Configurations**
+  複数の project や環境の設定を名前で切り替えられます。
+- **Loading Environment Variables**
+  `KIARINA_LIB_OPENAI_` prefix の環境変数を読み込めます。
+- **Using Compatible APIs**
+  `base_url` で OpenAI-compatible API の接続先を指定できます。
+- **Protecting API Keys**
+  API key を `SecretStr` で保持します。
 
-```python
-from kiarina.lib.openai import settings_manager
+### Configuring an OpenAI Client
 
-settings_manager.user_config = {
-    "default": {
-        "api_key": "sk-your-api-key-here",
-    },
-}
-
-settings = settings_manager.settings
-```
-
-### Using with OpenAI Client
+`to_client_kwargs()` は値が設定された項目だけを OpenAI SDK の引数名へ変換します。
 
 ```python
 from openai import OpenAI
+
+from kiarina.lib.openai import OpenAISettings
+
+settings = OpenAISettings(api_key="sk-...")
+client = OpenAI(**settings.to_client_kwargs())
+```
+
+`organization_id` は `organization` に変換されます。`api_key`、`organization_id`、`base_url` がすべて `None` の場合は空の `dict` を返します。
+
+### Managing Multiple Configurations
+
+`settings_manager` は複数設定モードです。名前付き設定を `configs` に配置します。
+
+```yaml
+kiarina.lib.openai:
+  default: production
+  configs:
+    development:
+      api_key: sk-development
+    production:
+      api_key: sk-production
+      organization_id: org-production
+```
+
+```python
+import yaml
+from pydantic_settings_manager import load_user_configs
+
 from kiarina.lib.openai import settings_manager
 
-client = OpenAI(**settings_manager.settings.to_client_kwargs())
+with open("config.yaml", encoding="utf-8") as file:
+    load_user_configs(yaml.safe_load(file) or {})
+
+settings = settings_manager.get_settings("production")
 ```
 
-### Environment Variable Configuration
-
-```bash
-export KIARINA_LIB_OPENAI_API_KEY="sk-your-api-key-here"
-```
-
-### Multiple Configurations
+このパッケージだけを直接設定する場合は、`settings_manager.user_config` を設定できます。
 
 ```python
-settings_manager.user_config = {
-    "project_a": {"api_key": "sk-project-a-key"},
-    "project_b": {"api_key": "sk-project-b-key"},
-}
-settings_manager.active_key = "project_a"
-```
+from kiarina.lib.openai import settings_manager
 
-### Custom Base URL
-
-```python
 settings_manager.user_config = {
-    "custom": {
-        "api_key": "your-custom-key",
-        "base_url": "https://custom.openai-compatible.api.com/v1",
+    "default": "development",
+    "configs": {
+        "development": {"api_key": "sk-development"},
+        "production": {
+            "api_key": "sk-production",
+            "organization_id": "org-production",
+        },
     },
 }
 ```
 
-## Configuration
+### Loading Environment Variables
 
-### OpenAISettings
-
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `api_key` | `SecretStr` | Yes | - | OpenAI API key |
-| `organization` | `str \| None` | No | `None` | organization ID |
-| `base_url` | `str \| None` | No | `None` | custom base URL |
-
-### Environment Variables
+単一の設定は環境変数から読み込めます。
 
 ```bash
-export KIARINA_LIB_OPENAI_API_KEY="sk-your-api-key"
-export KIARINA_LIB_OPENAI_ORGANIZATION="org-your-organization"
+export KIARINA_LIB_OPENAI_API_KEY="sk-..."
+export KIARINA_LIB_OPENAI_ORGANIZATION_ID="org-..."
 export KIARINA_LIB_OPENAI_BASE_URL="https://api.openai.com/v1"
 ```
 
-### Programmatic Configuration
-
 ```python
-from pydantic import SecretStr
-from kiarina.lib.openai import OpenAISettings, settings_manager
+from kiarina.lib.openai import OpenAISettings
 
-settings = OpenAISettings(api_key=SecretStr("sk-your-api-key"))
-settings_manager.user_config = {"default": {"api_key": "sk-your-api-key"}}
+settings = OpenAISettings()
 ```
 
-### Runtime Overrides
+### Using Compatible APIs
 
 ```python
-settings_manager.cli_args = {"base_url": "https://custom.api.com/v1"}
+from openai import OpenAI
+
+from kiarina.lib.openai import OpenAISettings
+
+settings = OpenAISettings(
+    api_key="compatible-api-key",
+    base_url="https://example.com/v1",
+)
+client = OpenAI(**settings.to_client_kwargs())
 ```
 
-## Security
+### Protecting API Keys
 
-### API Key Protection
-
-API key は `SecretStr` で mask されます。実値が必要な場合だけ `.get_secret_value()` を使います。
+`to_client_kwargs()` は OpenAI SDK に渡すため、`api_key` の秘密値を返します。戻り値を log に記録しないでください。
 
 ## API Reference
 
-### OpenAISettings
+### `kiarina.lib.openai`
 
-OpenAI API 設定用の Pydantic settings model です。`to_client_kwargs()` で OpenAI client 初期化用 kwargs に変換できます。
-
-### settings_manager
-
-OpenAI 設定用の global settings manager instance です。
-
-## Development
-
-### Prerequisites
-
-Python 3.12+ が必要です。
-
-### Setup
-
-```bash
-mise run setup
+```python
+from kiarina.lib.openai import (
+    OpenAISettings,
+    settings_manager,
+)
 ```
 
-### Running Tests
+#### `OpenAISettings`
 
-```bash
-cd packages/kiarina-lib-openai && make check
-mise run test kiarina-lib-openai --coverage
+```python
+class OpenAISettings(BaseSettings):
+    def __init__(
+        self,
+        *,
+        api_key: SecretStr | None = None,
+        organization_id: str | None = None,
+        base_url: str | None = None,
+    ) -> None: ...
+
+    def to_client_kwargs(self) -> dict[str, Any]: ...
 ```
 
-## Dependencies
+OpenAI client の設定。
 
-- `pydantic-settings`
-- `pydantic-settings-manager`
+**Fields**
 
-## License
+- `api_key` (`SecretStr | None`): OpenAI API key。
+- `organization_id` (`str | None`): OpenAI organization ID。
+- `base_url` (`str | None`): OpenAI API の base URL。
 
-MIT License です。詳細は [LICENSE](../../LICENSE) を参照してください。
+##### `to_client_kwargs`
 
-## Contributing
+値が `None` ではない field を OpenAI SDK の client 引数へ変換します。
 
-issue や pull request は歓迎します。
+**Returns**
 
-## Related Projects
+- `dict[str, Any]`: `api_key`、`organization`、`base_url` のうち、設定された値を持つ辞書。
 
-- [kiarina-python](https://github.com/kiarina/kiarina-python)
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager)
+#### `settings_manager`
 
+```python
+settings_manager: SettingsManager[OpenAISettings]
+```
+
+名前付き OpenAI client 設定を管理する global instance です。

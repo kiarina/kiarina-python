@@ -11,14 +11,8 @@ import falkordb.asyncio  # type: ignore
 from ..._settings import settings_manager
 
 _sync_cache: dict[str, falkordb.FalkorDB] = {}
-"""
-Sync FalkorDB clients cache
-"""
 
 _async_cache: dict[str, falkordb.asyncio.FalkorDB] = {}
-"""
-Async FalkorDB clients cache
-"""
 
 
 @overload
@@ -54,9 +48,6 @@ def get_falkordb(
     url: str | None = None,
     **kwargs: Any,
 ) -> falkordb.FalkorDB | falkordb.asyncio.FalkorDB:
-    """
-    Get a FalkorDB client with shared logic.
-    """
     settings = settings_manager.get_settings(settings_key)
 
     if url is None:

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 __version__ = version("kiarina-lib-falkordb")
 
 __all__ = [
-    # ._sync._helpers
+    # ._sync.helpers
     "get_falkordb",
     # ._settings
     "FalkorDBSettings",
