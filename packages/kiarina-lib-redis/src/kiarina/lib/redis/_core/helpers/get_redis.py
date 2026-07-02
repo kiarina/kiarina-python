@@ -8,14 +8,8 @@ from redis.retry import Retry
 from ..._settings import settings_manager
 
 _sync_cache: dict[str, redis.Redis] = {}
-"""
-Sync Redis clients cache
-"""
 
 _async_cache: dict[str, redis.asyncio.Redis] = {}
-"""
-Async Redis clients cache
-"""
 
 
 @overload
@@ -51,9 +45,6 @@ def get_redis(
     url: str | None = None,
     **kwargs: Any,
 ) -> redis.Redis | redis.asyncio.Redis:
-    """
-    Get a Redis client with shared logic.
-    """
     settings = settings_manager.get_settings(settings_key)
 
     if url is None:

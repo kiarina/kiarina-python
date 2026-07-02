@@ -6,67 +6,58 @@ from pydantic_settings_manager import SettingsManager
 
 
 class RedisSettings(BaseSettings):
-    """
-    Redis Settings
-    """
+    """Redis client settings."""
 
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_REDIS_")
 
-    url: SecretStr = SecretStr("redis://localhost:6379")
-    """
-    Redis URL
+    url: SecretStr = Field(
+        default=SecretStr("redis://localhost:6379"),
+        title="Redis URL",
+        description="Redis connection URL.",
+    )
 
-    Example:
-    - redis://[[username]:[password]]@localhost:6379
-    - rediss://[[username]:[password]]@localhost:6379
+    initialize_params: dict[str, Any] = Field(
+        default_factory=dict,
+        title="Initialization Parameters",
+        description="Additional parameters passed to Redis.from_url().",
+    )
 
-    Note: This field uses SecretStr to prevent accidental exposure of credentials in logs.
-    """
+    use_retry: bool = Field(
+        default=False,
+        title="Use Retry",
+        description="Retry Redis connection and timeout errors.",
+    )
 
-    initialize_params: dict[str, Any] = Field(default_factory=dict)
-    """
-    Additional parameters to initialize the Redis client.
-    """
+    socket_timeout: float = Field(
+        default=6.0,
+        title="Socket Timeout",
+        description="Socket read and write timeout in seconds when retries are enabled.",
+    )
 
-    use_retry: bool = False
-    """
-    Whether to enable automatic retries
+    socket_connect_timeout: float = Field(
+        default=3.0,
+        title="Socket Connection Timeout",
+        description="Socket connection timeout in seconds when retries are enabled.",
+    )
 
-    When enabled, it is configured to retry upon occurrence of
-    redis.ConnectionError or redis.TimeoutError.
-    """
+    health_check_interval: int = Field(
+        default=60,
+        title="Health Check Interval",
+        description="Connection health check interval in seconds when retries are enabled.",
+    )
 
-    socket_timeout: float = 6.0
-    """
-    Socket timeout in seconds
+    retry_attempts: int = Field(
+        default=3,
+        title="Retry Attempts",
+        description="Number of retry attempts.",
+    )
 
-    After sending a command, if this time is exceeded, a redis.TimeoutError will be raised.
-    """
-
-    socket_connect_timeout: float = 3.0
-    """
-    Socket connection timeout in seconds
-
-    If this time is exceeded when establishing a new connection, a redis.ConnectionError will occur.
-    """
-
-    health_check_interval: int = 60
-    """
-    Health check interval in seconds
-
-    When acquiring a connection from the pool,
-    if the time since last use has elapsed, execute a PING to verify the connection status.
-    """
-
-    retry_attempts: int = 3
-    """
-    Number of retry attempts
-    """
-
-    retry_delay: float = 1.0
-    """
-    Delay between retry attempts in seconds
-    """
+    retry_delay: float = Field(
+        default=1.0,
+        title="Retry Delay",
+        description="Maximum exponential backoff delay in seconds.",
+    )
 
 
 settings_manager = SettingsManager(RedisSettings, multi=True)
+"""Manager for named Redis client settings."""

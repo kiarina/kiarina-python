@@ -13,9 +13,6 @@ def get_redis(
     url: str | None = None,
     **kwargs: Any,
 ) -> redis.Redis:
-    """
-    Get a Redis client.
-    """
     return _get_redis(
         "sync",
         settings_key,
