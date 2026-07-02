@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **kiarina**: Streamline the meta-package README and document all included packages as dependencies.
 - **kiarina-lib-google**: Clarify settings metadata, streamline comments and docstrings, and document ADC credential search order and all settings fields.
 - **kiarina-lib-redis**: Clarify settings metadata, streamline comments and docstrings, and document all public APIs and client behavior.
 - **kiarina-lib-anthropic, kiarina-lib-cloudflare, kiarina-lib-falkordb, kiarina-lib-openai, kiarina-lib-slack**: Clarify settings metadata, streamline comments and docstrings, and document all public APIs and configuration behavior.
