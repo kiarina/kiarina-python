@@ -1,10 +1,10 @@
 # kiarina-lib-firebase-rtdb
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-firebase-rtdb.svg)](https://badge.fury.io/py/kiarina-lib-firebase-rtdb)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-firebase-rtdb.svg)](https://pypi.org/project/kiarina-lib-firebase-rtdb/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] What is this?
 > Firebase Realtime Database からデータを取得し、リアルタイムの変更を監視する非同期パッケージです。

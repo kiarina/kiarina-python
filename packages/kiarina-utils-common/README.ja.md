@@ -1,10 +1,10 @@
 # kiarina-utils-common
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-utils-common.svg)](https://badge.fury.io/py/kiarina-utils-common)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-common.svg)](https://pypi.org/project/kiarina-utils-common/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > 軽量な設定解決・動的 import・registry 基盤を提供するパッケージ。

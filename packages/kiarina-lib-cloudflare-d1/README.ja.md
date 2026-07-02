@@ -1,10 +1,10 @@
 # kiarina-lib-cloudflare-d1
 
-[English](README.md) | 日本語
-
 [![PyPI](https://img.shields.io/pypi/v/kiarina-lib-cloudflare-d1.svg)](https://pypi.org/project/kiarina-lib-cloudflare-d1/)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
+
+[English](README.md) | 日本語
 
 > [!NOTE]
 > Cloudflare D1 REST API へ SQL クエリを送信する同期・非同期クライアントを提供します。

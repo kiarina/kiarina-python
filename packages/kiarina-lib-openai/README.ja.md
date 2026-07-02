@@ -1,10 +1,10 @@
 # kiarina-lib-openai
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-openai.svg)](https://badge.fury.io/py/kiarina-lib-openai)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-openai.svg)](https://pypi.org/project/kiarina-lib-openai/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > OpenAI API の認証情報と接続先を pydantic-settings-manager で管理するためのパッケージ。

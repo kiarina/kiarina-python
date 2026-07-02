@@ -1,10 +1,10 @@
 # kiarina-currency
 
-[English](README.md) | 日本語
-
 [![PyPI](https://img.shields.io/pypi/v/kiarina-currency.svg)](https://pypi.org/project/kiarina-currency/)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-currency.svg)](https://pypi.org/project/kiarina-currency/)
 [![License](https://img.shields.io/pypi/l/kiarina-currency.svg)](../../LICENSE)
+
+[English](README.md) | 日本語
 
 > [!NOTE]
 > システム通貨の検出と、差し替え可能な provider による為替レート取得を提供します。

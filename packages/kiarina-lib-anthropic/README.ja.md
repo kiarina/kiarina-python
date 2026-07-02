@@ -1,10 +1,10 @@
 # kiarina-lib-anthropic
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-anthropic.svg)](https://badge.fury.io/py/kiarina-lib-anthropic)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-anthropic.svg)](https://pypi.org/project/kiarina-lib-anthropic/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > Anthropic API の認証情報と接続先を pydantic-settings-manager で管理するためのパッケージ。

@@ -1,10 +1,10 @@
 # kiarina-currency
 
-English | [日本語](README.ja.md)
-
 [![PyPI](https://img.shields.io/pypi/v/kiarina-currency.svg)](https://pypi.org/project/kiarina-currency/)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-currency.svg)](https://pypi.org/project/kiarina-currency/)
 [![License](https://img.shields.io/pypi/l/kiarina-currency.svg)](../../LICENSE)
+
+English | [日本語](README.ja.md)
 
 > [!NOTE]
 > Provides system currency detection and exchange rate retrieval through pluggable providers.

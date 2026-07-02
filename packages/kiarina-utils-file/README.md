@@ -1,10 +1,10 @@
 # kiarina-utils-file
 
-English | [日本語](README.ja.md)
-
 [![PyPI version](https://badge.fury.io/py/kiarina-utils-file.svg)](https://badge.fury.io/py/kiarina-utils-file)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-file.svg)](https://pypi.org/project/kiarina-utils-file/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+English | [日本語](README.ja.md)
 
 > [!NOTE] What is this?
 > A package for synchronous and asynchronous file I/O plus encoding, MIME type, and extension detection.

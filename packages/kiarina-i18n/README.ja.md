@@ -1,10 +1,10 @@
 # kiarina-i18n
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-i18n.svg)](https://badge.fury.io/py/kiarina-i18n)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-i18n.svg)](https://pypi.org/project/kiarina-i18n/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > dictionary や YAML の翻訳 catalog を、関数または型付き Pydantic model から利用するパッケージ。

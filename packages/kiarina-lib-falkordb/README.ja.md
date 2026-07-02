@@ -1,10 +1,10 @@
 # kiarina-lib-falkordb
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-falkordb.svg)](https://badge.fury.io/py/kiarina-lib-falkordb)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-falkordb.svg)](https://pypi.org/project/kiarina-lib-falkordb/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > 同期・非同期の FalkorDB client を設定、再試行、接続 cache とともに生成するためのパッケージ。

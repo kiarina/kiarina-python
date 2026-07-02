@@ -1,12 +1,12 @@
 # kiarina-python
 
-English | [日本語](README.ja.md)
-
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-latest-green.svg)](https://github.com/astral-sh/uv)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/kiarina/kiarina-python/workflows/CI/badge.svg)](https://github.com/kiarina/kiarina-python/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/kiarina/kiarina-python/graph/badge.svg?token=NS6QHOXDC0)](https://codecov.io/gh/kiarina/kiarina-python)
+
+English | [日本語](README.ja.md)
 
 > 🚀 **kiarina-python** - A foundational collection of Python modules for building LLM agents with qualia (the subjective texture of consciousness).
 

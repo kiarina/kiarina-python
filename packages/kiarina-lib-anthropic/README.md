@@ -1,10 +1,10 @@
 # kiarina-lib-anthropic
 
-English | [日本語](README.ja.md)
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-anthropic.svg)](https://badge.fury.io/py/kiarina-lib-anthropic)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-anthropic.svg)](https://pypi.org/project/kiarina-lib-anthropic/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+English | [日本語](README.ja.md)
 
 > [!NOTE] What is this?
 > A package for managing Anthropic API credentials and endpoints with pydantic-settings-manager.

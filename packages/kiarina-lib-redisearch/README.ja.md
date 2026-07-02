@@ -1,10 +1,10 @@
 # kiarina-lib-redisearch
 
-[English](README.md) | 日本語
-
 [![PyPI](https://img.shields.io/pypi/v/kiarina-lib-redisearch.svg)](https://pypi.org/project/kiarina-lib-redisearch/)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
+
+[English](README.md) | 日本語
 
 > [!NOTE]
 > 同期・非同期の RediSearch クライアント、検索フィルター、インデックススキーマを提供します。

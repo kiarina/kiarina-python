@@ -1,10 +1,10 @@
 # kiarina-utils-app
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-utils-app.svg)](https://badge.fury.io/py/kiarina-utils-app)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-app.svg)](https://pypi.org/project/kiarina-utils-app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] What is this?
 > アプリケーション（特に CLI ツール）の土台となるユーティリティです。起動時のアプリ識別子設定、ユーザーディレクトリの解決、重複起動の制御を提供します。

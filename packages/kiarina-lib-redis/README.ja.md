@@ -1,10 +1,10 @@
 # kiarina-lib-redis
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-redis.svg)](https://badge.fury.io/py/kiarina-lib-redis)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-redis.svg)](https://pypi.org/project/kiarina-lib-redis/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > 同期・非同期の Redis client を設定、再試行、接続 cache とともに生成するためのパッケージ。

@@ -1,12 +1,12 @@
 # kiarina-python
 
-[English](README.md) | 日本語
-
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-latest-green.svg)](https://github.com/astral-sh/uv)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/kiarina/kiarina-python/workflows/CI/badge.svg)](https://github.com/kiarina/kiarina-python/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/kiarina/kiarina-python/graph/badge.svg?token=NS6QHOXDC0)](https://codecov.io/gh/kiarina/kiarina-python)
+
+[English](README.md) | 日本語
 
 > 🚀 **kiarina-python** - クオリア（意識の質感）を持つ LLM エージェントを開発するための土台となる、包括的なPythonモジュール群。
 

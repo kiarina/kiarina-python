@@ -1,10 +1,10 @@
 # kiarina-utils-file
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-utils-file.svg)](https://badge.fury.io/py/kiarina-utils-file)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-file.svg)](https://pypi.org/project/kiarina-utils-file/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > sync / async の file I/O と、encoding、MIME type、拡張子の検出を提供するパッケージ。

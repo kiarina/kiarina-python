@@ -1,10 +1,10 @@
 # kiarina-lib-cloudflare
 
-English | [日本語](README.ja.md)
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-cloudflare.svg)](https://badge.fury.io/py/kiarina-lib-cloudflare)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-cloudflare.svg)](https://pypi.org/project/kiarina-lib-cloudflare/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+English | [日本語](README.ja.md)
 
 > [!NOTE] What is this?
 > A package for managing Cloudflare account credentials with pydantic-settings-manager.

@@ -1,10 +1,10 @@
 # kiarina-lib-slack
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-lib-slack.svg)](https://badge.fury.io/py/kiarina-lib-slack)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-slack.svg)](https://pypi.org/project/kiarina-lib-slack/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > Slack app の認証情報と OAuth 情報を pydantic-settings-manager で管理するためのパッケージ。
