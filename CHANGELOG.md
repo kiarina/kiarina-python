@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Streamline the repository README files and organize the package catalog, installation, development, and documentation guidance.
 - Standardize README headers so status badges appear before language links.
 - Replace the duplicate Test Settings runbook with a reference to `kiarina/test-settings`.
 - **kiarina**: Streamline the meta-package README and document all included packages as dependencies.
