@@ -243,32 +243,7 @@ make upgrade
 
 Ignored `.env` and `test_settings.yaml` files can be encrypted with age and shared through a private Google Cloud Storage prefix.
 
-See the [Test Settings runbook](docs/runbooks/test_settings/README.md) for age key generation, bucket creation, IAM configuration, environment setup, daily operation, and key rotation.
-
-Set the following variables in your shell or another secret store. Do not put the age identity in a repository `.env` file because `.env` is itself managed by these tasks.
-
-```bash
-export KIARINA_TEST_SETTINGS_GCS_URI="gs://your-private-bucket/kiarina-python"
-export KIARINA_TEST_SETTINGS_AGE_RECIPIENT="age1..."
-export KIARINA_TEST_SETTINGS_AGE_IDENTITY="AGE-SECRET-KEY-1..."
-```
-
-Upload every ignored `.env` and `test_settings.yaml` file:
-
-```bash
-mise run test-settings:upload --dry-run
-mise run test-settings:upload
-```
-
-Download and decrypt all managed files. Existing files are preserved unless `--force` is specified.
-
-```bash
-mise run test-settings:download --dry-run
-mise run test-settings:download
-mise run test-settings:download --force
-```
-
-The upload task uses only the age recipient. The download task requires the age identity, writes files atomically, and sets their permissions to `0600`. Upload never deletes remote objects automatically.
+See [kiarina/test-settings](https://github.com/kiarina/test-settings) for setup and operation.
 
 ### Project Structure
 
