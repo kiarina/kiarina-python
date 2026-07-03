@@ -64,7 +64,7 @@ pip install "kiarina-agi-file[asset-repository-gcs]"
 最初に application name を設定します。既定の data path と cache path は、application の user directory と `RunContext.agent_id` から生成されます。
 
 ```python
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.file.local_repository import create_local_repository
 from kiarina.utils.app import configure
 
@@ -84,7 +84,7 @@ loaded = await repository.get(file_path)
 既定の `local` preset は local filesystem を使用します。保存結果と取得結果は local asset cache 内の `FileBlob` です。
 
 ```python
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.file.asset_repository import create_asset_repository
 from kiarina.utils.app import configure
 

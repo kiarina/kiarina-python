@@ -3,8 +3,8 @@ import os
 import re
 from datetime import datetime
 
-from kiarina.agi.base.run_context import RunContext
 from kiarina.agi.file.asset_cache import AssetCache, create_asset_cache
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.mime import MIMEBlob
 
 from .._schemas.uri_policy import URIPolicy

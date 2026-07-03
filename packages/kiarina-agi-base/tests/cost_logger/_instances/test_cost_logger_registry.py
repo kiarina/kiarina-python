@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.cost_logger import BaseCostLogger, cost_logger_registry
+from kiarina.agi.cost_logger import BaseCostLogger, cost_logger_registry
 
 
 @pytest.fixture(autouse=True)

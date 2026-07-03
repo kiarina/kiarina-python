@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.file_utils import normalize_line_number
+from kiarina.agi.file_utils import normalize_line_number
 
 
 @pytest.mark.parametrize(

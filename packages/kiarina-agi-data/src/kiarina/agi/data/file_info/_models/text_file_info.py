@@ -2,9 +2,9 @@ from typing import Any, Literal, Self
 
 from pydantic import Field
 
-from kiarina.agi.base.file_utils import normalize_line_number
-from kiarina.agi.base.token_utils import TokenCount, calc_text_token
 from kiarina.agi.data.chat_estimates import ChatEstimates
+from kiarina.agi.file_utils import normalize_line_number
+from kiarina.agi.token_utils import TokenCount, calc_text_token
 
 from .base_file_info import BaseFileInfo
 

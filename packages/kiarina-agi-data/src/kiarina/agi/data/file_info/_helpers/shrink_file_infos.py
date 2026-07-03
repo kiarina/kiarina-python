@@ -1,4 +1,4 @@
-from kiarina.agi.base.token_utils import TokenCount
+from kiarina.agi.token_utils import TokenCount
 
 from .._types.file_info import FileInfo
 

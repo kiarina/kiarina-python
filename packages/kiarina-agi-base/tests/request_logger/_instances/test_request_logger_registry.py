@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.request_logger import BaseRequestLogger, request_logger_registry
+from kiarina.agi.request_logger import BaseRequestLogger, request_logger_registry
 
 
 @pytest.fixture(autouse=True)

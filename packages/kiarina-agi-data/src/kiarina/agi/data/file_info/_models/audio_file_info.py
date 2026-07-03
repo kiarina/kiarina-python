@@ -2,8 +2,8 @@ from typing import Any, Literal
 
 from pydantic import Field
 
-from kiarina.agi.base.file_utils import normalize_time
 from kiarina.agi.data.chat_estimates import ChatEstimates
+from kiarina.agi.file_utils import normalize_time
 
 from .base_file_info import BaseFileInfo
 

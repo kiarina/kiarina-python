@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.mark.parametrize(

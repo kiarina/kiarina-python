@@ -5,11 +5,11 @@ from typing import Any, Self
 import ulid
 from pydantic import BaseModel, Field, field_validator
 
-from kiarina.agi.base.file_utils import format_xml_attributes, is_uri
-from kiarina.agi.base.run_context import get_node_id
-from kiarina.agi.base.token_utils import TokenCount, calc_text_token
 from kiarina.agi.data.chat_estimates import ChatEstimates
 from kiarina.agi.file.file import URIOrFilePath
+from kiarina.agi.file_utils import format_xml_attributes, is_uri
+from kiarina.agi.run_context import get_node_id
+from kiarina.agi.token_utils import TokenCount, calc_text_token
 
 from .._types.file_id import FileID
 from .._types.file_type import FileType

@@ -60,7 +60,7 @@ export KIARINA_AGI_RUN_CONTEXT_CURRENCY=JPY
 ```
 
 ```python
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.app import configure
 
 configure("example-app", "example-author")
@@ -75,9 +75,9 @@ Registry は preset 名、または `name?key=value` 形式の specifier から�
 ```python
 import asyncio
 
-from kiarina.agi.base.cost_record import CostRecord
-from kiarina.agi.base.cost_recorder import cost_recorder_registry
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.cost_record import CostRecord
+from kiarina.agi.cost_recorder import cost_recorder_registry
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.app import configure
 
 
@@ -106,11 +106,11 @@ asyncio.run(main())
 ```python
 import asyncio
 
-from kiarina.agi.base.request_logger import (
+from kiarina.agi.request_logger import (
     RequestLogEntry,
     request_logger_registry,
 )
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.app import configure
 
 
@@ -135,7 +135,7 @@ asyncio.run(main())
 見積もりは model や provider によって異なります。Text では `TokenUtilsSettings.tiktoken_model_name`、image では OpenAI の tile 計算、audio と video では時間ベースの係数を使用します。
 
 ```python
-from kiarina.agi.base.token_utils import (
+from kiarina.agi.token_utils import (
     ImageSize,
     calc_image_token,
     calc_text_token,
@@ -147,10 +147,10 @@ image_tokens = calc_image_token(ImageSize(width=1024, height=768))
 
 ## API Reference
 
-### `kiarina.agi.base.run_context`
+### `kiarina.agi.run_context`
 
 ```python
-from kiarina.agi.base.run_context import (
+from kiarina.agi.run_context import (
     IDStr,
     RunContext,
     RunContextSettings,
@@ -234,10 +234,10 @@ IANA time zone 名です。
 settings_manager: SettingsManager[RunContextSettings]
 ```
 
-### `kiarina.agi.base.cost_record`
+### `kiarina.agi.cost_record`
 
 ```python
-from kiarina.agi.base.cost_record import (
+from kiarina.agi.cost_record import (
     CostKind,
     CostRecord,
     CostSource,
@@ -274,10 +274,10 @@ CostSource: TypeAlias = str
 Microdollars: TypeAlias = int
 ```
 
-### `kiarina.agi.base.cost_logger`
+### `kiarina.agi.cost_logger`
 
 ```python
-from kiarina.agi.base.cost_logger import (
+from kiarina.agi.cost_logger import (
     BaseCostLogger,
     CostLogger,
     CostLoggerName,
@@ -332,8 +332,8 @@ class CostLogger(Protocol):
 class CostLoggerSettings(BaseSettings):
     default: CostLoggerSpecifier = "null"
     presets: dict[CostLoggerName, ImportPath] = {
-        "console": "kiarina.agi.base.cost_logger_impl.console:ConsoleCostLogger",
-        "null": "kiarina.agi.base.cost_logger_impl.null:NullCostLogger",
+        "console": "kiarina.agi.cost_logger_impl.console:ConsoleCostLogger",
+        "null": "kiarina.agi.cost_logger_impl.null:NullCostLogger",
     }
     customs: dict[CostLoggerName, ImportPath] = {}
     currency: CurrencyCode | None = None
@@ -354,10 +354,10 @@ settings_manager: SettingsManager[CostLoggerSettings]
 
 Specifier は `"{CostLoggerName}?{ConfigString}"` 形式も受け付けます。
 
-### `kiarina.agi.base.cost_logger_impl.console`
+### `kiarina.agi.cost_logger_impl.console`
 
 ```python
-from kiarina.agi.base.cost_logger_impl.console import ConsoleCostLogger
+from kiarina.agi.cost_logger_impl.console import ConsoleCostLogger
 ```
 
 #### `ConsoleCostLogger`
@@ -369,10 +369,10 @@ class ConsoleCostLogger(BaseCostLogger):
     def log_cost_flush(self, cost_records: list[CostRecord]) -> None: ...
 ```
 
-### `kiarina.agi.base.cost_logger_impl.null`
+### `kiarina.agi.cost_logger_impl.null`
 
 ```python
-from kiarina.agi.base.cost_logger_impl.null import NullCostLogger
+from kiarina.agi.cost_logger_impl.null import NullCostLogger
 ```
 
 #### `NullCostLogger`
@@ -382,10 +382,10 @@ class NullCostLogger(BaseCostLogger):
     def __init__(self) -> None: ...
 ```
 
-### `kiarina.agi.base.cost_recorder`
+### `kiarina.agi.cost_recorder`
 
 ```python
-from kiarina.agi.base.cost_recorder import (
+from kiarina.agi.cost_recorder import (
     BaseCostRecorder,
     CostRecorder,
     CostRecorderName,
@@ -449,8 +449,8 @@ class CostRecorder(Protocol):
 class CostRecorderSettings(BaseSettings):
     default: CostRecorderSpecifier = "null"
     presets: dict[CostRecorderName, ImportPath] = {
-        "local": "kiarina.agi.base.cost_recorder_impl.local:LocalCostRecorder",
-        "null": "kiarina.agi.base.cost_recorder_impl.null:NullCostRecorder",
+        "local": "kiarina.agi.cost_recorder_impl.local:LocalCostRecorder",
+        "null": "kiarina.agi.cost_recorder_impl.null:NullCostRecorder",
     }
     customs: dict[CostRecorderName, ImportPath] = {}
 ```
@@ -468,10 +468,10 @@ settings_manager: SettingsManager[CostRecorderSettings]
 
 Specifier は `"{CostRecorderName}?{ConfigString}"` 形式も受け付けます。
 
-### `kiarina.agi.base.cost_recorder_impl.local`
+### `kiarina.agi.cost_recorder_impl.local`
 
 ```python
-from kiarina.agi.base.cost_recorder_impl.local import LocalCostRecorder
+from kiarina.agi.cost_recorder_impl.local import LocalCostRecorder
 ```
 
 #### `LocalCostRecorder`
@@ -484,10 +484,10 @@ class LocalCostRecorder(BaseCostRecorder):
     def file_path(self) -> str: ...
 ```
 
-### `kiarina.agi.base.cost_recorder_impl.null`
+### `kiarina.agi.cost_recorder_impl.null`
 
 ```python
-from kiarina.agi.base.cost_recorder_impl.null import NullCostRecorder
+from kiarina.agi.cost_recorder_impl.null import NullCostRecorder
 ```
 
 #### `NullCostRecorder`
@@ -497,10 +497,10 @@ class NullCostRecorder(BaseCostRecorder):
     def __init__(self, **kwargs: Any) -> None: ...
 ```
 
-### `kiarina.agi.base.request_logger`
+### `kiarina.agi.request_logger`
 
 ```python
-from kiarina.agi.base.request_logger import (
+from kiarina.agi.request_logger import (
     BaseRequestLogger,
     RequestLogEntry,
     RequestLogger,
@@ -580,9 +580,9 @@ class RequestLogger(Protocol):
 class RequestLoggerSettings(BaseSettings):
     default: RequestLoggerSpecifier = "null"
     presets: dict[RequestLoggerName, ImportPath] = {
-        "console": "kiarina.agi.base.request_logger_impl.console:ConsoleRequestLogger",
-        "local": "kiarina.agi.base.request_logger_impl.local:LocalRequestLogger",
-        "null": "kiarina.agi.base.request_logger_impl.null:NullRequestLogger",
+        "console": "kiarina.agi.request_logger_impl.console:ConsoleRequestLogger",
+        "local": "kiarina.agi.request_logger_impl.local:LocalRequestLogger",
+        "null": "kiarina.agi.request_logger_impl.null:NullRequestLogger",
     }
     customs: dict[RequestLoggerName, ImportPath] = {}
 ```
@@ -600,10 +600,10 @@ settings_manager: SettingsManager[RequestLoggerSettings]
 
 Specifier は `"{RequestLoggerName}?{ConfigString}"` 形式も受け付けます。
 
-### `kiarina.agi.base.request_logger_impl.console`
+### `kiarina.agi.request_logger_impl.console`
 
 ```python
-from kiarina.agi.base.request_logger_impl.console import ConsoleRequestLogger
+from kiarina.agi.request_logger_impl.console import ConsoleRequestLogger
 ```
 
 #### `ConsoleRequestLogger`
@@ -628,10 +628,10 @@ class ConsoleRequestLogger(BaseRequestLogger):
     ) -> None: ...
 ```
 
-### `kiarina.agi.base.request_logger_impl.local`
+### `kiarina.agi.request_logger_impl.local`
 
 ```python
-from kiarina.agi.base.request_logger_impl.local import LocalRequestLogger
+from kiarina.agi.request_logger_impl.local import LocalRequestLogger
 ```
 
 #### `LocalRequestLogger`
@@ -656,10 +656,10 @@ class LocalRequestLogger(BaseRequestLogger):
     ) -> None: ...
 ```
 
-### `kiarina.agi.base.request_logger_impl.null`
+### `kiarina.agi.request_logger_impl.null`
 
 ```python
-from kiarina.agi.base.request_logger_impl.null import NullRequestLogger
+from kiarina.agi.request_logger_impl.null import NullRequestLogger
 ```
 
 #### `NullRequestLogger`
@@ -669,10 +669,10 @@ class NullRequestLogger(BaseRequestLogger):
     def __init__(self, **kwargs: Any) -> None: ...
 ```
 
-### `kiarina.agi.base.token_utils`
+### `kiarina.agi.token_utils`
 
 ```python
-from kiarina.agi.base.token_utils import (
+from kiarina.agi.token_utils import (
     ImageSize,
     TokenCount,
     TokenUtilsSettings,
@@ -717,10 +717,10 @@ TokenCount: TypeAlias = int
 settings_manager: SettingsManager[TokenUtilsSettings]
 ```
 
-### `kiarina.agi.base.console_utils`
+### `kiarina.agi.console_utils`
 
 ```python
-from kiarina.agi.base.console_utils import (
+from kiarina.agi.console_utils import (
     ConsoleColor,
     divider,
     format_run_context,
@@ -762,10 +762,10 @@ ConsoleColor = Literal[
 ]
 ```
 
-### `kiarina.agi.base.cost_utils`
+### `kiarina.agi.cost_utils`
 
 ```python
-from kiarina.agi.base.cost_utils import format_cost
+from kiarina.agi.cost_utils import format_cost
 ```
 
 #### `format_cost`
@@ -782,10 +782,10 @@ def format_cost(
 
 Microdollars を通貨付き文字列へ変換します。USD 以外へ変換する場合は `currency` と `exchange_rate` の両方を指定します。
 
-### `kiarina.agi.base.file_utils`
+### `kiarina.agi.file_utils`
 
 ```python
-from kiarina.agi.base.file_utils import (
+from kiarina.agi.file_utils import (
     format_xml_attributes,
     is_uri,
     normalize_line_number,
@@ -806,10 +806,10 @@ def normalize_time(time: float, duration: float) -> float: ...
 
 `normalize_line_number` と `normalize_page` は 1 始まりの値を有効範囲に収めます。`normalize_time` は秒単位の値を `0` から `duration` の範囲に収めます。
 
-### `kiarina.agi.base.image_types`
+### `kiarina.agi.image_types`
 
 ```python
-from kiarina.agi.base.image_types import ImagePixels
+from kiarina.agi.image_types import ImagePixels
 ```
 
 #### `ImagePixels`

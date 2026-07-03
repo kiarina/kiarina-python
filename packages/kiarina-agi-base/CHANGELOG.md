@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Move public modules from `kiarina.agi.base` to `kiarina.agi`.
+
 ## [2.5.0] - 2026-07-03
 
 ### Changed

@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.run_context import RunContext, settings_manager
+from kiarina.agi.run_context import RunContext, settings_manager
 
 
 @pytest.fixture(autouse=True)

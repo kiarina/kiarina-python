@@ -1,4 +1,4 @@
-from kiarina.agi.base.file_utils import normalize_page
+from kiarina.agi.file_utils import normalize_page
 
 
 def test_normalize_page() -> None:

@@ -2,11 +2,11 @@ from typing import Self
 
 from pydantic import BaseModel, Field
 
-from kiarina.agi.base.token_utils import TokenCount
 from kiarina.agi.data.chat_estimates import ChatEstimates
 from kiarina.agi.data.content import Content
 from kiarina.agi.data.file_info import FileInfo
 from kiarina.agi.data.file_info_pool import FileInfoPool, find_file_index
+from kiarina.agi.token_utils import TokenCount
 
 from .._types.message_type import MessageType
 

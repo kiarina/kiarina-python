@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import Field
 
-from kiarina.agi.base.file_utils import is_uri
+from kiarina.agi.file_utils import is_uri
 
 from .base_display_content import BaseDisplayContent
 

@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.cost_recorder import BaseCostRecorder, cost_recorder_registry
+from kiarina.agi.cost_recorder import BaseCostRecorder, cost_recorder_registry
 
 
 @pytest.fixture(autouse=True)

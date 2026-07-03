@@ -4,8 +4,8 @@ from typing import Any
 import ulid
 from pydantic import BaseModel, Field
 
-from kiarina.agi.base.token_utils import calc_text_token
 from kiarina.agi.data.chat_estimates import ChatEstimates
+from kiarina.agi.token_utils import calc_text_token
 
 
 class ToolCall(BaseModel):

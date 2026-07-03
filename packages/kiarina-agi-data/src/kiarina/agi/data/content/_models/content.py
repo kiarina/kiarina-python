@@ -2,10 +2,10 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from kiarina.agi.base.file_utils import format_xml_attributes
-from kiarina.agi.base.token_utils import calc_text_token
 from kiarina.agi.data.chat_estimates import ChatEstimates
 from kiarina.agi.data.file_info import FileInfo, FileType
+from kiarina.agi.file_utils import format_xml_attributes
+from kiarina.agi.token_utils import calc_text_token
 
 
 class Content(BaseModel):

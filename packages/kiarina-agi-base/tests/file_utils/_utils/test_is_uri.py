@@ -1,4 +1,4 @@
-from kiarina.agi.base.file_utils import is_uri
+from kiarina.agi.file_utils import is_uri
 
 
 def test_is_uri() -> None:

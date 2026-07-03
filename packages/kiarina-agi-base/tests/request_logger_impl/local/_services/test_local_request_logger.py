@@ -1,8 +1,8 @@
 import traceback
 from typing import Any
 
-from kiarina.agi.base.request_logger import RequestLogEntry
-from kiarina.agi.base.request_logger_impl.local import LocalRequestLogger
+from kiarina.agi.request_logger import RequestLogEntry
+from kiarina.agi.request_logger_impl.local import LocalRequestLogger
 
 
 async def test_log_request_success(run_context: Any) -> None:

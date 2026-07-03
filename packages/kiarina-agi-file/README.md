@@ -64,7 +64,7 @@ pip install "kiarina-agi-file[asset-repository-gcs]"
 Configure the application name first. The default data and cache paths are generated from the application's user directories and `RunContext.agent_id`.
 
 ```python
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.file.local_repository import create_local_repository
 from kiarina.utils.app import configure
 
@@ -84,7 +84,7 @@ loaded = await repository.get(file_path)
 The default `local` preset uses the local filesystem. Stored and retrieved values are `FileBlob` objects in the local asset cache.
 
 ```python
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.file.asset_repository import create_asset_repository
 from kiarina.utils.app import configure
 

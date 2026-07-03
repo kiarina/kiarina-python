@@ -2,7 +2,7 @@ from io import StringIO
 
 import pytest
 
-from kiarina.agi.base.console_utils import stderr_color
+from kiarina.agi.console_utils import stderr_color
 
 
 class _FakeStderr(StringIO):

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-data**: Add messages, events, embeddings, file metadata, and related data models for AI agents.
 
 ### Changed
+- **kiarina-agi-base, kiarina-agi-data, kiarina-agi-file**: Move the `kiarina.agi.base` public modules directly under `kiarina.agi`.
 - **kiarina-agi-data**: Correct test fixture type annotations.
 - Run mypy against package tests and add the required test type annotations.
 

@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 import kiarina.utils.file.asyncio as kfa
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.app import user_directory
 from kiarina.utils.file import FileBlob
 

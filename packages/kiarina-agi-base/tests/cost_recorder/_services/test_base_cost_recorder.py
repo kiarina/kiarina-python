@@ -1,7 +1,7 @@
 from typing import Any
 
-from kiarina.agi.base.cost_record import CostRecord
-from kiarina.agi.base.cost_recorder import BaseCostRecorder
+from kiarina.agi.cost_record import CostRecord
+from kiarina.agi.cost_recorder import BaseCostRecorder
 
 
 class MyCostRecorder(BaseCostRecorder): ...

@@ -1,4 +1,4 @@
-from kiarina.agi.base.token_utils import calc_text_token
+from kiarina.agi.token_utils import calc_text_token
 
 
 def test_calc_text_token() -> None:

@@ -4,7 +4,6 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.run_context import RunContext, settings_manager
 from kiarina.agi.data.file_info import (
     AudioFileInfo,
     ImageFileInfo,
@@ -13,6 +12,7 @@ from kiarina.agi.data.file_info import (
     TextFileInfo,
     VideoFileInfo,
 )
+from kiarina.agi.run_context import RunContext, settings_manager
 from kiarina.utils.app import configure, reset
 
 

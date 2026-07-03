@@ -1,6 +1,6 @@
 from typing import Any
 
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.component_registry import ComponentFactory, ComponentRegistry
 
 from .._schemas.uri_policy import URIPolicy

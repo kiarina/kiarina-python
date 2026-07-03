@@ -11,4 +11,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add messages, events, embeddings, file metadata, and related data models for AI agents.
 
 ### Changed
+- Import shared AI agent utilities from `kiarina.agi`.
 - Correct test fixture type annotations.

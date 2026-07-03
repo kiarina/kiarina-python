@@ -1,4 +1,4 @@
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 
 from .._services.local_repository import LocalRepository
 from .._settings import settings_manager

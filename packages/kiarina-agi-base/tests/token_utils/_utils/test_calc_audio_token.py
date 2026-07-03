@@ -1,4 +1,4 @@
-from kiarina.agi.base.token_utils import calc_audio_token
+from kiarina.agi.token_utils import calc_audio_token
 
 
 def test_calc_audio_token() -> None:

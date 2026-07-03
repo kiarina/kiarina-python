@@ -1,4 +1,4 @@
-from kiarina.agi.base.file_utils import normalize_time
+from kiarina.agi.file_utils import normalize_time
 
 
 def test_normalize_time() -> None:

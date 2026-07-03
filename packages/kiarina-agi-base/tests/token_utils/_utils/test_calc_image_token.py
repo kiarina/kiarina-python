@@ -1,4 +1,4 @@
-from kiarina.agi.base.token_utils import ImageSize, calc_image_token
+from kiarina.agi.token_utils import ImageSize, calc_image_token
 
 
 def test_calc_image_token() -> None:

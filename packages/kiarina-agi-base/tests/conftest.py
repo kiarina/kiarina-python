@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.run_context import RunContext
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.app import configure, reset
 
 
@@ -18,7 +18,7 @@ def configure_app() -> Iterator[None]:
 @pytest.fixture
 def run_context(request: Any) -> RunContext:
     return RunContext(
-        organization_id="kiarina.agi.base",
+        organization_id="kiarina.agi",
         user_id=request.module.__name__,
         agent_id=re.sub(r"[^a-zA-Z0-9_-]", "", request.node.name),
         node_id="pytest",

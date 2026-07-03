@@ -2,9 +2,9 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.base.cost_logger import settings_manager
-from kiarina.agi.base.cost_logger_impl.console import ConsoleCostLogger
-from kiarina.agi.base.cost_record import CostRecord
+from kiarina.agi.cost_logger import settings_manager
+from kiarina.agi.cost_logger_impl.console import ConsoleCostLogger
+from kiarina.agi.cost_record import CostRecord
 
 
 @pytest.fixture(autouse=True)
