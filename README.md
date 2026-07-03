@@ -151,6 +151,7 @@ Git-ignored `.env` and `test_settings.yaml` files can be encrypted with age and 
 ## Documentation
 
 - [Development Flow](docs/playbooks/development_flow/README.md)
+- [Implementation Optional Dependencies](docs/concepts/implementation_optional_dependencies/README.md)
 - [uv Workspace Operations](docs/concepts/uv_workspace_operations/README.md)
 - [Sensitive Data Security](docs/concepts/sensitive_data_security/README.md)
 - [Adding a Package](docs/runbooks/add_new_package/README.md)

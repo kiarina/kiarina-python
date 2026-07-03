@@ -869,7 +869,6 @@ name = "kiarina-agi-file"
 version = "2.4.0"
 source = { editable = "packages/kiarina-agi-file" }
 dependencies = [
-    { name = "google-cloud-storage" },
     { name = "kiarina-agi-base" },
     { name = "kiarina-lib-google" },
     { name = "kiarina-utils-app" },
@@ -880,9 +879,14 @@ dependencies = [
     { name = "pydantic-settings-manager" },
 ]
 
+[package.optional-dependencies]
+asset-repository-gcs = [
+    { name = "google-cloud-storage" },
+]
+
 [package.metadata]
 requires-dist = [
-    { name = "google-cloud-storage", specifier = ">=3.4.0" },
+    { name = "google-cloud-storage", marker = "extra == 'asset-repository-gcs'", specifier = ">=3.4.0" },
     { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
     { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-utils-app", editable = "packages/kiarina-utils-app" },
@@ -892,6 +896,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
 ]
+provides-extras = ["asset-repository-gcs"]
 
 [[package]]
 name = "kiarina-currency"

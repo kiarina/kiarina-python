@@ -3,14 +3,21 @@ import logging
 from datetime import timedelta
 from urllib.parse import urlparse
 
-import google.cloud.exceptions
-from google.cloud.storage import Blob, Client  # type: ignore
-
 from kiarina.agi.file.asset_repository import BaseAssetRepository
 from kiarina.lib.google import get_credentials
 from kiarina.utils.mime import MIMEBlob, detect_mime_type
 
 from .._settings import GCSAssetRepositorySettings
+
+try:
+    import google.cloud.exceptions
+    from google.cloud.storage import Blob, Client  # type: ignore
+except ImportError as exc:
+    raise ImportError(
+        "google-cloud-storage is required to use GCSAssetRepository. "
+        "Install it with: "
+        "pip install 'kiarina-agi-file[asset-repository-gcs]'"
+    ) from exc
 
 logger = logging.getLogger(__name__)
 

@@ -13,7 +13,6 @@ English | [日本語](README.ja.md)
 
 | Package | Version | License |
 | --- | --- | --- |
-| [google-cloud-storage](https://github.com/googleapis/python-storage) | `>=3.4.0` | [Apache-2.0](https://github.com/googleapis/python-storage/blob/main/LICENSE) |
 | [kiarina-agi-base](../kiarina-agi-base/) | `>=2.4.0` | [MIT](../../LICENSE) |
 | [kiarina-lib-google](../kiarina-lib-google/) | `>=2.3.1` | [MIT](../../LICENSE) |
 | [kiarina-utils-app](../kiarina-utils-app/) | `>=2.4.0` | [MIT](../../LICENSE) |
@@ -23,10 +22,22 @@ English | [日本語](README.ja.md)
 | [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
 | [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
 
+### Optional Dependencies
+
+| Extra | Package | Version | License |
+| --- | --- | --- | --- |
+| `asset-repository-gcs` | [google-cloud-storage](https://github.com/googleapis/python-storage) | `>=3.4.0` | [Apache-2.0](https://github.com/googleapis/python-storage/blob/main/LICENSE) |
+
 ## Installation
 
 ```bash
 pip install kiarina-agi-file
+```
+
+To use the Google Cloud Storage asset repository:
+
+```bash
+pip install 'kiarina-agi-file[asset-repository-gcs]'
 ```
 
 ## Features

@@ -21,6 +21,9 @@
 pydantic-settings に関連したタスクを行う場合は、先に下記を把握してください。
 - https://github.com/kiarina/pydantic-settings-manager
 
+依存パッケージを追加・変更する場合、または `{mod}_impl.{name}` 以下を追加・変更する場合は、先に下記を把握してください。
+- docs/concepts/implementation_optional_dependencies/README.md
+
 新しいパッケージを追加する際は、作業前に下記を把握してください。
 - docs/runbooks/add_new_package/README.md
 

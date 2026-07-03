@@ -151,6 +151,7 @@ gitignore された `.env` と `test_settings.yaml` は、age で暗号化して
 ## Documentation
 
 - [Development Flow](docs/playbooks/development_flow/README.ja.md)
+- [Implementation Optional Dependencies](docs/concepts/implementation_optional_dependencies/README.ja.md)
 - [uv Workspace Operations](docs/concepts/uv_workspace_operations/README.ja.md)
 - [Sensitive Data Security](docs/concepts/sensitive_data_security/README.ja.md)
 - [Adding a Package](docs/runbooks/add_new_package/README.ja.md)

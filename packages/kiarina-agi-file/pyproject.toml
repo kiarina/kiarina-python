@@ -24,7 +24,6 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "google-cloud-storage>=3.4.0",
     "kiarina-agi-base>=2.4.0",
     "kiarina-lib-google>=2.3.1",
     "kiarina-utils-app>=2.4.0",
@@ -33,6 +32,11 @@ dependencies = [
     "pydantic>=2.11.7",
     "pydantic-settings>=2.10.1",
     "pydantic-settings-manager>=3.2.0",
+]
+
+[project.optional-dependencies]
+asset-repository-gcs = [
+    "google-cloud-storage>=3.4.0",
 ]
 
 [project.urls]
