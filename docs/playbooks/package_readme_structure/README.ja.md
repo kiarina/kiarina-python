@@ -29,6 +29,12 @@
 
 ## Dependencies
 
+### Required Dependencies
+
+### Optional Dependencies
+
+#### `<extra-name>`
+
 ## Installation
 
 ## Features
@@ -65,15 +71,30 @@ NOTE は詳細な機能一覧ではなく、「何を提供するパッケージ
 ### Dependencies
 
 利用者が導入する runtime dependency を表で記載します。
+optional dependency がある場合は、required dependency と optional dependency の表を分けます。
 
 ```markdown
 ## Dependencies
 
+### Required Dependencies
+
 | Package | Version | License |
 | --- | --- | --- |
 | [Pydantic](https://github.com/pydantic/pydantic) | `>=2.0.0` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+
+### Optional Dependencies
+
+#### `mime`
+
+content による MIME type 検出に使用します。
+
+| Package | Version | License |
+| --- | --- | --- |
+| [puremagic](https://github.com/cdgriffith/puremagic) | `>=1.30` | [MIT](https://github.com/cdgriffith/puremagic/blob/main/LICENSE) |
 ```
 
+optional dependency は Extra ごとに H4 と表を分け、Extra の用途を簡潔に記載します。
+optional dependency がない場合は、`Required Dependencies` の見出しを省略できます。
 Python 標準ライブラリだけを使用する場合は、その旨を簡潔に記載します。
 development dependency や test dependency は含めません。
 
@@ -89,7 +110,13 @@ pip install <package-name>
 ```
 ````
 
-optional dependency がある場合は、`### Optional Dependencies` を追加できます。
+Extra がある場合は、Extra ごとの導入コマンドも記載します。
+
+````markdown
+```bash
+pip install "<package-name>[<extra-name>]"
+```
+````
 
 ### Features
 

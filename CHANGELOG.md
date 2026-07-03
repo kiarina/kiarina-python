@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-agi-base**: Align internal modules and mirrored tests with Crystal Architecture responsibilities.
+
 ## [2.4.0] - 2026-07-03
 
 ### Added

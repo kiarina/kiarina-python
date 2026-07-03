@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class Aggregates:
+class _Aggregates:
     count: int = 0
     total_cost: Microdollars = 0
 
@@ -54,15 +54,15 @@ class BaseCostLogger(CostLogger):
     def _aggregate(
         self,
         cost_records: list[CostRecord],
-    ) -> dict[CostKind, dict[CostSource, Aggregates]]:
-        kind_source_cost_map: dict[CostKind, dict[CostSource, Aggregates]] = {}
+    ) -> dict[CostKind, dict[CostSource, _Aggregates]]:
+        kind_source_cost_map: dict[CostKind, dict[CostSource, _Aggregates]] = {}
 
         for record in cost_records:
             if record.kind not in kind_source_cost_map:
                 kind_source_cost_map[record.kind] = {}
 
             if record.source not in kind_source_cost_map[record.kind]:
-                kind_source_cost_map[record.kind][record.source] = Aggregates()
+                kind_source_cost_map[record.kind][record.source] = _Aggregates()
 
             kind_source_cost_map[record.kind][record.source].count += 1
             kind_source_cost_map[record.kind][

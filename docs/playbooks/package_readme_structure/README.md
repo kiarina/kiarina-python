@@ -29,6 +29,12 @@ English | [日本語](README.ja.md)
 
 ## Dependencies
 
+### Required Dependencies
+
+### Optional Dependencies
+
+#### `<extra-name>`
+
 ## Installation
 
 ## Features
@@ -65,15 +71,30 @@ The NOTE should explain what the package provides in one sentence rather than li
 ### Dependencies
 
 List runtime dependencies installed for consumers in a table.
+If optional dependencies are available, use separate tables for required and optional dependencies.
 
 ```markdown
 ## Dependencies
 
+### Required Dependencies
+
 | Package | Version | License |
 | --- | --- | --- |
 | [Pydantic](https://github.com/pydantic/pydantic) | `>=2.0.0` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+
+### Optional Dependencies
+
+#### `mime`
+
+Used for content-based MIME type detection.
+
+| Package | Version | License |
+| --- | --- | --- |
+| [puremagic](https://github.com/cdgriffith/puremagic) | `>=1.30` | [MIT](https://github.com/cdgriffith/puremagic/blob/main/LICENSE) |
 ```
 
+Create a separate H4 and table for each Extra, and briefly describe its purpose.
+If there are no optional dependencies, the `Required Dependencies` heading may be omitted.
 If the package only uses the Python standard library, state that briefly.
 Do not include development or test dependencies.
 
@@ -89,7 +110,13 @@ pip install <package-name>
 ```
 ````
 
-If optional dependencies are available, add an `### Optional Dependencies` subsection.
+If Extras are available, also show the installation command for each Extra.
+
+````markdown
+```bash
+pip install "<package-name>[<extra-name>]"
+```
+````
 
 ### Features
 

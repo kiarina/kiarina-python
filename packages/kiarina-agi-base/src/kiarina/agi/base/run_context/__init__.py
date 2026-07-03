@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.get_node_id import get_node_id
-    from ._schemas.run_context import RunContext
+    from ._models.run_context import RunContext
     from ._settings import RunContextSettings, settings_manager
     from ._types.id_str import IDStr
     from ._types.time_zone import TimeZone
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 __all__ = [
     # ._helpers
     "get_node_id",
-    # ._schemas
+    # ._models
     "RunContext",
     # ._settings
     "RunContextSettings",
@@ -29,8 +29,8 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._helpers
         "get_node_id": "._helpers.get_node_id",
-        # ._schemas
-        "RunContext": "._schemas.run_context",
+        # ._models
+        "RunContext": "._models.run_context",
         # ._settings
         "RunContextSettings": "._settings",
         "settings_manager": "._settings",
