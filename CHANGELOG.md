@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-file**: Make Google Cloud Storage support optional through the `asset-repository-gcs` extra.
 - Document the optional dependency policy for implementation packages.
 
+### Fixed
+- **kiarina-agi-file**: Keep GCS test settings untracked and skip integration tests when settings or credentials are unavailable.
+
 ## [2.4.0] - 2026-07-03
 
 ### Added

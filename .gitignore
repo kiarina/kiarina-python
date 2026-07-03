@@ -25,7 +25,7 @@ htmlcov/
 # Project specific
 *.log
 tmp/
-packages/*/test_settings.yaml
+**/test_settings.yaml
 
 # mise tasks (always include)
 !.mise/tasks/
