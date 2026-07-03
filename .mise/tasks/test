@@ -74,10 +74,19 @@ if [ "$coverage" = "true" ] && [ "$no_clean" = "false" ]; then
 fi
 
 # Test command construction
-test_cmd="uv run --group test pytest packages/$target/tests/"
+test_cmd=(uv run --group test pytest "packages/$target/tests/")
 
 if [ "$verbose" = "true" ]; then
-    test_cmd="$test_cmd -v"
+    test_cmd+=(-v)
+fi
+
+pytest_args_file="packages/$target/tests/.pytest-args"
+if [ -f "$pytest_args_file" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+        line_args=()
+        read -r -a line_args <<< "$line"
+        test_cmd+=("${line_args[@]}")
+    done < "$pytest_args_file"
 fi
 
 if [ "$coverage" = "true" ]; then
@@ -94,14 +103,14 @@ if [ "$coverage" = "true" ]; then
 
     # Add --cov for each module
     while IFS= read -r module; do
-        test_cmd="$test_cmd --cov=$module"
+        test_cmd+=("--cov=$module")
     done <<< "$module_paths"
 
     # Append to existing coverage data when --no-clean is used
     if [ "$no_clean" = "true" ]; then
-        test_cmd="$test_cmd --cov-append"
+        test_cmd+=(--cov-append)
     fi
 fi
 
 # Test execution
-eval "$test_cmd"
+"${test_cmd[@]}"

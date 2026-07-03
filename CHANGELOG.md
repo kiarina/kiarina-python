@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **kiarina-agi-text**: Select chat integration tests through environment variables, gate costly tests with a local file, and hide unsupported chat model presets.
+- Add opt-in pytest arguments for package tests through `packages/<package>/tests/.pytest-args`.
 
 ## [2.6.0] - 2026-07-03
 

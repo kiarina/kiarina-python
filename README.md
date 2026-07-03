@@ -133,6 +133,12 @@ mise run test kiarina-utils-file
 mise run build kiarina-utils-file
 ```
 
+To configure pytest for a package, add its arguments to `packages/<package>/tests/.pytest-args`.
+
+```text
+-n 8 --timeout 120 --reruns 3 --reruns-delay 5
+```
+
 Each package directory also contains a `Makefile` for that package.
 
 ```bash

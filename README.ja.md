@@ -133,6 +133,12 @@ mise run test kiarina-utils-file
 mise run build kiarina-utils-file
 ```
 
+パッケージで pytest を設定する場合は、pytest の引数を `packages/<package>/tests/.pytest-args` に記述します。
+
+```text
+-n 8 --timeout 120 --reruns 3 --reruns-delay 5
+```
+
 各パッケージのディレクトリでは、そのパッケージの `Makefile` も使用できます。
 
 ```bash
