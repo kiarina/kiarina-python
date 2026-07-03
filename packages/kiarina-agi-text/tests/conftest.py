@@ -37,18 +37,11 @@ from kiarina.utils.file import FileBlob, read_file
 from kiarina.utils.mime import MIMEBlob
 
 
-def pytest_addoption(parser: pytest.Parser) -> None:
-    parser.addoption("--chat-provider", default=[], action="append")
-    parser.addoption("--chat-model", default=[], action="append")
-    parser.addoption("--run-costly", action="store_true", default=False)
-
-
 @pytest.fixture(autouse=True)
 def skip_costly(request: pytest.FixtureRequest) -> None:
-    if request.node.get_closest_marker("costly") and not request.config.getoption(
-        "--run-costly"
-    ):
-        pytest.skip("Use --run-costly to run this test.")
+    costly_enabled = (Path(__file__).parent / ".costly").is_file()
+    if request.node.get_closest_marker("costly") and not costly_enabled:
+        pytest.skip("Create tests/.costly to run this test.")
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -63,6 +63,7 @@ class ChatModelSettings(BaseSettings):
                     "image_file_count_limit": 100,
                     "input_enabled": {"image": True},
                 },
+                visible=False,
             ),
             "qwen3.6-fast": ChatModelConfig(
                 provider_name="lc_openai",
@@ -76,6 +77,7 @@ class ChatModelSettings(BaseSettings):
                     "image_file_count_limit": 100,
                     "input_enabled": {"image": True},
                 },
+                visible=False,
             ),
             "qwen3-omni": ChatModelConfig(
                 provider_name="lc_openai",
@@ -92,6 +94,7 @@ class ChatModelSettings(BaseSettings):
                         "video": True,
                     },
                 },
+                visible=False,
             ),
             # -------------------------------------------------
             # lc_openai

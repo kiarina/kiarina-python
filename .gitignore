@@ -26,6 +26,8 @@ htmlcov/
 *.log
 tmp/
 **/test_settings.yaml
+.costly
+.costly.avoid
 
 # mise tasks (always include)
 !.mise/tasks/

@@ -1,6 +1,12 @@
 # mypy: ignore-errors
 
+import os
+
 import pytest
+
+
+def _get_names(env_name: str) -> list[str]:
+    return [name.strip() for name in os.getenv(env_name, "").split(",") if name.strip()]
 
 
 @pytest.fixture(autouse=True)
@@ -41,17 +47,16 @@ def pytest_generate_tests(metafunc):
     from kiarina.agi.chat_model import settings_manager
 
     if "chat_model_name" in metafunc.fixturenames:
-        chat_model_names = metafunc.config.getoption("--chat-model")
-        chat_provider_names = metafunc.config.getoption("--chat-provider")
-
+        chat_model_names = _get_names("TEST_CHAT_MODELS")
+        chat_provider_names = _get_names("TEST_CHAT_PROVIDERS")
         cases = []
 
-        if chat_model_names := metafunc.config.getoption("--chat-model"):
+        if chat_model_names:
             for chat_model_name in chat_model_names:
                 if chat_model_name in settings_manager.settings_cls().presets.keys():
                     cases.append(chat_model_name)
 
-        elif chat_provider_names := metafunc.config.getoption("--chat-provider"):
+        elif chat_provider_names:
             for (
                 chat_model_name,
                 chat_model_config,
