@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-base**: Add core contexts, cost and request logging, recording, and token utilities for AI agents.
+
+### Changed
+- **kiarina-utils-app**: Export the shared `App` type and `app` instance.
+
 ## [2.3.1] - 2026-07-02
 
 ### Changed

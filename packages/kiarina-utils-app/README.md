@@ -100,6 +100,8 @@ finally:
 
 ```python
 from kiarina.utils.app import (
+    app,
+    App,
     configure,
     reset,
     single_instance,
@@ -111,6 +113,18 @@ from kiarina.utils.app import (
     AppNotConfiguredError,
 )
 ```
+
+#### `app` and `App`
+
+```python
+class App:
+    app_name: str
+    app_author: str
+
+app: App
+```
+
+The shared application identity configured by `configure()`.
 
 #### `configure`
 

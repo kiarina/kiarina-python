@@ -100,6 +100,8 @@ finally:
 
 ```python
 from kiarina.utils.app import (
+    app,
+    App,
     configure,
     reset,
     single_instance,
@@ -111,6 +113,18 @@ from kiarina.utils.app import (
     AppNotConfiguredError,
 )
 ```
+
+#### `app` and `App`
+
+```python
+class App:
+    app_name: str
+    app_author: str
+
+app: App
+```
+
+`configure()` で設定される共有アプリケーション識別子です。
 
 #### `configure`
 

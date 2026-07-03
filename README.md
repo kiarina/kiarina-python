@@ -30,6 +30,12 @@ English | [日本語](README.ja.md)
 | [kiarina-i18n](packages/kiarina-i18n/) | Internationalization using dictionary and YAML catalogs |
 | [kiarina-currency](packages/kiarina-currency/) | System currency detection and exchange rate retrieval |
 
+### AI Agents
+
+| Package | Description |
+| --- | --- |
+| [kiarina-agi-base](packages/kiarina-agi-base/) | Core contexts, cost and request logging, recording, and token utilities for AI agents |
+
 ### Data Stores
 
 | Package | Description |

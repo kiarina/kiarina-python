@@ -9,6 +9,8 @@ if TYPE_CHECKING:
     from ._exceptions.app_not_configured_error import AppNotConfiguredError
     from ._helpers.configure import configure
     from ._helpers.reset import reset
+    from ._instances.app import app
+    from ._schemas.app import App
     from ._services import single_instance, user_directory
     from ._settings import AppSettings, settings_manager
 
@@ -22,6 +24,10 @@ __all__ = [
     # ._helpers
     "configure",
     "reset",
+    # ._instances
+    "app",
+    # ._schemas
+    "App",
     # ._services (exposed as modules)
     "single_instance",
     "user_directory",
@@ -45,6 +51,10 @@ def __getattr__(name: str) -> object:
         # ._helpers
         "configure": "._helpers.configure",
         "reset": "._helpers.reset",
+        # ._instances
+        "app": "._instances.app",
+        # ._schemas
+        "App": "._schemas.app",
         # ._services (exposed as modules)
         "single_instance": "._services.single_instance",
         "user_directory": "._services.user_directory",

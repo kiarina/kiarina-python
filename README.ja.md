@@ -30,6 +30,12 @@
 | [kiarina-i18n](packages/kiarina-i18n/) | dictionary と YAML catalog を使用する国際化 |
 | [kiarina-currency](packages/kiarina-currency/) | システム通貨の検出と為替レートの取得 |
 
+### AI Agents
+
+| Package | Description |
+| --- | --- |
+| [kiarina-agi-base](packages/kiarina-agi-base/) | AI agent 向けの context、cost・request logging、recording、token utility |
+
 ### Data Stores
 
 | Package | Description |
