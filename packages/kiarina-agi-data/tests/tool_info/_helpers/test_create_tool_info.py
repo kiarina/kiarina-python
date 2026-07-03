@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from kiarina.agi.data.tool_info import create_tool_info
+from kiarina.agi.tool_info import create_tool_info
 
 
 class MyTool(BaseModel):

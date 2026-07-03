@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from kiarina.agi.data.embedding import Embedding, calc_cosine_similarity
+from kiarina.agi.embedding import Embedding, calc_cosine_similarity
 
 
 def test_embeddings() -> None:

@@ -1,6 +1,6 @@
 from typing import Any
 
-from kiarina.agi.data.content import Content
+from kiarina.agi.content import Content
 
 
 def test_xml_attributes() -> None:

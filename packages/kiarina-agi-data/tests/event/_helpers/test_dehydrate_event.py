@@ -1,7 +1,7 @@
 from typing import Any
 
-from kiarina.agi.data.event import CustomEvent, HumanMessageEvent, dehydrate_event
-from kiarina.agi.data.message import hydrate_messages
+from kiarina.agi.event import CustomEvent, HumanMessageEvent, dehydrate_event
+from kiarina.agi.message import hydrate_messages
 
 
 def test_custom() -> None:

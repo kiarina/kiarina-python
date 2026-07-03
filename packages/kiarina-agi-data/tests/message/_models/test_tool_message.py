@@ -1,7 +1,7 @@
 from typing import Any
 
-from kiarina.agi.data.content import Content
-from kiarina.agi.data.message import ToolMessage
+from kiarina.agi.content import Content
+from kiarina.agi.message import ToolMessage
 
 
 def test_create_uses_empty_defaults() -> None:

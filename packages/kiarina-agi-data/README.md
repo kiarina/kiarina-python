@@ -40,31 +40,31 @@ pip install kiarina-agi-data
 
 Public APIs are available from the import paths below. Each class is a Pydantic model whose fields are available as typed constructor parameters.
 
-### `kiarina.agi.data.chat_estimates`
+### `kiarina.agi.chat_estimates`
 
 ```python
-from kiarina.agi.data.chat_estimates import ChatEstimates
+from kiarina.agi.chat_estimates import ChatEstimates
 ```
 
-### `kiarina.agi.data.chat_limits`
+### `kiarina.agi.chat_limits`
 
 ```python
-from kiarina.agi.data.chat_limits import ChatLimits, ChatLimitsSpecifier
+from kiarina.agi.chat_limits import ChatLimits, ChatLimitsSpecifier
 ```
 
-### `kiarina.agi.data.content`
+### `kiarina.agi.content`
 
 ```python
-from kiarina.agi.data.content import Content, dehydrate_content, hydrate_content
+from kiarina.agi.content import Content, dehydrate_content, hydrate_content
 
 def dehydrate_content(content: Content, pool: FileInfoPool) -> tuple[Content, FileInfoPool]: ...
 def hydrate_content(content: Content, pool: FileInfoPool) -> tuple[Content, FileInfoPool]: ...
 ```
 
-### `kiarina.agi.data.display_content`
+### `kiarina.agi.display_content`
 
 ```python
-from kiarina.agi.data.display_content import (
+from kiarina.agi.display_content import (
     BaseDisplayContent,
     DisplayContent,
     DisplayContentType,
@@ -73,10 +73,10 @@ from kiarina.agi.data.display_content import (
 )
 ```
 
-### `kiarina.agi.data.embedding`
+### `kiarina.agi.embedding`
 
 ```python
-from kiarina.agi.data.embedding import (
+from kiarina.agi.embedding import (
     Embedding,
     EmbeddingID,
     EmbeddingKind,
@@ -100,10 +100,10 @@ def search_embeddings(
 ) -> list[EmbeddingSearchResult]: ...
 ```
 
-### `kiarina.agi.data.event`
+### `kiarina.agi.event`
 
 ```python
-from kiarina.agi.data.event import (
+from kiarina.agi.event import (
     AIMessageChunkEvent,
     AIMessageEvent,
     BaseEvent,
@@ -122,10 +122,10 @@ def dehydrate_events(events: list[Event], pool: FileInfoPool) -> tuple[list[Even
 def message_to_event(message: Message) -> Event: ...
 ```
 
-### `kiarina.agi.data.file_bundle`
+### `kiarina.agi.file_bundle`
 
 ```python
-from kiarina.agi.data.file_bundle import (
+from kiarina.agi.file_bundle import (
     FileBundle,
     FileBundleContent,
     FileBundleContentInput,
@@ -140,10 +140,10 @@ from kiarina.agi.data.file_bundle import (
 )
 ```
 
-### `kiarina.agi.data.file_info`
+### `kiarina.agi.file_info`
 
 ```python
-from kiarina.agi.data.file_info import (
+from kiarina.agi.file_info import (
     AudioFileInfo,
     BaseFileInfo,
     FileID,
@@ -171,10 +171,10 @@ def shrink_file_infos(
 ) -> tuple[list[FileInfo], TokenCount]: ...
 ```
 
-### `kiarina.agi.data.file_info_pool`
+### `kiarina.agi.file_info_pool`
 
 ```python
-from kiarina.agi.data.file_info_pool import (
+from kiarina.agi.file_info_pool import (
     FileInfoPool,
     dehydrate_file_infos,
     find_file_index,
@@ -186,16 +186,16 @@ def find_file_index(pool: FileInfoPool, file_id: FileID) -> int | None: ...
 def hydrate_file_infos(file_infos: list[FileInfo], pool: FileInfoPool) -> tuple[list[FileInfo], FileInfoPool]: ...
 ```
 
-### `kiarina.agi.data.history`
+### `kiarina.agi.history`
 
 ```python
-from kiarina.agi.data.history import History
+from kiarina.agi.history import History
 ```
 
-### `kiarina.agi.data.message`
+### `kiarina.agi.message`
 
 ```python
-from kiarina.agi.data.message import (
+from kiarina.agi.message import (
     AIMessage,
     AIMessageChunk,
     BaseMessage,
@@ -214,10 +214,10 @@ def dehydrate_message(message: Message, pool: FileInfoPool) -> tuple[Message, Fi
 def hydrate_messages(messages: list[Message], pool: FileInfoPool) -> tuple[list[Message], FileInfoPool]: ...
 ```
 
-### `kiarina.agi.data.tool_info`
+### `kiarina.agi.tool_info`
 
 ```python
-from kiarina.agi.data.tool_info import (
+from kiarina.agi.tool_info import (
     ToolChoice,
     ToolInfo,
     ToolName,

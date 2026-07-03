@@ -1,4 +1,4 @@
-from kiarina.agi.data.chat_limits import ChatLimits
+from kiarina.agi.chat_limits import ChatLimits
 
 
 def test_to_string() -> None:

@@ -2,11 +2,11 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.data.embedding import Embedding
-from kiarina.agi.data.event import AIMessageEvent, HumanMessageEvent, ToolMessageEvent
-from kiarina.agi.data.history import History
-from kiarina.agi.data.message import HumanMessage, ToolCall
-from kiarina.agi.data.tool_info import ToolInfo
+from kiarina.agi.embedding import Embedding
+from kiarina.agi.event import AIMessageEvent, HumanMessageEvent, ToolMessageEvent
+from kiarina.agi.history import History
+from kiarina.agi.message import HumanMessage, ToolCall
+from kiarina.agi.tool_info import ToolInfo
 
 
 @pytest.fixture

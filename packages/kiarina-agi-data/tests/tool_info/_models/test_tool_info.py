@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel
 
-from kiarina.agi.data.tool_info import ToolInfo
+from kiarina.agi.tool_info import ToolInfo
 
 
 @pytest.fixture

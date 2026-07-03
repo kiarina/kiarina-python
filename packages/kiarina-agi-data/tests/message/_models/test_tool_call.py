@@ -1,4 +1,4 @@
-from kiarina.agi.data.message import ToolCall
+from kiarina.agi.message import ToolCall
 
 
 def test_to_estimates() -> None:

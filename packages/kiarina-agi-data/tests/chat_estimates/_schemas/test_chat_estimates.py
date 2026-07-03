@@ -1,4 +1,4 @@
-from kiarina.agi.data.chat_estimates import ChatEstimates
+from kiarina.agi.chat_estimates import ChatEstimates
 
 
 def test_chat_estimates() -> None:

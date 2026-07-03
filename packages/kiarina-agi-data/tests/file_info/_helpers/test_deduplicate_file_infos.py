@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from kiarina.agi.data.file_info import TextFileInfo, deduplicate_file_infos
+from kiarina.agi.file_info import TextFileInfo, deduplicate_file_infos
 
 
 def _make_text_file_info(

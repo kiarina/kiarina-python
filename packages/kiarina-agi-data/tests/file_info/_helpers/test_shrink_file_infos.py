@@ -1,4 +1,4 @@
-from kiarina.agi.data.file_info import TextFileInfo, shrink_file_infos
+from kiarina.agi.file_info import TextFileInfo, shrink_file_infos
 
 
 async def test_text_files() -> None:

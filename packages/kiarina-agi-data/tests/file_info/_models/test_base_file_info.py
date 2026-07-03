@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from kiarina.agi.data.file_info import BaseFileInfo, OtherFileInfo
+from kiarina.agi.file_info import BaseFileInfo, OtherFileInfo
 
 
 @pytest.fixture

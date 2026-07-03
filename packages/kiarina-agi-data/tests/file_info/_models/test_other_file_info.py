@@ -1,4 +1,4 @@
-from kiarina.agi.data.file_info import OtherFileInfo
+from kiarina.agi.file_info import OtherFileInfo
 
 
 def test_to_content_estimates(other_file_info: OtherFileInfo) -> None:

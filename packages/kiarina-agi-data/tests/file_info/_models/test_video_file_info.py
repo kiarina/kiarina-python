@@ -1,4 +1,4 @@
-from kiarina.agi.data.file_info import VideoFileInfo
+from kiarina.agi.file_info import VideoFileInfo
 
 
 def test_export() -> None:

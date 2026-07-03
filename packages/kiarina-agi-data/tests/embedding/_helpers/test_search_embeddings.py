@@ -1,6 +1,6 @@
 import numpy as np
 
-from kiarina.agi.data.embedding import Embedding, search_embeddings
+from kiarina.agi.embedding import Embedding, search_embeddings
 
 
 def _embedding(

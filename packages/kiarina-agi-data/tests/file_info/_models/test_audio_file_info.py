@@ -1,4 +1,4 @@
-from kiarina.agi.data.file_info import AudioFileInfo
+from kiarina.agi.file_info import AudioFileInfo
 
 
 def test_export() -> None:

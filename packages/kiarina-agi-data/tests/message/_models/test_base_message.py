@@ -2,8 +2,8 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.data.content import Content
-from kiarina.agi.data.message import (
+from kiarina.agi.content import Content
+from kiarina.agi.message import (
     HumanMessage,
     Message,
     dehydrate_message,

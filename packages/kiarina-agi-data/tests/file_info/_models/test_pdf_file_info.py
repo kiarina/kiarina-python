@@ -1,4 +1,4 @@
-from kiarina.agi.data.file_info import PDFFileInfo
+from kiarina.agi.file_info import PDFFileInfo
 
 
 def test_export() -> None:

@@ -1,6 +1,6 @@
 from typing import Any
 
-from kiarina.agi.data.event import HumanMessageEvent, dehydrate_events
+from kiarina.agi.event import HumanMessageEvent, dehydrate_events
 
 
 def test_not_dehydrated() -> None:

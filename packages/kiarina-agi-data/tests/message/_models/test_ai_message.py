@@ -1,7 +1,7 @@
 from typing import Any
 
-from kiarina.agi.data.content import Content
-from kiarina.agi.data.message import AIMessage, ToolCall
+from kiarina.agi.content import Content
+from kiarina.agi.message import AIMessage, ToolCall
 
 
 def test_to_estimates(text_file_info: Any) -> None:

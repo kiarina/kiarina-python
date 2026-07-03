@@ -1,6 +1,6 @@
 from typing import Any
 
-from kiarina.agi.data.message import HumanMessage, hydrate_messages
+from kiarina.agi.message import HumanMessage, hydrate_messages
 
 
 def test_hydrate(text_file_info: Any, image_file_info: Any) -> None:

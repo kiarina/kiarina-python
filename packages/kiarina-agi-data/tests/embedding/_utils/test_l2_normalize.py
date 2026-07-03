@@ -1,6 +1,6 @@
 import numpy as np
 
-from kiarina.agi.data.embedding import l2_normalize
+from kiarina.agi.embedding import l2_normalize
 
 
 def test_l2_normalize() -> None:

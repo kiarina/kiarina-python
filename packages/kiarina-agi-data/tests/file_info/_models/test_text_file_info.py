@@ -1,6 +1,6 @@
 from typing import Any
 
-from kiarina.agi.data.file_info import TextFileInfo
+from kiarina.agi.file_info import TextFileInfo
 
 
 def test_export() -> None:

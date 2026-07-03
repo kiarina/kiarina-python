@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from kiarina.agi.data.file_bundle import (
+from kiarina.agi.file_bundle import (
     FileBundleManifest,
     FileBundleMediaContent,
     FileBundleTextContent,

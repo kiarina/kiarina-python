@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from kiarina.agi.data.file_bundle import FileBundleTextContent
+from kiarina.agi.file_bundle import FileBundleTextContent
 
 
 def test_model_dump() -> None:
