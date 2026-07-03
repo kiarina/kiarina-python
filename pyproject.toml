@@ -23,6 +23,7 @@ members = [
     "packages/kiarina-agi-base",
     "packages/kiarina-agi-data",
     "packages/kiarina-agi-file",
+    "packages/kiarina-agi-text",
     "packages/kiarina-currency",
     "packages/kiarina-i18n",
     "packages/kiarina-lib-anthropic",
@@ -46,6 +47,7 @@ kiarina = { workspace = true }
 kiarina-agi-base = { workspace = true }
 kiarina-agi-data = { workspace = true }
 kiarina-agi-file = { workspace = true }
+kiarina-agi-text = { workspace = true }
 kiarina-currency = { workspace = true }
 kiarina-i18n = { workspace = true }
 kiarina-lib-anthropic = { workspace = true }
@@ -89,6 +91,7 @@ mypy_path = [
     "packages/kiarina-agi-base/src",
     "packages/kiarina-agi-data/src",
     "packages/kiarina-agi-file/src",
+    "packages/kiarina-agi-text/src",
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
@@ -115,12 +118,16 @@ strict = true
 asyncio_mode = "auto"
 asyncio_default_test_loop_scope = "session"
 asyncio_default_fixture_loop_scope = "session"
+markers = [
+    "costly: marks tests that call paid external services",
+]
 
 [tool.coverage.run]
 source = [
     "packages/kiarina-agi-base/src",
     "packages/kiarina-agi-data/src",
     "packages/kiarina-agi-file/src",
+    "packages/kiarina-agi-text/src",
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",

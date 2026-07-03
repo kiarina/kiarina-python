@@ -37,6 +37,7 @@ English | [日本語](README.ja.md)
 | [kiarina-agi-base](packages/kiarina-agi-base/) | Core contexts, cost and request logging, recording, and token utilities for AI agents |
 | [kiarina-agi-data](packages/kiarina-agi-data/) | Messages, events, embeddings, file metadata, and other data models for AI agents |
 | [kiarina-agi-file](packages/kiarina-agi-file/) | Local and cloud asset repositories, caching, and file resolution for AI agents |
+| [kiarina-agi-text](packages/kiarina-agi-text/) | Chat, logging, and text embeddings for AI agents |
 
 ### Data Stores
 

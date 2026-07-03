@@ -1,0 +1,17 @@
+# Changelog
+
+All notable changes to the kiarina-agi-text package will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Add the `kiarina-agi-text` package.
+
+## [2.6.0] - 2026-07-03
+
+### Added
+- Add chat logging, chat models, chat providers, and text embedding APIs.
+- Add optional Anthropic, Google, OpenAI, and mock implementations.
