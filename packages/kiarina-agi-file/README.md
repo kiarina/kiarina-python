@@ -7,9 +7,11 @@ English | [日本語](README.ja.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > [!NOTE] What is this?
-> Provides safe local filesystem and Google Cloud Storage asset persistence with local caching for AI agents.
+> A package for storing AI agent files in a local filesystem and assets in a pluggable asset store, with safe retrieval through access policies and a local cache.
 
 ## Dependencies
+
+### Required Dependencies
 
 | Package | Version | License |
 | --- | --- | --- |
@@ -24,34 +26,42 @@ English | [日本語](README.ja.md)
 
 ### Optional Dependencies
 
-| Extra | Package | Version | License |
-| --- | --- | --- | --- |
-| `asset-repository-gcs` | [google-cloud-storage](https://github.com/googleapis/python-storage) | `>=3.4.0` | [Apache-2.0](https://github.com/googleapis/python-storage/blob/main/LICENSE) |
+#### `asset-repository-gcs`
+
+Used by the Google Cloud Storage asset repository.
+
+| Package | Version | License |
+| --- | --- | --- |
+| [google-cloud-storage](https://github.com/googleapis/python-storage) | `>=3.4.0` | [Apache-2.0](https://github.com/googleapis/python-storage/blob/main/LICENSE) |
 
 ## Installation
+
+For local filesystem storage only:
 
 ```bash
 pip install kiarina-agi-file
 ```
 
-To use the Google Cloud Storage asset repository:
+To also use Google Cloud Storage:
 
 ```bash
-pip install 'kiarina-agi-file[asset-repository-gcs]'
+pip install "kiarina-agi-file[asset-repository-gcs]"
 ```
 
 ## Features
 
-- **Local repository**
-  Restricts access to allowed paths and separates data and cache directories.
-- **Asset repository**
-  Uses the same API for local filesystems and Google Cloud Storage.
-- **Asset cache**
-  Stores remote assets in a local cache with a TTL.
-- **File resolution**
-  Resolves a URI or local file path to a `FileBlob`.
+- **Local file storage**
+  Stores files in application data and cache directories and restricts accessible paths with regular expressions.
+- **Pluggable asset storage**
+  Provides an async API independent of the asset store implementation and supports implementations registered by import path.
+- **Local asset cache**
+  Caches retrieved content by URI and fetches it again after its TTL expires.
+- **Unified file resolution**
+  Detects URIs and local file paths and returns either as a `FileBlob`.
 
-### Local Repository
+### Store Local Files
+
+Configure the application name first. The default data and cache paths are generated from the application's user directories and `RunContext.agent_id`.
 
 ```python
 from kiarina.agi.base.run_context import RunContext
@@ -59,21 +69,68 @@ from kiarina.agi.file.local_repository import create_local_repository
 from kiarina.utils.app import configure
 
 configure("example-app", "example-author")
-repository = create_local_repository(RunContext())
+run_context = RunContext()
+repository = create_local_repository(run_context)
+
 file_path = repository.generate_data_path("documents/example.txt")
+file_blob = await repository.set(file_path, "text/plain", b"hello")
+loaded = await repository.get(file_path)
 ```
 
-### Asset Repository
+`FilePathPolicy.allowed_file_path_patterns` uses full regular-expression matches. Its default allows every path, so applications that handle untrusted paths should restrict it explicitly.
 
-The available presets are `local` and `gcs`. `AssetRepositorySettings.uri_policy` restricts accessible URIs.
+### Store Assets
+
+The default `local` preset uses the local filesystem. Stored and retrieved values are `FileBlob` objects in the local asset cache.
 
 ```python
+from kiarina.agi.base.run_context import RunContext
 from kiarina.agi.file.asset_repository import create_asset_repository
+from kiarina.utils.app import configure
 
+configure("example-app", "example-author")
 repository = create_asset_repository(RunContext())
+
 uri = repository.generate_data_uri("documents/example.txt")
-file_blob = await repository.set(uri, "text/plain", b"hello")
+cached_file = await repository.set(uri, "text/plain", b"hello")
+loaded = await repository.get(uri)
 ```
+
+`get(..., ignore_cache=True)` skips reading the cache, retrieves the asset from the backend, and refreshes the cache. `delete()` removes the asset from both the backend and the cache.
+
+### Use an Asset Store Implementation
+
+Select an asset store as a preset or custom implementation. This package includes the `local` and `gcs` presets.
+
+For example, to use Google Cloud Storage, select the `gcs` preset and configure a policy for `gs://` URIs. `{organization_id}`, `{user_id}`, and `{agent_id}` are expanded from the `RunContext`.
+
+```bash
+export KIARINA_AGI_ASSET_REPOSITORY_DEFAULT=gcs
+export KIARINA_AGI_ASSET_REPOSITORY_URI_POLICY='{
+  "allowed_uri_patterns": ["gs://example-bucket/{agent_id}/.*"],
+  "data_dir_uri_template": "gs://example-bucket/{agent_id}/data",
+  "cache_dir_uri_template": "gs://example-bucket/{agent_id}/cache"
+}'
+```
+
+Credentials are resolved from `kiarina-lib-google` settings. To use a specific settings key:
+
+```bash
+export KIARINA_AGI_ASSET_REPOSITORY_IMPL_GCS_GOOGLE_AUTH_SETTINGS_KEY=service_account
+```
+
+### Resolve a URI or File Path
+
+```python
+from kiarina.agi.file.file import get_file_blob
+
+file_blob = await get_file_blob(
+    "gs://example-bucket/agent-1/data/example.txt",
+    run_context=run_context,
+)
+```
+
+URIs use the configured asset repository; other strings use the local repository. The function returns `None` when the target does not exist.
 
 ## API Reference
 
@@ -110,6 +167,7 @@ from kiarina.agi.file.local_repository import (
 
 ```python
 def create_local_repository(run_context: RunContext) -> LocalRepository: ...
+
 def resolve_file_path(file_path: str | os.PathLike[str]) -> str: ...
 
 class LocalRepository:
@@ -122,21 +180,27 @@ class LocalRepository:
 
     @property
     def template_variables(self) -> dict[str, str]: ...
+
     @property
     def file_path_policy(self) -> FilePathPolicy: ...
+
     @property
     def data_dir(self) -> str: ...
+
     @property
     def cache_dir(self) -> str: ...
 
     def generate_data_path(self, relative_path: str | os.PathLike[str]) -> str: ...
+
     def generate_cache_path(self, relative_path: str | os.PathLike[str]) -> str: ...
+
     def generate_time_based_dir_path(
         self,
         *,
         sub_dir_path: str | os.PathLike[str] = "log",
         area: LocalArea = "data",
     ) -> str: ...
+
     def generate_time_based_file_path(
         self,
         file_name: str,
@@ -144,10 +208,15 @@ class LocalRepository:
         sub_dir_path: str | os.PathLike[str] = "log",
         area: LocalArea = "data",
     ) -> str: ...
+
     def is_valid_file_path(self, file_path: str | os.PathLike[str]) -> bool: ...
+
     def validate_file_path(self, file_path: str | os.PathLike[str]) -> None: ...
+
     async def exists(self, file_path: str | os.PathLike[str]) -> bool: ...
+
     async def get(self, file_path: str | os.PathLike[str]) -> FileBlob | None: ...
+
     async def set(
         self,
         file_path: str | os.PathLike[str],
@@ -156,6 +225,7 @@ class LocalRepository:
         *,
         only_not_exists: bool = False,
     ) -> FileBlob: ...
+
     async def delete(self, file_path: str | os.PathLike[str]) -> None: ...
 
 class FilePathPolicy(BaseModel):
@@ -169,6 +239,8 @@ class LocalRepositorySettings(BaseSettings):
 LocalArea = Literal["data", "cache"]
 settings_manager: SettingsManager[LocalRepositorySettings]
 ```
+
+`resolve_file_path()` expands environment variables and `~`, then returns an absolute path. Operations on a disallowed path raise `PermissionError`.
 
 ### `kiarina.agi.file.asset_cache`
 
@@ -191,10 +263,14 @@ class AssetCache:
         *,
         run_context: RunContext,
     ) -> None: ...
+
     @property
     def local_repository(self) -> LocalRepository: ...
+
     async def get(self, uri: str) -> FileBlob | None: ...
+
     async def set(self, uri: str, mime_type: str, raw_data: bytes) -> FileBlob: ...
+
     async def delete(self, uri: str) -> None: ...
 
 class AssetCacheSettings(BaseSettings):
@@ -228,10 +304,14 @@ def create_asset_repository(run_context: RunContext) -> AssetRepository: ...
 class AssetRepository(Protocol):
     uri_policy: URIPolicy
     run_context: RunContext
+
     @property
     def asset_cache(self) -> AssetCache: ...
+
     def generate_data_uri(self, relative_path: str) -> str: ...
+
     def generate_cache_uri(self, relative_path: str) -> str: ...
+
     def generate_time_based_uri(
         self,
         file_name: str | None = None,
@@ -239,15 +319,20 @@ class AssetRepository(Protocol):
         sub_dir_path: str = "log",
         area: AssetArea = "data",
     ) -> str: ...
+
     def is_valid_uri(self, uri: str) -> bool: ...
+
     def validate_uri(self, uri: str) -> None: ...
+
     async def exists(self, uri: str) -> bool: ...
+
     async def get(
         self,
         uri: str,
         *,
         ignore_cache: bool = False,
     ) -> CachedFileBlob | None: ...
+
     async def set(
         self,
         uri: str,
@@ -256,7 +341,9 @@ class AssetRepository(Protocol):
         *,
         only_not_exists: bool = False,
     ) -> CachedFileBlob: ...
+
     async def delete(self, uri: str) -> None: ...
+
     async def generate_download_url(
         self,
         uri: str,
@@ -266,6 +353,32 @@ class AssetRepository(Protocol):
 
 class BaseAssetRepository(AssetRepository):
     def __init__(self) -> None: ...
+
+    @property
+    def uri_policy(self) -> URIPolicy: ...
+
+    @uri_policy.setter
+    def uri_policy(self, uri_policy: URIPolicy) -> None: ...
+
+    @property
+    def run_context(self) -> RunContext: ...
+
+    @run_context.setter
+    def run_context(self, run_context: RunContext) -> None: ...
+
+    @property
+    def template_variables(self) -> dict[str, str]: ...
+
+    @property
+    def asset_cache(self) -> AssetCache: ...
+
+    @property
+    def data_uri(self) -> str: ...
+
+    @property
+    def cache_uri(self) -> str: ...
+
+    # Implements every AssetRepository method.
 
 class URIPolicy(BaseModel):
     allowed_uri_patterns: list[str] = []
@@ -286,7 +399,7 @@ asset_repository_registry: ComponentRegistry[AssetRepository]
 settings_manager: SettingsManager[AssetRepositorySettings]
 ```
 
-`BaseAssetRepository` implements the public `AssetRepository` methods and properties and delegates storage-specific operations to subclasses.
+`AssetRepositorySpecifier` is a repository name or a string in the `"{name}?{config}"` form. An absent URI pattern raises `ValueError`; operations on a disallowed URI raise `PermissionError`.
 
 ### `kiarina.agi.file.asset_repository_impl.local`
 
@@ -294,12 +407,18 @@ settings_manager: SettingsManager[AssetRepositorySettings]
 from kiarina.agi.file.asset_repository_impl.local import LocalAssetRepository
 
 class LocalAssetRepository(BaseAssetRepository):
-    pass
+    @property
+    def template_variables(self) -> dict[str, str]: ...
+
+    @property
+    def local_repository(self) -> LocalRepository: ...
 ```
 
-`LocalAssetRepository` implements the public API inherited from `BaseAssetRepository`.
+`LocalAssetRepository` implements the `BaseAssetRepository` storage operations on the local filesystem. Its download URL is a `file://` URL.
 
 ### `kiarina.agi.file.asset_repository_impl.gcs`
+
+Importing this module requires the `asset-repository-gcs` extra.
 
 ```python
 from kiarina.agi.file.asset_repository_impl.gcs import (
@@ -315,6 +434,7 @@ def create_gcs_asset_repository(**kwargs: Any) -> GCSAssetRepository: ...
 
 class GCSAssetRepository(BaseAssetRepository):
     def __init__(self, settings: GCSAssetRepositorySettings) -> None: ...
+
     @property
     def client(self) -> google.cloud.storage.Client: ...
 
