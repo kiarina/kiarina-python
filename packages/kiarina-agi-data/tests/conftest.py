@@ -1,5 +1,6 @@
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from typing import Any
 
 import pytest
 
@@ -16,7 +17,7 @@ from kiarina.utils.app import configure, reset
 
 
 @pytest.fixture(scope="session", autouse=True)
-def configure_app() -> None:
+def configure_app() -> Iterator[None]:
     configure(app_author="kiarina", app_name="kiarina-agi-data")
     cli_args = settings_manager.cli_args
     settings_manager.cli_args = {"node_id": "pytest"}
@@ -26,7 +27,7 @@ def configure_app() -> None:
 
 
 @pytest.fixture
-def run_context(request) -> RunContext:
+def run_context(request: pytest.FixtureRequest) -> RunContext:
     return RunContext(
         organization_id="kiarina.agi.data",
         user_id=request.module.__name__,
@@ -36,9 +37,9 @@ def run_context(request) -> RunContext:
 
 
 @pytest.fixture
-def file_info_factory() -> Callable[..., dict[str, object]]:
-    def factory(**overrides: object) -> dict[str, object]:
-        values: dict[str, object] = {
+def file_info_factory() -> Callable[..., dict[str, Any]]:
+    def factory(**overrides: Any) -> dict[str, Any]:
+        values: dict[str, Any] = {
             "uri_or_file_path": "/tmp/sample",
             "mime_type": "application/octet-stream",
             "file_hash": "dummy-hash",
@@ -55,7 +56,7 @@ def file_info_factory() -> Callable[..., dict[str, object]]:
 
 @pytest.fixture
 def text_file_info(
-    file_info_factory: Callable[..., dict[str, object]],
+    file_info_factory: Callable[..., dict[str, Any]],
 ) -> TextFileInfo:
     raw_text = "\n".join(f"Line {index}" for index in range(1, 101))
     return TextFileInfo(
@@ -70,7 +71,7 @@ def text_file_info(
 
 @pytest.fixture
 def image_file_info(
-    file_info_factory: Callable[..., dict[str, object]],
+    file_info_factory: Callable[..., dict[str, Any]],
 ) -> ImageFileInfo:
     return ImageFileInfo(
         **file_info_factory(
@@ -84,7 +85,7 @@ def image_file_info(
 
 @pytest.fixture
 def audio_file_info(
-    file_info_factory: Callable[..., dict[str, object]],
+    file_info_factory: Callable[..., dict[str, Any]],
 ) -> AudioFileInfo:
     return AudioFileInfo(
         **file_info_factory(
@@ -97,7 +98,7 @@ def audio_file_info(
 
 @pytest.fixture
 def video_file_info(
-    file_info_factory: Callable[..., dict[str, object]],
+    file_info_factory: Callable[..., dict[str, Any]],
 ) -> VideoFileInfo:
     return VideoFileInfo(
         **file_info_factory(
@@ -112,7 +113,7 @@ def video_file_info(
 
 @pytest.fixture
 def pdf_file_info(
-    file_info_factory: Callable[..., dict[str, object]],
+    file_info_factory: Callable[..., dict[str, Any]],
 ) -> PDFFileInfo:
     return PDFFileInfo(
         **file_info_factory(
@@ -125,6 +126,6 @@ def pdf_file_info(
 
 @pytest.fixture
 def other_file_info(
-    file_info_factory: Callable[..., dict[str, object]],
+    file_info_factory: Callable[..., dict[str, Any]],
 ) -> OtherFileInfo:
     return OtherFileInfo(**file_info_factory(uri_or_file_path="/tmp/sample.bin"))

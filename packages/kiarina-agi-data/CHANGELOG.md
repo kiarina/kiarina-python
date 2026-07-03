@@ -9,3 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add messages, events, embeddings, file metadata, and related data models for AI agents.
+
+### Changed
+- Correct test fixture type annotations.
