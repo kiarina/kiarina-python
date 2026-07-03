@@ -101,7 +101,7 @@ def text_file_path(test_data_dir: Path) -> str:
 
 @pytest.fixture
 def large_text_file_path(test_data_dir: Path) -> str:
-    return str(test_data_dir / "txt" / "ascii_code_docs_1600kb.txt")
+    return str(test_data_dir / "txt" / "utf-8_1027line_125kb.txt")
 
 
 @pytest.fixture

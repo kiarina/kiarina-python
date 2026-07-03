@@ -197,6 +197,7 @@ class ChatModelSettings(BaseSettings):
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
                 },
+                visible=False,
             ),
             "gpt-4.1": ChatModelConfig(
                 provider_name="lc_openai",

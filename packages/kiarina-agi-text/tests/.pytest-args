@@ -1,1 +1,4 @@
 -n 8
+--timeout 30
+--reruns 3
+--reruns-delay 5

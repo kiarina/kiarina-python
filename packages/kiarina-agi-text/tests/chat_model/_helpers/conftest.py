@@ -1,12 +1,14 @@
 # mypy: ignore-errors
 
-import os
+from pathlib import Path
 
 import pytest
 
 
-def _get_names(env_name: str) -> list[str]:
-    return [name.strip() for name in os.getenv(env_name, "").split(",") if name.strip()]
+def _get_names(path: Path) -> list[str]:
+    if not path.is_file():
+        return []
+    return [name.strip() for name in path.read_text().splitlines() if name.strip()]
 
 
 @pytest.fixture(autouse=True)
@@ -47,8 +49,9 @@ def pytest_generate_tests(metafunc):
     from kiarina.agi.chat_model import settings_manager
 
     if "chat_model_name" in metafunc.fixturenames:
-        chat_model_names = _get_names("TEST_CHAT_MODELS")
-        chat_provider_names = _get_names("TEST_CHAT_PROVIDERS")
+        tests_dir = Path(__file__).parents[2]
+        chat_model_names = _get_names(tests_dir / ".chat-models")
+        chat_provider_names = _get_names(tests_dir / ".chat-providers")
         cases = []
 
         if chat_model_names:
