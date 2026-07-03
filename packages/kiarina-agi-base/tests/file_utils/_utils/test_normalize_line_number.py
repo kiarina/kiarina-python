@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.base.file_utils import normalize_line_number
@@ -14,5 +16,7 @@ from kiarina.agi.base.file_utils import normalize_line_number
         (-5, 5, 1),
     ],
 )
-def test_normalize_line_number(line_number, line_count, expected):
+def test_normalize_line_number(
+    line_number: Any, line_count: Any, expected: Any
+) -> None:
     assert normalize_line_number(line_number, line_count) == expected

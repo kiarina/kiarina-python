@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import google.auth.compute_engine.credentials
 import google.oauth2.credentials
@@ -15,7 +16,7 @@ from kiarina.lib.google import GoogleSettings, get_credentials
     ),
     reason="ADC file not set",
 )
-def test_default(load_settings):
+def test_default(load_settings: Any) -> None:
     credentials = get_credentials("default")
     assert isinstance(
         credentials,
@@ -27,32 +28,32 @@ def test_default(load_settings):
     )
 
 
-def test_service_account_file(load_settings):
+def test_service_account_file(load_settings: Any) -> None:
     credentials = get_credentials("service_account_file")
     assert isinstance(credentials, google.oauth2.service_account.Credentials)
 
 
-def test_service_account_data(load_settings):
+def test_service_account_data(load_settings: Any) -> None:
     credentials = get_credentials("service_account_data")
     assert isinstance(credentials, google.oauth2.service_account.Credentials)
 
 
-def test_impersonate_service_account(load_settings):
+def test_impersonate_service_account(load_settings: Any) -> None:
     credentials = get_credentials("service_account_impersonate")
     assert isinstance(credentials, impersonated_credentials.Credentials)
 
 
-def test_user_account_file(load_settings):
+def test_user_account_file(load_settings: Any) -> None:
     credentials = get_credentials("user_account_file")
     assert isinstance(credentials, google.oauth2.credentials.Credentials)
 
 
-def test_user_account_data(load_settings):
+def test_user_account_data(load_settings: Any) -> None:
     credentials = get_credentials("user_account_data")
     assert isinstance(credentials, google.oauth2.credentials.Credentials)
 
 
-def test_impersonation_requires_scopes():
+def test_impersonation_requires_scopes() -> None:
     settings = GoogleSettings(
         impersonate_service_account="target@project.iam.gserviceaccount.com"
     )

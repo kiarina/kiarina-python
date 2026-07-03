@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 import kiarina.utils.file as kf
@@ -5,7 +7,7 @@ from kiarina.lib.redisearch.asyncio import RedisearchClient
 
 
 @pytest.fixture
-def fields():
+def fields() -> Any:
     return [
         {"type": "tag", "name": "id"},
         {"type": "text", "name": "title"},
@@ -14,20 +16,22 @@ def fields():
 
 
 @pytest.fixture
-def data_rows(assets_dir):
+def data_rows(assets_dir: Any) -> Any:
     return kf.read_json_list(
         assets_dir / "json" / "id_title_content_embedding_3row_apple_car_dog.json"
     )
 
 
 @pytest.fixture
-def data_query(assets_dir):
+def data_query(assets_dir: Any) -> Any:
     return kf.read_json_dict(
         assets_dir / "json" / "query_embedding_tell_me_about_dogs_not_apples.json"
     )
 
 
-async def test_search(client: RedisearchClient, data_rows, data_query):
+async def test_search(
+    client: RedisearchClient, data_rows: Any, data_query: Any
+) -> None:
     await client.reset_index()
 
     for row in data_rows:

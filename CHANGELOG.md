@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **kiarina-agi-data**: Correct test fixture type annotations.
+- Run mypy against package tests and add the required test type annotations.
 
 ## [2.5.0] - 2026-07-03
 

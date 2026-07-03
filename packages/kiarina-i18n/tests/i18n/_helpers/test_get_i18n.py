@@ -1,9 +1,11 @@
+from typing import Any
+
 from pydantic import BaseModel
 
 from kiarina.i18n import I18n, catalog, get_i18n
 
 
-def test_get_i18n_with_default_values():
+def test_get_i18n_with_default_values() -> None:
     """Test get_i18n returns default values when no translation exists."""
 
     class MyI18n(I18n, scope="test.default"):
@@ -19,7 +21,7 @@ def test_get_i18n_with_default_values():
     assert t.description == "Default Description"
 
 
-def test_get_i18n_with_translations():
+def test_get_i18n_with_translations() -> None:
     """Test get_i18n returns translated values."""
 
     class MyI18n(I18n, scope="test.translated"):
@@ -57,7 +59,7 @@ def test_get_i18n_with_translations():
     assert t_en.description == "English Description"
 
 
-def test_get_i18n_uses_system_language_by_default(monkeypatch):
+def test_get_i18n_uses_system_language_by_default(monkeypatch: Any) -> None:
     """Test get_i18n uses system language when language is omitted."""
 
     class MyI18n(I18n, scope="test.system_language"):
@@ -79,7 +81,7 @@ def test_get_i18n_uses_system_language_by_default(monkeypatch):
     assert t.title == "システム言語"
 
 
-def test_get_i18n_uses_system_language_when_language_is_none(monkeypatch):
+def test_get_i18n_uses_system_language_when_language_is_none(monkeypatch: Any) -> None:
     """Test get_i18n uses system language when language is None."""
 
     class MyI18n(I18n, scope="test.none_language"):
@@ -101,7 +103,7 @@ def test_get_i18n_uses_system_language_when_language_is_none(monkeypatch):
     assert t.title == "Noneの言語"
 
 
-def test_get_i18n_with_partial_translations():
+def test_get_i18n_with_partial_translations() -> None:
     """Test get_i18n falls back to default for missing translations."""
 
     class MyI18n(I18n, scope="test.partial"):
@@ -127,7 +129,7 @@ def test_get_i18n_with_partial_translations():
     assert t.error == "Default Error"  # Fallback to default
 
 
-def test_get_i18n_with_default_language():
+def test_get_i18n_with_default_language() -> None:
     """Test get_i18n uses default language."""
 
     class MyI18n(I18n, scope="test.fallback"):
@@ -154,7 +156,7 @@ def test_get_i18n_with_default_language():
     assert t.title == "English Title"
 
 
-def test_get_i18n_type_safety():
+def test_get_i18n_type_safety() -> None:
     """Test that get_i18n preserves type information."""
 
     class MyI18n(I18n, scope="test.type"):
@@ -170,7 +172,7 @@ def test_get_i18n_type_safety():
     assert isinstance(t.count, int)
 
 
-def test_get_i18n_multiple_instances():
+def test_get_i18n_multiple_instances() -> None:
     """Test that multiple i18n classes can coexist."""
 
     class ModuleAI18n(I18n, scope="module.a"):
@@ -195,7 +197,7 @@ def test_get_i18n_multiple_instances():
     assert t_b.title == "モジュールB"
 
 
-def test_get_i18n_with_scope_field():
+def test_get_i18n_with_scope_field() -> None:
     """Test that 'scope' can be used as a regular translation key."""
 
     class MyI18n(I18n, scope="test.scope_field"):
@@ -222,7 +224,7 @@ def test_get_i18n_with_scope_field():
     assert t.title == "タイトル"
 
 
-def test_get_i18n_with_base_model_uses_module_as_scope():
+def test_get_i18n_with_base_model_uses_module_as_scope() -> None:
     """Test get_i18n supports regular Pydantic models."""
 
     class MyModel(BaseModel):
@@ -245,7 +247,7 @@ def test_get_i18n_with_base_model_uses_module_as_scope():
     assert t.title == "公開モデル"
 
 
-def test_get_i18n_with_base_model_uses_public_module_before_private_word():
+def test_get_i18n_with_base_model_uses_public_module_before_private_word() -> None:
     """Test BaseModel scope removes private module words and everything after them."""
 
     class MyModel(BaseModel):

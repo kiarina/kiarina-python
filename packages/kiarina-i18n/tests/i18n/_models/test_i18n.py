@@ -4,7 +4,7 @@ from pydantic import ValidationError
 from kiarina.i18n import I18n
 
 
-def test_i18n_class_definition():
+def test_i18n_class_definition() -> None:
     """Test that I18n class can be subclassed with scope parameter."""
 
     class MyI18n(I18n, scope="test.my"):
@@ -18,7 +18,7 @@ def test_i18n_class_definition():
     assert i18n.description == "My Description"
 
 
-def test_i18n_scope_as_field():
+def test_i18n_scope_as_field() -> None:
     """Test that 'scope' can be used as a regular translation key."""
 
     class MyI18n(I18n, scope="test.scope_field"):
@@ -31,7 +31,7 @@ def test_i18n_scope_as_field():
     assert i18n.scope == "Default Scope Text"  # Field-level translation key
 
 
-def test_i18n_immutable():
+def test_i18n_immutable() -> None:
     """Test that I18n instances are immutable."""
 
     class MyI18n(I18n, scope="test.my"):
@@ -41,10 +41,10 @@ def test_i18n_immutable():
 
     # Should raise error when trying to modify
     with pytest.raises(ValidationError):
-        i18n.title = "New Title"  # type: ignore
+        i18n.title = "New Title"
 
 
-def test_i18n_forbid_extra_fields():
+def test_i18n_forbid_extra_fields() -> None:
     """Test that extra fields are forbidden."""
 
     class MyI18n(I18n, scope="test.my"):
@@ -55,7 +55,7 @@ def test_i18n_forbid_extra_fields():
         MyI18n(extra_field="value")  # type: ignore
 
 
-def test_i18n_auto_scope_generation():
+def test_i18n_auto_scope_generation() -> None:
     """Test that scope is automatically generated from module and class name."""
 
     class MyAppI18n(I18n):
@@ -66,7 +66,7 @@ def test_i18n_auto_scope_generation():
     assert i18n._scope == "tests.i18n._models.test_i18n.MyAppI18n"
 
 
-def test_i18n_auto_scope_with_nested_class():
+def test_i18n_auto_scope_with_nested_class() -> None:
     """Test auto scope generation with different class name patterns."""
 
     class UserProfileI18n(I18n):
@@ -77,7 +77,7 @@ def test_i18n_auto_scope_with_nested_class():
     assert i18n._scope == "tests.i18n._models.test_i18n.UserProfileI18n"
 
 
-def test_i18n_explicit_scope_overrides_auto():
+def test_i18n_explicit_scope_overrides_auto() -> None:
     """Test that explicit scope parameter overrides auto-generation."""
 
     class AutoI18n(I18n, scope="custom.scope"):

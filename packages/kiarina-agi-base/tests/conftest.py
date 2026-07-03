@@ -1,4 +1,6 @@
 import re
+from collections.abc import Iterator
+from typing import Any
 
 import pytest
 
@@ -7,14 +9,14 @@ from kiarina.utils.app import configure, reset
 
 
 @pytest.fixture(scope="session", autouse=True)
-def configure_app() -> None:
+def configure_app() -> Iterator[None]:
     configure(app_author="kiarina", app_name="kiarina-agi-base")
     yield
     reset()
 
 
 @pytest.fixture
-def run_context(request) -> RunContext:
+def run_context(request: Any) -> RunContext:
     return RunContext(
         organization_id="kiarina.agi.base",
         user_id=request.module.__name__,

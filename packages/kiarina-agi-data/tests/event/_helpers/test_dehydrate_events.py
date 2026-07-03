@@ -1,3 +1,5 @@
+from typing import Any
+
 from kiarina.agi.data.event import HumanMessageEvent, dehydrate_events
 
 
@@ -8,7 +10,7 @@ def test_not_dehydrated() -> None:
     assert len(pool) == 0
 
 
-def test_dehydrated(text_file_info) -> None:
+def test_dehydrated(text_file_info: Any) -> None:
     event = HumanMessageEvent.create("Hello", files=[text_file_info])
     new_events, pool = dehydrate_events([event], [])
     assert len(new_events) == 1

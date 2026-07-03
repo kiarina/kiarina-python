@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 pytest.importorskip("puremagic")
@@ -15,7 +17,7 @@ from kiarina.utils.mime._operations.detect_with_puremagic import detect_with_pur
         (b"unknown", "unknown.unknownext", None),
     ],
 )
-def test_with_hint(raw_data, file_name_hint, expected):
+def test_with_hint(raw_data: Any, file_name_hint: Any, expected: Any) -> None:
     assert (
         detect_with_puremagic(raw_data=raw_data, file_name_hint=file_name_hint)
         == expected
@@ -32,7 +34,7 @@ def test_with_hint(raw_data, file_name_hint, expected):
         (b"unknown", None),
     ],
 )
-def test_no_hint(raw_data, expected):
+def test_no_hint(raw_data: Any, expected: Any) -> None:
     assert detect_with_puremagic(raw_data=raw_data) == expected
 
 
@@ -52,7 +54,7 @@ def test_no_hint(raw_data, expected):
         ("mp4/shape_animation_1600x900_24fps_13s_4400kb.mp4", "video/mp4"),
     ],
 )
-def test_with_file(file_path, expected, assets_dir):
+def test_with_file(file_path: Any, expected: Any, assets_dir: Any) -> None:
     with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 

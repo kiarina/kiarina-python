@@ -1,10 +1,12 @@
+from typing import Any
+
 import pytest
 
 from kiarina.lib.redisearch.asyncio import RedisearchClient
 
 
 @pytest.fixture
-def fields():
+def fields() -> Any:
     return [
         {"type": "tag", "name": "id"},
         {"type": "text", "name": "title"},
@@ -12,7 +14,7 @@ def fields():
     ]
 
 
-async def test_find(client: RedisearchClient):
+async def test_find(client: RedisearchClient) -> None:
     await client.reset_index()
 
     # Insert test data

@@ -1,4 +1,5 @@
 import shutil
+from typing import Any
 
 import pytest
 
@@ -21,7 +22,7 @@ from kiarina.utils.encoding import detect_encoding
         pytest.param("こんにちは世界🌍️".encode(), "utf-8", id="utf-8-emoji"),
     ],
 )
-def test_main(raw_data, expected_encoding):
+def test_main(raw_data: Any, expected_encoding: Any) -> None:
     assert detect_encoding(raw_data, use_nkf=True) == expected_encoding
 
 
@@ -31,7 +32,7 @@ def test_main(raw_data, expected_encoding):
         ("png/miineko_256x256_799b.png", None),
     ],
 )
-def test_with_file(file_path, expected_encoding, assets_dir):
+def test_with_file(file_path: Any, expected_encoding: Any, assets_dir: Any) -> None:
     with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 

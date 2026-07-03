@@ -47,10 +47,8 @@ echo "🔧 Running ruff format check..."
 uv run --group dev ruff format --check "${paths[@]}" || status=1
 
 # Run mypy
-if [ -d "packages/$target/src" ]; then
-    echo "🔍 Running mypy..."
-    uv run --group dev mypy "packages/$target/src/" || status=1
-fi
+echo "🔍 Running mypy..."
+uv run --group dev mypy "${paths[@]}" || status=1
 
 if [ $status -ne 0 ]; then
     echo "❌ Linting failed for $target"

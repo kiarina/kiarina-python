@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 import pytest
 from pydantic_settings_manager import clear_user_configs, load_user_configs
@@ -7,7 +8,7 @@ from kiarina.utils.file import read_yaml_dict
 
 
 @pytest.fixture(autouse=True)
-def settings():
+def settings() -> Any:
     settings_path = Path(__file__).resolve().parent / "test_settings.yaml"
     if not settings_path.is_file():
         pytest.skip(f"test_settings.yaml does not exist: {settings_path}")

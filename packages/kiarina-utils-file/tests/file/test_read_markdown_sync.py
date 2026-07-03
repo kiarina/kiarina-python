@@ -6,7 +6,7 @@ import pytest
 import kiarina.utils.file as kf
 
 
-def test_read_markdown_with_front_matter():
+def test_read_markdown_with_front_matter() -> None:
     """Test reading Markdown file with YAML front matter"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Create a Markdown file with front matter
@@ -38,7 +38,7 @@ This is a test document.
         assert result.content == "# Hello World\n\nThis is a test document.\n"
 
 
-def test_read_markdown_without_front_matter():
+def test_read_markdown_without_front_matter() -> None:
     """Test reading Markdown file without front matter"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -52,7 +52,7 @@ def test_read_markdown_without_front_matter():
         assert result.content == content
 
 
-def test_read_markdown_with_invalid_front_matter():
+def test_read_markdown_with_invalid_front_matter() -> None:
     """Test reading Markdown file with invalid YAML front matter"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -74,7 +74,7 @@ author: John Doe
         assert result.content == content
 
 
-def test_read_markdown_with_non_dict_front_matter():
+def test_read_markdown_with_non_dict_front_matter() -> None:
     """Test reading Markdown file with non-dict YAML front matter"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -96,7 +96,7 @@ def test_read_markdown_with_non_dict_front_matter():
         assert result.content == content
 
 
-def test_read_markdown_with_non_string_keys():
+def test_read_markdown_with_non_string_keys() -> None:
     """Test reading Markdown file with non-string keys in front matter"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -118,7 +118,7 @@ def test_read_markdown_with_non_string_keys():
         assert result.content == content
 
 
-def test_read_markdown_non_existent_file():
+def test_read_markdown_non_existent_file() -> None:
     """Test reading non-existent Markdown file"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "non_existent.md")
@@ -127,7 +127,7 @@ def test_read_markdown_non_existent_file():
         assert result is None
 
 
-def test_read_markdown_with_default():
+def test_read_markdown_with_default() -> None:
     """Test reading non-existent Markdown file with default value"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "non_existent.md")
@@ -140,7 +140,7 @@ def test_read_markdown_with_default():
         assert result.metadata == {}
 
 
-def test_read_markdown_empty_file():
+def test_read_markdown_empty_file() -> None:
     """Test reading empty Markdown file"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "empty.md")
@@ -153,7 +153,7 @@ def test_read_markdown_empty_file():
         assert result.metadata == {}
 
 
-def test_read_markdown_only_front_matter():
+def test_read_markdown_only_front_matter() -> None:
     """Test reading Markdown file with only front matter"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -170,7 +170,7 @@ title: Only Front Matter
         assert result.content == ""
 
 
-def test_read_markdown_with_empty_front_matter():
+def test_read_markdown_with_empty_front_matter() -> None:
     """Test reading Markdown file with empty front matter"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -189,7 +189,7 @@ def test_read_markdown_with_empty_front_matter():
         assert result.content == content
 
 
-def test_read_markdown_with_complex_metadata():
+def test_read_markdown_with_complex_metadata() -> None:
     """Test reading Markdown file with complex nested metadata"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -222,7 +222,7 @@ settings:
         assert result.content == "# Content\n"
 
 
-def test_markdown_content_namedtuple():
+def test_markdown_content_namedtuple() -> None:
     """Test MarkdownContent as a NamedTuple"""
     content = kf.MarkdownContent(content="# Hello", metadata={"title": "Test"})
 
@@ -240,7 +240,7 @@ def test_markdown_content_namedtuple():
         content.content = "# Changed"  # type: ignore
 
 
-def test_read_markdown_with_dashes_in_content():
+def test_read_markdown_with_dashes_in_content() -> None:
     """Test reading Markdown file with --- in content (not front matter)"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -260,7 +260,7 @@ This is a separator.
         assert result.content == content
 
 
-def test_markdown_content_from_text_with_front_matter():
+def test_markdown_content_from_text_with_front_matter() -> None:
     """Test MarkdownContent.from_text() with YAML front matter"""
     text = """---
 title: Test Document
@@ -284,7 +284,7 @@ This is a test document.
     assert result.content == "# Hello World\n\nThis is a test document.\n"
 
 
-def test_markdown_content_from_text_without_front_matter():
+def test_markdown_content_from_text_without_front_matter() -> None:
     """Test MarkdownContent.from_text() without front matter"""
     text = "# Hello World\n\nThis is a test document.\n"
     result = kf.MarkdownContent.from_text(text)
@@ -293,7 +293,7 @@ def test_markdown_content_from_text_without_front_matter():
     assert result.content == text
 
 
-def test_markdown_content_from_text_with_invalid_front_matter():
+def test_markdown_content_from_text_with_invalid_front_matter() -> None:
     """Test MarkdownContent.from_text() with invalid YAML front matter"""
     # Invalid YAML (missing colon)
     text = """---
@@ -310,7 +310,7 @@ author: John Doe
     assert result.content == text
 
 
-def test_markdown_content_from_text_with_non_dict_front_matter():
+def test_markdown_content_from_text_with_non_dict_front_matter() -> None:
     """Test MarkdownContent.from_text() with non-dict YAML front matter"""
     # YAML that parses to a list, not a dict
     text = """---
@@ -327,7 +327,7 @@ def test_markdown_content_from_text_with_non_dict_front_matter():
     assert result.content == text
 
 
-def test_markdown_content_from_text_with_non_string_keys():
+def test_markdown_content_from_text_with_non_string_keys() -> None:
     """Test MarkdownContent.from_text() with non-string keys in front matter"""
     # YAML with numeric keys
     text = """---
@@ -344,7 +344,7 @@ def test_markdown_content_from_text_with_non_string_keys():
     assert result.content == text
 
 
-def test_markdown_content_from_text_empty_string():
+def test_markdown_content_from_text_empty_string() -> None:
     """Test MarkdownContent.from_text() with empty string"""
     text = ""
     result = kf.MarkdownContent.from_text(text)
@@ -353,7 +353,7 @@ def test_markdown_content_from_text_empty_string():
     assert result.content == ""
 
 
-def test_markdown_content_from_text_only_front_matter():
+def test_markdown_content_from_text_only_front_matter() -> None:
     """Test MarkdownContent.from_text() with only front matter"""
     text = """---
 title: Only Front Matter
@@ -365,7 +365,7 @@ title: Only Front Matter
     assert result.content == ""
 
 
-def test_markdown_content_from_text_with_empty_front_matter():
+def test_markdown_content_from_text_with_empty_front_matter() -> None:
     """Test MarkdownContent.from_text() with empty front matter"""
     text = """---
 ---
@@ -379,7 +379,7 @@ def test_markdown_content_from_text_with_empty_front_matter():
     assert result.content == text
 
 
-def test_markdown_content_from_text_with_complex_metadata():
+def test_markdown_content_from_text_with_complex_metadata() -> None:
     """Test MarkdownContent.from_text() with complex nested metadata"""
     text = """---
 title: Complex Document
@@ -407,7 +407,7 @@ settings:
     assert result.content == "# Content\n"
 
 
-def test_markdown_content_from_text_with_dashes_in_content():
+def test_markdown_content_from_text_with_dashes_in_content() -> None:
     """Test MarkdownContent.from_text() with --- in content (not front matter)"""
     # --- not at the start, so not front matter
     text = """# Hello

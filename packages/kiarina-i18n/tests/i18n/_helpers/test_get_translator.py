@@ -1,7 +1,9 @@
+from typing import Any
+
 from kiarina.i18n import catalog, get_translator
 
 
-def test_get_translator_basic(sample_catalog):
+def test_get_translator_basic(sample_catalog: Any) -> None:
     """Test get_translator function."""
     catalog.add_from_dict(sample_catalog)
 
@@ -9,7 +11,7 @@ def test_get_translator_basic(sample_catalog):
     assert t("hello", name="World") == "Hello, World!"
 
 
-def test_get_translator_creates_new_instances(sample_catalog):
+def test_get_translator_creates_new_instances(sample_catalog: Any) -> None:
     """Test that get_translator creates new instances (no caching)."""
     catalog.add_from_dict(sample_catalog)
 
@@ -20,7 +22,7 @@ def test_get_translator_creates_new_instances(sample_catalog):
     assert t1("hello", name="World") == t2("hello", name="World")
 
 
-def test_get_translator_different_languages(sample_catalog):
+def test_get_translator_different_languages(sample_catalog: Any) -> None:
     """Test get_translator with different languages."""
     catalog.add_from_dict(sample_catalog)
 
@@ -31,7 +33,7 @@ def test_get_translator_different_languages(sample_catalog):
     assert t_ja("hello", name="世界") == "こんにちは、世界!"
 
 
-def test_get_translator_different_scopes(sample_catalog):
+def test_get_translator_different_scopes(sample_catalog: Any) -> None:
     """Test get_translator with different scopes."""
     catalog.add_from_dict(sample_catalog)
 

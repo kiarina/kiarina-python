@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 import kiarina.utils.ext as ke
@@ -33,5 +35,5 @@ import kiarina.utils.ext as ke
         ("Document.PDF", ".pdf"),
     ],
 )
-def test_extract_extension(file_name_hint, expected):
+def test_extract_extension(file_name_hint: Any, expected: Any) -> None:
     assert ke.extract_extension(file_name_hint) == expected

@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import pytest
 
@@ -10,7 +11,7 @@ from kiarina.agi.file.local_repository import (
 
 
 @pytest.fixture
-def setup():
+def setup() -> Any:
     settings_manager.cli_args = {
         "file_path_policy": {
             "allowed_file_path_patterns": [
@@ -24,7 +25,7 @@ def setup():
 
 
 @pytest.fixture
-def local_repository(setup, run_context) -> LocalRepository:
+def local_repository(setup: Any, run_context: Any) -> LocalRepository:
     return create_local_repository(run_context)
 
 

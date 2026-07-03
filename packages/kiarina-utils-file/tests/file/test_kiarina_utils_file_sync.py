@@ -5,7 +5,7 @@ import tempfile
 import kiarina.utils.file as kf
 
 
-def test_main():
+def test_main() -> None:
     with tempfile.TemporaryDirectory() as tmp_dir:
         # 1. write_binary
         binary_path = os.path.join(tmp_dir, "test.bin")
@@ -166,7 +166,7 @@ def test_main():
         assert stat.S_IMODE(original_mode) == stat.S_IMODE(updated_mode)
 
 
-def test_symlink_operations():
+def test_symlink_operations() -> None:
     """Test read/write operations with symbolic links"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Create a real file
@@ -231,7 +231,7 @@ def test_symlink_operations():
         assert kf.read_json_dict(symlink_file) == json_data
 
 
-def test_yaml_comment_only_files():
+def test_yaml_comment_only_files() -> None:
     """Test reading YAML files with only comments"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Test read_yaml_dict with comment-only file
@@ -261,7 +261,7 @@ def test_yaml_comment_only_files():
         assert result_list_with_default == ["default"]
 
 
-def test_broken_symlink_operations():
+def test_broken_symlink_operations() -> None:
     """Test read/write operations with broken symbolic links"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Create a real file

@@ -1,10 +1,12 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.base.cost_logger import BaseCostLogger, cost_logger_registry
 
 
 @pytest.fixture(autouse=True)
-def cleanup():
+def cleanup() -> Any:
     yield
     cost_logger_registry.clear()
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.file.asset_repository import URIPolicy
@@ -5,7 +7,7 @@ from kiarina.agi.file.asset_repository_impl.local import LocalAssetRepository
 
 
 @pytest.fixture
-def asset_repository(run_context) -> LocalAssetRepository:
+def asset_repository(run_context: Any) -> LocalAssetRepository:
     repository = LocalAssetRepository()
     repository.uri_policy = URIPolicy(
         allowed_uri_patterns=[".*"],
@@ -16,5 +18,5 @@ def asset_repository(run_context) -> LocalAssetRepository:
     return repository
 
 
-def test_template_variables(asset_repository) -> None:
+def test_template_variables(asset_repository: Any) -> None:
     print("Template Variables:", asset_repository.template_variables)

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.data.embedding import Embedding
@@ -12,7 +14,7 @@ def history() -> History:
     return History()
 
 
-def test_clear(text_file_info) -> None:
+def test_clear(text_file_info: Any) -> None:
     history = History(
         events=[HumanMessageEvent.create("Hello")],
         file_infos=[text_file_info],
@@ -44,7 +46,7 @@ def test_get_last_event() -> None:
     assert event.message.to_text() == "second"
 
 
-def test_add_event(history: History, text_file_info) -> None:
+def test_add_event(history: History, text_file_info: Any) -> None:
     history.add_event(HumanMessageEvent.create("Hello", [text_file_info]))
     assert len(history.events) == 1
     assert len(history.file_infos) == 1
@@ -115,19 +117,19 @@ def test_add_message(history: History) -> None:
 # --------------------------------------------------
 
 
-def test_get_file_info(text_file_info) -> None:
+def test_get_file_info(text_file_info: Any) -> None:
     text_file_info.unique_key = "u1"
     history = History(file_infos=[text_file_info])
 
     assert history.get_file_info(unique_key="u1") == text_file_info
 
 
-def test_get_file_infos(text_file_info) -> None:
+def test_get_file_infos(text_file_info: Any) -> None:
     history = History(file_infos=[text_file_info, text_file_info])
     assert len(history.get_file_infos()) == 2
 
 
-def test_get_file_infos_uri_or_file_path(text_file_info) -> None:
+def test_get_file_infos_uri_or_file_path(text_file_info: Any) -> None:
     history = History(file_infos=[text_file_info])
     assert (
         len(history.get_file_infos(uri_or_file_path=text_file_info.uri_or_file_path))
@@ -135,44 +137,44 @@ def test_get_file_infos_uri_or_file_path(text_file_info) -> None:
     )
 
 
-def test_get_file_infos_group(text_file_info) -> None:
+def test_get_file_infos_group(text_file_info: Any) -> None:
     text_file_info.group = "g1"
     history = History(file_infos=[text_file_info])
     assert len(history.get_file_infos(group="g1")) == 1
 
 
-def test_get_file_infos_no_group(text_file_info) -> None:
+def test_get_file_infos_no_group(text_file_info: Any) -> None:
     text_file_info2 = text_file_info.model_copy(update={"group": "g1"})
     history = History(file_infos=[text_file_info, text_file_info2])
     assert len(history.get_file_infos(no_group=True)) == 1
 
 
-def test_get_file_infos_no_unique_key(text_file_info) -> None:
+def test_get_file_infos_no_unique_key(text_file_info: Any) -> None:
     text_file_info.unique_key = "u1"
     history = History(file_infos=[text_file_info])
     assert len(history.get_file_infos(no_unique_key=True)) == 0
 
 
-def test_get_file_infos_ignore_unique_keys(text_file_info) -> None:
+def test_get_file_infos_ignore_unique_keys(text_file_info: Any) -> None:
     text_file_info.unique_key = "u1"
     history = History(file_infos=[text_file_info])
     assert len(history.get_file_infos(ignore_unique_keys=["u1"])) == 0
 
 
-def test_get_file_infos_in_message(history: History, text_file_info) -> None:
+def test_get_file_infos_in_message(history: History, text_file_info: Any) -> None:
     history.add_event(HumanMessageEvent.create("Hello", [text_file_info]))
     assert len(history.get_file_infos(in_message=True)) == 1
     assert len(history.get_file_infos(in_message=False)) == 0
 
 
-def test_add_file_info(history: History, text_file_info) -> None:
+def test_add_file_info(history: History, text_file_info: Any) -> None:
     history.add_file_info(text_file_info)
 
     assert len(history.file_infos) == 1
     assert history.file_infos[0] == text_file_info
 
 
-def test_remove_file_info(history: History, text_file_info) -> None:
+def test_remove_file_info(history: History, text_file_info: Any) -> None:
     history.add_file_info(text_file_info)
 
     history.remove_file_info(text_file_info.id)

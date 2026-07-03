@@ -1,4 +1,5 @@
 import os
+from typing import Any, cast
 
 import pytest
 from pydantic_settings_manager import load_user_configs
@@ -7,7 +8,7 @@ import kiarina.utils.file as kf
 
 
 @pytest.fixture(scope="session")
-def load_settings():
+def load_settings() -> None:
     env_var = "KIARINA_LIB_FIREBASE_TEST_SETTINGS_FILE"
 
     if env_var not in os.environ:
@@ -28,7 +29,7 @@ def load_settings():
 
 
 @pytest.fixture(scope="session")
-def firebase_app(load_settings):
+def firebase_app(load_settings: Any) -> Any:
     """Initialize Firebase Admin SDK once per test session."""
     firebase_admin = pytest.importorskip("firebase_admin")
     credentials = pytest.importorskip("firebase_admin.credentials")
@@ -55,7 +56,7 @@ def user_id() -> str:
 
 
 @pytest.fixture
-def api_key(load_settings) -> str:
+def api_key(load_settings: Any) -> str:
     from kiarina.lib.firebase import settings_manager
 
     settings = settings_manager.get_settings()
@@ -63,13 +64,13 @@ def api_key(load_settings) -> str:
 
 
 @pytest.fixture
-def custom_token(firebase_app, user_id) -> str:
+def custom_token(firebase_app: Any, user_id: str) -> str:
     auth = pytest.importorskip("firebase_admin.auth")
-    return auth.create_custom_token(user_id).decode("utf-8")
+    return cast(bytes, auth.create_custom_token(user_id)).decode("utf-8")
 
 
 @pytest.fixture
-async def token_data(api_key, custom_token):
+async def token_data(api_key: Any, custom_token: Any) -> Any:
     from kiarina.lib.firebase import exchange_custom_token
 
     token_data = await exchange_custom_token(

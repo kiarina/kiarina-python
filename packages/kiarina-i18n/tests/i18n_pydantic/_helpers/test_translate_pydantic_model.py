@@ -11,7 +11,7 @@ def _set_module(model: type[BaseModel], module: str = "hoge.fields") -> None:
     model.__module__ = module
 
 
-def test_translate_pydantic_model_basic():
+def test_translate_pydantic_model_basic() -> None:
     """Test basic translation of Pydantic model field descriptions."""
 
     class Hoge(BaseModel):
@@ -44,7 +44,7 @@ def test_translate_pydantic_model_basic():
     assert HogeJa.model_fields["age"].description == "あなたの年齢"
 
 
-def test_translate_pydantic_model_preserves_types():
+def test_translate_pydantic_model_preserves_types() -> None:
     """Test that translation preserves field types."""
 
     class Hoge(BaseModel):
@@ -74,7 +74,7 @@ def test_translate_pydantic_model_preserves_types():
     assert HogeJa.model_fields["active"].annotation is bool
 
 
-def test_translate_pydantic_model_preserves_defaults():
+def test_translate_pydantic_model_preserves_defaults() -> None:
     """Test that translation preserves default values."""
 
     class Hoge(BaseModel):
@@ -106,7 +106,7 @@ def test_translate_pydantic_model_preserves_defaults():
     assert instance.age == 0
 
 
-def test_translate_pydantic_model_fallback_to_original():
+def test_translate_pydantic_model_fallback_to_original() -> None:
     """Test that missing translations fall back to original descriptions."""
 
     class Hoge(BaseModel):
@@ -134,7 +134,7 @@ def test_translate_pydantic_model_fallback_to_original():
     assert HogeJa.model_fields["age"].description == "Your Age"
 
 
-def test_translate_pydantic_model_validation_works():
+def test_translate_pydantic_model_validation_works() -> None:
     """Test that validation still works on translated model."""
 
     class Hoge(BaseModel):
@@ -170,7 +170,7 @@ def test_translate_pydantic_model_validation_works():
         HogeJa(name="Alice", age=-1)
 
 
-def test_translate_pydantic_model_json_schema():
+def test_translate_pydantic_model_json_schema() -> None:
     """Test that translated descriptions appear in JSON schema."""
 
     class Hoge(BaseModel):
@@ -200,7 +200,7 @@ def test_translate_pydantic_model_json_schema():
     assert schema["properties"]["age"]["description"] == "あなたの年齢"
 
 
-def test_translate_pydantic_model_multiple_languages():
+def test_translate_pydantic_model_multiple_languages() -> None:
     """Test translating the same model to multiple languages."""
 
     class Hoge(BaseModel):
@@ -225,7 +225,7 @@ def test_translate_pydantic_model_multiple_languages():
     assert HogeEs.model_fields["name"].description == "Tu nombre"
 
 
-def test_translate_pydantic_model_preserves_model_config():
+def test_translate_pydantic_model_preserves_model_config() -> None:
     """Test that model configuration is preserved."""
 
     class Hoge(BaseModel):
@@ -246,10 +246,10 @@ def test_translate_pydantic_model_preserves_model_config():
     # Test frozen behavior
     instance = HogeJa(name="Alice")
     with pytest.raises(ValidationError):
-        instance.name = "Bob"  # type: ignore
+        instance.name = "Bob"
 
 
-def test_translate_pydantic_model_with_i18n_subclass():
+def test_translate_pydantic_model_with_i18n_subclass() -> None:
     """Test translating I18n subclass without explicit scope."""
     from kiarina.i18n import I18n
 
@@ -276,7 +276,7 @@ def test_translate_pydantic_model_with_i18n_subclass():
     assert HogeI18nJa.model_fields["age"].description == "あなたの年齢"
 
 
-def test_translate_pydantic_model_base_model_uses_public_module_scope():
+def test_translate_pydantic_model_base_model_uses_public_module_scope() -> None:
     """Test translating regular BaseModel with scope resolved from module path."""
 
     class Hoge(BaseModel):
@@ -291,7 +291,7 @@ def test_translate_pydantic_model_base_model_uses_public_module_scope():
     assert HogeJa.model_fields["name"].description == "名前"
 
 
-def test_translate_pydantic_model_i18n_with_auto_scope():
+def test_translate_pydantic_model_i18n_with_auto_scope() -> None:
     """Test I18n subclass with auto-generated scope."""
     from kiarina.i18n import I18n
 
@@ -319,7 +319,7 @@ def test_translate_pydantic_model_i18n_with_auto_scope():
     assert UserI18nJa.model_fields["email"].description == "メールアドレス"
 
 
-def test_translate_pydantic_model_translates_docstring():
+def test_translate_pydantic_model_translates_docstring() -> None:
     """Test that __doc__ is translated."""
 
     class Hoge(BaseModel):
@@ -349,7 +349,7 @@ def test_translate_pydantic_model_translates_docstring():
     assert HogeJa.model_fields["name"].description == "あなたの名前"
 
 
-def test_translate_pydantic_model_docstring_fallback():
+def test_translate_pydantic_model_docstring_fallback() -> None:
     """Test that __doc__ falls back to original when translation is missing."""
 
     class Hoge(BaseModel):
@@ -377,7 +377,7 @@ def test_translate_pydantic_model_docstring_fallback():
     assert HogeJa.model_fields["name"].description == "あなたの名前"
 
 
-def test_translate_pydantic_model_without_docstring():
+def test_translate_pydantic_model_without_docstring() -> None:
     """Test translation when model has no __doc__."""
 
     class Hoge(BaseModel):
@@ -403,7 +403,7 @@ def test_translate_pydantic_model_without_docstring():
     assert HogeJa.model_fields["name"].description == "あなたの名前"
 
 
-def test_translate_pydantic_model_nested_i18n_list():
+def test_translate_pydantic_model_nested_i18n_list() -> None:
     """Test translation of nested I18n models in list."""
     from kiarina.i18n import I18n
 
@@ -445,7 +445,7 @@ def test_translate_pydantic_model_nested_i18n_list():
     assert nested_model.model_fields["start_line"].description == "開始行"
 
 
-def test_translate_pydantic_model_nested_i18n_dict():
+def test_translate_pydantic_model_nested_i18n_dict() -> None:
     """Test translation of nested I18n models in dict."""
     from kiarina.i18n import I18n
 
@@ -485,7 +485,7 @@ def test_translate_pydantic_model_nested_i18n_dict():
     assert value_type.model_fields["value"].description == "設定値"
 
 
-def test_translate_pydantic_model_nested_base_model_uses_own_module_scope():
+def test_translate_pydantic_model_nested_base_model_uses_own_module_scope() -> None:
     """Test that regular parent models use their own resolved scope."""
     from kiarina.i18n import I18n
 
@@ -521,7 +521,7 @@ def test_translate_pydantic_model_nested_base_model_uses_own_module_scope():
     assert nested_model.model_fields["name"].description == "名前"
 
 
-def test_translate_pydantic_model_nested_non_i18n_unchanged():
+def test_translate_pydantic_model_nested_non_i18n_unchanged() -> None:
     """Test that non-I18n nested models are not translated."""
     from kiarina.i18n import I18n
 
@@ -553,7 +553,7 @@ def test_translate_pydantic_model_nested_non_i18n_unchanged():
     assert nested_model.model_fields["value"].description == "Regular value"
 
 
-def test_translate_pydantic_model_complex_nested_structure():
+def test_translate_pydantic_model_complex_nested_structure() -> None:
     """Test translation with complex nested structure."""
     from kiarina.i18n import I18n
 
@@ -612,7 +612,7 @@ def test_translate_pydantic_model_complex_nested_structure():
     assert file_arg_ja.model_fields["end_line"].description == "終了行"
 
 
-def test_translate_pydantic_model_preserves_default_factory():
+def test_translate_pydantic_model_preserves_default_factory() -> None:
     """Test that default_factory is preserved after translation."""
 
     class Hoge(BaseModel):

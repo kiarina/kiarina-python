@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.utils.ext._operations.detect_with_dictionary import detect_with_dictionary
@@ -12,7 +14,7 @@ from kiarina.utils.ext._operations.detect_with_dictionary import detect_with_dic
         ("application/custom", ".custom"),
     ],
 )
-def test_detect_with_dictionary(mime_type, expected) -> None:
+def test_detect_with_dictionary(mime_type: Any, expected: Any) -> None:
     assert (
         detect_with_dictionary(
             mime_type,

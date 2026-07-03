@@ -7,7 +7,7 @@ import kiarina.utils.file as kf
 
 
 @pytest.fixture(scope="session")
-def load_settings():
+def load_settings() -> None:
     env_var = "KIARINA_LIB_GOOGLE_TEST_SETTINGS_FILE"
 
     if env_var not in os.environ:

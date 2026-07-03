@@ -1,3 +1,5 @@
+from typing import Any
+
 from kiarina.agi.base.cost_record import CostRecord
 from kiarina.agi.base.cost_recorder import BaseCostRecorder
 
@@ -5,7 +7,7 @@ from kiarina.agi.base.cost_recorder import BaseCostRecorder
 class MyCostRecorder(BaseCostRecorder): ...
 
 
-async def test_base_cost_recorder(run_context):
+async def test_base_cost_recorder(run_context: Any) -> None:
     cost_recorder = MyCostRecorder()
 
     cost_record = CostRecord(

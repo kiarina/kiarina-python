@@ -1,3 +1,5 @@
+from typing import Any
+
 from kiarina.agi.data.file_info import TextFileInfo
 
 
@@ -28,7 +30,7 @@ def test_to_content_estimates(text_file_info: TextFileInfo) -> None:
     assert estimates.token_count > 0
 
 
-def test_shrink(text_file_info) -> None:
+def test_shrink(text_file_info: Any) -> None:
     # metadata only
     new_file_info, reduced = text_file_info.shrink(
         reduce=text_file_info.token_count + 1
@@ -49,7 +51,7 @@ def test_shrink(text_file_info) -> None:
     assert reduced == text_file_info.token_count
 
 
-def test_shrink_by_line(text_file_info) -> None:
+def test_shrink_by_line(text_file_info: Any) -> None:
     # keep_from_start
     new_file_info = text_file_info.shrink_by_line(keep_line_count=2)
     assert new_file_info.normalized_end_line < text_file_info.line_count

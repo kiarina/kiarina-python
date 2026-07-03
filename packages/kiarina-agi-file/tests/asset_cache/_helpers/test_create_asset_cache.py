@@ -1,5 +1,7 @@
+from typing import Any
+
 from kiarina.agi.file.asset_cache import create_asset_cache
 
 
-def test_create_asset_cache(run_context):
+def test_create_asset_cache(run_context: Any) -> None:
     create_asset_cache(run_context)

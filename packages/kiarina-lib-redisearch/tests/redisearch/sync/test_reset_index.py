@@ -1,7 +1,7 @@
 from kiarina.lib.redisearch import RedisearchClient
 
 
-def test_reset_index(client: RedisearchClient):
+def test_reset_index(client: RedisearchClient) -> None:
     client.reset_index()
 
     assert client.get("test_id") is None

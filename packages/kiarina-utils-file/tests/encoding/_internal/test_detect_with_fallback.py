@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.utils.encoding._operations.detect_with_fallback import detect_with_fallback
@@ -14,7 +16,7 @@ from kiarina.utils.encoding._operations.detect_with_fallback import detect_with_
         ("こんにちは世界🌍️".encode(), "utf-8"),
     ],
 )
-def test_main(raw_data, expected_encoding):
+def test_main(raw_data: Any, expected_encoding: Any) -> None:
     assert detect_with_fallback(raw_data) == expected_encoding
 
 
@@ -27,7 +29,7 @@ def test_main(raw_data, expected_encoding):
         ("txt/ascii_code_docs_1600kb.txt", "utf-8"),
     ],
 )
-def test_with_file(file_path, expected_encoding, assets_dir):
+def test_with_file(file_path: Any, expected_encoding: Any, assets_dir: Any) -> None:
     with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 

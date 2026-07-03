@@ -1,10 +1,12 @@
+from typing import Any
+
 import google.oauth2.service_account
 import pytest
 
 from kiarina.lib.google import get_service_account_credentials, settings_manager
 
 
-def test_file(load_settings):
+def test_file(load_settings: Any) -> None:
     settings = settings_manager.get_settings("service_account_file")
     credentials = get_service_account_credentials(
         service_account_file=settings.service_account_file
@@ -12,14 +14,14 @@ def test_file(load_settings):
     assert isinstance(credentials, google.oauth2.service_account.Credentials)
 
 
-def test_nonexistent_file():
+def test_nonexistent_file() -> None:
     with pytest.raises(ValueError, match="Service account file does not exist"):
         get_service_account_credentials(
             service_account_file="/path/to/nonexistent/file.json"
         )
 
 
-def test_data(load_settings):
+def test_data(load_settings: Any) -> None:
     settings = settings_manager.get_settings("service_account_data")
     credentials = get_service_account_credentials(
         service_account_data=settings.get_service_account_data()

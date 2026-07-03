@@ -1,10 +1,12 @@
+from typing import Any
+
 import pytest
 
 from kiarina.i18n import catalog, settings_manager
 
 
 @pytest.fixture(autouse=True)
-def clear_i18n_caches():
+def clear_i18n_caches() -> Any:
     """Clear i18n caches and settings before and after each test."""
     catalog.clear()
 
@@ -16,7 +18,7 @@ def clear_i18n_caches():
 
 
 @pytest.fixture
-def sample_catalog():
+def sample_catalog() -> Any:
     """Sample translation catalog for testing."""
     return {
         "en": {

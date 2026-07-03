@@ -1,7 +1,7 @@
 from kiarina.lib.redisearch import RedisearchClient
 
 
-def test_count(client: RedisearchClient):
+def test_count(client: RedisearchClient) -> None:
     client.reset_index()
 
     client.set({"title": "This is a test document."}, id="test_id")

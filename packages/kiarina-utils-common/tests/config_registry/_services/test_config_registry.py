@@ -71,7 +71,7 @@ def test_base_model(caplog: LogCaptureFixture) -> None:
     assert not registry.is_registered("test3")
 
 
-def test_configure() -> None:
+def test_configure() -> Any:
     class MyConfig(BaseModel):
         message: str = ""
         options: dict[str, str] = Field(default_factory=dict)
@@ -123,7 +123,7 @@ def test_dict() -> None:
     }
 
 
-def test_unsupported_config_type() -> None:
+def test_unsupported_config_type() -> Any:
     registry = ConfigRegistry[int](
         get_presets=lambda: {"test1": 1},
     )

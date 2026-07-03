@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.utils.encoding import normalize_newlines
@@ -23,7 +25,7 @@ from kiarina.utils.encoding import normalize_newlines
         ),  # Mixed style
     ],
 )
-def test_normalize_newlines(input_text, expected):
+def test_normalize_newlines(input_text: Any, expected: Any) -> None:
     """normalize_newlines 関数の包括的テスト"""
     result = normalize_newlines(input_text)
     assert result == expected

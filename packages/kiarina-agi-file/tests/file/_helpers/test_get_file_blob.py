@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.file import asset_repository, local_repository
@@ -11,7 +13,7 @@ class MyAssetRepository(asset_repository.BaseAssetRepository):
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Any:
     asset_repository.settings_manager.cli_args = {
         "default": "my",
         "customs": {"my": f"{__name__}:MyAssetRepository"},
@@ -23,12 +25,12 @@ def setup():
     asset_repository.settings_manager.cli_args = {}
 
 
-async def test_asset(run_context) -> None:
+async def test_asset(run_context: Any) -> None:
     file_blob = await get_file_blob("my://hello", run_context=run_context)
     assert file_blob is None
 
 
-async def test_local(run_context) -> None:
+async def test_local(run_context: Any) -> None:
     repo = local_repository.create_local_repository(run_context)
     file_path = repo.generate_time_based_file_path("hello.txt")
     file_blob = await get_file_blob(file_path, run_context=run_context)

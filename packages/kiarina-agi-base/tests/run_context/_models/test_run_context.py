@@ -1,10 +1,12 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.base.run_context import RunContext, settings_manager
 
 
 @pytest.fixture(autouse=True)
-def cleanup_run_context():
+def cleanup_run_context() -> Any:
     cli_args = settings_manager.cli_args.copy()
     yield
     settings_manager.cli_args = cli_args

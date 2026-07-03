@@ -1,9 +1,11 @@
+from typing import Any
+
 import pytest
 
 from kiarina.utils.common import parse_config_string
 
 
-def test_parse_config_string_empty():
+def test_parse_config_string_empty() -> None:
     """Test empty configuration string"""
     result = parse_config_string("")
     assert result == {}
@@ -41,7 +43,7 @@ def test_parse_config_string_empty():
         ),
     ],
 )
-def test_parse_config_string_basic(config_str, expected):
+def test_parse_config_string_basic(config_str: Any, expected: Any) -> None:
     """Test basic configuration string parsing and type conversion"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -81,7 +83,7 @@ def test_parse_config_string_basic(config_str, expected):
         ),
     ],
 )
-def test_parse_config_string_nested(config_str, expected):
+def test_parse_config_string_nested(config_str: Any, expected: Any) -> None:
     """Test nested key parsing with dot notation"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -103,7 +105,7 @@ def test_parse_config_string_nested(config_str, expected):
         ),
     ],
 )
-def test_parse_config_string_whitespace(config_str, expected):
+def test_parse_config_string_whitespace(config_str: Any, expected: Any) -> None:
     """Test whitespace handling in keys and values"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -147,8 +149,12 @@ def test_parse_config_string_whitespace(config_str, expected):
     ],
 )
 def test_parse_config_string_custom_separators(
-    config_str, separator, key_value_separator, nested_separator, expected
-):
+    config_str: Any,
+    separator: Any,
+    key_value_separator: Any,
+    nested_separator: Any,
+    expected: Any,
+) -> None:
     """Test custom separators"""
     result = parse_config_string(
         config_str,
@@ -176,7 +182,7 @@ def test_parse_config_string_custom_separators(
         ),
     ],
 )
-def test_parse_config_string_edge_cases(config_str, expected):
+def test_parse_config_string_edge_cases(config_str: Any, expected: Any) -> None:
     """Test edge cases and error handling"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -215,7 +221,7 @@ def test_parse_config_string_edge_cases(config_str, expected):
         ),
     ],
 )
-def test_parse_config_string_arrays(config_str, expected):
+def test_parse_config_string_arrays(config_str: Any, expected: Any) -> None:
     """Test array support with index notation"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -234,13 +240,13 @@ def test_parse_config_string_arrays(config_str, expected):
         ),
     ],
 )
-def test_parse_config_string_array_flags(config_str, expected):
+def test_parse_config_string_array_flags(config_str: Any, expected: Any) -> None:
     """Test array support with flag notation"""
     result = parse_config_string(config_str)
     assert result == expected
 
 
-def test_parse_config_string_array_edge_cases():
+def test_parse_config_string_array_edge_cases() -> None:
     """Test edge cases for array functionality"""
     # Single element array
     result = parse_config_string("items.0=single")
@@ -256,7 +262,7 @@ def test_parse_config_string_array_edge_cases():
     assert result == {"items": ["zero"]}
 
 
-def test_parse_config_string_array_type_conflicts():
+def test_parse_config_string_array_type_conflicts() -> None:
     """Test handling of type conflicts with arrays"""
     # When dict key comes first, then array index - dict gets converted to array
     result = parse_config_string("items.key=value&items.0=first")
@@ -269,7 +275,7 @@ def test_parse_config_string_array_type_conflicts():
     assert result == {"items": {"key": "value"}}
 
 
-def test_parse_config_string_real_world_example():
+def test_parse_config_string_real_world_example() -> None:
     """Test real-world application configuration example"""
     config_str = "app.debug=true&app.port=8080&app.name=myapp&db.host=localhost&db.port=5432&db.timeout=30.5&cache.enabled=true&cache.ttl=3600"
 
@@ -308,20 +314,20 @@ def test_parse_config_string_real_world_example():
         ("k=pre(x&y)post", {"k": "pre(x&y)post"}),
     ],
 )
-def test_parse_config_string_brackets(config_str, expected):
+def test_parse_config_string_brackets(config_str: Any, expected: Any) -> None:
     """Bracketed values are atomic and type-conversion is suppressed."""
     result = parse_config_string(config_str)
     assert result == expected
 
 
-def test_parse_config_string_brackets_disabled():
+def test_parse_config_string_brackets_disabled() -> None:
     """brackets='' disables bracket handling (legacy behavior)."""
     # With brackets disabled, '&' inside parens is still a separator.
     result = parse_config_string("k=(a&b)", brackets="")
     assert result == {"k": "(a", "b)": None}
 
 
-def test_parse_config_string_brackets_custom_chars():
+def test_parse_config_string_brackets_custom_chars() -> None:
     """Custom bracket characters work for both open and close."""
     result = parse_config_string("k=[a&b]", brackets="[]")
     assert result == {"k": "a&b"}
@@ -336,12 +342,12 @@ def test_parse_config_string_brackets_custom_chars():
         "k=())",  # extra close
     ],
 )
-def test_parse_config_string_brackets_unbalanced(config_str):
+def test_parse_config_string_brackets_unbalanced(config_str: Any) -> None:
     with pytest.raises(ValueError):
         parse_config_string(config_str)
 
 
-def test_parse_config_string_brackets_invalid_argument():
+def test_parse_config_string_brackets_invalid_argument() -> None:
     # 1-char and 3+-char are rejected
     with pytest.raises(ValueError):
         parse_config_string("k=v", brackets="(")
@@ -355,7 +361,7 @@ def test_parse_config_string_brackets_invalid_argument():
         parse_config_string("k=v", separator="(", brackets="()")
 
 
-def test_parse_config_string_real_world_with_arrays():
+def test_parse_config_string_real_world_with_arrays() -> None:
     """Test real-world configuration with arrays"""
     config_str = "app.name=myapp&app.tags.0=web&app.tags.1=api&db.servers.0=primary&db.servers.1=secondary&db.ports.0=5432&db.ports.1=5433"
 

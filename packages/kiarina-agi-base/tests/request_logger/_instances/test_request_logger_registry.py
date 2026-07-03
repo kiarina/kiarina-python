@@ -1,10 +1,12 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.base.request_logger import BaseRequestLogger, request_logger_registry
 
 
 @pytest.fixture(autouse=True)
-def cleanup():
+def cleanup() -> Any:
     yield
     request_logger_registry.clear()
 

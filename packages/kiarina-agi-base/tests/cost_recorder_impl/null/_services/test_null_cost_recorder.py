@@ -1,8 +1,10 @@
+from typing import Any
+
 from kiarina.agi.base.cost_record import CostRecord
 from kiarina.agi.base.cost_recorder_impl.null import NullCostRecorder
 
 
-async def test_null_cost_recorder(run_context) -> None:
+async def test_null_cost_recorder(run_context: Any) -> None:
     recorder = NullCostRecorder()
 
     recorder.add(

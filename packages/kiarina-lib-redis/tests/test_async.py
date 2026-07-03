@@ -1,7 +1,7 @@
 from kiarina.lib.redis.asyncio import get_redis
 
 
-async def test_get_redis():
+async def test_get_redis() -> None:
     redis1 = get_redis(use_retry=True, decode_responses=True)
     redis2 = get_redis()
     assert redis1 is redis2

@@ -8,7 +8,7 @@ from kiarina.utils.component_registry import ComponentFactory, ComponentRegistry
 
 
 class MyClass:
-    def __init__(self, message: str = ""):
+    def __init__(self, message: str = "") -> None:
         self.message = message
         self.name = ""
 

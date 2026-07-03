@@ -1,7 +1,7 @@
 from kiarina.lib.cloudflare import settings_manager
 
 
-def test_settings():
+def test_settings() -> None:
     settings_manager.user_config = {
         "configs": {
             "default": {

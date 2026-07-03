@@ -1,7 +1,7 @@
 from kiarina.lib.redisearch.asyncio import RedisearchClient
 
 
-async def test_get_set_delete(client: RedisearchClient):
+async def test_get_set_delete(client: RedisearchClient) -> None:
     await client.reset_index()
 
     id = "test_id"

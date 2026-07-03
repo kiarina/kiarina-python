@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import pytest
 from google.oauth2.credentials import Credentials
@@ -10,7 +11,7 @@ from kiarina.lib.google import (
 )
 
 
-def test_file(load_settings):
+def test_file(load_settings: Any) -> None:
     settings = settings_manager.get_settings("user_account_file")
     credentials = get_user_account_credentials(
         authorized_user_file=settings.authorized_user_file,
@@ -19,7 +20,7 @@ def test_file(load_settings):
     assert isinstance(credentials, Credentials)
 
 
-def test_nonexistent_file():
+def test_nonexistent_file() -> None:
     with pytest.raises(ValueError, match="Authorized user file does not exist"):
         get_user_account_credentials(
             authorized_user_file="/path/to/nonexistent/file.json",
@@ -27,7 +28,7 @@ def test_nonexistent_file():
         )
 
 
-def test_data_uses_stored_scopes_when_scopes_are_not_specified():
+def test_data_uses_stored_scopes_when_scopes_are_not_specified() -> None:
     stored_scopes = ["https://www.googleapis.com/auth/drive"]
     credentials = get_user_account_credentials(
         authorized_user_data={
@@ -45,7 +46,7 @@ def test_data_uses_stored_scopes_when_scopes_are_not_specified():
     assert credentials.scopes == stored_scopes
 
 
-def test_data(load_settings):
+def test_data(load_settings: Any) -> None:
     settings = settings_manager.get_settings("user_account_data")
     credentials = get_user_account_credentials(
         authorized_user_data=settings.get_authorized_user_data(),
@@ -54,11 +55,11 @@ def test_data(load_settings):
     assert isinstance(credentials, Credentials)
 
 
-def test_cache(load_settings):
+def test_cache(load_settings: Any) -> Any:
     set_counter = 0
 
     class InMemoryCache(CredentialsCache):
-        def __init__(self):
+        def __init__(self) -> None:
             self._cache: str | None = None
 
         def get(self) -> str | None:

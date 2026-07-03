@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.base.run_context import RunContext
@@ -26,7 +28,7 @@ from kiarina.agi.base.run_context import RunContext
         "runner_test-1",
     ],
 )
-def test_id_str_valid(id_str):
+def test_id_str_valid(id_str: Any) -> None:
     RunContext(
         organization_id=id_str,
         user_id=id_str,
@@ -62,7 +64,7 @@ def test_id_str_valid(id_str):
         "id;semicolon",
     ],
 )
-def test_id_str_invalid(id_str):
+def test_id_str_invalid(id_str: Any) -> None:
     with pytest.raises(ValueError):
         RunContext(
             organization_id=id_str,

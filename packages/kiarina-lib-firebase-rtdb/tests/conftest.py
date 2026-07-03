@@ -1,14 +1,16 @@
 import logging
 import os
+from typing import Any, cast
 
 import pytest
 from pydantic_settings_manager import load_user_configs
 
 import kiarina.utils.file as kf
+from kiarina.lib.firebase import TokenData
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_logger():
+def setup_logger() -> None:
     logger = logging.getLogger("kiarina.lib.firebase_rtdb")
     logger.handlers.clear()
     logger.setLevel(logging.DEBUG)
@@ -31,7 +33,7 @@ def database_url() -> str:
 
 
 @pytest.fixture(scope="session")
-def load_settings():
+def load_settings() -> None:
     env_var = "KIARINA_LIB_FIREBASE_RTDB_TEST_SETTINGS_FILE"
 
     if env_var not in os.environ:
@@ -52,7 +54,7 @@ def load_settings():
 
 
 @pytest.fixture(scope="session")
-def firebase_app(load_settings):
+def firebase_app(load_settings: Any) -> Any:
     """Initialize Firebase Admin SDK once per test session."""
     firebase_admin = pytest.importorskip("firebase_admin")
     credentials = pytest.importorskip("firebase_admin.credentials")
@@ -88,13 +90,13 @@ def user_id() -> str:
 
 
 @pytest.fixture
-def custom_token(firebase_app, user_id) -> str:
+def custom_token(firebase_app: Any, user_id: str) -> str:
     auth = pytest.importorskip("firebase_admin.auth")
-    return auth.create_custom_token(user_id).decode("utf-8")
+    return cast(bytes, auth.create_custom_token(user_id)).decode("utf-8")
 
 
 @pytest.fixture
-async def token_data(custom_token):
+async def token_data(custom_token: str) -> TokenData:
     from kiarina.lib.firebase import exchange_custom_token, settings_manager
 
     settings = settings_manager.get_settings()
@@ -106,17 +108,17 @@ async def token_data(custom_token):
 
 
 @pytest.fixture
-def refresh_token(token_data) -> str:
+def refresh_token(token_data: TokenData) -> str:
     return token_data.refresh_token
 
 
 @pytest.fixture
-def id_token(token_data) -> str:
+def id_token(token_data: TokenData) -> str:
     return token_data.id_token
 
 
 @pytest.fixture
-def token_manager(token_data):
+def token_manager(token_data: TokenData) -> Any:
     from kiarina.lib.firebase import TokenManager, settings_manager
 
     settings = settings_manager.get_settings()

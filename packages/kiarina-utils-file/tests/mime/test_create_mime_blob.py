@@ -1,7 +1,9 @@
+from typing import Any
+
 import kiarina.utils.mime as km
 
 
-def test_create_mime_blob(assets_dir):
+def test_create_mime_blob(assets_dir: Any) -> None:
     with open(assets_dir / "jpg" / "apple_1024x1024_138kb.jpg", "rb") as f:
         raw_data = f.read()
 

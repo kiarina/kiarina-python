@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kiarina.agi.base.cost_logger import settings_manager
@@ -6,7 +8,7 @@ from kiarina.agi.base.cost_record import CostRecord
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Any:
     settings_manager.cli_args = {
         "currency": "JPY",
         "exchange_rate": 150.0,
@@ -16,7 +18,7 @@ def setup():
     settings_manager.cli_args = {}
 
 
-def test_cost_add():
+def test_cost_add() -> None:
     logger = ConsoleCostLogger()
 
     cost_record = CostRecord(
@@ -29,7 +31,7 @@ def test_cost_add():
     logger.log_cost_add(cost_record)
 
 
-def test_cost_flush():
+def test_cost_flush() -> None:
     logger = ConsoleCostLogger()
 
     cost_records = [

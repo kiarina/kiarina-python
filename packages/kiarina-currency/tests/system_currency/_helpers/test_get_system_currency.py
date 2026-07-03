@@ -3,7 +3,7 @@ from unittest.mock import patch
 from kiarina.currency.system_currency import get_system_currency
 
 
-def test_get_system_currency_returns_valid_code():
+def test_get_system_currency_returns_valid_code() -> None:
     """Test that get_system_currency returns a valid currency code"""
     currency = get_system_currency()
     assert isinstance(currency, str)
@@ -11,7 +11,7 @@ def test_get_system_currency_returns_valid_code():
     assert currency.isupper()
 
 
-def test_get_system_currency_with_int_curr_symbol():
+def test_get_system_currency_with_int_curr_symbol() -> None:
     """Test currency detection from int_curr_symbol"""
     mock_conv = {"int_curr_symbol": "JPY "}
 
@@ -20,9 +20,9 @@ def test_get_system_currency_with_int_curr_symbol():
         assert currency == "JPY"
 
 
-def test_get_system_currency_with_locale_ja():
+def test_get_system_currency_with_locale_ja() -> None:
     """Test currency detection from Japanese locale"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -32,9 +32,9 @@ def test_get_system_currency_with_locale_ja():
         assert currency == "JPY"
 
 
-def test_get_system_currency_with_locale_en_us():
+def test_get_system_currency_with_locale_en_us() -> None:
     """Test currency detection from US locale"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -44,9 +44,9 @@ def test_get_system_currency_with_locale_en_us():
         assert currency == "USD"
 
 
-def test_get_system_currency_with_locale_en_gb():
+def test_get_system_currency_with_locale_en_gb() -> None:
     """Test currency detection from UK locale"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -56,9 +56,9 @@ def test_get_system_currency_with_locale_en_gb():
         assert currency == "GBP"
 
 
-def test_get_system_currency_with_locale_de():
+def test_get_system_currency_with_locale_de() -> None:
     """Test currency detection from German locale"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -68,9 +68,9 @@ def test_get_system_currency_with_locale_de():
         assert currency == "EUR"
 
 
-def test_get_system_currency_with_locale_zh_cn():
+def test_get_system_currency_with_locale_zh_cn() -> None:
     """Test currency detection from Chinese locale"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -80,9 +80,9 @@ def test_get_system_currency_with_locale_zh_cn():
         assert currency == "CNY"
 
 
-def test_get_system_currency_with_env_var():
+def test_get_system_currency_with_env_var() -> None:
     """Test currency detection from environment variable"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -93,9 +93,9 @@ def test_get_system_currency_with_env_var():
         assert currency == "USD"
 
 
-def test_get_system_currency_fallback_to_usd():
+def test_get_system_currency_fallback_to_usd() -> None:
     """Test fallback to USD when locale detection fails"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -106,14 +106,14 @@ def test_get_system_currency_fallback_to_usd():
         assert currency == "USD"
 
 
-def test_get_system_currency_with_exception():
+def test_get_system_currency_with_exception() -> None:
     """Test fallback to USD when exception occurs"""
     with patch("locale.localeconv", side_effect=Exception("Test error")):
         currency = get_system_currency()
         assert currency == "USD"
 
 
-def test_get_system_currency_with_invalid_int_curr_symbol():
+def test_get_system_currency_with_invalid_int_curr_symbol() -> None:
     """Test fallback when int_curr_symbol is invalid"""
     mock_conv = {"int_curr_symbol": ""}
 
@@ -125,9 +125,9 @@ def test_get_system_currency_with_invalid_int_curr_symbol():
         assert currency == "USD"
 
 
-def test_get_system_currency_with_getlocale_exception():
+def test_get_system_currency_with_getlocale_exception() -> None:
     """Test fallback when getlocale raises exception"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),
@@ -138,9 +138,9 @@ def test_get_system_currency_with_getlocale_exception():
         assert currency == "USD"
 
 
-def test_get_system_currency_with_env_var_exception():
+def test_get_system_currency_with_env_var_exception() -> None:
     """Test fallback when environment variable parsing raises exception"""
-    mock_conv = {}
+    mock_conv: dict[str, str] = {}
 
     with (
         patch("locale.localeconv", return_value=mock_conv),

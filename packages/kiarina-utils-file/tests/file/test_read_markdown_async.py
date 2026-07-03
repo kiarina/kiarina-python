@@ -7,7 +7,7 @@ import kiarina.utils.file.asyncio as kfa
 
 
 @pytest.mark.asyncio
-async def test_read_markdown_with_front_matter():
+async def test_read_markdown_with_front_matter() -> None:
     """Test reading Markdown file with YAML front matter asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Create a Markdown file with front matter
@@ -40,7 +40,7 @@ This is a test document.
 
 
 @pytest.mark.asyncio
-async def test_read_markdown_without_front_matter():
+async def test_read_markdown_without_front_matter() -> None:
     """Test reading Markdown file without front matter asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -55,7 +55,7 @@ async def test_read_markdown_without_front_matter():
 
 
 @pytest.mark.asyncio
-async def test_read_markdown_with_invalid_front_matter():
+async def test_read_markdown_with_invalid_front_matter() -> None:
     """Test reading Markdown file with invalid YAML front matter asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -78,7 +78,7 @@ author: John Doe
 
 
 @pytest.mark.asyncio
-async def test_read_markdown_non_existent_file():
+async def test_read_markdown_non_existent_file() -> None:
     """Test reading non-existent Markdown file asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "non_existent.md")
@@ -88,7 +88,7 @@ async def test_read_markdown_non_existent_file():
 
 
 @pytest.mark.asyncio
-async def test_read_markdown_with_default():
+async def test_read_markdown_with_default() -> None:
     """Test reading non-existent Markdown file with default value asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "non_existent.md")
@@ -102,7 +102,7 @@ async def test_read_markdown_with_default():
 
 
 @pytest.mark.asyncio
-async def test_read_markdown_empty_file():
+async def test_read_markdown_empty_file() -> None:
     """Test reading empty Markdown file asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "empty.md")
@@ -116,7 +116,7 @@ async def test_read_markdown_empty_file():
 
 
 @pytest.mark.asyncio
-async def test_read_markdown_with_complex_metadata():
+async def test_read_markdown_with_complex_metadata() -> None:
     """Test reading Markdown file with complex nested metadata asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         md_path = os.path.join(tmp_dir, "test.md")
@@ -149,7 +149,7 @@ settings:
         assert result.content == "# Content\n"
 
 
-def test_markdown_content_from_text_with_front_matter():
+def test_markdown_content_from_text_with_front_matter() -> None:
     """Test MarkdownContent.from_text() with YAML front matter"""
     text = """---
 title: Test Document
@@ -173,7 +173,7 @@ This is a test document.
     assert result.content == "# Hello World\n\nThis is a test document.\n"
 
 
-def test_markdown_content_from_text_without_front_matter():
+def test_markdown_content_from_text_without_front_matter() -> None:
     """Test MarkdownContent.from_text() without front matter"""
     text = "# Hello World\n\nThis is a test document.\n"
     result = kfa.MarkdownContent.from_text(text)
@@ -182,7 +182,7 @@ def test_markdown_content_from_text_without_front_matter():
     assert result.content == text
 
 
-def test_markdown_content_from_text_with_invalid_front_matter():
+def test_markdown_content_from_text_with_invalid_front_matter() -> None:
     """Test MarkdownContent.from_text() with invalid YAML front matter"""
     # Invalid YAML (missing colon)
     text = """---

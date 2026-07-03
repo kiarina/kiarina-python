@@ -10,7 +10,9 @@ from kiarina.utils.object_registry import ObjectRegistry
 
 
 class MyObject:
-    def __init__(self, message: str = "", options: dict[str, Any] | None = None):
+    def __init__(
+        self, message: str = "", options: dict[str, Any] | None = None
+    ) -> None:
         self.message = message
         self.options = options or {}
         self.name = ""
@@ -34,7 +36,7 @@ def create_object(name: str, config: MyConfig) -> MyObject:
     return obj
 
 
-def test_object_registry(caplog: LogCaptureFixture) -> None:
+def test_object_registry(caplog: LogCaptureFixture) -> Any:
     settings_manager = SettingsManager(MyObjectSettings)
 
     def configure(config: MyConfig, values: dict[str, Any]) -> MyConfig:
@@ -178,7 +180,7 @@ def test_default_factory_with_object_config() -> None:
         pass
 
     class ConfiguredObject:
-        def __init__(self, config: ConfigObject):
+        def __init__(self, config: ConfigObject) -> None:
             self.config = config
 
     config = ConfigObject()

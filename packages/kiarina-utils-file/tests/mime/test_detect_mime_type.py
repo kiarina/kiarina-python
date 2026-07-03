@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 import kiarina.utils.mime as km
@@ -24,7 +26,9 @@ import kiarina.utils.mime as km
     ],
     ids=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
 )
-def test_detect_mime_type(raw_data, file_name_hint, expected_mime_type):
+def test_detect_mime_type(
+    raw_data: Any, file_name_hint: Any, expected_mime_type: Any
+) -> None:
     result = km.detect_mime_type(
         file_name_hint=file_name_hint,
         raw_data=raw_data,

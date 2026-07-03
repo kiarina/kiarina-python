@@ -1,7 +1,9 @@
+from typing import Any
+
 from kiarina.agi.data.message import HumanMessage, hydrate_messages
 
 
-def test_hydrate(text_file_info, image_file_info) -> None:
+def test_hydrate(text_file_info: Any, image_file_info: Any) -> None:
     pool = [text_file_info, image_file_info]
 
     message = HumanMessage.model_validate(
@@ -46,7 +48,7 @@ def test_no_files() -> None:
     assert len(pool) == 0
 
 
-def test_file_index_none(text_file_info) -> None:
+def test_file_index_none(text_file_info: Any) -> None:
     message = HumanMessage.model_validate(
         {
             "contents": [
@@ -64,7 +66,7 @@ def test_file_index_none(text_file_info) -> None:
     assert len(pool) == 0
 
 
-def test_not_metadata_only(text_file_info) -> None:
+def test_not_metadata_only(text_file_info: Any) -> None:
     message = HumanMessage.model_validate(
         {
             "contents": [

@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -17,7 +18,7 @@ from kiarina.utils.mime._operations.detect_with_mimetypes import detect_with_mim
         ((None, "gzip"), None),  # encoding without MIME type
     ],
 )
-def test_detect_with_mimetypes(mock_guess_type_return, expected):
+def test_detect_with_mimetypes(mock_guess_type_return: Any, expected: Any) -> None:
     """
     Test detect_with_mimetypes function behavior.
 
@@ -36,7 +37,7 @@ def test_detect_with_mimetypes(mock_guess_type_return, expected):
         mock_guess_type.assert_called_once_with("any_filename.ext", strict=False)
 
 
-def test_detect_with_mimetypes_integration():
+def test_detect_with_mimetypes_integration() -> None:
     """
     Integration test that verifies the function works with the actual mimetypes module.
 
