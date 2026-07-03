@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-file**: Add local and cloud asset repositories, caching, and file resolution for AI agents.
+
 ### Changed
 - **kiarina-agi-base**: Align internal modules and mirrored tests with Crystal Architecture responsibilities.
 

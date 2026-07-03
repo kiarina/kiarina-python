@@ -21,6 +21,7 @@ test = [
 members = [
     "packages/kiarina",
     "packages/kiarina-agi-base",
+    "packages/kiarina-agi-file",
     "packages/kiarina-currency",
     "packages/kiarina-i18n",
     "packages/kiarina-lib-anthropic",
@@ -42,6 +43,7 @@ members = [
 [tool.uv.sources]
 kiarina = { workspace = true }
 kiarina-agi-base = { workspace = true }
+kiarina-agi-file = { workspace = true }
 kiarina-currency = { workspace = true }
 kiarina-i18n = { workspace = true }
 kiarina-lib-anthropic = { workspace = true }
@@ -83,6 +85,7 @@ combine-as-imports = true
 [tool.mypy]
 mypy_path = [
     "packages/kiarina-agi-base/src",
+    "packages/kiarina-agi-file/src",
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
@@ -113,6 +116,7 @@ asyncio_default_fixture_loop_scope = "session"
 [tool.coverage.run]
 source = [
     "packages/kiarina-agi-base/src",
+    "packages/kiarina-agi-file/src",
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",

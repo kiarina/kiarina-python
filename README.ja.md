@@ -35,6 +35,7 @@
 | Package | Description |
 | --- | --- |
 | [kiarina-agi-base](packages/kiarina-agi-base/) | AI agent 向けの context、cost・request logging、recording、token utility |
+| [kiarina-agi-file](packages/kiarina-agi-file/) | AI agent 向けの local・cloud asset repository、cache、file resolution |
 
 ### Data Stores
 

@@ -12,6 +12,7 @@ resolution-markers = [
 members = [
     "kiarina",
     "kiarina-agi-base",
+    "kiarina-agi-file",
     "kiarina-currency",
     "kiarina-i18n",
     "kiarina-lib-anthropic",
@@ -787,6 +788,7 @@ version = "2.4.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-base" },
+    { name = "kiarina-agi-file" },
     { name = "kiarina-currency" },
     { name = "kiarina-i18n" },
     { name = "kiarina-lib-anthropic" },
@@ -808,6 +810,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
+    { name = "kiarina-agi-file", editable = "packages/kiarina-agi-file" },
     { name = "kiarina-currency", editable = "packages/kiarina-currency" },
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
@@ -859,6 +862,35 @@ requires-dist = [
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "tiktoken", specifier = ">=0.13.0" },
+]
+
+[[package]]
+name = "kiarina-agi-file"
+version = "2.4.0"
+source = { editable = "packages/kiarina-agi-file" }
+dependencies = [
+    { name = "google-cloud-storage" },
+    { name = "kiarina-agi-base" },
+    { name = "kiarina-lib-google" },
+    { name = "kiarina-utils-app" },
+    { name = "kiarina-utils-common" },
+    { name = "kiarina-utils-file" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "google-cloud-storage", specifier = ">=3.4.0" },
+    { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
+    { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
+    { name = "kiarina-utils-app", editable = "packages/kiarina-utils-app" },
+    { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
+    { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
+    { name = "pydantic", specifier = ">=2.11.7" },
+    { name = "pydantic-settings", specifier = ">=2.10.1" },
+    { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
 ]
 
 [[package]]

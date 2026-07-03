@@ -36,6 +36,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "kiarina-agi-base>=2.4.0",
+    "kiarina-agi-file>=2.4.0",
     "kiarina-currency>=2.3.1",
     "kiarina-i18n>=2.3.1",
     "kiarina-lib-anthropic>=2.3.1",
