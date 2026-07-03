@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-utils-app"
-version = "2.3.0"
+version = "2.4.0"
 description = "Application foundation utilities: startup configuration, user directory resolution, and single-instance control"
 readme = "README.md"
 license = "MIT"

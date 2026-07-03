@@ -783,7 +783,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.3.1"
+version = "2.4.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -828,7 +828,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-base"
-version = "2.3.1"
+version = "2.4.0"
 source = { editable = "packages/kiarina-agi-base" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1133,7 +1133,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-utils-app"
-version = "2.3.0"
+version = "2.4.0"
 source = { editable = "packages/kiarina-utils-app" }
 dependencies = [
     { name = "filelock" },

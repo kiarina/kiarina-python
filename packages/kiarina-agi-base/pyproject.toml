@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-base"
-version = "2.3.1"
+version = "2.4.0"
 description = "Core types, contexts, logging, recording, and token utilities for building AI agents"
 readme = "README.md"
 license = "MIT"
