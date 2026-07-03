@@ -6,10 +6,10 @@ from typing import ClassVar, Self
 
 from kiarina.utils.mime import MIMEBlob
 
+from .._schemas.file_bundle_media_content import FileBundleMediaContent
 from .._types.file_bundle_content_input import FileBundleContentInput
 from .._types.file_bundle_file_path import FileBundleFilePath
 from .file_bundle_manifest import FileBundleManifest
-from .file_bundle_media_content import FileBundleMediaContent
 
 
 @dataclass

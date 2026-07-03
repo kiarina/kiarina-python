@@ -6,8 +6,8 @@ from ._models.base_message import BaseMessage
 from ._models.human_message import HumanMessage
 from ._models.system_message import SystemMessage
 from ._models.tool_call import ToolCall
-from ._models.tool_call_chunk import ToolCallChunk
 from ._models.tool_message import ToolMessage
+from ._schemas.tool_call_chunk import ToolCallChunk
 from ._types.message import Message
 from ._types.message_type import MessageType
 
@@ -22,8 +22,9 @@ __all__ = [
     "HumanMessage",
     "SystemMessage",
     "ToolCall",
-    "ToolCallChunk",
     "ToolMessage",
+    # ._schemas
+    "ToolCallChunk",
     # ._types
     "Message",
     "MessageType",

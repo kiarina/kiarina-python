@@ -2,8 +2,8 @@ from typing import Literal
 
 from pydantic import Field
 
+from .._schemas.tool_call_chunk import ToolCallChunk
 from .ai_message import AIMessage
-from .tool_call_chunk import ToolCallChunk
 
 
 class AIMessageChunk(AIMessage):

@@ -2,8 +2,8 @@ from collections.abc import Iterable
 
 import numpy as np
 
-from .._schemas.embedding import Embedding
-from .._schemas.embedding_search_result import EmbeddingSearchResult
+from .._models.embedding import Embedding
+from .._views.embedding_search_result import EmbeddingSearchResult
 from .calc_cosine_similarity import calc_cosine_similarity
 
 

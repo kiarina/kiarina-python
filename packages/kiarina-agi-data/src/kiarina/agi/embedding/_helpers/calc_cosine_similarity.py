@@ -2,7 +2,7 @@ from typing import TypeAlias
 
 import numpy as np
 
-from .._schemas.embedding import Embedding
+from .._models.embedding import Embedding
 from .._types.embedding_vector import EmbeddingVector
 
 EmbeddingLike: TypeAlias = Embedding | np.ndarray

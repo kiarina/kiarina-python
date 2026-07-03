@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-data**: Add messages, events, embeddings, file metadata, and related data models for AI agents.
 
 ### Changed
+- **kiarina-agi-data**: Align internal modules and mirrored tests with Crystal Architecture responsibilities.
 - **kiarina-agi-data**: Move the `kiarina.agi.data` public modules directly under `kiarina.agi`.
 - **kiarina-agi-file, kiarina-agi-data**: Move the `kiarina.agi.file` public modules directly under `kiarina.agi`.
 - **kiarina-agi-base, kiarina-agi-data, kiarina-agi-file**: Move the `kiarina.agi.base` public modules directly under `kiarina.agi`.

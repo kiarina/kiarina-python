@@ -2,8 +2,8 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._schemas.file_bundle import FileBundle
-    from ._schemas.file_bundle_manifest import FileBundleManifest
+    from ._models.file_bundle import FileBundle
+    from ._models.file_bundle_manifest import FileBundleManifest
     from ._schemas.file_bundle_media_content import FileBundleMediaContent
     from ._schemas.file_bundle_text_content import FileBundleTextContent
     from ._types.file_bundle_content import FileBundleContent
@@ -15,9 +15,10 @@ if TYPE_CHECKING:
     from ._types.file_bundle_text_content_spec import FileBundleTextContentSpec
 
 __all__ = [
-    # ._schemas
+    # ._models
     "FileBundle",
     "FileBundleManifest",
+    # ._schemas
     "FileBundleMediaContent",
     "FileBundleTextContent",
     # ._types
@@ -36,9 +37,10 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
+        # ._models
+        "FileBundle": "._models.file_bundle",
+        "FileBundleManifest": "._models.file_bundle_manifest",
         # ._schemas
-        "FileBundle": "._schemas.file_bundle",
-        "FileBundleManifest": "._schemas.file_bundle_manifest",
         "FileBundleMediaContent": "._schemas.file_bundle_media_content",
         "FileBundleTextContent": "._schemas.file_bundle_text_content",
         # ._types

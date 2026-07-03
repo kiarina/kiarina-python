@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .embedding import Embedding
+from .._models.embedding import Embedding
 
 
 class EmbeddingSearchResult(BaseModel):

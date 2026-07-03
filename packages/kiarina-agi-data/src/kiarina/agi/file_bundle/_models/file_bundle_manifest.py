@@ -2,9 +2,9 @@ from typing import ClassVar, Self
 
 from pydantic import BaseModel, Field, TypeAdapter
 
+from .._schemas.file_bundle_text_content import FileBundleTextContent
 from .._types.file_bundle_content import FileBundleContent
 from .._types.file_bundle_content_input import FileBundleContentInput
-from .file_bundle_text_content import FileBundleTextContent
 
 _CONTENT_ADAPTER: TypeAdapter[FileBundleContent] = TypeAdapter(FileBundleContent)
 
