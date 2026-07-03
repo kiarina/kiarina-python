@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._helpers.create_asset_repository import create_asset_repository
     from ._instances.asset_repository_registry import asset_repository_registry
-    from ._models.base_asset_repository import BaseAssetRepository
     from ._schemas.uri_policy import URIPolicy
+    from ._services.base_asset_repository import BaseAssetRepository
     from ._settings import AssetRepositorySettings, settings_manager
     from ._types.asset_area import AssetArea
     from ._types.asset_repository import AssetRepository
@@ -18,7 +18,7 @@ __all__ = [
     "create_asset_repository",
     # ._instances
     "asset_repository_registry",
-    # ._models
+    # ._services
     "BaseAssetRepository",
     # ._schemas
     "URIPolicy",
@@ -43,8 +43,8 @@ def __getattr__(name: str) -> object:
         "create_asset_repository": "._helpers.create_asset_repository",
         # ._instances
         "asset_repository_registry": "._instances.asset_repository_registry",
-        # ._models
-        "BaseAssetRepository": "._models.base_asset_repository",
+        # ._services
+        "BaseAssetRepository": "._services.base_asset_repository",
         # ._schemas
         "URIPolicy": "._schemas.uri_policy",
         # ._settings

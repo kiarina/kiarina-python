@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add local and cloud asset repositories, caching, and file resolution for AI agents.
 
+### Changed
+- Align service modules and mirrored tests with Crystal Architecture responsibilities.
+
 ## [2.4.0] - 2026-07-03
 
 ### Added

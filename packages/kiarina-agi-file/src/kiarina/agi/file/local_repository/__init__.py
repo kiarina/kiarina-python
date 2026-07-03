@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.create_local_repository import create_local_repository
-    from ._models.local_repository import LocalRepository
     from ._schemas.file_path_policy import FilePathPolicy
+    from ._services.local_repository import LocalRepository
     from ._settings import LocalRepositorySettings, settings_manager
     from ._types.local_area import LocalArea
     from ._utils.resolve_file_path import resolve_file_path
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 __all__ = [
     # ._helpers
     "create_local_repository",
-    # ._models
+    # ._services
     "LocalRepository",
     # ._schemas
     "FilePathPolicy",
@@ -33,8 +33,8 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._helpers
         "create_local_repository": "._helpers.create_local_repository",
-        # ._models
-        "LocalRepository": "._models.local_repository",
+        # ._services
+        "LocalRepository": "._services.local_repository",
         # ._schemas
         "FilePathPolicy": "._schemas.file_path_policy",
         # ._settings

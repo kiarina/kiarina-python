@@ -3,13 +3,13 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.create_asset_cache import create_asset_cache
-    from ._models.asset_cache import AssetCache
+    from ._services.asset_cache import AssetCache
     from ._settings import AssetCacheSettings, settings_manager
 
 __all__ = [
     # ._helpers
     "create_asset_cache",
-    # ._models
+    # ._services
     "AssetCache",
     # ._settings
     "AssetCacheSettings",
@@ -24,8 +24,8 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._helpers
         "create_asset_cache": "._helpers.create_asset_cache",
-        # ._models
-        "AssetCache": "._models.asset_cache",
+        # ._services
+        "AssetCache": "._services.asset_cache",
         # ._settings
         "AssetCacheSettings": "._settings",
         "settings_manager": "._settings",

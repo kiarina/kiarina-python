@@ -1,6 +1,6 @@
 from typing import Any
 
-from .._models.gcs_asset_repository import GCSAssetRepository
+from .._services.gcs_asset_repository import GCSAssetRepository
 from .._settings import GCSAssetRepositorySettings, settings_manager
 
 
