@@ -1,0 +1,17 @@
+kiarina.lib.google:
+  default: service_account
+  configs:
+    service_account:
+      type: service_account
+      project_id: your-project-id
+      service_account_email: your-service-account@your-project.iam.gserviceaccount.com
+      service_account_file: ~/.gcp/service-account/your-project/your-service-account/key.json
+
+kiarina.agi.file.asset_repository:
+  default: gcs
+  uri_policy:
+    allowed_uri_patterns:
+      - "gs://your-bucket/agi/agents/{agent_id}/data/.*"
+      - "gs://your-bucket/agi/agents/{agent_id}/cache/.*"
+    data_dir_uri_template: "gs://your-bucket/agi/agents/{agent_id}/data/"
+    cache_dir_uri_template: "gs://your-bucket/agi/agents/{agent_id}/cache/"
