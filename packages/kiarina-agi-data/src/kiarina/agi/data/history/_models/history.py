@@ -18,7 +18,7 @@ from kiarina.agi.data.file_info import FileID, FileInfo, Group, UniqueKey
 from kiarina.agi.data.file_info_pool import FileInfoPool
 from kiarina.agi.data.message import Message, MessageType, ToolCall
 from kiarina.agi.data.tool_info import ToolInfo, ToolName, ToolState
-from kiarina.agi.file.file import URIOrFilePath
+from kiarina.agi.file import URIOrFilePath
 
 
 class History(BaseModel):

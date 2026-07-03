@@ -7,7 +7,7 @@ kiarina.lib.google:
       service_account_email: your-service-account@your-project.iam.gserviceaccount.com
       service_account_file: ~/.gcp/service-account/your-project/your-service-account/key.json
 
-kiarina.agi.file.asset_repository:
+kiarina.agi.asset_repository:
   default: gcs
   uri_policy:
     allowed_uri_patterns:

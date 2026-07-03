@@ -65,7 +65,7 @@ Configure the application name first. The default data and cache paths are gener
 
 ```python
 from kiarina.agi.run_context import RunContext
-from kiarina.agi.file.local_repository import create_local_repository
+from kiarina.agi.local_repository import create_local_repository
 from kiarina.utils.app import configure
 
 configure("example-app", "example-author")
@@ -85,7 +85,7 @@ The default `local` preset uses the local filesystem. Stored and retrieved value
 
 ```python
 from kiarina.agi.run_context import RunContext
-from kiarina.agi.file.asset_repository import create_asset_repository
+from kiarina.agi.asset_repository import create_asset_repository
 from kiarina.utils.app import configure
 
 configure("example-app", "example-author")
@@ -122,7 +122,7 @@ export KIARINA_AGI_ASSET_REPOSITORY_IMPL_GCS_GOOGLE_AUTH_SETTINGS_KEY=service_ac
 ### Resolve a URI or File Path
 
 ```python
-from kiarina.agi.file.file import get_file_blob
+from kiarina.agi.file import get_file_blob
 
 file_blob = await get_file_blob(
     "gs://example-bucket/agent-1/data/example.txt",
@@ -134,10 +134,10 @@ URIs use the configured asset repository; other strings use the local repository
 
 ## API Reference
 
-### `kiarina.agi.file.file`
+### `kiarina.agi.file`
 
 ```python
-from kiarina.agi.file.file import FilePath, URIOrFilePath, get_file_blob
+from kiarina.agi.file import FilePath, URIOrFilePath, get_file_blob
 ```
 
 ```python
@@ -151,10 +151,10 @@ FilePath: TypeAlias = str
 URIOrFilePath: TypeAlias = str
 ```
 
-### `kiarina.agi.file.local_repository`
+### `kiarina.agi.local_repository`
 
 ```python
-from kiarina.agi.file.local_repository import (
+from kiarina.agi.local_repository import (
     FilePathPolicy,
     LocalArea,
     LocalRepository,
@@ -242,10 +242,10 @@ settings_manager: SettingsManager[LocalRepositorySettings]
 
 `resolve_file_path()` expands environment variables and `~`, then returns an absolute path. Operations on a disallowed path raise `PermissionError`.
 
-### `kiarina.agi.file.asset_cache`
+### `kiarina.agi.asset_cache`
 
 ```python
-from kiarina.agi.file.asset_cache import (
+from kiarina.agi.asset_cache import (
     AssetCache,
     AssetCacheSettings,
     create_asset_cache,
@@ -280,10 +280,10 @@ class AssetCacheSettings(BaseSettings):
 settings_manager: SettingsManager[AssetCacheSettings]
 ```
 
-### `kiarina.agi.file.asset_repository`
+### `kiarina.agi.asset_repository`
 
 ```python
-from kiarina.agi.file.asset_repository import (
+from kiarina.agi.asset_repository import (
     AssetArea,
     AssetRepository,
     AssetRepositoryName,
@@ -401,10 +401,10 @@ settings_manager: SettingsManager[AssetRepositorySettings]
 
 `AssetRepositorySpecifier` is a repository name or a string in the `"{name}?{config}"` form. An absent URI pattern raises `ValueError`; operations on a disallowed URI raise `PermissionError`.
 
-### `kiarina.agi.file.asset_repository_impl.local`
+### `kiarina.agi.asset_repository_impl.local`
 
 ```python
-from kiarina.agi.file.asset_repository_impl.local import LocalAssetRepository
+from kiarina.agi.asset_repository_impl.local import LocalAssetRepository
 
 class LocalAssetRepository(BaseAssetRepository):
     @property
@@ -416,12 +416,12 @@ class LocalAssetRepository(BaseAssetRepository):
 
 `LocalAssetRepository` implements the `BaseAssetRepository` storage operations on the local filesystem. Its download URL is a `file://` URL.
 
-### `kiarina.agi.file.asset_repository_impl.gcs`
+### `kiarina.agi.asset_repository_impl.gcs`
 
 Importing this module requires the `asset-repository-gcs` extra.
 
 ```python
-from kiarina.agi.file.asset_repository_impl.gcs import (
+from kiarina.agi.asset_repository_impl.gcs import (
     GCSAssetRepository,
     GCSAssetRepositorySettings,
     create_gcs_asset_repository,

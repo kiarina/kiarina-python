@@ -9,7 +9,7 @@ import sys
 sys.modules["google.cloud.exceptions"] = None
 sys.modules["google.cloud.storage"] = None
 
-from kiarina.agi.file.asset_repository_impl.gcs._services import (
+from kiarina.agi.asset_repository_impl.gcs._services import (
     gcs_asset_repository,
 )
 """

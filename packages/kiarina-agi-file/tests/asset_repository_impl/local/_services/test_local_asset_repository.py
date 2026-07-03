@@ -2,8 +2,8 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.file.asset_repository import URIPolicy
-from kiarina.agi.file.asset_repository_impl.local import LocalAssetRepository
+from kiarina.agi.asset_repository import URIPolicy
+from kiarina.agi.asset_repository_impl.local import LocalAssetRepository
 
 
 @pytest.fixture

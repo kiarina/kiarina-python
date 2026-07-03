@@ -6,7 +6,7 @@ import time
 from typing import cast
 
 import kiarina.utils.file.asyncio as kfa
-from kiarina.agi.file.local_repository import LocalRepository, create_local_repository
+from kiarina.agi.local_repository import LocalRepository, create_local_repository
 from kiarina.agi.run_context import RunContext
 from kiarina.utils.ext import detect_extension
 from kiarina.utils.file import FileBlob

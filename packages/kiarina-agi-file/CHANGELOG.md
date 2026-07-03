@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Move public modules from `kiarina.agi.file` to `kiarina.agi`.
 - Import shared AI agent utilities from `kiarina.agi`.
 
 ## [2.5.0] - 2026-07-03

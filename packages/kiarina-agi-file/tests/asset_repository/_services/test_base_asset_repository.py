@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.file.asset_repository import (
+from kiarina.agi.asset_repository import (
     AssetRepository,
     create_asset_repository,
     settings_manager,

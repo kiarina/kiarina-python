@@ -3,7 +3,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.file.local_repository import (
+from kiarina.agi.local_repository import (
     LocalRepository,
     create_local_repository,
     settings_manager,

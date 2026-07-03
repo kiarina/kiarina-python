@@ -27,9 +27,9 @@ class AssetRepositorySettings(BaseSettings):
         title="Repository Presets",
         description="Built-in repository factory import paths.",
         default_factory=lambda: {
-            "local": "kiarina.agi.file.asset_repository_impl.local:LocalAssetRepository",
+            "local": "kiarina.agi.asset_repository_impl.local:LocalAssetRepository",
             "gcs": (
-                "kiarina.agi.file.asset_repository_impl.gcs:create_gcs_asset_repository"
+                "kiarina.agi.asset_repository_impl.gcs:create_gcs_asset_repository"
             ),
         },
     )

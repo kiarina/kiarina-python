@@ -1,6 +1,6 @@
-from kiarina.agi.file.asset_repository import create_asset_repository
-from kiarina.agi.file.local_repository import create_local_repository
+from kiarina.agi.asset_repository import create_asset_repository
 from kiarina.agi.file_utils import is_uri
+from kiarina.agi.local_repository import create_local_repository
 from kiarina.agi.run_context import RunContext
 from kiarina.utils.file import FileBlob
 

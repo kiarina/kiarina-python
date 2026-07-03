@@ -1,6 +1,6 @@
 import os
 
-from kiarina.agi.file.local_repository import resolve_file_path
+from kiarina.agi.local_repository import resolve_file_path
 
 
 def test_resolve_file_path() -> None:

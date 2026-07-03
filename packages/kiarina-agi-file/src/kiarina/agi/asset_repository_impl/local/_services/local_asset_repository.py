@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 
-from kiarina.agi.file.asset_repository import BaseAssetRepository
-from kiarina.agi.file.local_repository import LocalRepository, create_local_repository
+from kiarina.agi.asset_repository import BaseAssetRepository
+from kiarina.agi.local_repository import LocalRepository, create_local_repository
 from kiarina.utils.app import user_directory
 from kiarina.utils.mime import MIMEBlob
 

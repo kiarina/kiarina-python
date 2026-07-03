@@ -2,8 +2,8 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.file import asset_repository, local_repository
-from kiarina.agi.file.file import get_file_blob
+from kiarina.agi import asset_repository, local_repository
+from kiarina.agi.file import get_file_blob
 from kiarina.utils.mime import MIMEBlob
 
 

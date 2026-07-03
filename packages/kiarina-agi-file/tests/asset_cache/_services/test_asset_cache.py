@@ -3,7 +3,7 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.file.asset_cache import create_asset_cache, settings_manager
+from kiarina.agi.asset_cache import create_asset_cache, settings_manager
 
 
 @pytest.fixture(autouse=True)

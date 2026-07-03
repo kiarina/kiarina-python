@@ -1,6 +1,6 @@
 from typing import Protocol, runtime_checkable
 
-from kiarina.agi.file.asset_cache import AssetCache
+from kiarina.agi.asset_cache import AssetCache
 from kiarina.agi.run_context import RunContext
 
 from .._schemas.uri_policy import URIPolicy

@@ -3,7 +3,7 @@ import logging
 from datetime import timedelta
 from urllib.parse import urlparse
 
-from kiarina.agi.file.asset_repository import BaseAssetRepository
+from kiarina.agi.asset_repository import BaseAssetRepository
 from kiarina.lib.google import get_credentials
 from kiarina.utils.mime import MIMEBlob, detect_mime_type
 

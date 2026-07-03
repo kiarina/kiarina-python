@@ -65,7 +65,7 @@ pip install "kiarina-agi-file[asset-repository-gcs]"
 
 ```python
 from kiarina.agi.run_context import RunContext
-from kiarina.agi.file.local_repository import create_local_repository
+from kiarina.agi.local_repository import create_local_repository
 from kiarina.utils.app import configure
 
 configure("example-app", "example-author")
@@ -85,7 +85,7 @@ loaded = await repository.get(file_path)
 
 ```python
 from kiarina.agi.run_context import RunContext
-from kiarina.agi.file.asset_repository import create_asset_repository
+from kiarina.agi.asset_repository import create_asset_repository
 from kiarina.utils.app import configure
 
 configure("example-app", "example-author")
@@ -122,7 +122,7 @@ export KIARINA_AGI_ASSET_REPOSITORY_IMPL_GCS_GOOGLE_AUTH_SETTINGS_KEY=service_ac
 ### Resolve a URI or File Path
 
 ```python
-from kiarina.agi.file.file import get_file_blob
+from kiarina.agi.file import get_file_blob
 
 file_blob = await get_file_blob(
     "gs://example-bucket/agent-1/data/example.txt",
@@ -134,10 +134,10 @@ URI は configured asset repository、その他の文字列は local repository 
 
 ## API Reference
 
-### `kiarina.agi.file.file`
+### `kiarina.agi.file`
 
 ```python
-from kiarina.agi.file.file import FilePath, URIOrFilePath, get_file_blob
+from kiarina.agi.file import FilePath, URIOrFilePath, get_file_blob
 ```
 
 ```python
@@ -151,10 +151,10 @@ FilePath: TypeAlias = str
 URIOrFilePath: TypeAlias = str
 ```
 
-### `kiarina.agi.file.local_repository`
+### `kiarina.agi.local_repository`
 
 ```python
-from kiarina.agi.file.local_repository import (
+from kiarina.agi.local_repository import (
     FilePathPolicy,
     LocalArea,
     LocalRepository,
@@ -242,10 +242,10 @@ settings_manager: SettingsManager[LocalRepositorySettings]
 
 `resolve_file_path()` は environment variable と `~` を展開し、absolute path を返します。許可されていない path に対する操作は `PermissionError` を送出します。
 
-### `kiarina.agi.file.asset_cache`
+### `kiarina.agi.asset_cache`
 
 ```python
-from kiarina.agi.file.asset_cache import (
+from kiarina.agi.asset_cache import (
     AssetCache,
     AssetCacheSettings,
     create_asset_cache,
@@ -280,10 +280,10 @@ class AssetCacheSettings(BaseSettings):
 settings_manager: SettingsManager[AssetCacheSettings]
 ```
 
-### `kiarina.agi.file.asset_repository`
+### `kiarina.agi.asset_repository`
 
 ```python
-from kiarina.agi.file.asset_repository import (
+from kiarina.agi.asset_repository import (
     AssetArea,
     AssetRepository,
     AssetRepositoryName,
@@ -401,10 +401,10 @@ settings_manager: SettingsManager[AssetRepositorySettings]
 
 `AssetRepositorySpecifier` は repository name、または `"{name}?{config}"` 形式の文字列です。URI pattern が未設定の場合は `ValueError`、許可されていない URI に対する操作は `PermissionError` を送出します。
 
-### `kiarina.agi.file.asset_repository_impl.local`
+### `kiarina.agi.asset_repository_impl.local`
 
 ```python
-from kiarina.agi.file.asset_repository_impl.local import LocalAssetRepository
+from kiarina.agi.asset_repository_impl.local import LocalAssetRepository
 
 class LocalAssetRepository(BaseAssetRepository):
     @property
@@ -416,12 +416,12 @@ class LocalAssetRepository(BaseAssetRepository):
 
 `LocalAssetRepository` は `BaseAssetRepository` の storage 操作を local filesystem に実装します。download URL は `file://` URL です。
 
-### `kiarina.agi.file.asset_repository_impl.gcs`
+### `kiarina.agi.asset_repository_impl.gcs`
 
 この module の import には `asset-repository-gcs` extra が必要です。
 
 ```python
-from kiarina.agi.file.asset_repository_impl.gcs import (
+from kiarina.agi.asset_repository_impl.gcs import (
     GCSAssetRepository,
     GCSAssetRepositorySettings,
     create_gcs_asset_repository,

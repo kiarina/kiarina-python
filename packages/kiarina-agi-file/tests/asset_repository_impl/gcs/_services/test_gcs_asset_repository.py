@@ -3,8 +3,8 @@ from typing import Any
 
 import pytest
 
-from kiarina.agi.file.asset_repository import AssetRepository, create_asset_repository
-from kiarina.agi.file.asset_repository_impl.gcs import GCSAssetRepository
+from kiarina.agi.asset_repository import AssetRepository, create_asset_repository
+from kiarina.agi.asset_repository_impl.gcs import GCSAssetRepository
 
 
 @pytest.fixture
