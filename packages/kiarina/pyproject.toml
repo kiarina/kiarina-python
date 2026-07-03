@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "2.4.0"
+version = "2.5.0"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"
@@ -35,8 +35,8 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "kiarina-agi-base>=2.4.0",
-    "kiarina-agi-file>=2.4.0",
+    "kiarina-agi-base>=2.5.0",
+    "kiarina-agi-file>=2.5.0",
     "kiarina-currency>=2.3.1",
     "kiarina-i18n>=2.3.1",
     "kiarina-lib-anthropic>=2.3.1",
