@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Move manually run chat and token overflow checks from skipped tests to package scripts.
 - Enable targeted costly tests through `KIARINA_TEST_COSTLY`, the test task, and package Make shortcuts.
 
+### Fixed
+- Allow chat helpers to create a run context when one is not provided.
+
 ## [2.6.0] - 2026-07-03
 
 ### Added

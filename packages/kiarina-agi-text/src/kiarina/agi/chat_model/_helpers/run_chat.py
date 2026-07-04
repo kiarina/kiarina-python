@@ -17,10 +17,11 @@ async def run_chat(
     tool_infos: list[ToolInfo] | None = None,
     chat_options: ChatOptions | None = None,
     cost_recorder: CostRecorder | None = None,
-    run_context: RunContext,
+    run_context: RunContext | None = None,
 ) -> AsyncIterator[AIMessageChunk | AIMessage]:
     chat_options = chat_options or {}
     cost_recorder = cost_recorder or NullCostRecorder()
+    run_context = run_context or RunContext()
 
     chat_model = chat_options.get("chat_model")
 

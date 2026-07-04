@@ -15,7 +15,7 @@ async def stream_chat(
     tool_infos: list[ToolInfo] | None = None,
     chat_options: ChatOptions | None = None,
     cost_recorder: CostRecorder | None = None,
-    run_context: RunContext,
+    run_context: RunContext | None = None,
 ) -> AsyncIterator[AIMessageChunk | AIMessage]:
     chat_options = chat_options or {}
     chat_options = {**chat_options, "streaming": True}

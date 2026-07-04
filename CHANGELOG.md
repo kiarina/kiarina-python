@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add AI agent packages to the VS Code workspace.
 - Standardize package README optional dependency tables and `all` extra installation guidance.
 
+### Fixed
+- **kiarina-agi-text**: Allow chat helpers to create a run context when one is not provided.
+
 ## [2.6.0] - 2026-07-03
 
 ### Added
