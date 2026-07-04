@@ -1,6 +1,6 @@
 import re
-from collections.abc import Callable, Iterator
-from typing import Any
+from collections.abc import Iterator
+from typing import TypedDict
 
 import pytest
 
@@ -14,6 +14,32 @@ from kiarina.agi.file_info import (
 )
 from kiarina.agi.run_context import RunContext, settings_manager
 from kiarina.utils.app import configure, reset
+
+
+class FileInfoArgs(TypedDict):
+    uri_or_file_path: str
+    mime_type: str
+    file_hash: str
+    file_size: int
+    token_count: int
+    intermediate_file_path: str | None
+    asset_uri: str | None
+
+
+def create_file_info_args(
+    *,
+    uri_or_file_path: str = "/tmp/sample",
+    mime_type: str = "application/octet-stream",
+) -> FileInfoArgs:
+    return {
+        "uri_or_file_path": uri_or_file_path,
+        "mime_type": mime_type,
+        "file_hash": "dummy-hash",
+        "file_size": 100,
+        "token_count": 100,
+        "intermediate_file_path": None,
+        "asset_uri": None,
+    }
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -37,30 +63,10 @@ def run_context(request: pytest.FixtureRequest) -> RunContext:
 
 
 @pytest.fixture
-def file_info_factory() -> Callable[..., dict[str, Any]]:
-    def factory(**overrides: Any) -> dict[str, Any]:
-        values: dict[str, Any] = {
-            "uri_or_file_path": "/tmp/sample",
-            "mime_type": "application/octet-stream",
-            "file_hash": "dummy-hash",
-            "file_size": 100,
-            "token_count": 100,
-            "intermediate_file_path": None,
-            "asset_uri": None,
-        }
-        values.update(overrides)
-        return values
-
-    return factory
-
-
-@pytest.fixture
-def text_file_info(
-    file_info_factory: Callable[..., dict[str, Any]],
-) -> TextFileInfo:
+def text_file_info() -> TextFileInfo:
     raw_text = "\n".join(f"Line {index}" for index in range(1, 101))
     return TextFileInfo(
-        **file_info_factory(
+        **create_file_info_args(
             uri_or_file_path="/tmp/sample.txt",
             mime_type="text/plain",
         ),
@@ -70,11 +76,9 @@ def text_file_info(
 
 
 @pytest.fixture
-def image_file_info(
-    file_info_factory: Callable[..., dict[str, Any]],
-) -> ImageFileInfo:
+def image_file_info() -> ImageFileInfo:
     return ImageFileInfo(
-        **file_info_factory(
+        **create_file_info_args(
             uri_or_file_path="/tmp/sample.png",
             mime_type="image/png",
         ),
@@ -84,11 +88,9 @@ def image_file_info(
 
 
 @pytest.fixture
-def audio_file_info(
-    file_info_factory: Callable[..., dict[str, Any]],
-) -> AudioFileInfo:
+def audio_file_info() -> AudioFileInfo:
     return AudioFileInfo(
-        **file_info_factory(
+        **create_file_info_args(
             uri_or_file_path="/tmp/sample.mp3",
             mime_type="audio/mpeg",
         ),
@@ -97,11 +99,9 @@ def audio_file_info(
 
 
 @pytest.fixture
-def video_file_info(
-    file_info_factory: Callable[..., dict[str, Any]],
-) -> VideoFileInfo:
+def video_file_info() -> VideoFileInfo:
     return VideoFileInfo(
-        **file_info_factory(
+        **create_file_info_args(
             uri_or_file_path="/tmp/sample.mp4",
             mime_type="video/mp4",
         ),
@@ -112,11 +112,9 @@ def video_file_info(
 
 
 @pytest.fixture
-def pdf_file_info(
-    file_info_factory: Callable[..., dict[str, Any]],
-) -> PDFFileInfo:
+def pdf_file_info() -> PDFFileInfo:
     return PDFFileInfo(
-        **file_info_factory(
+        **create_file_info_args(
             uri_or_file_path="/tmp/sample.pdf",
             mime_type="application/pdf",
         ),
@@ -125,7 +123,5 @@ def pdf_file_info(
 
 
 @pytest.fixture
-def other_file_info(
-    file_info_factory: Callable[..., dict[str, Any]],
-) -> OtherFileInfo:
-    return OtherFileInfo(**file_info_factory(uri_or_file_path="/tmp/sample.bin"))
+def other_file_info() -> OtherFileInfo:
+    return OtherFileInfo(**create_file_info_args(uri_or_file_path="/tmp/sample.bin"))

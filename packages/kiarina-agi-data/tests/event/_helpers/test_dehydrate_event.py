@@ -1,6 +1,5 @@
-from typing import Any
-
 from kiarina.agi.event import CustomEvent, HumanMessageEvent, dehydrate_event
+from kiarina.agi.file_info import TextFileInfo
 from kiarina.agi.message import hydrate_messages
 
 
@@ -18,7 +17,7 @@ def test_not_dehydrated() -> None:
     assert len(pool) == 0
 
 
-def test_dehydrated(text_file_info: Any) -> None:
+def test_dehydrated(text_file_info: TextFileInfo) -> None:
     event = HumanMessageEvent.create("Hello", files=[text_file_info])
     new_event, pool = dehydrate_event(event, [])
     assert new_event.type == "human_message"

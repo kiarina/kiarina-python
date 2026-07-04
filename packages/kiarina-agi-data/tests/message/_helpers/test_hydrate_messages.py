@@ -1,10 +1,10 @@
-from typing import Any
-
+from kiarina.agi.file_info import ImageFileInfo, TextFileInfo
+from kiarina.agi.file_info_pool import FileInfoPool
 from kiarina.agi.message import HumanMessage, hydrate_messages
 
 
-def test_hydrate(text_file_info: Any, image_file_info: Any) -> None:
-    pool = [text_file_info, image_file_info]
+def test_hydrate(text_file_info: TextFileInfo, image_file_info: ImageFileInfo) -> None:
+    pool: FileInfoPool = [text_file_info, image_file_info]
 
     message = HumanMessage.model_validate(
         {
@@ -48,7 +48,7 @@ def test_no_files() -> None:
     assert len(pool) == 0
 
 
-def test_file_index_none(text_file_info: Any) -> None:
+def test_file_index_none(text_file_info: TextFileInfo) -> None:
     message = HumanMessage.model_validate(
         {
             "contents": [
@@ -66,7 +66,7 @@ def test_file_index_none(text_file_info: Any) -> None:
     assert len(pool) == 0
 
 
-def test_not_metadata_only(text_file_info: Any) -> None:
+def test_not_metadata_only(text_file_info: TextFileInfo) -> None:
     message = HumanMessage.model_validate(
         {
             "contents": [

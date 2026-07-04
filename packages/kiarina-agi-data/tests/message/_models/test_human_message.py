@@ -1,6 +1,5 @@
-from typing import Any
-
 from kiarina.agi.content import Content
+from kiarina.agi.file_info import TextFileInfo
 from kiarina.agi.message import HumanMessage
 
 
@@ -15,7 +14,7 @@ def test_create_uses_empty_defaults() -> None:
     assert content.files == []
 
 
-def test_create_sets_text_and_files(text_file_info: Any) -> None:
+def test_create_sets_text_and_files(text_file_info: TextFileInfo) -> None:
     message = HumanMessage.create("hello", [text_file_info])
     content = message.contents[0]
 

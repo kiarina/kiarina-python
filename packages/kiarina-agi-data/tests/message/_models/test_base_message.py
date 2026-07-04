@@ -1,8 +1,7 @@
-from typing import Any
-
 import pytest
 
 from kiarina.agi.content import Content
+from kiarina.agi.file_info import TextFileInfo
 from kiarina.agi.message import (
     HumanMessage,
     Message,
@@ -11,7 +10,7 @@ from kiarina.agi.message import (
 )
 
 
-def test_get_file_infos(text_file_info: Any) -> None:
+def test_get_file_infos(text_file_info: TextFileInfo) -> None:
     message = HumanMessage(
         contents=[
             Content(text="Hello1", files=[text_file_info]),
@@ -22,7 +21,7 @@ def test_get_file_infos(text_file_info: Any) -> None:
     assert len(message.get_file_infos()) == 2
 
 
-def test_to_estimates(text_file_info: Any) -> None:
+def test_to_estimates(text_file_info: TextFileInfo) -> None:
     message = HumanMessage.create("Hello", files=[text_file_info])
     estimates = message.to_estimates()
     assert estimates.token_count > 0
@@ -48,7 +47,7 @@ def test_replace_content() -> None:
         message.replace_content(Content(text="missing"), new)
 
 
-def test_shrink_not_reducible(text_file_info: Any) -> None:
+def test_shrink_not_reducible(text_file_info: TextFileInfo) -> None:
     message = HumanMessage.create("Hello", files=[text_file_info])
     print("Original text:", message.to_text())
 
@@ -59,7 +58,7 @@ def test_shrink_not_reducible(text_file_info: Any) -> None:
     print("Shrunk text:", message.to_text())
 
 
-def test_shrink(text_file_info: Any) -> None:
+def test_shrink(text_file_info: TextFileInfo) -> None:
     message: Message = HumanMessage.create("Hello", files=[text_file_info])
     print("Original text:", message.to_text())
 
