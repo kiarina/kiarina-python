@@ -1,16 +1,10 @@
 # mypy: ignore-errors
 
 import json
-import os
 
 import pytest
 
 from kiarina.agi.message import HumanMessage
-
-
-@pytest.fixture(scope="session")
-def chat_model_name() -> str:
-    return os.getenv("KIARINA_AGI_TEXT_TEST_CHAT_MODEL", "mock").strip() or "mock"
 
 
 @pytest.fixture

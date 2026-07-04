@@ -1,5 +1,6 @@
 # mypy: ignore-errors
 
+import os
 import re
 from collections.abc import Callable, Iterator
 from pathlib import Path
@@ -35,6 +36,19 @@ from kiarina.agi.tool_info import create_tool_info
 from kiarina.utils.app import configure, reset
 from kiarina.utils.file import FileBlob, read_file
 from kiarina.utils.mime import MIMEBlob
+
+
+def _get_chat_model_name() -> str:
+    return os.getenv("KIARINA_AGI_TEXT_TEST_CHAT_MODEL", "mock").strip() or "mock"
+
+
+def pytest_report_header() -> str:
+    return f"chat model: {_get_chat_model_name()}"
+
+
+@pytest.fixture(scope="session")
+def chat_model_name() -> str:
+    return _get_chat_model_name()
 
 
 @pytest.fixture(autouse=True)
