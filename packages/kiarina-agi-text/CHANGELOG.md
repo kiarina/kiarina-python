@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add the `kiarina-agi-text` package.
 
 ### Changed
+- Expand the package README with dependencies, installation, usage, configuration, and public API references.
 - Add concrete type annotations to package tests and remove file-wide mypy suppressions.
 - Add the GPT-5.5 chat model preset and remove obsolete OpenAI presets.
 - Select chat model helper tests through `KIARINA_AGI_TEXT_TEST_CHAT_MODEL`, default to the mock model, configure verbose parallel retries and timeouts, use a smaller text fixture, and hide unsupported chat model presets.
