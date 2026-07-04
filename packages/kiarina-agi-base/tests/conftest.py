@@ -1,8 +1,8 @@
 import re
 from collections.abc import Iterator
-from typing import Any
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 
 from kiarina.agi.run_context import RunContext
 from kiarina.utils.app import configure, reset
@@ -16,7 +16,7 @@ def configure_app() -> Iterator[None]:
 
 
 @pytest.fixture
-def run_context(request: Any) -> RunContext:
+def run_context(request: FixtureRequest) -> RunContext:
     return RunContext(
         organization_id="kiarina.agi",
         user_id=request.module.__name__,

@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -6,7 +6,7 @@ from kiarina.agi.run_context import RunContext, settings_manager
 
 
 @pytest.fixture(autouse=True)
-def cleanup_run_context() -> Any:
+def cleanup_run_context() -> Iterator[None]:
     cli_args = settings_manager.cli_args.copy()
     yield
     settings_manager.cli_args = cli_args

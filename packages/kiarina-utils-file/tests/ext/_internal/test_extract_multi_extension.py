@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 from kiarina.utils.ext._operations.extract_multi_extension import (
@@ -39,5 +37,5 @@ from kiarina.utils.ext._operations.extract_multi_extension import (
         ("file.", None),
     ],
 )
-def test_main(file_name_hint: Any, expected: Any) -> None:
+def test_main(file_name_hint: str, expected: str | None) -> None:
     assert extract_multi_extension(file_name_hint) == expected

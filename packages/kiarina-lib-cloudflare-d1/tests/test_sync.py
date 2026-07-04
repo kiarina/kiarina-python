@@ -1,18 +1,16 @@
-from typing import Any
-
 import pytest
 
 from kiarina.lib.cloudflare_d1 import create_d1_client
 
 
-def test_success(load_settings: Any) -> None:
+def test_success(load_settings: None) -> None:
     client = create_d1_client()
     result = client.query("SELECT 1")
     assert result.success
     assert len(result.first.rows) == 1
 
 
-def test_error(load_settings: Any) -> None:
+def test_error(load_settings: None) -> None:
     client = create_d1_client()
 
     result = client.query("SELECT * FROM non_existent_table")

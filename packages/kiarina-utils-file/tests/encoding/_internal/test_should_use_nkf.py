@@ -1,6 +1,5 @@
 import os
-from typing import Any
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from kiarina.utils.encoding._operations.should_use_nkf import (
     clear_nkf_cache,
@@ -10,7 +9,7 @@ from kiarina.utils.encoding._operations.should_use_nkf import (
 
 @patch("kiarina.utils.encoding._operations.should_use_nkf.shutil.which")
 @patch("kiarina.utils.encoding._operations.should_use_nkf.locale.getlocale")
-def test_jp(mock_getlocale: Any, mock_which: Any) -> None:
+def test_jp(mock_getlocale: MagicMock, mock_which: MagicMock) -> None:
     """Test that should_use_nkf returns True when nkf is available in Japanese environment"""
     clear_nkf_cache()
     mock_getlocale.return_value = ("ja_JP", "UTF-8")
@@ -26,7 +25,7 @@ def test_jp(mock_getlocale: Any, mock_which: Any) -> None:
 )
 @patch("kiarina.utils.encoding._operations.should_use_nkf.shutil.which")
 @patch("kiarina.utils.encoding._operations.should_use_nkf.locale.getlocale")
-def test_non_jp(mock_getlocale: Any, mock_which: Any) -> None:
+def test_non_jp(mock_getlocale: MagicMock, mock_which: MagicMock) -> None:
     """Test that should_use_nkf returns False when nkf is available in non-Japanese environment"""
     clear_nkf_cache()
     mock_getlocale.return_value = ("en_US", "UTF-8")

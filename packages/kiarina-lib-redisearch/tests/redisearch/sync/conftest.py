@@ -1,6 +1,5 @@
-from typing import Any
-
 import pytest
+from redis import Redis
 
 from kiarina.lib.redis import get_redis
 from kiarina.lib.redisearch import RedisearchClient, RedisearchSettings
@@ -8,12 +7,17 @@ from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
 @pytest.fixture
-def redis() -> Any:
+def redis() -> Redis:
     return get_redis(cache_key="kiarina.lib.redisearch")
 
 
 @pytest.fixture
-def client(key_prefix: Any, index_name: Any, redis: Any, fields: Any) -> Any:
+def client(
+    key_prefix: str,
+    index_name: str,
+    redis: Redis,
+    fields: list[dict[str, object]],
+) -> RedisearchClient:
     return RedisearchClient(
         RedisearchSettings(
             key_prefix=key_prefix,

@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -9,7 +9,7 @@ from kiarina.currency.rate_provider import (
 )
 
 
-def dummy(**kwargs: Any) -> object:
+def dummy(**kwargs: object) -> object:
     return object()
 
 
@@ -25,7 +25,7 @@ class RateProvider(BaseRateProvider):
 
 
 @pytest.fixture(autouse=True)
-def setup() -> Any:
+def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "default": "test",
         "providers": {"test": __name__},

@@ -1,6 +1,5 @@
 import re
 from collections.abc import Iterator
-from typing import Any
 
 import pytest
 
@@ -16,7 +15,7 @@ def configure_app() -> Iterator[None]:
 
 
 @pytest.fixture
-def run_context(request: Any) -> RunContext:
+def run_context(request: pytest.FixtureRequest) -> RunContext:
     return RunContext(
         organization_id="kiarina.agi",
         user_id=request.module.__name__,

@@ -1,4 +1,3 @@
-from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -23,7 +22,9 @@ from kiarina.utils.ext._operations.detect_with_mimetypes import detect_with_mime
     ],
 )
 def test_detect_with_mimetypes(
-    mime_type: Any, mock_guess_extension_return: Any, expected: Any
+    mime_type: str,
+    mock_guess_extension_return: str | None,
+    expected: str | None,
 ) -> None:
     """
     Test detect_with_mimetypes function behavior.

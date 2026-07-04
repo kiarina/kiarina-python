@@ -1,5 +1,4 @@
 from datetime import UTC, datetime, timedelta
-from typing import Any
 
 import pytest
 from google.oauth2.credentials import Credentials
@@ -11,7 +10,7 @@ from kiarina.lib.google import (
 )
 
 
-def test_file(load_settings: Any) -> None:
+def test_file(load_settings: None) -> None:
     settings = settings_manager.get_settings("user_account_file")
     credentials = get_user_account_credentials(
         authorized_user_file=settings.authorized_user_file,
@@ -46,7 +45,7 @@ def test_data_uses_stored_scopes_when_scopes_are_not_specified() -> None:
     assert credentials.scopes == stored_scopes
 
 
-def test_data(load_settings: Any) -> None:
+def test_data(load_settings: None) -> None:
     settings = settings_manager.get_settings("user_account_data")
     credentials = get_user_account_credentials(
         authorized_user_data=settings.get_authorized_user_data(),
@@ -55,7 +54,7 @@ def test_data(load_settings: Any) -> None:
     assert isinstance(credentials, Credentials)
 
 
-def test_cache(load_settings: Any) -> Any:
+def test_cache(load_settings: None) -> None:
     set_counter = 0
 
     class InMemoryCache(CredentialsCache):

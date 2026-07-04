@@ -1,13 +1,15 @@
 import asyncio
-from typing import Any
+from collections.abc import Iterator
+from pathlib import Path
 
 import pytest
 
 from kiarina.agi.asset_cache import create_asset_cache, settings_manager
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture(autouse=True)
-def setup() -> Any:
+def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "cache_ttl": 1,
     }
@@ -22,7 +24,7 @@ def setup() -> Any:
         pytest.param("{tmp}/test.txt", id="2. file_path"),
     ],
 )
-async def test_uri(uri: Any, run_context: Any, tmp_path: Any) -> None:
+async def test_uri(uri: str, run_context: RunContext, tmp_path: Path) -> None:
     uri = uri.format(tmp=str(tmp_path))
 
     asset_cache = create_asset_cache(run_context)

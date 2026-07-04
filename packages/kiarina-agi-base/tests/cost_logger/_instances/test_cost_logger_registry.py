@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -6,7 +6,7 @@ from kiarina.agi.cost_logger import BaseCostLogger, cost_logger_registry
 
 
 @pytest.fixture(autouse=True)
-def cleanup() -> Any:
+def cleanup() -> Iterator[None]:
     yield
     cost_logger_registry.clear()
 

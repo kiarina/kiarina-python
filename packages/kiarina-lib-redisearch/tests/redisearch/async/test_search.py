@@ -1,4 +1,5 @@
-from typing import Any
+from pathlib import Path
+from typing import Any, TypedDict, cast
 
 import pytest
 
@@ -6,8 +7,19 @@ import kiarina.utils.file as kf
 from kiarina.lib.redisearch.asyncio import RedisearchClient
 
 
+class DataRow(TypedDict):
+    id: str
+    title: str
+    content: str
+    embedding: list[float]
+
+
+class DataQuery(TypedDict):
+    embedding: list[float]
+
+
 @pytest.fixture
-def fields() -> Any:
+def fields() -> list[dict[str, object]]:
     return [
         {"type": "tag", "name": "id"},
         {"type": "text", "name": "title"},
@@ -16,26 +28,34 @@ def fields() -> Any:
 
 
 @pytest.fixture
-def data_rows(assets_dir: Any) -> Any:
-    return kf.read_json_list(
-        assets_dir / "json" / "id_title_content_embedding_3row_apple_car_dog.json"
+def data_rows(assets_dir: Path) -> list[DataRow]:
+    return cast(
+        list[DataRow],
+        kf.read_json_list(
+            assets_dir / "json" / "id_title_content_embedding_3row_apple_car_dog.json"
+        ),
     )
 
 
 @pytest.fixture
-def data_query(assets_dir: Any) -> Any:
-    return kf.read_json_dict(
-        assets_dir / "json" / "query_embedding_tell_me_about_dogs_not_apples.json"
+def data_query(assets_dir: Path) -> DataQuery:
+    return cast(
+        DataQuery,
+        kf.read_json_dict(
+            assets_dir / "json" / "query_embedding_tell_me_about_dogs_not_apples.json"
+        ),
     )
 
 
 async def test_search(
-    client: RedisearchClient, data_rows: Any, data_query: Any
+    client: RedisearchClient,
+    data_rows: list[DataRow],
+    data_query: DataQuery,
 ) -> None:
     await client.reset_index()
 
     for row in data_rows:
-        await client.set(row)
+        await client.set(cast(dict[str, Any], row))
 
     # The simplest search
     result = await client.search(

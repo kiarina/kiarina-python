@@ -1,4 +1,4 @@
-from typing import Any, NoReturn
+from typing import NoReturn
 
 import httpx
 import pytest
@@ -12,7 +12,7 @@ from kiarina.lib.firebase import (
 )
 
 
-async def test_invalid_refresh_token(load_settings: Any) -> None:
+async def test_invalid_refresh_token(load_settings: None) -> None:
     settings = settings_manager.get_settings()
 
     with pytest.raises(InvalidRefreshTokenError):
@@ -30,8 +30,8 @@ async def test_firebase_api_error() -> None:
         )
 
 
-async def test_httpx_reqest_error(monkeypatch: Any) -> None:
-    def mock_post(*args: Any, **kwargs: Any) -> NoReturn:
+async def test_httpx_reqest_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    def mock_post(*args: object, **kwargs: object) -> NoReturn:
         raise httpx.RequestError("Network error")
 
     monkeypatch.setattr("httpx.AsyncClient.post", mock_post)
@@ -45,7 +45,7 @@ async def test_httpx_reqest_error(monkeypatch: Any) -> None:
     assert "Request failed" in str(exc_info.value)
 
 
-async def test_happy_path(firebase_app: Any) -> None:
+async def test_happy_path(firebase_app: object) -> None:
     auth = pytest.importorskip("firebase_admin.auth")
 
     custom_token = auth.create_custom_token("test").decode("utf-8")

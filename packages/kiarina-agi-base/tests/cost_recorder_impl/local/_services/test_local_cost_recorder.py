@@ -1,11 +1,10 @@
-from typing import Any
-
 import kiarina.utils.file.asyncio as kfa
 from kiarina.agi.cost_record import CostRecord
 from kiarina.agi.cost_recorder_impl.local import LocalCostRecorder
+from kiarina.agi.run_context import RunContext
 
 
-async def test_local_cost_recorder(run_context: Any) -> None:
+async def test_local_cost_recorder(run_context: RunContext) -> None:
     recorder = LocalCostRecorder()
 
     recorder.add(

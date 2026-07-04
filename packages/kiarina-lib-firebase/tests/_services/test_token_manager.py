@@ -1,5 +1,4 @@
 import asyncio
-from typing import Any
 
 import pytest
 
@@ -29,7 +28,7 @@ async def test_missing_parameters() -> None:
         TokenManager(api_key="test")
 
 
-async def test_before_get_id_token(api_key: Any, token_data: Any) -> None:
+async def test_before_get_id_token(api_key: str, token_data: TokenData) -> None:
     manager = TokenManager(
         api_key=api_key,
         token_data_cache=InMemoryTokenCache(token_data),
@@ -42,7 +41,7 @@ async def test_before_get_id_token(api_key: Any, token_data: Any) -> None:
         _ = manager.token_data
 
 
-async def test_happy_path(api_key: Any, token_data: Any) -> None:
+async def test_happy_path(api_key: str, token_data: TokenData) -> None:
     manager = TokenManager(
         api_key=api_key,
         token_data_cache=InMemoryTokenCache(token_data),
@@ -63,7 +62,7 @@ async def test_happy_path(api_key: Any, token_data: Any) -> None:
     assert new_token_data.expires_at == manager.expires_at
 
 
-async def test_need_refresh(api_key: Any, token_data: Any) -> None:
+async def test_need_refresh(api_key: str, token_data: TokenData) -> None:
     manager = TokenManager(
         api_key=api_key,
         refresh_token=token_data.refresh_token,
@@ -72,7 +71,7 @@ async def test_need_refresh(api_key: Any, token_data: Any) -> None:
     await manager.get_id_token()
 
 
-async def test_init_with_token_data(api_key: Any, token_data: Any) -> None:
+async def test_init_with_token_data(api_key: str, token_data: TokenData) -> None:
     TokenManager(
         api_key=api_key,
         token_data=token_data,

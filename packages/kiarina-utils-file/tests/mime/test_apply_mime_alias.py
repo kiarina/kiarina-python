@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 import kiarina.utils.mime as km
@@ -11,5 +9,5 @@ import kiarina.utils.mime as km
         ("application/x-yaml", "application/yaml"),
     ],
 )
-def test_apply_mime_alias(mime_type: Any, expected: Any) -> None:
+def test_apply_mime_alias(mime_type: str, expected: str) -> None:
     assert km.apply_mime_alias(mime_type) == expected

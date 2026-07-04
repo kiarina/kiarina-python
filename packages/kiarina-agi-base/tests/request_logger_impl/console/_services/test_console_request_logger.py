@@ -1,11 +1,11 @@
 import traceback
-from typing import Any
 
 from kiarina.agi.request_logger import RequestLogEntry
 from kiarina.agi.request_logger_impl.console import ConsoleRequestLogger
+from kiarina.agi.run_context import RunContext
 
 
-async def test_log_request_success(run_context: Any) -> None:
+async def test_log_request_success(run_context: RunContext) -> None:
     logger = ConsoleRequestLogger()
 
     await logger.log_request_success(
@@ -19,7 +19,7 @@ async def test_log_request_success(run_context: Any) -> None:
     )
 
 
-async def test_log_request_error(run_context: Any) -> None:
+async def test_log_request_error(run_context: RunContext) -> None:
     logger = ConsoleRequestLogger()
 
     def _raise_test_exception() -> None:

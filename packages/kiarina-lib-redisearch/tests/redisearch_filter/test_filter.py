@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 import kiarina.lib.redisearch_filter as rf
@@ -37,7 +35,7 @@ from kiarina.lib.redisearch_schema import RedisearchSchema
         ),
     ],
 )
-def test_redisearch_filter(filter: Any, query: Any) -> None:
+def test_redisearch_filter(filter: rf.RedisearchFilter, query: str) -> None:
     assert str(filter) == query
 
 
@@ -69,7 +67,9 @@ def test_redisearch_filter(filter: Any, query: Any) -> None:
         ),
     ],
 )
-def test_create_redisearch_filter(conditions: Any, expected: Any) -> None:
+def test_create_redisearch_filter(
+    conditions: list[list[object]], expected: str
+) -> None:
     schema = RedisearchSchema.model_validate(
         {
             "fields": [
@@ -115,5 +115,5 @@ def test_create_redisearch_filter(conditions: Any, expected: Any) -> None:
         (".,!$", "\\.\\,\\!\\$"),
     ],
 )
-def test_escape_token(input_str: Any, expected: Any) -> None:
+def test_escape_token(input_str: str, expected: str) -> None:
     assert escape_token(input_str) == expected

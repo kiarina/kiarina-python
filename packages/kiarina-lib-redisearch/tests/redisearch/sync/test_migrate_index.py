@@ -1,11 +1,11 @@
-from typing import Any
+from redis import Redis
 
 from kiarina.lib.redisearch import RedisearchClient, RedisearchSettings
 from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
-def test_migrate(key_prefix: Any, index_name: Any, redis: Any) -> Any:
-    fields: list[dict[str, Any]] = []
+def test_migrate(key_prefix: str, index_name: str, redis: Redis) -> None:
+    fields: list[dict[str, object]] = []
 
     def _create_client() -> RedisearchClient:
         return RedisearchClient(

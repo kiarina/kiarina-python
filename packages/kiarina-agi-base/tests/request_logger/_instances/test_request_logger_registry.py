@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -6,7 +6,7 @@ from kiarina.agi.request_logger import BaseRequestLogger, request_logger_registr
 
 
 @pytest.fixture(autouse=True)
-def cleanup() -> Any:
+def cleanup() -> Iterator[None]:
     yield
     request_logger_registry.clear()
 

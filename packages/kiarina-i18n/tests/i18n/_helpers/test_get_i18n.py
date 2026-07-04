@@ -1,5 +1,4 @@
-from typing import Any
-
+import pytest
 from pydantic import BaseModel
 
 from kiarina.i18n import I18n, catalog, get_i18n
@@ -59,7 +58,9 @@ def test_get_i18n_with_translations() -> None:
     assert t_en.description == "English Description"
 
 
-def test_get_i18n_uses_system_language_by_default(monkeypatch: Any) -> None:
+def test_get_i18n_uses_system_language_by_default(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Test get_i18n uses system language when language is omitted."""
 
     class MyI18n(I18n, scope="test.system_language"):
@@ -81,7 +82,9 @@ def test_get_i18n_uses_system_language_by_default(monkeypatch: Any) -> None:
     assert t.title == "システム言語"
 
 
-def test_get_i18n_uses_system_language_when_language_is_none(monkeypatch: Any) -> None:
+def test_get_i18n_uses_system_language_when_language_is_none(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Test get_i18n uses system language when language is None."""
 
     class MyI18n(I18n, scope="test.none_language"):

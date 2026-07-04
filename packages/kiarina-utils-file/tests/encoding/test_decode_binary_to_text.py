@@ -1,5 +1,5 @@
 import shutil
-from typing import Any
+from pathlib import Path
 
 import pytest
 
@@ -20,7 +20,7 @@ from kiarina.utils.encoding import decode_binary_to_text
         pytest.param("こんにちは世界🌍️".encode(), "こんにちは世界🌍️", id="utf-8-emoji"),
     ],
 )
-def test_main(raw_data: Any, expected_text: Any) -> None:
+def test_main(raw_data: bytes, expected_text: str) -> None:
     assert decode_binary_to_text(raw_data, use_nkf=True) == expected_text
 
 
@@ -30,7 +30,7 @@ def test_main(raw_data: Any, expected_text: Any) -> None:
         ("png/miineko_256x256_799b.png", None),
     ],
 )
-def test_with_file(file_path: Any, expected_text: Any, assets_dir: Any) -> None:
+def test_with_file(file_path: str, expected_text: str | None, assets_dir: Path) -> None:
     with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 

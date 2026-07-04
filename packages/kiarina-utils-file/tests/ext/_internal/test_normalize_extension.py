@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 from kiarina.utils.ext._utils.normalize_extension import normalize_extension
@@ -36,5 +34,5 @@ from kiarina.utils.ext._utils.normalize_extension import normalize_extension
         ("  .  ", "."),
     ],
 )
-def test_normalize_extension(extension: Any, expected: Any) -> None:
+def test_normalize_extension(extension: str, expected: str) -> None:
     assert normalize_extension(extension) == expected

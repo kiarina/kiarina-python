@@ -1,12 +1,10 @@
-from typing import Any
-
 import pytest
 
 from kiarina.lib.redisearch import RedisearchClient
 
 
 @pytest.fixture
-def fields() -> Any:
+def fields() -> list[dict[str, object]]:
     return [
         {"type": "tag", "name": "id"},
         {"type": "text", "name": "title"},

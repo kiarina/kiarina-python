@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 import kiarina.utils.ext as ke
@@ -23,7 +21,7 @@ import kiarina.utils.ext as ke
         ("", None),
     ],
 )
-def test_detect_extension(mime_type: Any, expected: Any) -> None:
+def test_detect_extension(mime_type: str, expected: str | None) -> None:
     result = ke.detect_extension(
         mime_type=mime_type,
         custom_extensions={"application/custom": ".custom"},

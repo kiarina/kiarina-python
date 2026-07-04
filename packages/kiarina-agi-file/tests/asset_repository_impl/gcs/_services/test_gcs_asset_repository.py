@@ -1,14 +1,14 @@
 import pathlib
-from typing import Any
 
 import pytest
 
 from kiarina.agi.asset_repository import AssetRepository, create_asset_repository
 from kiarina.agi.asset_repository_impl.gcs import GCSAssetRepository
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture
-def asset_repository(run_context: Any) -> GCSAssetRepository:
+def asset_repository(run_context: RunContext) -> GCSAssetRepository:
     asset_repository = create_asset_repository(run_context)
     assert isinstance(asset_repository, GCSAssetRepository)
     return asset_repository

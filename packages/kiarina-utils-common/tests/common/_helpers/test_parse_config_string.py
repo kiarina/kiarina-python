@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 from kiarina.utils.common import parse_config_string
@@ -43,7 +41,7 @@ def test_parse_config_string_empty() -> None:
         ),
     ],
 )
-def test_parse_config_string_basic(config_str: Any, expected: Any) -> None:
+def test_parse_config_string_basic(config_str: str, expected: object) -> None:
     """Test basic configuration string parsing and type conversion"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -83,7 +81,7 @@ def test_parse_config_string_basic(config_str: Any, expected: Any) -> None:
         ),
     ],
 )
-def test_parse_config_string_nested(config_str: Any, expected: Any) -> None:
+def test_parse_config_string_nested(config_str: str, expected: object) -> None:
     """Test nested key parsing with dot notation"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -105,7 +103,7 @@ def test_parse_config_string_nested(config_str: Any, expected: Any) -> None:
         ),
     ],
 )
-def test_parse_config_string_whitespace(config_str: Any, expected: Any) -> None:
+def test_parse_config_string_whitespace(config_str: str, expected: object) -> None:
     """Test whitespace handling in keys and values"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -149,11 +147,11 @@ def test_parse_config_string_whitespace(config_str: Any, expected: Any) -> None:
     ],
 )
 def test_parse_config_string_custom_separators(
-    config_str: Any,
-    separator: Any,
-    key_value_separator: Any,
-    nested_separator: Any,
-    expected: Any,
+    config_str: str,
+    separator: str,
+    key_value_separator: str,
+    nested_separator: str,
+    expected: object,
 ) -> None:
     """Test custom separators"""
     result = parse_config_string(
@@ -182,7 +180,7 @@ def test_parse_config_string_custom_separators(
         ),
     ],
 )
-def test_parse_config_string_edge_cases(config_str: Any, expected: Any) -> None:
+def test_parse_config_string_edge_cases(config_str: str, expected: object) -> None:
     """Test edge cases and error handling"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -221,7 +219,7 @@ def test_parse_config_string_edge_cases(config_str: Any, expected: Any) -> None:
         ),
     ],
 )
-def test_parse_config_string_arrays(config_str: Any, expected: Any) -> None:
+def test_parse_config_string_arrays(config_str: str, expected: object) -> None:
     """Test array support with index notation"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -240,7 +238,7 @@ def test_parse_config_string_arrays(config_str: Any, expected: Any) -> None:
         ),
     ],
 )
-def test_parse_config_string_array_flags(config_str: Any, expected: Any) -> None:
+def test_parse_config_string_array_flags(config_str: str, expected: object) -> None:
     """Test array support with flag notation"""
     result = parse_config_string(config_str)
     assert result == expected
@@ -314,7 +312,7 @@ def test_parse_config_string_real_world_example() -> None:
         ("k=pre(x&y)post", {"k": "pre(x&y)post"}),
     ],
 )
-def test_parse_config_string_brackets(config_str: Any, expected: Any) -> None:
+def test_parse_config_string_brackets(config_str: str, expected: object) -> None:
     """Bracketed values are atomic and type-conversion is suppressed."""
     result = parse_config_string(config_str)
     assert result == expected
@@ -342,7 +340,7 @@ def test_parse_config_string_brackets_custom_chars() -> None:
         "k=())",  # extra close
     ],
 )
-def test_parse_config_string_brackets_unbalanced(config_str: Any) -> None:
+def test_parse_config_string_brackets_unbalanced(config_str: str) -> None:
     with pytest.raises(ValueError):
         parse_config_string(config_str)
 

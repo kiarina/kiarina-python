@@ -1,10 +1,10 @@
 import asyncio
-from typing import Any
 
+from kiarina.lib.firebase import TokenManager
 from kiarina.lib.firebase_rtdb import DataChangeEvent, watch_data
 
 
-async def test_unauthorized(database_url: Any, token_manager: Any) -> None:
+async def test_unauthorized(database_url: str, token_manager: TokenManager) -> None:
     # In unauthorized case, the stream does not end
     async def _task() -> None:
         async for _ in watch_data(database_url, "/posts/other_user", token_manager):
@@ -23,7 +23,9 @@ async def test_unauthorized(database_url: Any, token_manager: Any) -> None:
             pass
 
 
-async def test_happy_path(database_url: Any, user_id: Any, token_manager: Any) -> None:
+async def test_happy_path(
+    database_url: str, user_id: str, token_manager: TokenManager
+) -> None:
     events: list[DataChangeEvent] = []
     stop_event = asyncio.Event()
 

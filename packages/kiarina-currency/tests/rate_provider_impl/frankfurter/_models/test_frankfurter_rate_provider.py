@@ -1,5 +1,4 @@
 import os
-from typing import Any
 
 import pytest
 
@@ -14,20 +13,24 @@ skip_unless_enabled = pytest.mark.skipif(
 
 
 @pytest.fixture
-def frankfurter_provider() -> Any:
+def frankfurter_provider() -> FrankfurterRateProvider:
     """Create a FrankfurterRateProvider"""
     return FrankfurterRateProvider()
 
 
 @skip_unless_enabled
-async def test_same_currency(frankfurter_provider: Any) -> None:
+async def test_same_currency(
+    frankfurter_provider: FrankfurterRateProvider,
+) -> None:
     """Test rate for same currency returns 1.0"""
     rate = await frankfurter_provider.get_rate("USD", "USD")
     assert rate == 1.0
 
 
 @skip_unless_enabled
-async def test_get_rate_usd_to_jpy(frankfurter_provider: Any) -> None:
+async def test_get_rate_usd_to_jpy(
+    frankfurter_provider: FrankfurterRateProvider,
+) -> None:
     """Test getting USD to JPY exchange rate"""
     rate = await frankfurter_provider.get_rate("USD", "JPY")
     assert isinstance(rate, float)
@@ -35,7 +38,9 @@ async def test_get_rate_usd_to_jpy(frankfurter_provider: Any) -> None:
 
 
 @skip_unless_enabled
-async def test_get_rate_eur_to_usd(frankfurter_provider: Any) -> None:
+async def test_get_rate_eur_to_usd(
+    frankfurter_provider: FrankfurterRateProvider,
+) -> None:
     """Test getting EUR to USD exchange rate"""
     rate = await frankfurter_provider.get_rate("EUR", "USD")
     assert isinstance(rate, float)
@@ -43,7 +48,9 @@ async def test_get_rate_eur_to_usd(frankfurter_provider: Any) -> None:
 
 
 @skip_unless_enabled
-async def test_get_rate_with_default(frankfurter_provider: Any) -> None:
+async def test_get_rate_with_default(
+    frankfurter_provider: FrankfurterRateProvider,
+) -> None:
     """Test getting rate with default value for unsupported currency"""
     # Use an invalid currency code
     rate = await frankfurter_provider.get_rate("USD", "XXX", default=1.5)
@@ -52,7 +59,7 @@ async def test_get_rate_with_default(frankfurter_provider: Any) -> None:
 
 @skip_unless_enabled
 async def test_get_rate_unsupported_currency_raises_error(
-    frankfurter_provider: Any,
+    frankfurter_provider: FrankfurterRateProvider,
 ) -> None:
     """Test that unsupported currency raises ExchangeRateNotFoundError"""
     with pytest.raises(ExchangeRateNotFoundError):
@@ -60,7 +67,9 @@ async def test_get_rate_unsupported_currency_raises_error(
 
 
 @skip_unless_enabled
-async def test_get_rate_inverted(frankfurter_provider: Any) -> None:
+async def test_get_rate_inverted(
+    frankfurter_provider: FrankfurterRateProvider,
+) -> None:
     """Test that inverted rates are consistent"""
     # Get USD -> EUR
     usd_to_eur = await frankfurter_provider.get_rate("USD", "EUR")

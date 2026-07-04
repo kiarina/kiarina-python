@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -7,10 +7,11 @@ from kiarina.agi.asset_repository import (
     create_asset_repository,
     settings_manager,
 )
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture()
-def setup() -> Any:
+def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "uri_policy": {
             "allowed_uri_patterns": [
@@ -26,7 +27,7 @@ def setup() -> Any:
 
 
 @pytest.fixture
-def asset_repository(setup: Any, run_context: Any) -> Any:
+def asset_repository(setup: None, run_context: RunContext) -> AssetRepository:
     return create_asset_repository(run_context)
 
 

@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -8,7 +8,7 @@ from kiarina.agi.cost_record import CostRecord
 
 
 @pytest.fixture(autouse=True)
-def setup() -> Any:
+def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "currency": "JPY",
         "exchange_rate": 150.0,

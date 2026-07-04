@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import Any
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 
 
 @pytest.fixture
@@ -10,17 +10,17 @@ def assets_dir() -> Path:
 
 
 @pytest.fixture
-def key_prefix(request: Any) -> str:
+def key_prefix(request: FixtureRequest) -> str:
     return f"pytest:{request.module.__name__}:{request.node.name}:"
 
 
 @pytest.fixture
-def index_name(request: Any) -> str:
+def index_name(request: FixtureRequest) -> str:
     return f"pytest_{request.module.__name__}_{request.node.name}"
 
 
 @pytest.fixture
-def fields() -> Any:
+def fields() -> list[dict[str, object]]:
     return [{"type": "text", "name": "title"}]
 
 

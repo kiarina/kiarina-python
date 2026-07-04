@@ -1,4 +1,3 @@
-from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -18,7 +17,10 @@ from kiarina.utils.mime._operations.detect_with_mimetypes import detect_with_mim
         ((None, "gzip"), None),  # encoding without MIME type
     ],
 )
-def test_detect_with_mimetypes(mock_guess_type_return: Any, expected: Any) -> None:
+def test_detect_with_mimetypes(
+    mock_guess_type_return: tuple[str | None, str | None],
+    expected: str | None,
+) -> None:
     """
     Test detect_with_mimetypes function behavior.
 

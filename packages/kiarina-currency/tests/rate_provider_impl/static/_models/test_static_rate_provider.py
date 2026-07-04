@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -10,7 +10,7 @@ from kiarina.currency.rate_provider_impl.static import (
 
 
 @pytest.fixture
-def static_provider() -> Any:
+def static_provider() -> Iterator[StaticRateProvider]:
     """Create a StaticRateProvider with test rates"""
     settings_manager.cli_args = {
         "base_currency": "USD",
@@ -24,25 +24,25 @@ def static_provider() -> Any:
     settings_manager.cli_args = {}
 
 
-async def test_same_currency(static_provider: Any) -> None:
+async def test_same_currency(static_provider: StaticRateProvider) -> None:
     """Test rate for same currency returns 1.0"""
     rate = await static_provider.get_rate("USD", "USD")
     assert rate == 1.0
 
 
-async def test_direct_rate(static_provider: Any) -> None:
+async def test_direct_rate(static_provider: StaticRateProvider) -> None:
     """Test direct rate lookup"""
     rate = await static_provider.get_rate("USD", "JPY")
     assert rate == 150.0
 
 
-async def test_inverted_rate(static_provider: Any) -> None:
+async def test_inverted_rate(static_provider: StaticRateProvider) -> None:
     """Test inverted rate calculation"""
     rate = await static_provider.get_rate("JPY", "USD")
     assert rate == pytest.approx(1.0 / 150.0)
 
 
-async def test_indirect_rate_via_base(static_provider: Any) -> None:
+async def test_indirect_rate_via_base(static_provider: StaticRateProvider) -> None:
     """Test indirect rate calculation via base currency"""
     # EUR -> GBP via USD
     # EUR -> USD: 1/0.85
@@ -52,7 +52,7 @@ async def test_indirect_rate_via_base(static_provider: Any) -> None:
     assert rate == 0.86
 
 
-async def test_indirect_rate_complex(static_provider: Any) -> None:
+async def test_indirect_rate_complex(static_provider: StaticRateProvider) -> None:
     """Test complex indirect rate calculation"""
     # AUD -> JPY via USD (base_currency)
     # AUD -> GBP: 1/1.9
@@ -70,19 +70,23 @@ async def test_indirect_rate_complex(static_provider: Any) -> None:
         await static_provider.get_rate("GBP", "JPY")
 
 
-async def test_rate_not_found_with_default(static_provider: Any) -> None:
+async def test_rate_not_found_with_default(static_provider: StaticRateProvider) -> None:
     """Test rate not found returns default"""
     rate = await static_provider.get_rate("USD", "CNY", default=7.0)
     assert rate == 7.0
 
 
-async def test_rate_not_found_raises_error(static_provider: Any) -> None:
+async def test_rate_not_found_raises_error(
+    static_provider: StaticRateProvider,
+) -> None:
     """Test rate not found raises ExchangeRateNotFoundError"""
     with pytest.raises(ExchangeRateNotFoundError):
         await static_provider.get_rate("USD", "CNY")
 
 
-async def test_indirect_via_base_currency(static_provider: Any) -> None:
+async def test_indirect_via_base_currency(
+    static_provider: StaticRateProvider,
+) -> None:
     """Test indirect rate via base_currency (USD)"""
     # JPY -> EUR via USD
     # JPY -> USD: 1/150.0
@@ -92,7 +96,9 @@ async def test_indirect_via_base_currency(static_provider: Any) -> None:
     assert rate == pytest.approx(expected)
 
 
-async def test_indirect_via_base_with_direct_from_rate(static_provider: Any) -> None:
+async def test_indirect_via_base_with_direct_from_rate(
+    static_provider: StaticRateProvider,
+) -> None:
     """Test indirect rate via base_currency with direct from_currency rate (line 44)"""
     # Test case: CNY -> EUR via USD
     # Key: CNY MUST be in rates and USD MUST be in rates[CNY] for line 44
@@ -113,7 +119,9 @@ async def test_indirect_via_base_with_direct_from_rate(static_provider: Any) -> 
     assert rate == pytest.approx(expected)
 
 
-async def test_indirect_via_base_with_inverted_to_rate(static_provider: Any) -> None:
+async def test_indirect_via_base_with_inverted_to_rate(
+    static_provider: StaticRateProvider,
+) -> None:
     """Test indirect rate via base_currency with inverted to_currency rate (lines 51-52)"""
     # Test case: JPY -> GBP via USD
     # We need GBP -> USD (not USD -> GBP)

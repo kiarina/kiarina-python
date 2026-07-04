@@ -1,4 +1,4 @@
-from typing import Any
+from pathlib import Path
 
 import pytest
 
@@ -16,7 +16,7 @@ from kiarina.utils.encoding._operations.detect_with_charset_normalizer import (
         ("こんにちは世界🌍️".encode(), "utf-8"),
     ],
 )
-def test_main(raw_data: Any, expected_encoding: Any) -> None:
+def test_main(raw_data: bytes, expected_encoding: str | None) -> None:
     assert detect_with_charset_normalizer(raw_data) == expected_encoding
 
 
@@ -34,7 +34,7 @@ def test_main(raw_data: Any, expected_encoding: Any) -> None:
 )
 @pytest.mark.xfail(reason="Known charset_normalizer misdetection cases")
 def test_known_misdetections(
-    raw_data: Any, expected_encoding: Any, actual_encoding: Any
+    raw_data: bytes, expected_encoding: str, actual_encoding: str
 ) -> None:
     # Expected failure: charset_normalizer does not return the correct encoding
     assert detect_with_charset_normalizer(raw_data) == expected_encoding
@@ -50,7 +50,9 @@ def test_known_misdetections(
         ("txt/ascii_code_docs_1600kb.txt", "ascii"),
     ],
 )
-def test_with_file(file_path: Any, expected_encoding: Any, assets_dir: Any) -> None:
+def test_with_file(
+    file_path: str, expected_encoding: str | None, assets_dir: Path
+) -> None:
     with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 

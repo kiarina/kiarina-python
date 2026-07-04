@@ -1,5 +1,3 @@
-from typing import Any
-
 from pydantic_settings import BaseSettings
 from pydantic_settings_manager import SettingsManager
 
@@ -24,8 +22,8 @@ def create_sub_my_class(message: str = "") -> SubMyClass:
 def _factory_wrapper(
     factory: ComponentFactory[MyClass],
     component_name: str,
-    *args: Any,
-    **kwargs: Any,
+    *args: object,
+    **kwargs: object,
 ) -> MyClass:
     instance = factory(*args, **kwargs)
     instance.name = component_name

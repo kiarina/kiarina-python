@@ -1,4 +1,4 @@
-from typing import Any
+from collections.abc import Iterator
 
 import pytest
 
@@ -6,7 +6,7 @@ from kiarina.agi.cost_recorder import BaseCostRecorder, cost_recorder_registry
 
 
 @pytest.fixture(autouse=True)
-def cleanup() -> Any:
+def cleanup() -> Iterator[None]:
     yield
     cost_recorder_registry.clear()
 

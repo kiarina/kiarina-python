@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 from kiarina.utils.mime._operations.detect_with_dictionary import detect_with_dictionary
@@ -29,7 +27,7 @@ from kiarina.utils.mime._operations.detect_with_dictionary import detect_with_di
         ("test.jpeg", None),
     ],
 )
-def test_detect_with_dictionary(file_name_hint: Any, expected: Any) -> None:
+def test_detect_with_dictionary(file_name_hint: str, expected: str | None) -> None:
     assert (
         detect_with_dictionary(
             file_name_hint,

@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 from kiarina.utils.ext._utils.clean_url_path import clean_url_path
@@ -32,5 +30,5 @@ from kiarina.utils.ext._utils.clean_url_path import clean_url_path
         ),
     ],
 )
-def test_clean_url_path(input_path: Any, expected: Any) -> None:
+def test_clean_url_path(input_path: str, expected: str) -> None:
     assert clean_url_path(input_path) == expected

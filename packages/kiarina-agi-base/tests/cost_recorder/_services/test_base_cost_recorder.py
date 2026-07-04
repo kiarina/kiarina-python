@@ -1,13 +1,12 @@
-from typing import Any
-
 from kiarina.agi.cost_record import CostRecord
 from kiarina.agi.cost_recorder import BaseCostRecorder
+from kiarina.agi.run_context import RunContext
 
 
 class MyCostRecorder(BaseCostRecorder): ...
 
 
-async def test_base_cost_recorder(run_context: Any) -> None:
+async def test_base_cost_recorder(run_context: RunContext) -> None:
     cost_recorder = MyCostRecorder()
 
     cost_record = CostRecord(

@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
@@ -71,7 +70,7 @@ def test_base_model(caplog: LogCaptureFixture) -> None:
     assert not registry.is_registered("test3")
 
 
-def test_configure() -> Any:
+def test_configure() -> None:
     class MyConfig(BaseModel):
         message: str = ""
         options: dict[str, str] = Field(default_factory=dict)
@@ -81,8 +80,11 @@ def test_configure() -> Any:
 
     settings_manager = SettingsManager(MyClassSettings)
 
-    def configure(config: MyConfig, values: dict[str, Any]) -> MyConfig:
-        config.options.update(values)
+    def configure(config: MyConfig, values: dict[str, object]) -> MyConfig:
+        assert all(isinstance(value, str) for value in values.values())
+        config.options.update(
+            {key: value for key, value in values.items() if isinstance(value, str)}
+        )
         return config
 
     registry = ConfigRegistry(
@@ -123,7 +125,7 @@ def test_dict() -> None:
     }
 
 
-def test_unsupported_config_type() -> Any:
+def test_unsupported_config_type() -> None:
     registry = ConfigRegistry[int](
         get_presets=lambda: {"test1": 1},
     )
@@ -131,8 +133,10 @@ def test_unsupported_config_type() -> Any:
     with raises(TypeError, match="Pass configure=\\.\\.\\. to ConfigRegistry"):
         registry.get("test1?value=2")
 
-    def configure(config: int, values: dict[str, Any]) -> int:
-        return config + int(values.get("value", 0))
+    def configure(config: int, values: dict[str, object]) -> int:
+        value = values.get("value", 0)
+        assert isinstance(value, str | int)
+        return config + int(value)
 
     registry = ConfigRegistry[int](
         get_presets=lambda: {"test1": 1},
