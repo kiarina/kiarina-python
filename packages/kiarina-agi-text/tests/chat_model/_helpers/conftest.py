@@ -1,21 +1,48 @@
 # mypy: ignore-errors
 
-from pathlib import Path
+import json
+import os
 
 import pytest
 
+from kiarina.agi.message import HumanMessage
 
-def _get_names(path: Path) -> list[str]:
-    if not path.is_file():
-        return []
-    return [name.strip() for name in path.read_text().splitlines() if name.strip()]
+
+@pytest.fixture(scope="session")
+def chat_model_name() -> str:
+    return os.getenv("KIARINA_AGI_TEXT_TEST_CHAT_MODEL", "mock").strip() or "mock"
+
+
+@pytest.fixture
+def create_tool_call_message(chat_model_name: str):
+    def create(text: str, *tool_names: str) -> HumanMessage:
+        if chat_model_name != "mock":
+            return HumanMessage.create(text)
+
+        return HumanMessage.create(
+            json.dumps(
+                {
+                    "tool_calls": [
+                        {
+                            "name": tool_name,
+                            "args": {"reason": "test"},
+                        }
+                        for tool_name in tool_names
+                    ]
+                }
+            )
+        )
+
+    return create
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup(chat_model_name: str):
     from kiarina.agi.chat_model import settings_manager
 
-    settings_manager.cli_args = settings_manager.settings_cls().model_dump()
+    settings = settings_manager.settings_cls().model_dump()
+    settings["default"] = chat_model_name
+    settings_manager.cli_args = settings
     yield
     settings_manager.cli_args = {}
 
@@ -43,46 +70,3 @@ def disable_request_logger():
     from kiarina.agi.request_logger import settings_manager
 
     settings_manager.cli_args = {}
-
-
-def pytest_generate_tests(metafunc):
-    from kiarina.agi.chat_model import settings_manager
-
-    if "chat_model_name" in metafunc.fixturenames:
-        tests_dir = Path(__file__).parents[2]
-        chat_model_names = _get_names(tests_dir / ".chat-models")
-        chat_provider_names = _get_names(tests_dir / ".chat-providers")
-        cases = []
-
-        if chat_model_names:
-            for chat_model_name in chat_model_names:
-                if chat_model_name in settings_manager.settings_cls().presets.keys():
-                    cases.append(chat_model_name)
-
-        elif chat_provider_names:
-            for (
-                chat_model_name,
-                chat_model_config,
-            ) in settings_manager.settings_cls().presets.items():
-                if (
-                    chat_model_config.provider_name in chat_provider_names
-                    and chat_model_config.visible
-                ):
-                    cases.append(chat_model_name)
-
-        else:
-            for i, chat_model_name in enumerate(
-                settings_manager.settings_cls().presets.keys()
-            ):
-                chat_model_config = settings_manager.settings_cls().presets[
-                    chat_model_name
-                ]
-
-                if not chat_model_config.visible:
-                    continue
-
-                cases.append(
-                    pytest.param(chat_model_name, id=f"{i:02d}. {chat_model_name}")
-                )
-
-        metafunc.parametrize("chat_model_name", cases)

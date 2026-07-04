@@ -10,8 +10,6 @@ from kiarina.agi.message import (
     ToolMessage,
 )
 
-pytestmark = [pytest.mark.costly]
-
 
 @pytest.fixture
 def args(cost_recorder, run_context):
@@ -21,24 +19,20 @@ def args(cost_recorder, run_context):
     }
 
 
-async def test_stream(chat_model_name, args) -> None:
+async def test_stream(args) -> None:
     async for _ in stream_chat(
         [HumanMessage.create("Hello")],
-        chat_options={
-            "chat_model": chat_model_name,
-        },
         **args,
     ):
         pass
 
 
-async def test_tool_info_auto_no_tool_call(chat_model_name, tool_info, args) -> None:
+async def test_tool_info_auto_no_tool_call(tool_info, args) -> None:
     ai_message = None
     async for generated_message in stream_chat(
         [HumanMessage.create("Hello")],
         tool_infos=[tool_info],
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "auto",
         },
         **args,
@@ -48,13 +42,12 @@ async def test_tool_info_auto_no_tool_call(chat_model_name, tool_info, args) -> 
     assert len(ai_message.tool_calls) == 0
 
 
-async def test_tool_info_auto_tool_call(chat_model_name, tool_info, args) -> None:
+async def test_tool_info_auto_tool_call(tool_info, args) -> None:
     message = None
     async for generated_message in stream_chat(
         [HumanMessage.create("Hello, can you get me the weather in Tokyo?")],
         tool_infos=[tool_info],
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "auto",
         },
         **args,
@@ -64,13 +57,12 @@ async def test_tool_info_auto_tool_call(chat_model_name, tool_info, args) -> Non
     assert len(message.tool_calls) >= 0
 
 
-async def test_info_any(chat_model_name, tool_info, args) -> None:
+async def test_info_any(tool_info, create_tool_call_message, args) -> None:
     message = None
     async for generated_message in stream_chat(
-        [HumanMessage.create("Hello")],
+        [create_tool_call_message("Hello", "get_weather")],
         tool_infos=[tool_info],
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "any",
         },
         **args,
@@ -80,13 +72,19 @@ async def test_info_any(chat_model_name, tool_info, args) -> None:
     assert len(message.tool_calls) == 1
 
 
-async def test_tool_infos_not_parallel(chat_model_name, tool_infos, args) -> None:
+async def test_tool_infos_not_parallel(
+    tool_infos, create_tool_call_message, args
+) -> None:
     message = None
     async for generated_message in stream_chat(
-        [HumanMessage.create("Tell me the weather and the latest news.")],
+        [
+            create_tool_call_message(
+                "Tell me the weather and the latest news.",
+                "get_weather",
+            )
+        ],
         tool_infos=tool_infos,
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "any",
         },
         **args,
@@ -96,13 +94,18 @@ async def test_tool_infos_not_parallel(chat_model_name, tool_infos, args) -> Non
     assert len(message.tool_calls) == 1
 
 
-async def test_tool_infos_parallel(chat_model_name, tool_infos, args) -> None:
+async def test_tool_infos_parallel(tool_infos, create_tool_call_message, args) -> None:
     message = None
     async for generated_message in stream_chat(
-        [HumanMessage.create("Tell me the weather and the latest news.")],
+        [
+            create_tool_call_message(
+                "Tell me the weather and the latest news.",
+                "get_weather",
+                "get_news",
+            )
+        ],
         tool_infos=tool_infos,
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "any",
             "parallel_tool_calls": True,
         },
@@ -113,18 +116,15 @@ async def test_tool_infos_parallel(chat_model_name, tool_infos, args) -> None:
     assert len(message.tool_calls) == 2
 
 
-async def test_image_input(chat_model_name, image_file_info, args) -> None:
+async def test_image_input(image_file_info, args) -> None:
     async for _ in stream_chat(
         [HumanMessage.create("What do you see in this image?", [image_file_info])],
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass
 
 
-async def test_image_output(
-    chat_model_name, image_file_info, generate_tool_infos, args
-) -> None:
+async def test_image_output(image_file_info, generate_tool_infos, args) -> None:
     async for _ in stream_chat(
         [
             HumanMessage.create("Create an image."),
@@ -147,24 +147,20 @@ async def test_image_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass
 
 
-async def test_audio_input(chat_model_name, audio_file_info, args) -> None:
+async def test_audio_input(audio_file_info, args) -> None:
     async for _ in stream_chat(
         [HumanMessage.create("What do you hear in this audio?", [audio_file_info])],
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass
 
 
-async def test_audio_output(
-    chat_model_name, audio_file_info, generate_tool_infos, args
-) -> None:
+async def test_audio_output(audio_file_info, generate_tool_infos, args) -> None:
     async for _ in stream_chat(
         [
             HumanMessage.create("Create an audio."),
@@ -187,24 +183,20 @@ async def test_audio_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass
 
 
-async def test_video_input(chat_model_name, video_file_info, args) -> None:
+async def test_video_input(video_file_info, args) -> None:
     async for _ in stream_chat(
         [HumanMessage.create("What do you see in this video?", [video_file_info])],
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass
 
 
-async def test_video_output(
-    chat_model_name, video_file_info, generate_tool_infos, args
-) -> None:
+async def test_video_output(video_file_info, generate_tool_infos, args) -> None:
     async for _ in stream_chat(
         [
             HumanMessage.create("Create a video."),
@@ -227,13 +219,12 @@ async def test_video_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass
 
 
-async def test_pdf_input(chat_model_name, pdf_file_info, args) -> None:
+async def test_pdf_input(pdf_file_info, args) -> None:
     async for _ in stream_chat(
         [
             HumanMessage.create("Here is a PDF file:"),
@@ -242,15 +233,12 @@ async def test_pdf_input(chat_model_name, pdf_file_info, args) -> None:
                 [pdf_file_info],
             ),
         ],
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass
 
 
-async def test_pdf_output(
-    chat_model_name, pdf_file_info, generate_tool_infos, args
-) -> None:
+async def test_pdf_output(pdf_file_info, generate_tool_infos, args) -> None:
     async for _ in stream_chat(
         [
             HumanMessage.create("Create a PDF."),
@@ -273,7 +261,6 @@ async def test_pdf_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     ):
         pass

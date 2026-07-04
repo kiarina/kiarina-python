@@ -12,8 +12,6 @@ from kiarina.agi.message import (
 )
 from kiarina.agi.tool_info import ToolInfo
 
-pytestmark = [pytest.mark.costly]
-
 
 @pytest.fixture
 def args(cost_recorder, run_context):
@@ -23,20 +21,18 @@ def args(cost_recorder, run_context):
     }
 
 
-async def test_invoke(chat_model_name, args) -> None:
+async def test_invoke(args) -> None:
     await invoke_chat(
         [HumanMessage.create("Hello")],
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_tool_info_auto_no_tool_call(chat_model_name, tool_info, args) -> None:
+async def test_tool_info_auto_no_tool_call(tool_info, args) -> None:
     ai_message = await invoke_chat(
         [HumanMessage.create("Hello")],
         tool_infos=[tool_info],
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "auto",
         },
         **args,
@@ -45,12 +41,11 @@ async def test_tool_info_auto_no_tool_call(chat_model_name, tool_info, args) -> 
     assert len(ai_message.tool_calls) == 0
 
 
-async def test_tool_info_auto_tool_call(chat_model_name, tool_info, args) -> None:
+async def test_tool_info_auto_tool_call(tool_info, args) -> None:
     ai_message = await invoke_chat(
         [HumanMessage.create("Hello, can you get me the weather in Tokyo?")],
         tool_infos=[tool_info],
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "auto",
         },
         **args,
@@ -59,12 +54,11 @@ async def test_tool_info_auto_tool_call(chat_model_name, tool_info, args) -> Non
     assert len(ai_message.tool_calls) >= 0
 
 
-async def test_info_any(chat_model_name, tool_info, args) -> None:
+async def test_info_any(tool_info, create_tool_call_message, args) -> None:
     ai_message = await invoke_chat(
-        [HumanMessage.create("Hello")],
+        [create_tool_call_message("Hello", "get_weather")],
         tool_infos=[tool_info],
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "any",
         },
         **args,
@@ -73,12 +67,18 @@ async def test_info_any(chat_model_name, tool_info, args) -> None:
     assert len(ai_message.tool_calls) == 1
 
 
-async def test_tool_infos_not_parallel(chat_model_name, tool_infos, args) -> None:
+async def test_tool_infos_not_parallel(
+    tool_infos, create_tool_call_message, args
+) -> None:
     ai_message = await invoke_chat(
-        [HumanMessage.create("Tell me the weather and the latest news.")],
+        [
+            create_tool_call_message(
+                "Tell me the weather and the latest news.",
+                "get_weather",
+            )
+        ],
         tool_infos=tool_infos,
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "any",
         },
         **args,
@@ -87,12 +87,17 @@ async def test_tool_infos_not_parallel(chat_model_name, tool_infos, args) -> Non
     assert len(ai_message.tool_calls) == 1
 
 
-async def test_tool_infos_parallel(chat_model_name, tool_infos, args) -> None:
+async def test_tool_infos_parallel(tool_infos, create_tool_call_message, args) -> None:
     ai_message = await invoke_chat(
-        [HumanMessage.create("Tell me the weather and the latest news.")],
+        [
+            create_tool_call_message(
+                "Tell me the weather and the latest news.",
+                "get_weather",
+                "get_news",
+            )
+        ],
         tool_infos=tool_infos,
         chat_options={
-            "chat_model": chat_model_name,
             "tool_choice": "any",
             "parallel_tool_calls": True,
         },
@@ -102,17 +107,14 @@ async def test_tool_infos_parallel(chat_model_name, tool_infos, args) -> None:
     assert len(ai_message.tool_calls) == 2
 
 
-async def test_image_input(chat_model_name, image_file_info, args) -> None:
+async def test_image_input(image_file_info, args) -> None:
     await invoke_chat(
         [HumanMessage.create("What do you see in this image?", [image_file_info])],
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_image_output(
-    chat_model_name, image_file_info, generate_tool_infos, args
-) -> None:
+async def test_image_output(image_file_info, generate_tool_infos, args) -> None:
     await invoke_chat(
         [
             HumanMessage.create("Create an image."),
@@ -135,22 +137,18 @@ async def test_image_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_audio_input(chat_model_name, audio_file_info, args) -> None:
+async def test_audio_input(audio_file_info, args) -> None:
     await invoke_chat(
         [HumanMessage.create("What do you hear in this audio?", [audio_file_info])],
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_audio_output(
-    chat_model_name, audio_file_info, generate_tool_infos, args
-) -> None:
+async def test_audio_output(audio_file_info, generate_tool_infos, args) -> None:
     await invoke_chat(
         [
             HumanMessage.create("Create an audio."),
@@ -173,22 +171,18 @@ async def test_audio_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_video_input(chat_model_name, video_file_info, args) -> None:
+async def test_video_input(video_file_info, args) -> None:
     await invoke_chat(
         [HumanMessage.create("What do you see in this video?", [video_file_info])],
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_video_output(
-    chat_model_name, video_file_info, generate_tool_infos, args
-) -> None:
+async def test_video_output(video_file_info, generate_tool_infos, args) -> None:
     await invoke_chat(
         [
             HumanMessage.create("Create a video."),
@@ -211,12 +205,11 @@ async def test_video_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_pdf_input(chat_model_name, pdf_file_info, args) -> None:
+async def test_pdf_input(pdf_file_info, args) -> None:
     await invoke_chat(
         [
             HumanMessage.create("Here is a PDF file:"),
@@ -225,14 +218,11 @@ async def test_pdf_input(chat_model_name, pdf_file_info, args) -> None:
                 [pdf_file_info],
             ),
         ],
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
-async def test_pdf_output(
-    chat_model_name, pdf_file_info, generate_tool_infos, args
-) -> None:
+async def test_pdf_output(pdf_file_info, generate_tool_infos, args) -> None:
     await invoke_chat(
         [
             HumanMessage.create("Create a PDF."),
@@ -255,14 +245,13 @@ async def test_pdf_output(
             ),
         ],
         tool_infos=generate_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
 @pytest.mark.skip(reason="High cost: run manually when needed.")
 async def test_content_cache(
-    chat_model_name, large_text_file_blob, args, disable_request_logger
+    large_text_file_blob, args, disable_request_logger
 ) -> None:
     # OpenAI is automatically cached.
     # Anthropic requires explicit cache specification for Content
@@ -293,9 +282,6 @@ async def test_content_cache(
 
     ai_message = await invoke_chat(
         messages,
-        chat_options={
-            "chat_model": chat_model_name,
-        },
         **args,
     )
 
@@ -306,17 +292,12 @@ async def test_content_cache(
 
     await invoke_chat(
         messages,
-        chat_options={
-            "chat_model": chat_model_name,
-        },
         **args,
     )
 
 
 @pytest.mark.skip(reason="High cost: run manually when needed.")
-async def test_tool_cache(
-    chat_model_name, large_tool_infos, args, disable_request_logger
-) -> None:
+async def test_tool_cache(large_tool_infos, args, disable_request_logger) -> None:
     # OpenAI automatically caches tools as well.
     # Anthropic requires explicit cache specifications for its tools.
     # Google does not cache tools.
@@ -336,7 +317,6 @@ async def test_tool_cache(
     ai_message = await invoke_chat(
         messages,
         tool_infos=large_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
@@ -350,13 +330,12 @@ async def test_tool_cache(
     await invoke_chat(
         messages,
         tool_infos=large_tool_infos,
-        chat_options={"chat_model": chat_model_name},
         **args,
     )
 
 
 @pytest.mark.skip(reason="Tmp test for recent edits")
-async def test_tmp(chat_model_name, args) -> None:
+async def test_tmp(args) -> None:
     await invoke_chat(
         [HumanMessage.create("どれが一番好き?")],
         tool_infos=[
@@ -368,7 +347,6 @@ async def test_tmp(chat_model_name, args) -> None:
             }.items()
         ],
         chat_options={  # type: ignore
-            "chat_model": chat_model_name,
             "tool_choice": "any",
         },
         **args,
@@ -376,7 +354,7 @@ async def test_tmp(chat_model_name, args) -> None:
 
 
 @pytest.mark.skip(reason="Tmp test for recent edits")
-async def test_system_message(chat_model_name, args) -> None:
+async def test_system_message(args) -> None:
     from datetime import datetime
 
     from kiarina.agi.content import Content
@@ -409,7 +387,6 @@ async def test_system_message(chat_model_name, args) -> None:
             }.items()
         ],
         chat_options={  # type: ignore
-            "chat_model": chat_model_name,
             "tool_choice": "any",
         },
         **args,
@@ -417,7 +394,7 @@ async def test_system_message(chat_model_name, args) -> None:
 
 
 @pytest.mark.skip(reason="Tmp test for recent edits")
-async def test_ai_message_continuation(chat_model_name, args) -> None:
+async def test_ai_message_continuation(args) -> None:
     # OpenAI: 連続の AIMessage, HumanMessage のない AIMessage を許容
     # Anthropic: 連続の AIMessage を許容しない, HumanMessage のない AIMessage を許容しない
     # Google: 連続の AIMessage を許容, HumanMessage のない AIMessage を許容
@@ -427,8 +404,5 @@ async def test_ai_message_continuation(chat_model_name, args) -> None:
             AIMessage.create("最初の回答です。"),
             AIMessage.create("続けて回答します。"),
         ],
-        chat_options={
-            "chat_model": chat_model_name,
-        },
         **args,
     )
