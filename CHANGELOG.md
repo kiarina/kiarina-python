@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Add chat, logging, and text embedding APIs for AI agents.
 
 ### Changed
-- **kiarina-agi-text**: Select chat integration tests through local files, configure parallel retries and timeouts, use a smaller text fixture, gate costly tests with a local file, and hide unsupported chat model presets.
+- **kiarina-agi-text**: Select integration tests through local files, configure verbose parallel retries and timeouts, use a smaller text fixture, gate costly tests with a local file, and hide unsupported chat model presets.
 - Add opt-in pytest arguments for package tests through `packages/<package>/tests/.pytest-args`.
+- Add AI agent packages to the VS Code workspace.
 
 ## [2.6.0] - 2026-07-03
 

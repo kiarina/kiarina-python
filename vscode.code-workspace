@@ -4,6 +4,18 @@
       "path": "packages/kiarina"
     },
     {
+      "path": "packages/kiarina-agi-base"
+    },
+    {
+      "path": "packages/kiarina-agi-data"
+    },
+    {
+      "path": "packages/kiarina-agi-file"
+    },
+    {
+      "path": "packages/kiarina-agi-text"
+    },
+    {
       "path": "packages/kiarina-currency"
     },
     {
