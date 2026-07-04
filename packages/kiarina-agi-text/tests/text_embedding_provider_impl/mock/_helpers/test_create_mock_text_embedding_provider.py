@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 from kiarina.agi.text_embedding_provider_impl.mock import (
     MockTextEmbeddingProvider,
     create_mock_text_embedding_provider,

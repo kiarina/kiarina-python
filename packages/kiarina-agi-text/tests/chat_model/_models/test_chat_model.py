@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any
 
 from kiarina.agi.chat_model import chat_model_registry
 from kiarina.agi.chat_provider_impl.mock import MockChatProvider
@@ -14,7 +14,7 @@ def test_chat_model() -> None:
     print("__str__:", str(chat_model))
 
 
-async def test_run(messages, run_context) -> None:
+async def test_run(messages: Any, run_context: Any) -> None:
     chat_model = chat_model_registry.resolve("mock")
 
     ai_messages = [

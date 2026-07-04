@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any
 
 import pytest
 
@@ -15,7 +15,7 @@ from kiarina.agi.langchain_chat_provider import (
 
 
 @pytest.fixture
-def provider(capabilities) -> LCAnthropicChatProvider:
+def provider(capabilities: Any) -> LCAnthropicChatProvider:
     capabilities.output_enabled["image"] = True
     provider = LCAnthropicChatProvider(
         LCAnthropicChatProviderSettings(
@@ -28,7 +28,7 @@ def provider(capabilities) -> LCAnthropicChatProvider:
 
 
 @pytest.fixture
-def ctx(run_context):
+def ctx(run_context: Any) -> Any:
     return LangChainChatProviderContext.create(run_context=run_context)
 
 
@@ -43,12 +43,14 @@ def test_provider(provider: LCAnthropicChatProvider) -> None:
 # --------------------------------------------------
 
 
-def test_to_image_content(provider: LCAnthropicChatProvider, image_file_blob):
+def test_to_image_content(
+    provider: LCAnthropicChatProvider, image_file_blob: Any
+) -> None:
     content = provider.to_image_content(image_file_blob.mime_blob)
     assert content is not None
 
 
-def test_to_pdf_content(provider: LCAnthropicChatProvider, pdf_file_blob):
+def test_to_pdf_content(provider: LCAnthropicChatProvider, pdf_file_blob: Any) -> None:
     content = provider.to_pdf_content(
         pdf_file_blob.mime_blob, display_name="sample.pdf"
     )
@@ -137,7 +139,7 @@ async def test_stream(
 
 @pytest.mark.costly
 async def test_get_cost_record(
-    large_text_file_blob,
+    large_text_file_blob: Any,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -228,7 +230,7 @@ async def test_is_max_token_error(
 
 @pytest.mark.costly
 async def test_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -242,7 +244,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:

@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 from kiarina.agi.langchain_chat_provider import (
     LCAIMessageChunk,
     to_ai_message_chunk,

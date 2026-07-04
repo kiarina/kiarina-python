@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any
 
 import pytest
 
@@ -15,7 +15,7 @@ from kiarina.utils.file import FileBlob
 
 
 @pytest.fixture
-def provider(capabilities) -> LCAnthropicVertexChatProvider:
+def provider(capabilities: Any) -> LCAnthropicVertexChatProvider:
     capabilities.output_enabled["image"] = True
     provider = LCAnthropicVertexChatProvider(
         LCAnthropicVertexChatProviderSettings(
@@ -28,7 +28,7 @@ def provider(capabilities) -> LCAnthropicVertexChatProvider:
 
 
 @pytest.fixture
-def ctx(run_context):
+def ctx(run_context: Any) -> Any:
     return LangChainChatProviderContext.create(run_context=run_context)
 
 
@@ -45,8 +45,8 @@ def test_provider(provider: LCAnthropicVertexChatProvider) -> None:
 
 def test_to_image_content(
     provider: LCAnthropicVertexChatProvider,
-    image_file_blob,
-):
+    image_file_blob: Any,
+) -> None:
     content = provider.to_image_content(image_file_blob.mime_blob)
     assert content is not None
 
@@ -125,7 +125,7 @@ async def test_stream(
 
 @pytest.mark.costly
 async def test_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCAnthropicVertexChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -141,7 +141,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCAnthropicVertexChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:

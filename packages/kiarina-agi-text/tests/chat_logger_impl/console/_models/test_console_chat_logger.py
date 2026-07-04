@@ -1,10 +1,10 @@
-# mypy: ignore-errors
+from typing import Any
 
 from kiarina.agi.chat_logger_impl.console import ConsoleChatLogger
 from kiarina.agi.message import AIMessage, AIMessageChunk, ToolCall, ToolCallChunk
 
 
-def test_invoke(run_context) -> None:
+def test_invoke(run_context: Any) -> None:
     chat_logger = ConsoleChatLogger()
     chat_logger.log_chat_invoke_start(run_context)
     chat_logger.log_chat_invoke_end(
@@ -21,7 +21,7 @@ def test_invoke(run_context) -> None:
     )
 
 
-def test_stream(run_context) -> None:
+def test_stream(run_context: Any) -> None:
     chat_logger = ConsoleChatLogger()
 
     with chat_logger.log_chat_stream(run_context):

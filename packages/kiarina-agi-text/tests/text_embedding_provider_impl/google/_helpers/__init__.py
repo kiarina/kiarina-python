@@ -1,3 +1,1 @@
-# mypy: ignore-errors
-
 

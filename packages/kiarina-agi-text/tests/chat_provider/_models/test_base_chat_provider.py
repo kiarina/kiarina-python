@@ -1,6 +1,5 @@
-# mypy: ignore-errors
-
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 
 import pytest
 
@@ -23,7 +22,7 @@ class ExampleChatProvider(BaseChatProvider):
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Iterator[None]:
     chat_provider_registry.register("example", ExampleChatProvider)
     yield
     chat_provider_registry.clear()
@@ -36,7 +35,7 @@ def test_base_chat_provider() -> None:
     print(f"__str__: {provider!s}")
 
 
-async def test_run(run_context, cost_recorder) -> None:
+async def test_run(run_context: Any, cost_recorder: Any) -> None:
     provider = chat_provider_registry.create("example")
 
     ai_messages = [

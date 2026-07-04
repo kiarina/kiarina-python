@@ -1,6 +1,5 @@
-# mypy: ignore-errors
-
 from collections.abc import Sequence
+from typing import Any
 
 import pytest
 
@@ -16,7 +15,7 @@ from kiarina.agi.message import (
 
 
 @pytest.fixture
-def args(capabilities, media_converter, run_context):
+def args(capabilities: Any, media_converter: Any, run_context: Any) -> Any:
     return {
         "capabilities": capabilities,
         "media_converter": media_converter,
@@ -25,7 +24,7 @@ def args(capabilities, media_converter, run_context):
 
 
 @pytest.fixture
-def messages(image_file_info) -> Sequence[Message]:
+def messages(image_file_info: Any) -> Sequence[Message]:
     return [
         SystemMessage.create("You are a helpful assistant."),
         HumanMessage.create("Hello"),
@@ -51,7 +50,7 @@ def messages(image_file_info) -> Sequence[Message]:
     ]
 
 
-async def test_to_langchain_messages(messages, args) -> None:
+async def test_to_langchain_messages(messages: Any, args: Any) -> None:
     lc_messages = await from_messages(messages, **args)
 
     assert len(lc_messages) == 7

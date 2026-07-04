@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 from kiarina.agi.text_embedding_provider_impl.openai import (
     OpenAITextEmbeddingProvider,
     create_openai_text_embedding_provider,

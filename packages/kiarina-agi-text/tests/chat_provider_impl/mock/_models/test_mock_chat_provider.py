@@ -1,6 +1,5 @@
-# mypy: ignore-errors
-
 import json
+from typing import Any
 
 import pytest
 
@@ -25,7 +24,9 @@ def provider() -> MockChatProvider:
     return provider
 
 
-async def test_invoke(provider, messages, cost_recorder, run_context) -> None:
+async def test_invoke(
+    provider: Any, messages: Any, cost_recorder: Any, run_context: Any
+) -> None:
     ai_messages = [
         ai_message
         async for ai_message in provider.run(
@@ -40,7 +41,9 @@ async def test_invoke(provider, messages, cost_recorder, run_context) -> None:
     print(ai_messages[0].model_dump_json(indent=2))
 
 
-async def test_stream(messages, provider, cost_recorder, run_context) -> None:
+async def test_stream(
+    messages: Any, provider: Any, cost_recorder: Any, run_context: Any
+) -> None:
     ai_messages = [
         ai_message
         async for ai_message in provider.run(
@@ -58,7 +61,9 @@ async def test_stream(messages, provider, cost_recorder, run_context) -> None:
     print(ai_messages[-1].model_dump_json(indent=2))
 
 
-async def test_check_error_simulation(provider, cost_recorder, run_context) -> None:
+async def test_check_error_simulation(
+    provider: Any, cost_recorder: Any, run_context: Any
+) -> None:
     with pytest.raises(TokenOverflowError):
         async for _ in provider.run(
             [
@@ -96,7 +101,7 @@ async def test_check_error_simulation(provider, cost_recorder, run_context) -> N
             pass
 
 
-async def test_tool_calls(provider, cost_recorder, run_context) -> None:
+async def test_tool_calls(provider: Any, cost_recorder: Any, run_context: Any) -> None:
     ai_message = None
     async for generated_message in provider.run(
         [
@@ -121,6 +126,7 @@ async def test_tool_calls(provider, cost_recorder, run_context) -> None:
     ):
         ai_message = generated_message
 
+    assert ai_message is not None
     assert len(ai_message.tool_calls) == 2
 
     print(ai_message.model_dump_json(indent=2))

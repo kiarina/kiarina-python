@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any
 
 import numpy as np
 
@@ -8,7 +8,7 @@ from kiarina.agi.text_embedding_provider_impl.mock import (
 )
 
 
-async def test_mock_text_embedding_provider(run_context) -> None:
+async def test_mock_text_embedding_provider(run_context: Any) -> None:
     provider = MockTextEmbeddingProvider(
         MockTextEmbeddingProviderSettings(
             dimension=2,

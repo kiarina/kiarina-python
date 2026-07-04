@@ -1,5 +1,4 @@
-# mypy: ignore-errors
-
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -9,7 +8,7 @@ from kiarina.utils.file import read_yaml_dict
 
 
 @pytest.fixture(autouse=True)
-def test_settings():
+def test_settings() -> Iterator[None]:
     settings_path = Path(__file__).resolve().parent / "test_settings.yaml"
     user_configs = read_yaml_dict(settings_path)
 

@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 import numpy as np
 import pytest
 

@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from collections.abc import Iterator
 
 import pytest
 
@@ -6,7 +6,7 @@ from kiarina.agi.chat_model import chat_model_registry, settings_manager
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "default": "my",
         "aliases": {

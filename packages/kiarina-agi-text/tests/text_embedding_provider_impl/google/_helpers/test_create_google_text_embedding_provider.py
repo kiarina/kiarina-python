@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 from kiarina.agi.text_embedding_provider_impl.google import (
     GoogleTextEmbeddingProvider,
     create_google_text_embedding_provider,

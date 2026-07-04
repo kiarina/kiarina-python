@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 from kiarina.agi.langchain_chat_provider import (
     LCAIMessage,
     LCHumanMessage,
@@ -7,7 +5,7 @@ from kiarina.agi.langchain_chat_provider import (
 )
 
 
-def test_exists():
+def test_exists() -> None:
     assert has_content(
         [
             LCHumanMessage(content="Hello"),
@@ -23,7 +21,7 @@ def test_exists():
     )
 
 
-def test_not_exists():
+def test_not_exists() -> None:
     assert not has_content(
         [LCHumanMessage(content="Hello")],
         "video",

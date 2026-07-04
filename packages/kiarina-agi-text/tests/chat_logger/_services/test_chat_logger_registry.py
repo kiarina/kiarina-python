@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from collections.abc import Iterator
 
 import pytest
 
@@ -6,7 +6,7 @@ from kiarina.agi.chat_logger import BaseChatLogger, chat_logger_registry
 
 
 @pytest.fixture(autouse=True)
-def cleanup():
+def cleanup() -> Iterator[None]:
     yield
     chat_logger_registry.clear()
 

@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any
 
 import pytest
 
@@ -9,7 +9,7 @@ from kiarina.agi.langchain_chat_provider._operations.from_content import (
 
 
 @pytest.fixture
-def args(capabilities, media_converter, run_context):
+def args(capabilities: Any, media_converter: Any, run_context: Any) -> Any:
     return {
         "capabilities": capabilities,
         "media_converter": media_converter,
@@ -17,7 +17,7 @@ def args(capabilities, media_converter, run_context):
     }
 
 
-async def test_human(text_file_info, image_file_info, args) -> None:
+async def test_human(text_file_info: Any, image_file_info: Any, args: Any) -> None:
     result = await from_content(
         message_type="human",
         content=Content(
@@ -34,7 +34,7 @@ async def test_human(text_file_info, image_file_info, args) -> None:
     print(result)
 
 
-async def test_tool(text_file_info, image_file_info, args) -> None:
+async def test_tool(text_file_info: Any, image_file_info: Any, args: Any) -> None:
     result = await from_content(
         message_type="tool",
         content=Content(

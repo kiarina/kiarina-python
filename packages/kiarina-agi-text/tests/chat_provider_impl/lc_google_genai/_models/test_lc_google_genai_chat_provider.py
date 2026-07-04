@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any, cast
 
 import pytest
 
@@ -27,7 +27,7 @@ def capabilities() -> ChatCapabilities:
 
 
 @pytest.fixture
-def provider_gemini_api(capabilities) -> LCGoogleGenAIChatProvider:
+def provider_gemini_api(capabilities: Any) -> LCGoogleGenAIChatProvider:
     provider = LCGoogleGenAIChatProvider(
         LCGoogleGenAIChatProviderSettings(
             backend_type="gemini_api",
@@ -41,7 +41,7 @@ def provider_gemini_api(capabilities) -> LCGoogleGenAIChatProvider:
 
 
 @pytest.fixture
-def provider_vertex_ai_api_key(capabilities) -> LCGoogleGenAIChatProvider:
+def provider_vertex_ai_api_key(capabilities: Any) -> LCGoogleGenAIChatProvider:
     provider = LCGoogleGenAIChatProvider(
         LCGoogleGenAIChatProviderSettings(
             backend_type="vertex_ai_api_key",
@@ -55,7 +55,7 @@ def provider_vertex_ai_api_key(capabilities) -> LCGoogleGenAIChatProvider:
 
 
 @pytest.fixture
-def provider_vertex_ai_credentials(capabilities) -> LCGoogleGenAIChatProvider:
+def provider_vertex_ai_credentials(capabilities: Any) -> LCGoogleGenAIChatProvider:
     provider = LCGoogleGenAIChatProvider(
         LCGoogleGenAIChatProviderSettings(
             backend_type="vertex_ai_credentials",
@@ -69,12 +69,12 @@ def provider_vertex_ai_credentials(capabilities) -> LCGoogleGenAIChatProvider:
 
 
 @pytest.fixture
-def provider(provider_gemini_api) -> LCGoogleGenAIChatProvider:
-    return provider_gemini_api
+def provider(provider_gemini_api: Any) -> LCGoogleGenAIChatProvider:
+    return cast(LCGoogleGenAIChatProvider, provider_gemini_api)
 
 
 @pytest.fixture
-def ctx(run_context):
+def ctx(run_context: Any) -> Any:
     return LangChainChatProviderContext.create(run_context=run_context)
 
 
@@ -93,7 +93,7 @@ def ctx(run_context):
     ],
 )
 async def test_backend(
-    fixture_name, request, ctx: LangChainChatProviderContext
+    fixture_name: Any, request: Any, ctx: LangChainChatProviderContext
 ) -> None:
     print("\n\n" + "=" * 10 + f" {fixture_name} " + "=" * 10 + "\n")
 
@@ -267,7 +267,7 @@ async def test_is_max_token_error(
 
 @pytest.mark.costly
 async def test_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCGoogleGenAIChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -283,7 +283,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCGoogleGenAIChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:

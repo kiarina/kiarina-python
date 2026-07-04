@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any
 
 import numpy as np
 import pytest
@@ -35,8 +35,8 @@ def test_properties(provider: OpenAITextEmbeddingProvider) -> None:
 @pytest.mark.costly
 async def test_embed_text_request(
     provider: OpenAITextEmbeddingProvider,
-    cost_recorder,
-    run_context,
+    cost_recorder: Any,
+    run_context: Any,
 ) -> None:
     embedding = await provider.embed(
         "Hello, world!",

@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 import json
 
 from pydantic import BaseModel

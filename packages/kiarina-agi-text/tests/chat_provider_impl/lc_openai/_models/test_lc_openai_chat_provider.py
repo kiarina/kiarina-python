@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from typing import Any
 
 import pytest
 
@@ -16,7 +16,7 @@ from kiarina.utils.file import FileBlob
 
 
 @pytest.fixture
-def provider(capabilities) -> LCOpenAIChatProvider:
+def provider(capabilities: Any) -> LCOpenAIChatProvider:
     provider = LCOpenAIChatProvider(
         LCOpenAIChatProviderSettings(
             input_enabled=capabilities.input_enabled,
@@ -59,12 +59,12 @@ def test_get_capabilities_use_settings_token_count_limit_default() -> None:
 
 
 @pytest.fixture
-def ctx(run_context):
+def ctx(run_context: Any) -> Any:
     return LangChainChatProviderContext.create(run_context=run_context)
 
 
 @pytest.fixture
-def lc_messages_with_pdf(provider, pdf_file_blob) -> list[LCMessage]:
+def lc_messages_with_pdf(provider: Any, pdf_file_blob: Any) -> list[LCMessage]:
     return [
         LCHumanMessage(
             content=[
@@ -77,7 +77,7 @@ def lc_messages_with_pdf(provider, pdf_file_blob) -> list[LCMessage]:
     ]
 
 
-def test_provider(provider: LCOpenAIChatProvider):
+def test_provider(provider: LCOpenAIChatProvider) -> None:
     print(f"__str__: {provider!s}")
     print(f"openai_settings: {provider.openai_settings}")
 
@@ -87,12 +87,12 @@ def test_provider(provider: LCOpenAIChatProvider):
 # --------------------------------------------------
 
 
-def test_to_image_content(provider: LCOpenAIChatProvider, image_file_blob):
+def test_to_image_content(provider: LCOpenAIChatProvider, image_file_blob: Any) -> None:
     content = provider.to_image_content(image_file_blob.mime_blob)
     assert content is not None
 
 
-def test_to_pdf_content(provider: LCOpenAIChatProvider, pdf_file_blob):
+def test_to_pdf_content(provider: LCOpenAIChatProvider, pdf_file_blob: Any) -> None:
     content = provider.to_pdf_content(
         pdf_file_blob.mime_blob, display_name="sample.pdf"
     )
@@ -107,7 +107,7 @@ def test_to_pdf_content(provider: LCOpenAIChatProvider, pdf_file_blob):
 async def test_pre_request_responses_api(
     provider: LCOpenAIChatProvider,
     ctx: LangChainChatProviderContext,
-    lc_messages_with_pdf,
+    lc_messages_with_pdf: Any,
 ) -> None:
     ctx.lc_messages = lc_messages_with_pdf
     await provider._pre_request(ctx)
@@ -115,7 +115,7 @@ async def test_pre_request_responses_api(
 
 
 async def test_pre_request_chat_completions_api(
-    lc_messages,
+    lc_messages: Any,
     provider: LCOpenAIChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -277,7 +277,7 @@ async def test_reasoning_effort_and_verbosity(
 
 @pytest.mark.costly
 async def test_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCOpenAIChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -293,7 +293,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
-    lc_tool_infos,
+    lc_tool_infos: Any,
     provider: LCOpenAIChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:

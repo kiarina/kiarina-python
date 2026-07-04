@@ -1,11 +1,11 @@
-# mypy: ignore-errors
+from typing import Any
 
 import numpy as np
 
 from kiarina.agi.text_embedding_model import embed_text
 
 
-async def test_embed_text(run_context, cost_recorder) -> None:
+async def test_embed_text(run_context: Any, cost_recorder: Any) -> None:
     result = await embed_text(
         "hello",
         text_embedding_options={

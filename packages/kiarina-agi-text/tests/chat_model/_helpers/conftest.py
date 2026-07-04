@@ -1,6 +1,6 @@
-# mypy: ignore-errors
-
 import json
+from collections.abc import Iterator
+from typing import Any
 
 import pytest
 
@@ -8,7 +8,7 @@ from kiarina.agi.message import HumanMessage
 
 
 @pytest.fixture
-def create_tool_call_message(chat_model_name: str):
+def create_tool_call_message(chat_model_name: str) -> Any:
     def create(text: str, *tool_names: str) -> HumanMessage:
         if chat_model_name != "mock":
             return HumanMessage.create(text)
@@ -31,7 +31,7 @@ def create_tool_call_message(chat_model_name: str):
 
 
 @pytest.fixture(autouse=True)
-def setup(chat_model_name: str):
+def setup(chat_model_name: str) -> Iterator[None]:
     from kiarina.agi.chat_model import settings_manager
 
     settings = settings_manager.settings_cls().model_dump()
@@ -42,7 +42,7 @@ def setup(chat_model_name: str):
 
 
 @pytest.fixture(autouse=True)
-def setup_cost_logger():
+def setup_cost_logger() -> Any:
     from kiarina.agi.cost_logger import settings_manager
 
     settings_manager.cli_args = {"default": "console"}
@@ -51,7 +51,7 @@ def setup_cost_logger():
 
 
 @pytest.fixture(autouse=True)
-def setup_request_logger():
+def setup_request_logger() -> Any:
     from kiarina.agi.request_logger import settings_manager
 
     settings_manager.cli_args = {"default": "console"}
@@ -60,7 +60,7 @@ def setup_request_logger():
 
 
 @pytest.fixture
-def disable_request_logger():
+def disable_request_logger() -> None:
     from kiarina.agi.request_logger import settings_manager
 
     settings_manager.cli_args = {}

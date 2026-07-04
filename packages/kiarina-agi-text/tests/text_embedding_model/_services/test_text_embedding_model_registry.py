@@ -1,4 +1,4 @@
-# mypy: ignore-errors
+from collections.abc import Iterator
 
 import pytest
 
@@ -9,7 +9,7 @@ from kiarina.agi.text_embedding_model import (
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "presets": {
             "my": {

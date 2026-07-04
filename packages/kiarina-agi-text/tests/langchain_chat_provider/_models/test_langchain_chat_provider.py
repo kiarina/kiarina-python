@@ -1,6 +1,5 @@
-# mypy: ignore-errors
-
 from collections.abc import AsyncIterator
+from typing import Any
 
 import pytest
 
@@ -68,7 +67,7 @@ class MyChatProvider(LangChainChatProvider):
 
 
 @pytest.fixture
-def provider(capabilities) -> MyChatProvider:
+def provider(capabilities: Any) -> MyChatProvider:
     provider = MyChatProvider()
     provider.name = "my"
     provider._capabilities = capabilities
@@ -76,17 +75,17 @@ def provider(capabilities) -> MyChatProvider:
 
 
 @pytest.fixture
-def args(cost_recorder, run_context) -> dict:
+def args(cost_recorder: Any, run_context: Any) -> dict[str, Any]:
     return {"cost_recorder": cost_recorder, "run_context": run_context}
 
 
-async def test_invoke(provider: MyChatProvider, messages, args) -> None:
+async def test_invoke(provider: MyChatProvider, messages: Any, args: Any) -> None:
     ai_message = await _invoke(provider, messages, args)
 
     print(ai_message.to_text())
 
 
-async def test_stream(provider: MyChatProvider, messages, args) -> None:
+async def test_stream(provider: MyChatProvider, messages: Any, args: Any) -> None:
     async for ai_message in provider.run(messages, streaming=True, **args):
         if ai_message.type == "ai_chunk":
             print(ai_message.to_text(), end="", flush=True)
@@ -95,7 +94,9 @@ async def test_stream(provider: MyChatProvider, messages, args) -> None:
     print(ai_message.to_text())
 
 
-async def test_request_error(provider: MyChatProvider, messages, args) -> None:
+async def test_request_error(
+    provider: MyChatProvider, messages: Any, args: Any
+) -> None:
     provider.request_error = RuntimeError("Simulated request error")
 
     with pytest.raises(RuntimeError, match="Simulated request error"):
@@ -103,7 +104,7 @@ async def test_request_error(provider: MyChatProvider, messages, args) -> None:
 
 
 async def test_extract_overflow_token_count(
-    provider: MyChatProvider, messages, args
+    provider: MyChatProvider, messages: Any, args: Any
 ) -> None:
     provider.request_error = RuntimeError("Simulated token overflow error")
     provider.overflow_token_count = 12345
@@ -114,14 +115,16 @@ async def test_extract_overflow_token_count(
     assert exc_info.value.token_count == 12345
 
 
-async def test_safety_error(provider: MyChatProvider, messages, args) -> None:
+async def test_safety_error(provider: MyChatProvider, messages: Any, args: Any) -> None:
     provider.safety_error = True
 
     with pytest.raises(SafetyError):
         await _invoke(provider, messages, args)
 
 
-async def test_max_token_error(provider: MyChatProvider, messages, args) -> None:
+async def test_max_token_error(
+    provider: MyChatProvider, messages: Any, args: Any
+) -> None:
     provider.max_token_error = True
 
     with pytest.raises(MaxTokenError):
@@ -130,8 +133,8 @@ async def test_max_token_error(provider: MyChatProvider, messages, args) -> None
 
 async def _invoke(
     provider: MyChatProvider,
-    messages,
-    args,
+    messages: Any,
+    args: Any,
 ) -> AIMessage:
     ai_message = None
 
