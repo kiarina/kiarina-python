@@ -96,9 +96,25 @@ class ChatModelSettings(BaseSettings):
                 },
                 visible=False,
             ),
-            # -------------------------------------------------
+            # --------------------------------------------------
             # lc_openai
             # --------------------------------------------------
+            "gpt-5.5": ChatModelConfig(
+                provider_name="lc_openai",
+                provider_config={
+                    "model_name": "gpt-5.5",
+                    "context_window": 1_050_000,
+                    "max_output_tokens": 128_000,
+                    "input_cost_microdollars_per_1k_tokens": 5_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 500,
+                    "output_cost_microdollars_per_1k_tokens": 30_000,
+                    "endpoint_type": "responses",
+                    "token_count_limit": 800_000,
+                    "image_file_count_limit": 100,
+                    "pdf_page_count_limit": 100,
+                    "input_enabled": {"image": True, "pdf": True},
+                },
+            ),
             "gpt-5.4-nano": ChatModelConfig(
                 provider_name="lc_openai",
                 provider_config={
@@ -146,74 +162,6 @@ class ChatModelSettings(BaseSettings):
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
                 },
-            ),
-            "gpt-5.3-codex": ChatModelConfig(
-                provider_name="lc_openai",
-                provider_config={
-                    "model_name": "gpt-5.2",
-                    "context_window": 400_000,
-                    "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 1_750,
-                    "cached_input_cost_microdollars_per_1k_tokens": 175,
-                    "output_cost_microdollars_per_1k_tokens": 14_000,
-                    "endpoint_type": "responses",
-                    "token_count_limit": 272_000,
-                    "image_file_count_limit": 100,
-                    "pdf_page_count_limit": 100,
-                    "input_enabled": {"image": True, "pdf": True},
-                },
-                visible=False,
-            ),
-            "gpt-5-mini": ChatModelConfig(
-                provider_name="lc_openai",
-                provider_config={
-                    "model_name": "gpt-5-mini",
-                    "context_window": 400_000,
-                    "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 250,
-                    "cached_input_cost_microdollars_per_1k_tokens": 25,
-                    "output_cost_microdollars_per_1k_tokens": 2_000,
-                    "reasoning_effort": "minimal",
-                    "verbosity": "medium",
-                    "token_count_limit": 272_000,
-                    "image_file_count_limit": 100,
-                    "pdf_page_count_limit": 100,
-                    "input_enabled": {"image": True, "pdf": True},
-                },
-            ),
-            "gpt-5-nano": ChatModelConfig(
-                provider_name="lc_openai",
-                provider_config={
-                    "model_name": "gpt-5-nano",
-                    "context_window": 400_000,
-                    "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 50,
-                    "cached_input_cost_microdollars_per_1k_tokens": 5,
-                    "output_cost_microdollars_per_1k_tokens": 400,
-                    "reasoning_effort": "minimal",
-                    "verbosity": "medium",
-                    "token_count_limit": 272_000,
-                    "image_file_count_limit": 100,
-                    "pdf_page_count_limit": 100,
-                    "input_enabled": {"image": True, "pdf": True},
-                },
-                visible=False,
-            ),
-            "gpt-4.1": ChatModelConfig(
-                provider_name="lc_openai",
-                provider_config={
-                    "model_name": "gpt-4.1",
-                    "context_window": 1_047_576,
-                    "max_output_tokens": 32_768,
-                    "input_cost_microdollars_per_1k_tokens": 2_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 500,
-                    "output_cost_microdollars_per_1k_tokens": 8_000,
-                    "token_count_limit": 1_014_808,
-                    "image_file_count_limit": 100,
-                    "pdf_page_count_limit": 100,
-                    "input_enabled": {"image": True, "pdf": True},
-                },
-                visible=False,
             ),
             # --------------------------------------------------
             # lc_anthropic
