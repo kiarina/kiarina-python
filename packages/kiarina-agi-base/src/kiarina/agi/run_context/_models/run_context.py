@@ -7,6 +7,7 @@ from kiarina.currency import CurrencyCode
 from kiarina.i18n import Language
 from kiarina.utils.app import app
 
+from .._operations.get_id import get_id
 from .._settings import settings_manager
 from .._types.id_str import IDStr
 from .._types.time_zone import TimeZone
@@ -17,21 +18,13 @@ class RunContext(BaseModel):
 
     app_name: str = Field(default_factory=lambda: app.app_name)
 
-    organization_id: IDStr = Field(
-        default_factory=lambda: settings_manager.get_settings().get_organization_id()
-    )
+    organization_id: IDStr = Field(default_factory=lambda: get_id("organization_id"))
 
-    user_id: IDStr = Field(
-        default_factory=lambda: settings_manager.get_settings().get_user_id()
-    )
+    user_id: IDStr = Field(default_factory=lambda: get_id("user_id"))
 
-    agent_id: IDStr = Field(
-        default_factory=lambda: settings_manager.get_settings().get_agent_id()
-    )
+    agent_id: IDStr = Field(default_factory=lambda: get_id("agent_id"))
 
-    node_id: IDStr = Field(
-        default_factory=lambda: settings_manager.get_settings().get_node_id()
-    )
+    node_id: IDStr = Field(default_factory=lambda: get_id("node_id"))
 
     time_zone: TimeZone = Field(
         default_factory=lambda: settings_manager.get_settings().time_zone

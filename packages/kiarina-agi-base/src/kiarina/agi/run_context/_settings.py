@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
@@ -22,35 +23,17 @@ class RunContextSettings(BaseSettings):
 
     node_id: IDStr | None = "default"
 
+    disallow_default_ids: bool = Field(
+        default=False,
+        title="Disallow default IDs",
+        description="Reject default run context identifiers.",
+    )
+
     time_zone: TimeZone = "UTC"
 
     language: Language = "en"
 
     currency: CurrencyCode = "USD"
-
-    def get_organization_id(self) -> IDStr:
-        if not self.organization_id:
-            raise ValueError("organization_id is not set")
-
-        return self.organization_id
-
-    def get_user_id(self) -> IDStr:
-        if not self.user_id:
-            raise ValueError("user_id is not set")
-
-        return self.user_id
-
-    def get_agent_id(self) -> IDStr:
-        if not self.agent_id:
-            raise ValueError("agent_id is not set")
-
-        return self.agent_id
-
-    def get_node_id(self) -> IDStr:
-        if not self.node_id:
-            raise ValueError("node_id is not set")
-
-        return self.node_id
 
 
 settings_manager = SettingsManager(RunContextSettings)

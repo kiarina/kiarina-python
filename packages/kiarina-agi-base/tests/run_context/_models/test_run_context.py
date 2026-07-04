@@ -31,3 +31,21 @@ def test_run_context() -> None:
 
     run_context = run_context.with_metadata(initial="value")
     assert run_context.metadata["initial"] == "value"
+
+
+def test_allow_default_ids() -> None:
+    settings_manager.cli_args = {}
+
+    run_context = RunContext()
+
+    assert run_context.organization_id == "default"
+    assert run_context.user_id == "default"
+    assert run_context.agent_id == "default"
+    assert run_context.node_id == "default"
+
+
+def test_disallow_default_ids() -> None:
+    settings_manager.cli_args = {"disallow_default_ids": True}
+
+    with pytest.raises(ValueError, match=r"^organization_id must not be default$"):
+        RunContext()

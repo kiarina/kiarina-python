@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Add chat, logging, and text embedding APIs for AI agents.
 
 ### Changed
-- **kiarina-agi-base**: Default run context identifiers to `default`.
+- **kiarina-agi-base**: Default run context identifiers to `default` and add an option to require explicit identifiers.
 - **kiarina-agi-data**: Replace broad `Any` annotations in package tests with concrete types.
 - **kiarina-agi-text**: Add an `all` extra and consolidate optional dependency documentation.
 - **kiarina-agi-text**: Add concrete type annotations to package tests and remove file-wide mypy suppressions.

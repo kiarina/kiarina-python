@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Default run context identifiers to `default`.
+- Default run context identifiers to `default` and add an option to require explicit identifiers.
 
 ## [2.6.0] - 2026-07-03
 

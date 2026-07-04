@@ -54,6 +54,7 @@ export KIARINA_AGI_RUN_CONTEXT_ORGANIZATION_ID=my-org
 export KIARINA_AGI_RUN_CONTEXT_USER_ID=my-user
 export KIARINA_AGI_RUN_CONTEXT_AGENT_ID=my-agent
 export KIARINA_AGI_RUN_CONTEXT_NODE_ID=my-node
+export KIARINA_AGI_RUN_CONTEXT_DISALLOW_DEFAULT_IDS=true
 export KIARINA_AGI_RUN_CONTEXT_TIME_ZONE=Asia/Tokyo
 export KIARINA_AGI_RUN_CONTEXT_LANGUAGE=ja
 export KIARINA_AGI_RUN_CONTEXT_CURRENCY=JPY
@@ -195,21 +196,17 @@ class RunContext(BaseModel):
 
 ```python
 class RunContextSettings(BaseSettings):
-    organization_id: IDStr | None = None
-    user_id: IDStr | None = None
-    agent_id: IDStr | None = None
-    node_id: IDStr | None = None
+    organization_id: IDStr | None = "default"
+    user_id: IDStr | None = "default"
+    agent_id: IDStr | None = "default"
+    node_id: IDStr | None = "default"
+    disallow_default_ids: bool = False
     time_zone: TimeZone = "UTC"
     language: Language = "en"
     currency: CurrencyCode = "USD"
-
-    def get_organization_id(self) -> IDStr: ...
-    def get_user_id(self) -> IDStr: ...
-    def get_agent_id(self) -> IDStr: ...
-    def get_node_id(self) -> IDStr: ...
 ```
 
-The environment variable prefix is `KIARINA_AGI_RUN_CONTEXT_`. Each `get_*_id` method raises `ValueError` when its value is not set.
+The environment variable prefix is `KIARINA_AGI_RUN_CONTEXT_`. Creating a `RunContext` raises `ValueError` when an identifier is not set, or when `disallow_default_ids` is `True` and an identifier is `default`. Enable this flag in multi-user environments to require explicit identifiers.
 
 #### `IDStr`
 

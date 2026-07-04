@@ -1,5 +1,5 @@
-from .._settings import settings_manager
+from .._operations.get_id import get_id
 
 
 def get_node_id() -> str:
-    return settings_manager.get_settings().get_node_id()
+    return get_id("node_id")
