@@ -28,5 +28,3 @@ except ImportError as exc:
         "pip install 'kiarina-agi-file[asset-repository-gcs]'"
     ) from exc
 ```
-
-パッケージの README にも、extra 名、依存パッケージ、インストールコマンドを記載します。

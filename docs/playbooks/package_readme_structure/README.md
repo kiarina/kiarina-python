@@ -33,8 +33,6 @@ English | [日本語](README.ja.md)
 
 ### Optional Dependencies
 
-#### `<extra-name>`
-
 ## Installation
 
 ## Features
@@ -84,16 +82,17 @@ If optional dependencies are available, use separate tables for required and opt
 
 ### Optional Dependencies
 
-#### `mime`
+| Package | Version | License | Extras |
+| --- | --- | --- | --- |
+| [puremagic](https://github.com/cdgriffith/puremagic) | `>=1.30` | [MIT](https://github.com/cdgriffith/puremagic/blob/main/LICENSE) | `mime` |
 
-Used for content-based MIME type detection.
-
-| Package | Version | License |
-| --- | --- | --- |
-| [puremagic](https://github.com/cdgriffith/puremagic) | `>=1.30` | [MIT](https://github.com/cdgriffith/puremagic/blob/main/LICENSE) |
+The `all` Extra installs every optional dependency listed above.
 ```
 
-Create a separate H4 and table for each Extra, and briefly describe its purpose.
+List optional dependencies in one table and use the `Extras` column to identify every Extra that installs each dependency.
+When listing multiple Extras, separate them with `<br>` so each appears on its own line.
+When multiple Extras use the same dependency, include only one row for that dependency.
+For an Extra such as `all` that installs every dependency in the table, explain it below the table instead of repeating it in every optional dependency row.
 If there are no optional dependencies, the `Required Dependencies` heading may be omitted.
 If the package only uses the Python standard library, state that briefly.
 Do not include development or test dependencies.
@@ -117,6 +116,8 @@ If Extras are available, also show the installation command for each Extra.
 pip install "<package-name>[<extra-name>]"
 ```
 ````
+
+If an `all` Extra is available, show only its installation command.
 
 ### Features
 
@@ -214,5 +215,12 @@ class Registry(Generic[T]):
 
     def clear(self) -> None: ...
 ```
+
+Some modules are intended for internal use and are not meaningful to introduce
+to consumers, even if they define `__all__`.
+Omit such modules from the API Reference.
+
+This cannot be determined from the package code alone.
+Follow any instruction that explicitly allows a module to be omitted from the API Reference.
 
 Keep signatures and the executable content of code examples identical between `README.md` and `README.ja.md`; translate only explanatory prose and comments.
