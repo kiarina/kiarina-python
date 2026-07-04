@@ -15,7 +15,7 @@ class LCOpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
 
     openai_settings_key: SettingsKey | None = None
 
-    model_name: str = "gpt-5-nano"
+    model_name: str = "gpt-5.5"
 
     max_output_tokens: int = 128_000
 
