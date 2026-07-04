@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Select chat model helper tests through `KIARINA_AGI_TEXT_TEST_CHAT_MODEL`, default to the mock model, configure verbose parallel retries and timeouts, use a smaller text fixture, and hide unsupported chat model presets.
 - **kiarina-agi-text**: Show the selected chat model in pytest output and load package test variables from `.env.vscode` in VS Code.
 - **kiarina-agi-text**: Move manually run chat and token overflow checks from skipped tests to package scripts.
+- **kiarina-agi-text**: Enable costly tests through `KIARINA_AGI_TEXT_TEST_COSTLY` instead of a marker file.
 - Include package `scripts` directories in formatting, linting, and type checking.
 - Add opt-in pytest arguments for package tests through `packages/<package>/tests/.pytest-args`.
 - Add AI agent packages to the VS Code workspace.

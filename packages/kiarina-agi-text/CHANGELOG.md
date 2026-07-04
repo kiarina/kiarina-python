@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Select chat model helper tests through `KIARINA_AGI_TEXT_TEST_CHAT_MODEL`, default to the mock model, configure verbose parallel retries and timeouts, use a smaller text fixture, and hide unsupported chat model presets.
 - Show the selected chat model in pytest output and load package test variables from `.env.vscode` in VS Code.
 - Move manually run chat and token overflow checks from skipped tests to package scripts.
+- Enable costly tests through `KIARINA_AGI_TEXT_TEST_COSTLY` instead of a marker file.
 
 ## [2.6.0] - 2026-07-03
 

@@ -53,9 +53,9 @@ def chat_model_name() -> str:
 
 @pytest.fixture(autouse=True)
 def skip_costly(request: pytest.FixtureRequest) -> None:
-    costly_enabled = (Path(__file__).parent / ".costly").is_file()
+    costly_enabled = os.getenv("KIARINA_AGI_TEXT_TEST_COSTLY", "0") == "1"
     if request.node.get_closest_marker("costly") and not costly_enabled:
-        pytest.skip("Create tests/.costly to run this test.")
+        pytest.skip("Set KIARINA_AGI_TEXT_TEST_COSTLY=1 to run this test.")
 
 
 @pytest.fixture(scope="session", autouse=True)
