@@ -3,6 +3,8 @@
 #USAGE arg "[package]" help="Package name (default: current package, or all at repo root)"
 #USAGE flag "-v --verbose" help="Verbose output"
 #USAGE flag "-c --coverage" help="Run with coverage"
+#USAGE flag "--costly" help="Run tests marked as costly"
+#USAGE flag "--path <path>" help="Test path relative to the package directory"
 #USAGE flag "--no-clean" help="Skip cleaning previous coverage data (for CI)"
 #USAGE flag "--no-docker" help="Skip Docker Compose up/down (only used when running all)"
 
@@ -11,12 +13,19 @@ set -euo pipefail
 target="${usage_package:-$(cd "${MISE_ORIGINAL_CWD:-$PWD}" && mise run package:current)}"
 verbose="${usage_verbose:-false}"
 coverage="${usage_coverage:-false}"
+costly="${usage_costly:-false}"
+test_path="${usage_path:-tests/}"
 no_clean="${usage_no_clean:-false}"
 no_docker="${usage_no_docker:-false}"
 
 # Resolve "all": orchestrate Docker, run every package with coverage appended,
 # then generate aggregate coverage reports (meta-packages excluded).
 if [ "$target" = "all" ]; then
+    if [ "$test_path" != "tests/" ]; then
+        echo "❌ --path requires a package target." >&2
+        exit 1
+    fi
+
     if [ "$no_docker" = "false" ]; then
         echo "🐳 Starting Docker services..."
         docker compose up -d
@@ -30,6 +39,7 @@ if [ "$target" = "all" ]; then
     while IFS= read -r package; do
         test_args=("$package")
         [ "$verbose" = "true" ] && test_args+=(--verbose)
+        [ "$costly" = "true" ] && test_args+=(--costly)
         if [ "$coverage" = "true" ]; then
             test_args+=(--coverage --no-clean)
         fi
@@ -74,7 +84,7 @@ if [ "$coverage" = "true" ] && [ "$no_clean" = "false" ]; then
 fi
 
 # Test command construction
-test_cmd=(uv run --group test pytest "packages/$target/tests/")
+test_cmd=(uv run --group test pytest "packages/$target/$test_path")
 
 if [ "$verbose" = "true" ]; then
     test_cmd+=(-v)
@@ -113,4 +123,8 @@ if [ "$coverage" = "true" ]; then
 fi
 
 # Test execution
-"${test_cmd[@]}"
+if [ "$costly" = "true" ]; then
+    KIARINA_TEST_COSTLY=1 "${test_cmd[@]}"
+else
+    "${test_cmd[@]}"
+fi
