@@ -1,8 +1,8 @@
-from typing import Any
-
 import numpy as np
 import pytest
 
+from kiarina.agi.cost_recorder import CostRecorder
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.text_embedding_provider_impl.google import (
     GoogleTextEmbeddingProvider,
     GoogleTextEmbeddingProviderSettings,
@@ -36,8 +36,8 @@ def test_properties(provider: GoogleTextEmbeddingProvider) -> None:
 @pytest.mark.costly
 async def test_embed_text_request(
     provider: GoogleTextEmbeddingProvider,
-    cost_recorder: Any,
-    run_context: Any,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
 ) -> None:
     embedding = await provider.embed(
         "Hello, world!",

@@ -1,7 +1,6 @@
-from typing import Any
-
 import pytest
 
+from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.chat_provider_impl.lc_anthropic import (
     LCAnthropicChatProvider,
     LCAnthropicChatProviderSettings,
@@ -12,10 +11,12 @@ from kiarina.agi.langchain_chat_provider import (
     LCHumanMessage,
     LCToolInfo,
 )
+from kiarina.agi.run_context import RunContext
+from kiarina.utils.file import FileBlob
 
 
 @pytest.fixture
-def provider(capabilities: Any) -> LCAnthropicChatProvider:
+def provider(capabilities: ChatCapabilities) -> LCAnthropicChatProvider:
     capabilities.output_enabled["image"] = True
     provider = LCAnthropicChatProvider(
         LCAnthropicChatProviderSettings(
@@ -28,7 +29,7 @@ def provider(capabilities: Any) -> LCAnthropicChatProvider:
 
 
 @pytest.fixture
-def ctx(run_context: Any) -> Any:
+def ctx(run_context: RunContext) -> LangChainChatProviderContext:
     return LangChainChatProviderContext.create(run_context=run_context)
 
 
@@ -44,13 +45,15 @@ def test_provider(provider: LCAnthropicChatProvider) -> None:
 
 
 def test_to_image_content(
-    provider: LCAnthropicChatProvider, image_file_blob: Any
+    provider: LCAnthropicChatProvider, image_file_blob: FileBlob
 ) -> None:
     content = provider.to_image_content(image_file_blob.mime_blob)
     assert content is not None
 
 
-def test_to_pdf_content(provider: LCAnthropicChatProvider, pdf_file_blob: Any) -> None:
+def test_to_pdf_content(
+    provider: LCAnthropicChatProvider, pdf_file_blob: FileBlob
+) -> None:
     content = provider.to_pdf_content(
         pdf_file_blob.mime_blob, display_name="sample.pdf"
     )
@@ -139,7 +142,7 @@ async def test_stream(
 
 @pytest.mark.costly
 async def test_get_cost_record(
-    large_text_file_blob: Any,
+    large_text_file_blob: FileBlob,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -230,7 +233,7 @@ async def test_is_max_token_error(
 
 @pytest.mark.costly
 async def test_tool_calls(
-    lc_tool_infos: Any,
+    lc_tool_infos: list[LCToolInfo],
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -244,7 +247,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
-    lc_tool_infos: Any,
+    lc_tool_infos: list[LCToolInfo],
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:

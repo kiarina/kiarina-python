@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 import pytest
 
@@ -12,7 +11,9 @@ from kiarina.agi.chat_provider_impl.mock import (
     MockChatProvider,
     MockChatProviderSettings,
 )
-from kiarina.agi.message import HumanMessage
+from kiarina.agi.cost_recorder import CostRecorder
+from kiarina.agi.message import AIMessage, AIMessageChunk, HumanMessage, Message
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.tool_info import ToolInfo
 
 
@@ -25,9 +26,12 @@ def provider() -> MockChatProvider:
 
 
 async def test_invoke(
-    provider: Any, messages: Any, cost_recorder: Any, run_context: Any
+    provider: MockChatProvider,
+    messages: list[Message],
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
 ) -> None:
-    ai_messages = [
+    ai_messages: list[AIMessageChunk | AIMessage] = [
         ai_message
         async for ai_message in provider.run(
             messages[:-1],
@@ -42,9 +46,12 @@ async def test_invoke(
 
 
 async def test_stream(
-    messages: Any, provider: Any, cost_recorder: Any, run_context: Any
+    messages: list[Message],
+    provider: MockChatProvider,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
 ) -> None:
-    ai_messages = [
+    ai_messages: list[AIMessageChunk | AIMessage] = [
         ai_message
         async for ai_message in provider.run(
             messages[:-1],
@@ -62,7 +69,9 @@ async def test_stream(
 
 
 async def test_check_error_simulation(
-    provider: Any, cost_recorder: Any, run_context: Any
+    provider: MockChatProvider,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
 ) -> None:
     with pytest.raises(TokenOverflowError):
         async for _ in provider.run(
@@ -101,7 +110,11 @@ async def test_check_error_simulation(
             pass
 
 
-async def test_tool_calls(provider: Any, cost_recorder: Any, run_context: Any) -> None:
+async def test_tool_calls(
+    provider: MockChatProvider,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
+) -> None:
     ai_message = None
     async for generated_message in provider.run(
         [

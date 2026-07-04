@@ -1,9 +1,10 @@
-from collections.abc import Sequence
-from typing import Any
+from typing import TypedDict
 
 import pytest
 
-from kiarina.agi.langchain_chat_provider import from_messages
+from kiarina.agi.chat_provider import ChatCapabilities
+from kiarina.agi.file_info import ImageFileInfo
+from kiarina.agi.langchain_chat_provider import LangChainMediaConverter, from_messages
 from kiarina.agi.message import (
     AIMessage,
     HumanMessage,
@@ -12,10 +13,21 @@ from kiarina.agi.message import (
     ToolCall,
     ToolMessage,
 )
+from kiarina.agi.run_context import RunContext
+
+
+class ConversionArgs(TypedDict):
+    capabilities: ChatCapabilities
+    media_converter: LangChainMediaConverter
+    run_context: RunContext
 
 
 @pytest.fixture
-def args(capabilities: Any, media_converter: Any, run_context: Any) -> Any:
+def args(
+    capabilities: ChatCapabilities,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+) -> ConversionArgs:
     return {
         "capabilities": capabilities,
         "media_converter": media_converter,
@@ -24,7 +36,7 @@ def args(capabilities: Any, media_converter: Any, run_context: Any) -> Any:
 
 
 @pytest.fixture
-def messages(image_file_info: Any) -> Sequence[Message]:
+def messages(image_file_info: ImageFileInfo) -> list[Message]:
     return [
         SystemMessage.create("You are a helpful assistant."),
         HumanMessage.create("Hello"),
@@ -50,7 +62,9 @@ def messages(image_file_info: Any) -> Sequence[Message]:
     ]
 
 
-async def test_to_langchain_messages(messages: Any, args: Any) -> None:
+async def test_to_langchain_messages(
+    messages: list[Message], args: ConversionArgs
+) -> None:
     lc_messages = await from_messages(messages, **args)
 
     assert len(lc_messages) == 7

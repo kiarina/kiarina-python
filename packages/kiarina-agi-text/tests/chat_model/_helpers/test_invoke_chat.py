@@ -1,32 +1,47 @@
-from typing import Any
+from collections.abc import Callable
+from typing import TypedDict
 
 import pytest
 
 from kiarina.agi.chat_model import invoke_chat
+from kiarina.agi.cost_recorder import CostRecorder
+from kiarina.agi.file_info import (
+    AudioFileInfo,
+    ImageFileInfo,
+    PDFFileInfo,
+    VideoFileInfo,
+)
 from kiarina.agi.message import (
     AIMessage,
     HumanMessage,
     ToolCall,
     ToolMessage,
 )
+from kiarina.agi.run_context import RunContext
+from kiarina.agi.tool_info import ToolInfo
+
+
+class ChatArgs(TypedDict):
+    cost_recorder: CostRecorder
+    run_context: RunContext
 
 
 @pytest.fixture
-def args(cost_recorder: Any, run_context: Any) -> Any:
+def args(cost_recorder: CostRecorder, run_context: RunContext) -> ChatArgs:
     return {
         "cost_recorder": cost_recorder,
         "run_context": run_context,
     }
 
 
-async def test_invoke(args: Any) -> None:
+async def test_invoke(args: ChatArgs) -> None:
     await invoke_chat(
         [HumanMessage.create("Hello")],
         **args,
     )
 
 
-async def test_tool_info_auto_no_tool_call(tool_info: Any, args: Any) -> None:
+async def test_tool_info_auto_no_tool_call(tool_info: ToolInfo, args: ChatArgs) -> None:
     ai_message = await invoke_chat(
         [HumanMessage.create("Hello")],
         tool_infos=[tool_info],
@@ -39,7 +54,7 @@ async def test_tool_info_auto_no_tool_call(tool_info: Any, args: Any) -> None:
     assert len(ai_message.tool_calls) == 0
 
 
-async def test_tool_info_auto_tool_call(tool_info: Any, args: Any) -> None:
+async def test_tool_info_auto_tool_call(tool_info: ToolInfo, args: ChatArgs) -> None:
     ai_message = await invoke_chat(
         [HumanMessage.create("Hello, can you get me the weather in Tokyo?")],
         tool_infos=[tool_info],
@@ -53,7 +68,9 @@ async def test_tool_info_auto_tool_call(tool_info: Any, args: Any) -> None:
 
 
 async def test_info_any(
-    tool_info: Any, create_tool_call_message: Any, args: Any
+    tool_info: ToolInfo,
+    create_tool_call_message: Callable[..., HumanMessage],
+    args: ChatArgs,
 ) -> None:
     ai_message = await invoke_chat(
         [create_tool_call_message("Hello", "get_weather")],
@@ -68,7 +85,9 @@ async def test_info_any(
 
 
 async def test_tool_infos_not_parallel(
-    tool_infos: Any, create_tool_call_message: Any, args: Any
+    tool_infos: list[ToolInfo],
+    create_tool_call_message: Callable[..., HumanMessage],
+    args: ChatArgs,
 ) -> None:
     ai_message = await invoke_chat(
         [
@@ -88,7 +107,9 @@ async def test_tool_infos_not_parallel(
 
 
 async def test_tool_infos_parallel(
-    tool_infos: Any, create_tool_call_message: Any, args: Any
+    tool_infos: list[ToolInfo],
+    create_tool_call_message: Callable[..., HumanMessage],
+    args: ChatArgs,
 ) -> None:
     ai_message = await invoke_chat(
         [
@@ -109,7 +130,7 @@ async def test_tool_infos_parallel(
     assert len(ai_message.tool_calls) == 2
 
 
-async def test_image_input(image_file_info: Any, args: Any) -> None:
+async def test_image_input(image_file_info: ImageFileInfo, args: ChatArgs) -> None:
     await invoke_chat(
         [HumanMessage.create("What do you see in this image?", [image_file_info])],
         **args,
@@ -117,7 +138,7 @@ async def test_image_input(image_file_info: Any, args: Any) -> None:
 
 
 async def test_image_output(
-    image_file_info: Any, generate_tool_infos: Any, args: Any
+    image_file_info: ImageFileInfo, generate_tool_infos: list[ToolInfo], args: ChatArgs
 ) -> None:
     await invoke_chat(
         [
@@ -145,7 +166,7 @@ async def test_image_output(
     )
 
 
-async def test_audio_input(audio_file_info: Any, args: Any) -> None:
+async def test_audio_input(audio_file_info: AudioFileInfo, args: ChatArgs) -> None:
     await invoke_chat(
         [HumanMessage.create("What do you hear in this audio?", [audio_file_info])],
         **args,
@@ -153,7 +174,7 @@ async def test_audio_input(audio_file_info: Any, args: Any) -> None:
 
 
 async def test_audio_output(
-    audio_file_info: Any, generate_tool_infos: Any, args: Any
+    audio_file_info: AudioFileInfo, generate_tool_infos: list[ToolInfo], args: ChatArgs
 ) -> None:
     await invoke_chat(
         [
@@ -181,7 +202,7 @@ async def test_audio_output(
     )
 
 
-async def test_video_input(video_file_info: Any, args: Any) -> None:
+async def test_video_input(video_file_info: VideoFileInfo, args: ChatArgs) -> None:
     await invoke_chat(
         [HumanMessage.create("What do you see in this video?", [video_file_info])],
         **args,
@@ -189,7 +210,7 @@ async def test_video_input(video_file_info: Any, args: Any) -> None:
 
 
 async def test_video_output(
-    video_file_info: Any, generate_tool_infos: Any, args: Any
+    video_file_info: VideoFileInfo, generate_tool_infos: list[ToolInfo], args: ChatArgs
 ) -> None:
     await invoke_chat(
         [
@@ -217,7 +238,7 @@ async def test_video_output(
     )
 
 
-async def test_pdf_input(pdf_file_info: Any, args: Any) -> None:
+async def test_pdf_input(pdf_file_info: PDFFileInfo, args: ChatArgs) -> None:
     await invoke_chat(
         [
             HumanMessage.create("Here is a PDF file:"),
@@ -231,7 +252,7 @@ async def test_pdf_input(pdf_file_info: Any, args: Any) -> None:
 
 
 async def test_pdf_output(
-    pdf_file_info: Any, generate_tool_infos: Any, args: Any
+    pdf_file_info: PDFFileInfo, generate_tool_infos: list[ToolInfo], args: ChatArgs
 ) -> None:
     await invoke_chat(
         [

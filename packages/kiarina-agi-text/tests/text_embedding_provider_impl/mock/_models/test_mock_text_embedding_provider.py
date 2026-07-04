@@ -1,14 +1,13 @@
-from typing import Any
-
 import numpy as np
 
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.text_embedding_provider_impl.mock import (
     MockTextEmbeddingProvider,
     MockTextEmbeddingProviderSettings,
 )
 
 
-async def test_mock_text_embedding_provider(run_context: Any) -> None:
+async def test_mock_text_embedding_provider(run_context: RunContext) -> None:
     provider = MockTextEmbeddingProvider(
         MockTextEmbeddingProviderSettings(
             dimension=2,

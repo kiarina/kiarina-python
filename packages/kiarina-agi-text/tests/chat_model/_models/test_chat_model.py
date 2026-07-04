@@ -1,7 +1,7 @@
-from typing import Any
-
 from kiarina.agi.chat_model import chat_model_registry
 from kiarina.agi.chat_provider_impl.mock import MockChatProvider
+from kiarina.agi.message import Message
+from kiarina.agi.run_context import RunContext
 
 
 def test_chat_model() -> None:
@@ -14,7 +14,7 @@ def test_chat_model() -> None:
     print("__str__:", str(chat_model))
 
 
-async def test_run(messages: Any, run_context: Any) -> None:
+async def test_run(messages: list[Message], run_context: RunContext) -> None:
     chat_model = chat_model_registry.resolve("mock")
 
     ai_messages = [

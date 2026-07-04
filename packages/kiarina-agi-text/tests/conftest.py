@@ -1,6 +1,6 @@
 import os
 import re
-from collections.abc import Callable, Iterator
+from collections.abc import AsyncIterator, Callable, Iterator
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from kiarina.agi.chat_model import ChatModel, chat_model_registry
 from kiarina.agi.chat_provider import ChatCapabilities
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.file_info import (
     AudioFileInfo,
     ImageFileInfo,
@@ -30,7 +31,7 @@ from kiarina.agi.message import (
     ToolMessage,
 )
 from kiarina.agi.run_context import RunContext
-from kiarina.agi.tool_info import create_tool_info
+from kiarina.agi.tool_info import ToolInfo, create_tool_info
 from kiarina.utils.app import configure, reset
 from kiarina.utils.file import FileBlob, read_file
 from kiarina.utils.mime import MIMEBlob
@@ -64,7 +65,7 @@ def configure_app() -> Iterator[None]:
 
 
 @pytest.fixture(autouse=True)
-def setup_chat_logger() -> Any:
+def setup_chat_logger() -> Iterator[None]:
     from kiarina.agi.chat_logger import settings_manager
 
     settings_manager.cli_args = {"default": "console"}
@@ -78,7 +79,7 @@ def setup_chat_logger() -> Any:
 
 
 @pytest.fixture
-def run_context(request: Any) -> RunContext:
+def run_context(request: pytest.FixtureRequest) -> RunContext:
     return RunContext(
         organization_id="kiarina.agi",
         user_id=request.module.__name__,
@@ -88,7 +89,7 @@ def run_context(request: Any) -> RunContext:
 
 
 @pytest.fixture
-async def cost_recorder(run_context: Any) -> Any:
+async def cost_recorder(run_context: RunContext) -> AsyncIterator[CostRecorder]:
     from kiarina.agi.cost_recorder_impl.null import NullCostRecorder
 
     recorder = NullCostRecorder()
@@ -147,14 +148,14 @@ def other_file_path(test_data_dir: Path) -> str:
 
 
 @pytest.fixture
-def text_file_blob(text_file_path: Any) -> FileBlob:
+def text_file_blob(text_file_path: str) -> FileBlob:
     file_blob = read_file(text_file_path)
     assert file_blob is not None
     return file_blob
 
 
 @pytest.fixture
-def large_text_file_blob(large_text_file_path: Any) -> FileBlob:
+def large_text_file_blob(large_text_file_path: str) -> FileBlob:
     file_blob = read_file(large_text_file_path)
     assert file_blob is not None
     return file_blob
@@ -194,7 +195,7 @@ def pdf_file_blob(pdf_file_path: str) -> FileBlob:
 
 
 @pytest.fixture
-def tool_info() -> Any:
+def tool_info() -> ToolInfo:
     class get_weather(BaseModel):
         """Get the weather for a given location."""
 
@@ -204,7 +205,7 @@ def tool_info() -> Any:
 
 
 @pytest.fixture
-def tool_infos() -> Any:
+def tool_infos() -> list[ToolInfo]:
     class get_weather(BaseModel):
         """Get the weather for a given location."""
 
@@ -222,7 +223,7 @@ def tool_infos() -> Any:
 
 
 @pytest.fixture
-def generate_tool_infos() -> Any:
+def generate_tool_infos() -> list[ToolInfo]:
     class generate_image(BaseModel):
         """Generate an image based on the given instructions."""
 
@@ -253,10 +254,12 @@ def generate_tool_infos() -> Any:
 
 @pytest.fixture
 def large_tool_infos(
-    tool_info: Any, generate_tool_infos: Any, large_text_file_blob: Any
-) -> Any:
+    tool_info: ToolInfo,
+    generate_tool_infos: list[ToolInfo],
+    large_text_file_blob: FileBlob,
+) -> list[ToolInfo]:
     large_tool_info = tool_info.copy()
-    large_tool_info["description"] += "\n\n" + large_text_file_blob.raw_text
+    large_tool_info.description += "\n\n" + large_text_file_blob.raw_text
     return [*generate_tool_infos, large_tool_info]
 
 
@@ -430,7 +433,7 @@ def media_converter() -> LangChainMediaConverter:
 
 
 @pytest.fixture
-def chat_model(run_context: Any) -> ChatModel:
+def chat_model(run_context: RunContext) -> ChatModel:
     chat_model = chat_model_registry.resolve("mock")
     chat_model.config.provider_config.update(
         {
@@ -446,7 +449,7 @@ def chat_model(run_context: Any) -> ChatModel:
 
 
 @pytest.fixture
-def all_enabled_chat_model(run_context: Any) -> ChatModel:
+def all_enabled_chat_model(run_context: RunContext) -> ChatModel:
     chat_model = chat_model_registry.resolve("mock")
     chat_model.config.provider_config.update(
         {
@@ -467,7 +470,7 @@ def all_enabled_chat_model(run_context: Any) -> ChatModel:
 
 
 @pytest.fixture
-def messages(image_file_info: Any) -> list[Message]:
+def messages(image_file_info: ImageFileInfo) -> list[Message]:
     return [
         HumanMessage.create("Hello"),
         AIMessage.create("Hello"),
@@ -498,14 +501,14 @@ def messages(image_file_info: Any) -> list[Message]:
 
 
 @pytest.fixture
-def lc_tool_infos(tool_infos: Any) -> list[LCToolInfo]:
+def lc_tool_infos(tool_infos: list[ToolInfo]) -> list[LCToolInfo]:
     from kiarina.agi.langchain_chat_provider import from_tool_infos
 
     return from_tool_infos(tool_infos)
 
 
 @pytest.fixture
-def lc_generate_tool_infos(generate_tool_infos: Any) -> list[LCToolInfo]:
+def lc_generate_tool_infos(generate_tool_infos: list[ToolInfo]) -> list[LCToolInfo]:
     from kiarina.agi.langchain_chat_provider import from_tool_infos
 
     return from_tool_infos(generate_tool_infos)
@@ -518,7 +521,10 @@ def lc_generate_tool_infos(generate_tool_infos: Any) -> list[LCToolInfo]:
 
 @pytest.fixture
 async def lc_messages(
-    messages: Any, capabilities: Any, media_converter: Any, run_context: Any
+    messages: list[Message],
+    capabilities: ChatCapabilities,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
 ) -> list[LCMessage]:
     from kiarina.agi.langchain_chat_provider import from_messages
 

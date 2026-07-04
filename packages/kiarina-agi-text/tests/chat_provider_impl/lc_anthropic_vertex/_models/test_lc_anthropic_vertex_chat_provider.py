@@ -1,7 +1,6 @@
-from typing import Any
-
 import pytest
 
+from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.chat_provider_impl.lc_anthropic_vertex import (
     LCAnthropicVertexChatProvider,
     LCAnthropicVertexChatProviderSettings,
@@ -9,13 +8,15 @@ from kiarina.agi.chat_provider_impl.lc_anthropic_vertex import (
 from kiarina.agi.langchain_chat_provider import (
     LangChainChatProviderContext,
     LCHumanMessage,
+    LCToolInfo,
     LCToolMessage,
 )
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.file import FileBlob
 
 
 @pytest.fixture
-def provider(capabilities: Any) -> LCAnthropicVertexChatProvider:
+def provider(capabilities: ChatCapabilities) -> LCAnthropicVertexChatProvider:
     capabilities.output_enabled["image"] = True
     provider = LCAnthropicVertexChatProvider(
         LCAnthropicVertexChatProviderSettings(
@@ -28,7 +29,7 @@ def provider(capabilities: Any) -> LCAnthropicVertexChatProvider:
 
 
 @pytest.fixture
-def ctx(run_context: Any) -> Any:
+def ctx(run_context: RunContext) -> LangChainChatProviderContext:
     return LangChainChatProviderContext.create(run_context=run_context)
 
 
@@ -45,7 +46,7 @@ def test_provider(provider: LCAnthropicVertexChatProvider) -> None:
 
 def test_to_image_content(
     provider: LCAnthropicVertexChatProvider,
-    image_file_blob: Any,
+    image_file_blob: FileBlob,
 ) -> None:
     content = provider.to_image_content(image_file_blob.mime_blob)
     assert content is not None
@@ -125,7 +126,7 @@ async def test_stream(
 
 @pytest.mark.costly
 async def test_tool_calls(
-    lc_tool_infos: Any,
+    lc_tool_infos: list[LCToolInfo],
     provider: LCAnthropicVertexChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -141,7 +142,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
-    lc_tool_infos: Any,
+    lc_tool_infos: list[LCToolInfo],
     provider: LCAnthropicVertexChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:

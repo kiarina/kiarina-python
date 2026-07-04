@@ -1,5 +1,4 @@
 from collections.abc import AsyncIterator, Iterator
-from typing import Any
 
 import pytest
 
@@ -8,7 +7,9 @@ from kiarina.agi.chat_provider import (
     ChatProviderContext,
     chat_provider_registry,
 )
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.message import AIMessage, AIMessageChunk, HumanMessage
+from kiarina.agi.run_context import RunContext
 
 
 class ExampleChatProvider(BaseChatProvider):
@@ -35,7 +36,7 @@ def test_base_chat_provider() -> None:
     print(f"__str__: {provider!s}")
 
 
-async def test_run(run_context: Any, cost_recorder: Any) -> None:
+async def test_run(run_context: RunContext, cost_recorder: CostRecorder) -> None:
     provider = chat_provider_registry.create("example")
 
     ai_messages = [

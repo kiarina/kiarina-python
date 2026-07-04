@@ -1,14 +1,13 @@
-from typing import Any
-
 import numpy as np
 
+from kiarina.agi.run_context import RunContext
 from kiarina.agi.text_embedding_model import (
     TextEmbeddingModel,
     TextEmbeddingModelConfig,
 )
 
 
-async def test_text_embedding_model(run_context: Any) -> None:
+async def test_text_embedding_model(run_context: RunContext) -> None:
     text_embedding_model = TextEmbeddingModel(
         "example",
         TextEmbeddingModelConfig(

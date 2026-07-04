@@ -1,5 +1,5 @@
 from collections.abc import AsyncIterator
-from typing import Any
+from typing import TypedDict
 
 import pytest
 
@@ -10,13 +10,20 @@ from kiarina.agi.chat_provider import (
     TokenOverflowError,
 )
 from kiarina.agi.cost_record import CostRecord
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.langchain_chat_provider import (
     LangChainChatProvider,
     LangChainChatProviderContext,
     LCAIMessage,
     LCAIMessageChunk,
 )
-from kiarina.agi.message import AIMessage
+from kiarina.agi.message import AIMessage, Message
+from kiarina.agi.run_context import RunContext
+
+
+class RunArgs(TypedDict):
+    cost_recorder: CostRecorder
+    run_context: RunContext
 
 
 class MyChatProvider(LangChainChatProvider):
@@ -67,7 +74,7 @@ class MyChatProvider(LangChainChatProvider):
 
 
 @pytest.fixture
-def provider(capabilities: Any) -> MyChatProvider:
+def provider(capabilities: ChatCapabilities) -> MyChatProvider:
     provider = MyChatProvider()
     provider.name = "my"
     provider._capabilities = capabilities
@@ -75,17 +82,21 @@ def provider(capabilities: Any) -> MyChatProvider:
 
 
 @pytest.fixture
-def args(cost_recorder: Any, run_context: Any) -> dict[str, Any]:
+def args(cost_recorder: CostRecorder, run_context: RunContext) -> RunArgs:
     return {"cost_recorder": cost_recorder, "run_context": run_context}
 
 
-async def test_invoke(provider: MyChatProvider, messages: Any, args: Any) -> None:
+async def test_invoke(
+    provider: MyChatProvider, messages: list[Message], args: RunArgs
+) -> None:
     ai_message = await _invoke(provider, messages, args)
 
     print(ai_message.to_text())
 
 
-async def test_stream(provider: MyChatProvider, messages: Any, args: Any) -> None:
+async def test_stream(
+    provider: MyChatProvider, messages: list[Message], args: RunArgs
+) -> None:
     async for ai_message in provider.run(messages, streaming=True, **args):
         if ai_message.type == "ai_chunk":
             print(ai_message.to_text(), end="", flush=True)
@@ -95,7 +106,7 @@ async def test_stream(provider: MyChatProvider, messages: Any, args: Any) -> Non
 
 
 async def test_request_error(
-    provider: MyChatProvider, messages: Any, args: Any
+    provider: MyChatProvider, messages: list[Message], args: RunArgs
 ) -> None:
     provider.request_error = RuntimeError("Simulated request error")
 
@@ -104,7 +115,7 @@ async def test_request_error(
 
 
 async def test_extract_overflow_token_count(
-    provider: MyChatProvider, messages: Any, args: Any
+    provider: MyChatProvider, messages: list[Message], args: RunArgs
 ) -> None:
     provider.request_error = RuntimeError("Simulated token overflow error")
     provider.overflow_token_count = 12345
@@ -115,7 +126,9 @@ async def test_extract_overflow_token_count(
     assert exc_info.value.token_count == 12345
 
 
-async def test_safety_error(provider: MyChatProvider, messages: Any, args: Any) -> None:
+async def test_safety_error(
+    provider: MyChatProvider, messages: list[Message], args: RunArgs
+) -> None:
     provider.safety_error = True
 
     with pytest.raises(SafetyError):
@@ -123,7 +136,7 @@ async def test_safety_error(provider: MyChatProvider, messages: Any, args: Any) 
 
 
 async def test_max_token_error(
-    provider: MyChatProvider, messages: Any, args: Any
+    provider: MyChatProvider, messages: list[Message], args: RunArgs
 ) -> None:
     provider.max_token_error = True
 
@@ -133,8 +146,8 @@ async def test_max_token_error(
 
 async def _invoke(
     provider: MyChatProvider,
-    messages: Any,
-    args: Any,
+    messages: list[Message],
+    args: RunArgs,
 ) -> AIMessage:
     ai_message = None
 

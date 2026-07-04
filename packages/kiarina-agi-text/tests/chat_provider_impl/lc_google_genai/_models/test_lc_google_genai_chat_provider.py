@@ -1,5 +1,3 @@
-from typing import Any, cast
-
 import pytest
 
 from kiarina.agi.chat_provider import ChatCapabilities
@@ -10,7 +8,9 @@ from kiarina.agi.chat_provider_impl.lc_google_genai import (
 from kiarina.agi.langchain_chat_provider import (
     LangChainChatProviderContext,
     LCHumanMessage,
+    LCToolInfo,
 )
+from kiarina.agi.run_context import RunContext
 from kiarina.utils.file import FileBlob
 
 
@@ -27,7 +27,7 @@ def capabilities() -> ChatCapabilities:
 
 
 @pytest.fixture
-def provider_gemini_api(capabilities: Any) -> LCGoogleGenAIChatProvider:
+def provider_gemini_api(capabilities: ChatCapabilities) -> LCGoogleGenAIChatProvider:
     provider = LCGoogleGenAIChatProvider(
         LCGoogleGenAIChatProviderSettings(
             backend_type="gemini_api",
@@ -41,7 +41,9 @@ def provider_gemini_api(capabilities: Any) -> LCGoogleGenAIChatProvider:
 
 
 @pytest.fixture
-def provider_vertex_ai_api_key(capabilities: Any) -> LCGoogleGenAIChatProvider:
+def provider_vertex_ai_api_key(
+    capabilities: ChatCapabilities,
+) -> LCGoogleGenAIChatProvider:
     provider = LCGoogleGenAIChatProvider(
         LCGoogleGenAIChatProviderSettings(
             backend_type="vertex_ai_api_key",
@@ -55,7 +57,9 @@ def provider_vertex_ai_api_key(capabilities: Any) -> LCGoogleGenAIChatProvider:
 
 
 @pytest.fixture
-def provider_vertex_ai_credentials(capabilities: Any) -> LCGoogleGenAIChatProvider:
+def provider_vertex_ai_credentials(
+    capabilities: ChatCapabilities,
+) -> LCGoogleGenAIChatProvider:
     provider = LCGoogleGenAIChatProvider(
         LCGoogleGenAIChatProviderSettings(
             backend_type="vertex_ai_credentials",
@@ -69,12 +73,14 @@ def provider_vertex_ai_credentials(capabilities: Any) -> LCGoogleGenAIChatProvid
 
 
 @pytest.fixture
-def provider(provider_gemini_api: Any) -> LCGoogleGenAIChatProvider:
-    return cast(LCGoogleGenAIChatProvider, provider_gemini_api)
+def provider(
+    provider_gemini_api: LCGoogleGenAIChatProvider,
+) -> LCGoogleGenAIChatProvider:
+    return provider_gemini_api
 
 
 @pytest.fixture
-def ctx(run_context: Any) -> Any:
+def ctx(run_context: RunContext) -> LangChainChatProviderContext:
     return LangChainChatProviderContext.create(run_context=run_context)
 
 
@@ -93,7 +99,9 @@ def ctx(run_context: Any) -> Any:
     ],
 )
 async def test_backend(
-    fixture_name: Any, request: Any, ctx: LangChainChatProviderContext
+    fixture_name: str,
+    request: pytest.FixtureRequest,
+    ctx: LangChainChatProviderContext,
 ) -> None:
     print("\n\n" + "=" * 10 + f" {fixture_name} " + "=" * 10 + "\n")
 
@@ -267,7 +275,7 @@ async def test_is_max_token_error(
 
 @pytest.mark.costly
 async def test_tool_calls(
-    lc_tool_infos: Any,
+    lc_tool_infos: list[LCToolInfo],
     provider: LCGoogleGenAIChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -283,7 +291,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
-    lc_tool_infos: Any,
+    lc_tool_infos: list[LCToolInfo],
     provider: LCGoogleGenAIChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:

@@ -1,10 +1,9 @@
-from typing import Any
-
 from kiarina.agi.chat_logger_impl.console import ConsoleChatLogger
 from kiarina.agi.message import AIMessage, AIMessageChunk, ToolCall, ToolCallChunk
+from kiarina.agi.run_context import RunContext
 
 
-def test_invoke(run_context: Any) -> None:
+def test_invoke(run_context: RunContext) -> None:
     chat_logger = ConsoleChatLogger()
     chat_logger.log_chat_invoke_start(run_context)
     chat_logger.log_chat_invoke_end(
@@ -21,7 +20,7 @@ def test_invoke(run_context: Any) -> None:
     )
 
 
-def test_stream(run_context: Any) -> None:
+def test_stream(run_context: RunContext) -> None:
     chat_logger = ConsoleChatLogger()
 
     with chat_logger.log_chat_stream(run_context):
