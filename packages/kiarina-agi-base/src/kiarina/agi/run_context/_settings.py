@@ -14,13 +14,13 @@ class RunContextSettings(BaseSettings):
         extra="ignore",
     )
 
-    organization_id: IDStr | None = None
+    organization_id: IDStr | None = "default"
 
-    user_id: IDStr | None = None
+    user_id: IDStr | None = "default"
 
-    agent_id: IDStr | None = None
+    agent_id: IDStr | None = "default"
 
-    node_id: IDStr | None = None
+    node_id: IDStr | None = "default"
 
     time_zone: TimeZone = "UTC"
 
