@@ -31,8 +31,12 @@ if [ -d "packages/$target/tests" ]; then
     paths+=("packages/$target/tests/")
 fi
 
+if [ -d "packages/$target/scripts" ]; then
+    paths+=("packages/$target/scripts/")
+fi
+
 if [ ${#paths[@]} -eq 0 ]; then
-    echo "⚠️  No src or tests directories found for $target"
+    echo "⚠️  No src, tests, or scripts directories found for $target"
     exit 0
 fi
 

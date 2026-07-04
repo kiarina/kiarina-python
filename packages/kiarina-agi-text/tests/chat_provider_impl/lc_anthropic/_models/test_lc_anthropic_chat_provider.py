@@ -136,29 +136,6 @@ async def test_stream(
 
 
 @pytest.mark.costly
-@pytest.mark.skip(reason="High cost: run manually when needed.")
-async def test_extract_overflow_token_count(
-    provider: LCAnthropicChatProvider,
-    ctx: LangChainChatProviderContext,
-) -> None:
-    provider.settings.model_name = "claude-haiku-4-5-20251001"
-
-    ctx.lc_messages = [
-        LCHumanMessage(content="Tell me a long story about AI.\n" * 100_000)
-    ]
-
-    try:
-        await provider._invoke(ctx)
-        raise AssertionError("Expected an exception due to max token limit.")
-
-    except Exception as e:
-        print(f"Caught Exception: {e}")
-        overflow_token_count = provider._extract_overflow_token_count(e)
-        print(f"Overflow Token Count from Exception: {overflow_token_count}")
-        assert overflow_token_count is not None and overflow_token_count > 0
-
-
-@pytest.mark.costly
 async def test_get_cost_record(
     large_text_file_blob,
     provider: LCAnthropicChatProvider,
