@@ -1,0 +1,65 @@
+[project]
+name = "kiarina-agi-image"
+version = "2.7.0"
+description = "Image detection, embedding, and generation for AI agents"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "kiarina", email = "kiarinadawa@gmail.com" }]
+maintainers = [{ name = "kiarina", email = "kiarinadawa@gmail.com" }]
+keywords = ["ai", "agents", "computer-vision", "embeddings", "image-generation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+requires-python = ">=3.12"
+dependencies = [
+    "kiarina-agi-base>=2.7.0",
+    "kiarina-agi-data>=2.7.0",
+    "kiarina-agi-file>=2.6.0",
+    "kiarina-utils-common>=2.3.0",
+    "kiarina-utils-file>=2.3.1",
+    "numpy>=2.0,<3",
+    "pillow>=11.3.0,<12",
+    "pydantic>=2.11.7,<3",
+    "pydantic-settings>=2.10.1,<3",
+    "pydantic-settings-manager>=3.2.0",
+]
+
+[project.optional-dependencies]
+all = [
+    "google-genai>=1.65.0,<3",
+    "httpx>=0.28.1,<1",
+    "kiarina-lib-google>=2.3.1",
+    "kiarina-lib-openai>=2.3.1",
+    "onnxruntime>=1.25.1",
+    "openai>=2.0.1,<3",
+    "opencv-python>=4.12.0,<5",
+]
+image-detection-provider-dfine = ["onnxruntime>=1.25.1", "opencv-python>=4.12.0,<5"]
+image-detection-provider-yunet = ["opencv-python>=4.12.0,<5"]
+image-embedding-provider-gemini = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.3.1"]
+image-embedding-provider-qwen3-vl = ["httpx>=0.28.1,<1", "opencv-python>=4.12.0,<5"]
+image-embedding-provider-sface = ["opencv-python>=4.12.0,<5"]
+image-embedding-provider-siglip2 = ["onnxruntime>=1.25.1", "opencv-python>=4.12.0,<5"]
+image-generation-provider-google = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.3.1"]
+image-generation-provider-openai = ["httpx>=0.28.1,<1", "kiarina-lib-openai>=2.3.1", "openai>=2.0.1,<3"]
+
+[project.urls]
+Homepage = "https://github.com/kiarina/kiarina-python"
+Repository = "https://github.com/kiarina/kiarina-python"
+Issues = "https://github.com/kiarina/kiarina-python/issues"
+Changelog = "https://github.com/kiarina/kiarina-python/blob/main/packages/kiarina-agi-image/CHANGELOG.md"
+Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-agi-image#readme"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kiarina"]

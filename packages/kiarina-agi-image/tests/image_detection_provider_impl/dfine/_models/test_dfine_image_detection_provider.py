@@ -1,0 +1,55 @@
+# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
+
+from pathlib import Path
+
+import pytest
+
+from kiarina.agi.image_detection_provider_impl.dfine import (
+    DFineImageDetectionProvider,
+    DFineImageDetectionProviderSettings,
+)
+
+
+@pytest.fixture
+def dfine_model_path() -> str:
+    path = Path("models/dfine/model.onnx")
+
+    if not path.exists():
+        pytest.skip(f"D-FINE ONNX model file not found at {path}")
+
+    return str(path)
+
+
+@pytest.fixture
+def dfine_label_map_path() -> str:
+    path = Path("models/dfine/coco_labels.txt")
+
+    if not path.exists():
+        pytest.skip(f"D-FINE label map file not found at {path}")
+
+    return str(path)
+
+
+async def test_dfine_image_detection_provider(
+    dfine_model_path,
+    dfine_label_map_path,
+    load_rgb_image,
+    run_context,
+) -> None:
+    provider = DFineImageDetectionProvider(
+        DFineImageDetectionProviderSettings(
+            model_path=dfine_model_path,
+            label_map_path=dfine_label_map_path,
+        )
+    )
+
+    pixels = load_rgb_image("jpg/apple_1024x1024_138kb.jpg")
+    result = await provider.detect(pixels, run_context=run_context)
+
+    assert len(result) >= 1
+
+    for detection in result:
+        assert isinstance(detection.label, str) and detection.label
+        assert len(detection.bbox) == 4
+        assert all(0.0 <= v <= 1.0 for v in detection.bbox)
+        assert 0.0 <= detection.score <= 1.0
