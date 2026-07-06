@@ -8,9 +8,9 @@ from kiarina.agi.cost_recorder_impl.null import NullCostRecorder
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
 
-from .._schemas.detected_object import DetectedObject
 from .._types.image_detection_provider import ImageDetectionProvider
 from .._types.image_detection_provider_name import ImageDetectionProviderName
+from .._views.detected_object import DetectedObject
 
 
 class BaseImageDetectionProvider(ImageDetectionProvider, ABC):

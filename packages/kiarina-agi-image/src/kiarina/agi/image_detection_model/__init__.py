@@ -6,33 +6,40 @@ if TYPE_CHECKING:
     from ._helpers.crop_objects import crop_objects
     from ._helpers.detect_faces import detect_faces
     from ._helpers.detect_objects import detect_objects
-    from ._models.image_detection_model import ImageDetectionModel
-    from ._schemas.cropped_object import CroppedObject
-    from ._schemas.image_detection_model_config import ImageDetectionModelConfig
-    from ._services.image_detection_model_registry import (
+    from ._instances.image_detection_model_registry import (
         image_detection_model_registry,
     )
+    from ._models.image_detection_model import ImageDetectionModel
+    from ._schemas.image_detection_model_config import ImageDetectionModelConfig
     from ._settings import ImageDetectionModelSettings, settings_manager
     from ._types.image_detection_model_alias import ImageDetectionModelAlias
     from ._types.image_detection_model_name import ImageDetectionModelName
     from ._types.image_detection_model_specifier import ImageDetectionModelSpecifier
     from ._types.image_detection_options import ImageDetectionOptions
+    from ._views.cropped_object import CroppedObject
 
 __all__ = [
+    # ._helpers
     "crop_align_faces",
     "crop_objects",
     "detect_faces",
     "detect_objects",
-    "ImageDetectionModel",
-    "CroppedObject",
-    "ImageDetectionModelConfig",
+    # ._instances
     "image_detection_model_registry",
+    # ._models
+    "ImageDetectionModel",
+    # ._schemas
+    "ImageDetectionModelConfig",
+    # ._settings
     "ImageDetectionModelSettings",
     "settings_manager",
+    # ._types
     "ImageDetectionModelAlias",
     "ImageDetectionModelName",
     "ImageDetectionModelSpecifier",
     "ImageDetectionOptions",
+    # ._views
+    "CroppedObject",
 ]
 
 
@@ -41,20 +48,27 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
+        # ._helpers
         "crop_align_faces": "._helpers.crop_align_faces",
         "crop_objects": "._helpers.crop_objects",
         "detect_faces": "._helpers.detect_faces",
         "detect_objects": "._helpers.detect_objects",
+        # ._instances
+        "image_detection_model_registry": "._instances.image_detection_model_registry",
+        # ._models
         "ImageDetectionModel": "._models.image_detection_model",
-        "CroppedObject": "._schemas.cropped_object",
+        # ._schemas
         "ImageDetectionModelConfig": "._schemas.image_detection_model_config",
-        "image_detection_model_registry": "._services.image_detection_model_registry",
+        # ._settings
         "ImageDetectionModelSettings": "._settings",
         "settings_manager": "._settings",
+        # ._types
         "ImageDetectionModelAlias": "._types.image_detection_model_alias",
         "ImageDetectionModelName": "._types.image_detection_model_name",
         "ImageDetectionModelSpecifier": "._types.image_detection_model_specifier",
         "ImageDetectionOptions": "._types.image_detection_options",
+        # ._views
+        "CroppedObject": "._views.cropped_object",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)

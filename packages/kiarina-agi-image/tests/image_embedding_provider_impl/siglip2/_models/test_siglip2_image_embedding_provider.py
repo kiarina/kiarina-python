@@ -1,5 +1,3 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +8,7 @@ from kiarina.agi.image_embedding_provider_impl.siglip2 import (
     SigLIP2ImageEmbeddingProvider,
     SigLIP2ImageEmbeddingProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture
@@ -28,8 +27,8 @@ def _image(seed: int) -> np.ndarray:
 
 
 async def test_siglip2_image_embedding_provider(
-    siglip2_model_path,
-    run_context,
+    siglip2_model_path: str,
+    run_context: RunContext,
 ) -> None:
     provider = SigLIP2ImageEmbeddingProvider(
         SigLIP2ImageEmbeddingProviderSettings(model_path=siglip2_model_path)
@@ -51,8 +50,8 @@ async def test_siglip2_image_embedding_provider(
 
 
 async def test_deterministic_and_distinct(
-    siglip2_model_path,
-    run_context,
+    siglip2_model_path: str,
+    run_context: RunContext,
 ) -> None:
     provider = SigLIP2ImageEmbeddingProvider(
         SigLIP2ImageEmbeddingProviderSettings(model_path=siglip2_model_path)

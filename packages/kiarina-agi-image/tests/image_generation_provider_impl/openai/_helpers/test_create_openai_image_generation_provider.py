@@ -1,4 +1,4 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
+from collections.abc import Iterator
 
 import pytest
 
@@ -10,7 +10,7 @@ from kiarina.agi.image_generation_provider_impl.openai import (
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "model_name": "gpt-image-1",
         "quality": "medium",

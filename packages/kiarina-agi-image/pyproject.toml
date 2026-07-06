@@ -25,6 +25,7 @@ dependencies = [
     "kiarina-utils-common>=2.3.0",
     "kiarina-utils-file>=2.3.1",
     "numpy>=2.0,<3",
+    "opencv-python>=4.12.0,<5",
     "pillow>=11.3.0,<12",
     "pydantic>=2.11.7,<3",
     "pydantic-settings>=2.10.1,<3",
@@ -39,14 +40,13 @@ all = [
     "kiarina-lib-openai>=2.3.1",
     "onnxruntime>=1.25.1",
     "openai>=2.0.1,<3",
-    "opencv-python>=4.12.0,<5",
 ]
-image-detection-provider-dfine = ["onnxruntime>=1.25.1", "opencv-python>=4.12.0,<5"]
-image-detection-provider-yunet = ["opencv-python>=4.12.0,<5"]
+image-detection-provider-dfine = ["onnxruntime>=1.25.1"]
+image-detection-provider-yunet = []
 image-embedding-provider-gemini = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.3.1"]
-image-embedding-provider-qwen3-vl = ["httpx>=0.28.1,<1", "opencv-python>=4.12.0,<5"]
-image-embedding-provider-sface = ["opencv-python>=4.12.0,<5"]
-image-embedding-provider-siglip2 = ["onnxruntime>=1.25.1", "opencv-python>=4.12.0,<5"]
+image-embedding-provider-qwen3-vl = ["httpx>=0.28.1,<1"]
+image-embedding-provider-sface = []
+image-embedding-provider-siglip2 = ["onnxruntime>=1.25.1"]
 image-generation-provider-google = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.3.1"]
 image-generation-provider-openai = ["httpx>=0.28.1,<1", "kiarina-lib-openai>=2.3.1", "openai>=2.0.1,<3"]
 

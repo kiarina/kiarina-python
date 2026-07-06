@@ -1,5 +1,3 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 import numpy as np
 
 from kiarina.agi.image_detection_model import crop_objects

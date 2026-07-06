@@ -2,8 +2,8 @@ from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.run_context import RunContext
 
 from ...image_generation_provider import ImageGenerationResult
+from .._instances.image_generation_model_registry import image_generation_model_registry
 from .._models.image_generation_model import ImageGenerationModel
-from .._services.image_generation_model_registry import image_generation_model_registry
 from .._types.image_generation_options import ImageGenerationOptions
 
 

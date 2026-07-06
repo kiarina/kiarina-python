@@ -1,13 +1,13 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 import numpy as np
 import pytest
 
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.embedding import calc_cosine_similarity
 from kiarina.agi.image_embedding_provider_impl.gemini import (
     GeminiImageEmbeddingProvider,
     GeminiImageEmbeddingProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture
@@ -36,7 +36,9 @@ def provider_vertex_ai_credentials() -> GeminiImageEmbeddingProvider:
 
 
 @pytest.fixture
-def provider(provider_gemini_api) -> GeminiImageEmbeddingProvider:
+def provider(
+    provider_gemini_api: GeminiImageEmbeddingProvider,
+) -> GeminiImageEmbeddingProvider:
     return provider_gemini_api
 
 
@@ -56,8 +58,8 @@ def test_get_space(provider: GeminiImageEmbeddingProvider) -> None:
 @pytest.mark.costly
 async def test_gemini_image_embedding_provider(
     provider: GeminiImageEmbeddingProvider,
-    run_context,
-    cost_recorder,
+    run_context: RunContext,
+    cost_recorder: CostRecorder,
 ) -> None:
     space = provider.get_space()
 
@@ -76,8 +78,8 @@ async def test_gemini_image_embedding_provider(
 @pytest.mark.costly
 async def test_deterministic_and_distinct(
     provider: GeminiImageEmbeddingProvider,
-    run_context,
-    cost_recorder,
+    run_context: RunContext,
+    cost_recorder: CostRecorder,
 ) -> None:
     a1 = await provider.embed(
         _image(1), cost_recorder=cost_recorder, run_context=run_context

@@ -1,15 +1,10 @@
 from typing import cast
 
+import cv2
 import numpy as np
 
 from kiarina.agi.image_detection_provider import DetectedObject
 from kiarina.agi.image_types import ImagePixels
-
-try:
-    import cv2
-except ImportError as exc:
-    # TODO: package を分離したら、デフォルトの dependencies に含めるのでこのままとする
-    raise ImportError("opencv-python is required to use crop_align_faces") from exc
 
 _FACE_5PT = "face_5pt"
 

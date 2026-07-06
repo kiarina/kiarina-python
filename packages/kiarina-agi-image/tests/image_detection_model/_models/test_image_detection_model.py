@@ -1,14 +1,13 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 import numpy as np
 
 from kiarina.agi.image_detection_model import (
     ImageDetectionModel,
     ImageDetectionModelConfig,
 )
+from kiarina.agi.run_context import RunContext
 
 
-async def test_image_detection_model(run_context) -> None:
+async def test_image_detection_model(run_context: RunContext) -> None:
     image_detection_model = ImageDetectionModel(
         "example",
         ImageDetectionModelConfig(

@@ -1,5 +1,3 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 import os
 
 import httpx
@@ -11,6 +9,7 @@ from kiarina.agi.image_embedding_provider_impl.qwen3_vl import (
     Qwen3VLImageEmbeddingProvider,
     Qwen3VLImageEmbeddingProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 _BASE_URL = os.environ.get(
     "KIARINA_AGI_IMAGE_EMBEDDING_PROVIDER_IMPL_QWEN3_VL_BASE_URL",
@@ -38,8 +37,8 @@ def _image(seed: int) -> np.ndarray:
 
 
 async def test_qwen3_vl_image_embedding_provider(
-    qwen3_vl_base_url,
-    run_context,
+    qwen3_vl_base_url: str,
+    run_context: RunContext,
 ) -> None:
     provider = Qwen3VLImageEmbeddingProvider(
         Qwen3VLImageEmbeddingProviderSettings(base_url=qwen3_vl_base_url)
@@ -61,8 +60,8 @@ async def test_qwen3_vl_image_embedding_provider(
 
 
 async def test_deterministic_and_distinct(
-    qwen3_vl_base_url,
-    run_context,
+    qwen3_vl_base_url: str,
+    run_context: RunContext,
 ) -> None:
     provider = Qwen3VLImageEmbeddingProvider(
         Qwen3VLImageEmbeddingProviderSettings(base_url=qwen3_vl_base_url)

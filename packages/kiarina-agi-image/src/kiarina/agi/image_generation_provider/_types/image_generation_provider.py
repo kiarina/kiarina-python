@@ -3,7 +3,7 @@ from typing import Protocol, runtime_checkable
 from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.run_context import RunContext
 
-from .._schemas.image_generation_result import ImageGenerationResult
+from .._views.image_generation_result import ImageGenerationResult
 from .image_generation_provider_name import ImageGenerationProviderName
 
 

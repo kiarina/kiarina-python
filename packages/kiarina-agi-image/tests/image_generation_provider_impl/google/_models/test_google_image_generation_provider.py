@@ -1,16 +1,18 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
+from pathlib import Path
 
 import pytest
 
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.image_generation_provider_impl.google import (
     GoogleImageGenerationProvider,
     GoogleImageGenerationProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.mark.costly
 async def test_google_image_generation_provider(
-    cost_recorder, run_context, tmp_path
+    cost_recorder: CostRecorder, run_context: RunContext, tmp_path: Path
 ) -> None:
     settings = GoogleImageGenerationProviderSettings()
     provider = GoogleImageGenerationProvider(settings)

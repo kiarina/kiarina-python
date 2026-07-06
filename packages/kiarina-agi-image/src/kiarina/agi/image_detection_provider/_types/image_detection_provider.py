@@ -4,7 +4,7 @@ from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
 
-from .._schemas.detected_object import DetectedObject
+from .._views.detected_object import DetectedObject
 from .image_detection_provider_name import ImageDetectionProviderName
 
 

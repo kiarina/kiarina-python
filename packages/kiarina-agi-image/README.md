@@ -21,6 +21,7 @@ English | [日本語](README.ja.md)
 | [kiarina-utils-common](../kiarina-utils-common/) | `>=2.3.0` | MIT |
 | [kiarina-utils-file](../kiarina-utils-file/) | `>=2.3.1` | MIT |
 | [NumPy](https://github.com/numpy/numpy) | `>=2.0,<3` | BSD-3-Clause |
+| [OpenCV](https://github.com/opencv/opencv-python) | `>=4.12.0,<5` | Apache-2.0 |
 | [Pillow](https://github.com/python-pillow/Pillow) | `>=11.3.0,<12` | HPND |
 | [Pydantic](https://github.com/pydantic/pydantic) | `>=2.11.7,<3` | MIT |
 | [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1,<3` | MIT |
@@ -36,7 +37,6 @@ English | [日本語](README.ja.md)
 | kiarina-lib-openai | `image-generation-provider-openai` |
 | onnxruntime | `image-detection-provider-dfine`<br>`image-embedding-provider-siglip2` |
 | openai | `image-generation-provider-openai` |
-| opencv-python | `image-detection-provider-dfine`<br>`image-detection-provider-yunet`<br>`image-embedding-provider-qwen3-vl`<br>`image-embedding-provider-sface`<br>`image-embedding-provider-siglip2` |
 
 The `all` Extra installs every optional dependency listed above.
 
@@ -69,7 +69,7 @@ Exports image detection model settings, registries, detection helpers, and cropp
 
 ### `kiarina.agi.image_detection_provider`
 
-Exports the image detection provider protocol, base class, detection result schema, and registry.
+Exports the image detection provider protocol, base class, detection result view, and registry.
 
 ### `kiarina.agi.image_embedding_model`
 
@@ -85,6 +85,6 @@ Exports image generation model settings, registry, and generation helper.
 
 ### `kiarina.agi.image_generation_provider`
 
-Exports the image generation provider protocol, base class, result schema, and registry.
+Exports the image generation provider protocol, base class, result view, and registry.
 
 Import provider implementations from the matching `kiarina.agi.*_provider_impl.<name>` path.

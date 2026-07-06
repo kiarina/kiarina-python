@@ -1,5 +1,3 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 from kiarina.agi.image_detection_provider_impl.yunet import (
     create_yunet_image_detection_provider,
 )

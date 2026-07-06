@@ -1,14 +1,13 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 import numpy as np
 
 from kiarina.agi.image_embedding_provider_impl.mock import (
     MockImageEmbeddingProvider,
     MockImageEmbeddingProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 
-async def test_mock_image_embedding_provider(run_context) -> None:
+async def test_mock_image_embedding_provider(run_context: RunContext) -> None:
     provider = MockImageEmbeddingProvider(
         MockImageEmbeddingProviderSettings(embedding=[0.0, 2.0], dimension=2)
     )
@@ -29,7 +28,7 @@ async def test_mock_image_embedding_provider(run_context) -> None:
     assert result.metadata["width"] == 24
 
 
-async def test_without_normalize(run_context) -> None:
+async def test_without_normalize(run_context: RunContext) -> None:
     provider = MockImageEmbeddingProvider(
         MockImageEmbeddingProviderSettings(
             embedding=[0.0, 2.0],
@@ -46,7 +45,7 @@ async def test_without_normalize(run_context) -> None:
     assert np.allclose(result.to_numpy(), [0.0, 2.0])
 
 
-async def test_can_override_kind(run_context) -> None:
+async def test_can_override_kind(run_context: RunContext) -> None:
     provider = MockImageEmbeddingProvider(
         MockImageEmbeddingProviderSettings(kind="object")
     )

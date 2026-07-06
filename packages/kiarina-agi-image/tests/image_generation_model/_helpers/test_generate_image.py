@@ -1,14 +1,19 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
+from pathlib import Path
 
 import pytest
 
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.image_generation_model import generate_image
+from kiarina.agi.run_context import RunContext
 
 pytestmark = [pytest.mark.costly]
 
 
 async def test_generate_image(
-    image_generation_model_name, cost_recorder, run_context, tmp_path
+    image_generation_model_name: str,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
+    tmp_path: Path,
 ) -> None:
     result = await generate_image(
         "A cute cat sitting on a sofa, digital art",
@@ -29,7 +34,11 @@ async def test_generate_image(
 
 
 async def test_generate_image_from_input(
-    image_generation_model_name, cost_recorder, run_context, test_data_dir, tmp_path
+    image_generation_model_name: str,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
+    test_data_dir: Path,
+    tmp_path: Path,
 ) -> None:
     result = await generate_image(
         "Add a hat to the cat",

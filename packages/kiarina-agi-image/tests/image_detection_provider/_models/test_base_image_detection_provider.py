@@ -1,5 +1,3 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 import numpy as np
 import pytest
 
@@ -84,7 +82,7 @@ async def test_clips_out_of_range_coordinates(run_context: RunContext) -> None:
 
 
 async def test_supplies_null_cost_recorder(run_context: RunContext) -> None:
-    captured: dict = {}
+    captured: dict[str, CostRecorder] = {}
 
     class CapturingProvider(BaseImageDetectionProvider):
         def _detect(

@@ -1,11 +1,13 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
+from pathlib import Path
 
 import pytest
 
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.image_generation_provider_impl.openai import (
     OpenAIImageGenerationProvider,
     OpenAIImageGenerationProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 
 def test_init_and_properties() -> None:
@@ -18,7 +20,7 @@ def test_init_and_properties() -> None:
 
 @pytest.mark.costly
 async def test_generate_without_and_with_images(
-    cost_recorder, run_context, tmp_path
+    cost_recorder: CostRecorder, run_context: RunContext, tmp_path: Path
 ) -> None:
     settings = OpenAIImageGenerationProviderSettings()
     provider = OpenAIImageGenerationProvider(settings)

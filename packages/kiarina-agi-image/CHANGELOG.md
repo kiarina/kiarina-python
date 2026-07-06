@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add the `kiarina-agi-image` package.
 
+### Changed
+- Add concrete type annotations to package tests and remove mypy suppressions.
+
 ## [2.7.0] - 2026-07-06
 
 ### Added

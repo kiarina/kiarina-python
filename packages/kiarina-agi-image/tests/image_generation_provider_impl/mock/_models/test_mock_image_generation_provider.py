@@ -1,16 +1,18 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
+from pathlib import Path
 
+from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.image_generation_provider_impl.mock import (
     MockImageGenerationProvider,
     MockImageGenerationProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 # --------------------------------------------------
 # Initialization and Properties
 # --------------------------------------------------
 
 
-def test_initialize_and_properties():
+def test_initialize_and_properties() -> None:
     settings = MockImageGenerationProviderSettings()
     provider = MockImageGenerationProvider(settings)
 
@@ -22,7 +24,7 @@ def test_initialize_and_properties():
 # --------------------------------------------------
 
 
-async def test_generate_image(run_context):
+async def test_generate_image(run_context: RunContext) -> None:
     settings = MockImageGenerationProviderSettings(
         image_width=512,
         image_height=512,
@@ -39,7 +41,9 @@ async def test_generate_image(run_context):
     assert len(result.mime_blob.raw_data) > 0
 
 
-async def test_generate_image_jpeg_format(cost_recorder, run_context):
+async def test_generate_image_jpeg_format(
+    cost_recorder: CostRecorder, run_context: RunContext
+) -> None:
     settings = MockImageGenerationProviderSettings(
         output_format="jpeg",
     )
@@ -60,7 +64,9 @@ async def test_generate_image_jpeg_format(cost_recorder, run_context):
 # --------------------------------------------------
 
 
-async def test_generate_image_from_input(run_context, tmp_path):
+async def test_generate_image_from_input(
+    run_context: RunContext, tmp_path: Path
+) -> None:
     settings = MockImageGenerationProviderSettings()
     provider = MockImageGenerationProvider(settings)
 

@@ -4,9 +4,9 @@ from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.cost_recorder_impl.null import NullCostRecorder
 from kiarina.agi.run_context import RunContext
 
-from .._schemas.image_generation_result import ImageGenerationResult
 from .._types.image_generation_provider import ImageGenerationProvider
 from .._types.image_generation_provider_name import ImageGenerationProviderName
+from .._views.image_generation_result import ImageGenerationResult
 
 
 class BaseImageGenerationProvider(ImageGenerationProvider, ABC):

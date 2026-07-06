@@ -5,7 +5,7 @@ import numpy as np
 from kiarina.agi.image_detection_provider import DetectedObject
 from kiarina.agi.image_types import ImagePixels
 
-from .._schemas.cropped_object import CroppedObject
+from .._views.cropped_object import CroppedObject
 
 
 def crop_objects(

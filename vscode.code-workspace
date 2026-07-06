@@ -13,6 +13,9 @@
       "path": "packages/kiarina-agi-file"
     },
     {
+      "path": "packages/kiarina-agi-image"
+    },
+    {
       "path": "packages/kiarina-agi-text"
     },
     {

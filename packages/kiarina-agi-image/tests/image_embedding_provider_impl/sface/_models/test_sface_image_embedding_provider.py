@@ -1,5 +1,3 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +8,7 @@ from kiarina.agi.image_embedding_provider_impl.sface import (
     SFaceImageEmbeddingProvider,
     SFaceImageEmbeddingProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture
@@ -28,8 +27,8 @@ def _face(seed: int) -> np.ndarray:
 
 
 async def test_sface_image_embedding_provider(
-    sface_model_path,
-    run_context,
+    sface_model_path: str,
+    run_context: RunContext,
 ) -> None:
     provider = SFaceImageEmbeddingProvider(
         SFaceImageEmbeddingProviderSettings(model_path=sface_model_path)
@@ -51,8 +50,8 @@ async def test_sface_image_embedding_provider(
 
 
 async def test_deterministic_and_distinct(
-    sface_model_path,
-    run_context,
+    sface_model_path: str,
+    run_context: RunContext,
 ) -> None:
     provider = SFaceImageEmbeddingProvider(
         SFaceImageEmbeddingProviderSettings(model_path=sface_model_path)
@@ -67,8 +66,8 @@ async def test_deterministic_and_distinct(
 
 
 async def test_resizes_non_112(
-    sface_model_path,
-    run_context,
+    sface_model_path: str,
+    run_context: RunContext,
 ) -> None:
     provider = SFaceImageEmbeddingProvider(
         SFaceImageEmbeddingProviderSettings(model_path=sface_model_path)

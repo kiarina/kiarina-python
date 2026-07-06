@@ -3,8 +3,8 @@ from kiarina.agi.image_detection_provider import DetectedObject
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
 
+from .._instances.image_detection_model_registry import image_detection_model_registry
 from .._models.image_detection_model import ImageDetectionModel
-from .._services.image_detection_model_registry import image_detection_model_registry
 from .._types.image_detection_options import ImageDetectionOptions
 
 _DEFAULT_ALIAS = "object"

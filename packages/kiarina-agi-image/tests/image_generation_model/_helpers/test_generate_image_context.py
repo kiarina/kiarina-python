@@ -1,6 +1,6 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 from unittest.mock import AsyncMock
+
+import pytest
 
 from kiarina.agi.image_generation_model import (
     ImageGenerationModel,
@@ -10,14 +10,16 @@ from kiarina.agi.image_generation_model import (
 from kiarina.agi.run_context import RunContext
 
 
-async def test_generate_image_creates_run_context() -> None:
+async def test_generate_image_creates_run_context(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     model = ImageGenerationModel(
         "mock",
         ImageGenerationModelConfig(provider_name="mock"),
     )
     result = object()
     generate = AsyncMock(return_value=result)
-    model.generate = generate  # type: ignore[method-assign]
+    monkeypatch.setattr(model, "generate", generate)
 
     actual = await generate_image(
         "Generate an image",
@@ -31,14 +33,16 @@ async def test_generate_image_creates_run_context() -> None:
     assert run_context.metadata["image_generation_model"] == "mock"
 
 
-async def test_generate_image_extends_explicit_run_context(run_context) -> None:
+async def test_generate_image_extends_explicit_run_context(
+    run_context: RunContext, monkeypatch: pytest.MonkeyPatch
+) -> None:
     model = ImageGenerationModel(
         "mock",
         ImageGenerationModelConfig(provider_name="mock"),
     )
     result = object()
     generate = AsyncMock(return_value=result)
-    model.generate = generate  # type: ignore[method-assign]
+    monkeypatch.setattr(model, "generate", generate)
 
     actual = await generate_image(
         "Generate an image",

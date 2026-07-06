@@ -1,13 +1,14 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
+from collections.abc import Callable
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from kiarina.agi.image_detection_provider_impl.dfine import (
     DFineImageDetectionProvider,
     DFineImageDetectionProviderSettings,
 )
+from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture
@@ -31,10 +32,10 @@ def dfine_label_map_path() -> str:
 
 
 async def test_dfine_image_detection_provider(
-    dfine_model_path,
-    dfine_label_map_path,
-    load_rgb_image,
-    run_context,
+    dfine_model_path: str,
+    dfine_label_map_path: str,
+    load_rgb_image: Callable[[str], np.ndarray],
+    run_context: RunContext,
 ) -> None:
     provider = DFineImageDetectionProvider(
         DFineImageDetectionProviderSettings(

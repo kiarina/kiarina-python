@@ -3,7 +3,7 @@ from kiarina.agi.embedding import Embedding
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
 
-from .._services.image_embedding_model_registry import image_embedding_model_registry
+from .._instances.image_embedding_model_registry import image_embedding_model_registry
 from .._types.image_embedding_options import ImageEmbeddingOptions
 
 

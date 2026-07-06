@@ -1,4 +1,4 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
+from collections.abc import Iterator
 
 import pytest
 
@@ -6,13 +6,13 @@ from kiarina.agi.image_generation_model import settings_manager
 
 
 @pytest.fixture(autouse=True)
-def setup():
+def setup() -> Iterator[None]:
     settings_manager.cli_args = settings_manager.settings_cls().model_dump()
     yield
     settings_manager.cli_args = {}
 
 
-def pytest_generate_tests(metafunc):
+def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
     if "image_generation_model_name" in metafunc.fixturenames:
         cases = []
 

@@ -1,14 +1,13 @@
-# mypy: disable-error-code="no-untyped-def,no-untyped-call,type-arg,attr-defined,no-any-return"
-
 import numpy as np
 
 from kiarina.agi.image_embedding_model import (
     ImageEmbeddingModel,
     ImageEmbeddingModelConfig,
 )
+from kiarina.agi.run_context import RunContext
 
 
-async def test_image_embedding_model(run_context) -> None:
+async def test_image_embedding_model(run_context: RunContext) -> None:
     image_embedding_model = ImageEmbeddingModel(
         "example",
         ImageEmbeddingModelConfig(
