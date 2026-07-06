@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-07-06
+
+### Added
+- **kiarina-agi-text**: Add chat, logging, and text embedding APIs for AI agents.
+
+### Changed
+- **kiarina-agi-base**: Default run context identifiers to `default` and add an option to require explicit identifiers.
+- **kiarina-agi-data**: Replace broad `Any` annotations in package tests with concrete types.
+- **kiarina-agi-text**: Add an `all` extra and consolidate optional dependency documentation.
+- **kiarina-agi-text**: Add concrete type annotations to package tests and remove file-wide mypy suppressions.
+- **kiarina-agi-text**: Add the GPT-5.5 chat model preset and remove obsolete OpenAI presets.
+- **kiarina-agi-text**: Select chat model helper tests through `KIARINA_AGI_TEXT_TEST_CHAT_MODEL`, default to the mock model, configure verbose parallel retries and timeouts, use a smaller text fixture, and hide unsupported chat model presets.
+- **kiarina-agi-text**: Show the selected chat model in pytest output and load package test variables from `.env.vscode` in VS Code.
+- **kiarina-agi-text**: Move manually run chat and token overflow checks from skipped tests to package scripts.
+- **kiarina-agi-text**: Enable targeted costly tests through `KIARINA_TEST_COSTLY`, the test task, and package Make shortcuts.
+- Include package `scripts` directories in formatting, linting, and type checking.
+- Add opt-in pytest arguments for package tests through `packages/<package>/tests/.pytest-args`.
+- Add AI agent packages to the VS Code workspace.
+- Standardize package README optional dependency tables and `all` extra installation guidance.
+
+### Fixed
+- **kiarina-agi-text**: Allow chat helpers to create a run context when one is not provided.
+
 ## [2.6.0] - 2026-07-03
 
 ### Added

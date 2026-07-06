@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-07-06
+
 ### Added
 - **kiarina-agi-text**: Add chat, logging, and text embedding APIs for AI agents.
 

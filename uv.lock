@@ -1111,7 +1111,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.6.0"
+version = "2.7.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1162,7 +1162,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-base"
-version = "2.6.0"
+version = "2.7.0"
 source = { editable = "packages/kiarina-agi-base" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1197,7 +1197,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-data"
-version = "2.6.0"
+version = "2.7.0"
 source = { editable = "packages/kiarina-agi-data" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1258,7 +1258,7 @@ provides-extras = ["asset-repository-gcs"]
 
 [[package]]
 name = "kiarina-agi-text"
-version = "2.6.0"
+version = "2.7.0"
 source = { editable = "packages/kiarina-agi-text" }
 dependencies = [
     { name = "kiarina-agi-base" },

@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-data"
-version = "2.6.0"
+version = "2.7.0"
 description = "Data models and utilities for AI agents"
 readme = "README.md"
 license = "MIT"
