@@ -39,6 +39,24 @@ development branch に実装を commit します。
 
 ---
 
+### Makefile Style
+
+`.PHONY` は、基本的に 1 行にまとめます。
+
+改行が必要になる場合は、まとめて書かず、各タスクの直前にそれぞれ書きます。
+
+```make
+.PHONY: image_generation_provider_openai_test
+image_generation_provider_openai_test:
+	mise run test --costly --path tests/image_generation_provider_impl/openai
+
+.PHONY: image_generation_model_test
+image_generation_model_test:
+	mise run test --costly --path tests/image_generation_model
+```
+
+---
+
 ### Updating CHANGELOG.md
 
 PyPI に公開される機能の変更については、対象 sub project、meta project、root project の CHANGELOG.md に記録します。

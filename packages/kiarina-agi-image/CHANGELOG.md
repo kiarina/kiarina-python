@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Add concrete type annotations to package tests and remove mypy suppressions.
+- Add explicit costly image test shortcuts and VS Code pytest settings.
 - Use user cache model downloads in real local provider tests.
 
 ## [2.7.0] - 2026-07-06

@@ -1,3 +1,4 @@
+import os
 import re
 from collections.abc import AsyncIterator, Callable, Iterator
 from pathlib import Path
@@ -19,8 +20,9 @@ def configure_app() -> Iterator[None]:
 
 @pytest.fixture(autouse=True)
 def skip_costly(request: pytest.FixtureRequest) -> None:
-    if request.node.get_closest_marker("costly"):
-        pytest.skip("Costly image provider tests must be run explicitly.")
+    costly_enabled = os.getenv("KIARINA_TEST_COSTLY", "0") == "1"
+    if request.node.get_closest_marker("costly") and not costly_enabled:
+        pytest.skip("Set KIARINA_TEST_COSTLY=1 to run this test.")
 
 
 @pytest.fixture

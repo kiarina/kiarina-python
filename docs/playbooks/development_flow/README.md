@@ -34,6 +34,24 @@ Run tests for all packages and confirm there are no issues.
 
 ---
 
+### Makefile Style
+
+Keep `.PHONY` entries on one line by default.
+
+If the line needs to be split, do not group the entries. Write each `.PHONY` immediately before its target.
+
+```make
+.PHONY: image_generation_provider_openai_test
+image_generation_provider_openai_test:
+	mise run test --costly --path tests/image_generation_provider_impl/openai
+
+.PHONY: image_generation_model_test
+image_generation_model_test:
+	mise run test --costly --path tests/image_generation_model
+```
+
+---
+
 ### Updating CHANGELOG.md
 
 For changes to features published on PyPI, record them in the CHANGELOG.md of the target sub project, meta project, and root project.

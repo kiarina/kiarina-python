@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **kiarina-agi-image**: Add concrete type annotations to package tests and remove mypy suppressions.
+- **kiarina-agi-image**: Add explicit costly image test shortcuts and VS Code pytest settings.
 
 ## [2.7.0] - 2026-07-06
 
