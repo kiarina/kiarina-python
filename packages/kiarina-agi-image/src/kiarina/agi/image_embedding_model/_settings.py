@@ -29,18 +29,8 @@ class ImageEmbeddingModelSettings(BaseSettings):
             "mock": ImageEmbeddingModelConfig(provider_name="mock"),
             "gemini": ImageEmbeddingModelConfig(provider_name="gemini"),
             "qwen3-vl": ImageEmbeddingModelConfig(provider_name="qwen3-vl"),
-            "siglip2": ImageEmbeddingModelConfig(
-                provider_name="siglip2",
-                provider_config={
-                    "model_path": "models/siglip2/vision_model_int8.onnx",
-                },
-            ),
-            "sface": ImageEmbeddingModelConfig(
-                provider_name="sface",
-                provider_config={
-                    "model_path": "models/sface/face_recognition_sface_2021dec.onnx",
-                },
-            ),
+            "siglip2": ImageEmbeddingModelConfig(provider_name="siglip2"),
+            "sface": ImageEmbeddingModelConfig(provider_name="sface"),
         }
     )
 

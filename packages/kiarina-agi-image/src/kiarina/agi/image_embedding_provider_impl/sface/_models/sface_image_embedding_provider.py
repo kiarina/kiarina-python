@@ -12,6 +12,8 @@ from kiarina.agi.image_embedding_provider import (
 )
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
+from kiarina.utils.app import user_directory
+from kiarina.utils.common import download_file
 
 from .._settings import SFaceImageEmbeddingProviderSettings
 
@@ -31,33 +33,39 @@ class SFaceImageEmbeddingProvider(BaseImageEmbeddingProvider):
         self.settings: SFaceImageEmbeddingProviderSettings = settings
         self.normalize_embedding = settings.normalize_embedding
         self._recognizer: cv2.FaceRecognizerSF | None = None
+        self._model_path: Path | None = None
         self._model_sha256: str | None = None
         self._lock = Lock()
+
+    def _resolve_model_path(self) -> Path:
+        if self._model_path is None:
+            if self.settings.model_path is not None:
+                self._model_path = Path(self.settings.model_path).expanduser()
+            else:
+                self._model_path = download_file(
+                    self.settings.model_url,
+                    self.settings.model_sha256,
+                    user_directory.get_user_cache_dir()
+                    / "models"
+                    / "sface"
+                    / self.settings.model_filename,
+                )
+
+        return self._model_path
 
     @property
     def recognizer(self) -> "cv2.FaceRecognizerSF":
         if self._recognizer is None:
-            if self.settings.model_path is None:
-                raise ValueError(
-                    "model_path must be set for SFaceImageEmbeddingProvider"
-                )
-
-            model_path = Path(self.settings.model_path).expanduser()
-            self._recognizer = cv2.FaceRecognizerSF.create(str(model_path), "")
+            self._recognizer = cv2.FaceRecognizerSF.create(
+                str(self._resolve_model_path()), ""
+            )
 
         return self._recognizer
 
     @property
     def model_sha256(self) -> str:
         if self._model_sha256 is None:
-            if self.settings.model_path is None:
-                raise ValueError(
-                    "model_path must be set for SFaceImageEmbeddingProvider"
-                )
-
-            self._model_sha256 = _sha256_file(
-                Path(self.settings.model_path).expanduser()
-            )
+            self._model_sha256 = _sha256_file(self._resolve_model_path())
 
         return self._model_sha256
 

@@ -22,6 +22,7 @@ dependencies = [
     "kiarina-agi-base>=2.7.0",
     "kiarina-agi-data>=2.7.0",
     "kiarina-agi-file>=2.6.0",
+    "kiarina-utils-app>=2.4.0",
     "kiarina-utils-common>=2.3.0",
     "kiarina-utils-file>=2.3.1",
     "numpy>=2.0,<3",

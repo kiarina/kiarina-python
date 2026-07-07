@@ -11,6 +11,8 @@ from kiarina.agi.image_embedding_provider import (
 )
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
+from kiarina.utils.app import user_directory
+from kiarina.utils.common import download_file
 
 from .._settings import SigLIP2ImageEmbeddingProviderSettings
 
@@ -32,32 +34,36 @@ class SigLIP2ImageEmbeddingProvider(BaseImageEmbeddingProvider):
         self.settings: SigLIP2ImageEmbeddingProviderSettings = settings
         self.normalize_embedding = settings.normalize_embedding
         self._session: ort.InferenceSession | None = None
+        self._model_path: Path | None = None
         self._model_sha256: str | None = None
+
+    def _resolve_model_path(self) -> Path:
+        if self._model_path is None:
+            if self.settings.model_path is not None:
+                self._model_path = Path(self.settings.model_path).expanduser()
+            else:
+                self._model_path = download_file(
+                    self.settings.model_url,
+                    self.settings.model_sha256,
+                    user_directory.get_user_cache_dir()
+                    / "models"
+                    / "siglip2"
+                    / self.settings.model_filename,
+                )
+
+        return self._model_path
 
     @property
     def session(self) -> ort.InferenceSession:
         if self._session is None:
-            if self.settings.model_path is None:
-                raise ValueError(
-                    "model_path must be set for SigLIP2ImageEmbeddingProvider"
-                )
-
-            model_path = Path(self.settings.model_path).expanduser()
-            self._session = ort.InferenceSession(str(model_path))
+            self._session = ort.InferenceSession(str(self._resolve_model_path()))
 
         return self._session
 
     @property
     def model_sha256(self) -> str:
         if self._model_sha256 is None:
-            if self.settings.model_path is None:
-                raise ValueError(
-                    "model_path must be set for SigLIP2ImageEmbeddingProvider"
-                )
-
-            self._model_sha256 = _sha256_file(
-                Path(self.settings.model_path).expanduser()
-            )
+            self._model_sha256 = _sha256_file(self._resolve_model_path())
 
         return self._model_sha256
 

@@ -23,21 +23,8 @@ class ImageDetectionModelSettings(BaseSettings):
     presets: dict[ImageDetectionModelName, ImageDetectionModelConfig] = Field(
         default_factory=lambda: {
             "mock": ImageDetectionModelConfig(provider_name="mock"),
-            "yunet": ImageDetectionModelConfig(
-                provider_name="yunet",
-                provider_config={
-                    "model_path": (
-                        "models/yunet/face_detection_yunet_2023mar_int8bq.onnx"
-                    ),
-                },
-            ),
-            "dfine": ImageDetectionModelConfig(
-                provider_name="dfine",
-                provider_config={
-                    "model_path": "models/dfine/model.onnx",
-                    "label_map_path": "models/dfine/coco_labels.txt",
-                },
-            ),
+            "yunet": ImageDetectionModelConfig(provider_name="yunet"),
+            "dfine": ImageDetectionModelConfig(provider_name="dfine"),
         }
     )
 

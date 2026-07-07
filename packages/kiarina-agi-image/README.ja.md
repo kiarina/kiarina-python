@@ -18,6 +18,7 @@
 | [kiarina-agi-base](../kiarina-agi-base/) | `>=2.7.0` | MIT |
 | [kiarina-agi-data](../kiarina-agi-data/) | `>=2.7.0` | MIT |
 | [kiarina-agi-file](../kiarina-agi-file/) | `>=2.6.0` | MIT |
+| [kiarina-utils-app](../kiarina-utils-app/) | `>=2.4.0` | MIT |
 | [kiarina-utils-common](../kiarina-utils-common/) | `>=2.3.0` | MIT |
 | [kiarina-utils-file](../kiarina-utils-file/) | `>=2.3.1` | MIT |
 | [NumPy](https://github.com/numpy/numpy) | `>=2.0,<3` | BSD-3-Clause |
@@ -60,6 +61,14 @@ pip install "kiarina-agi-image[all]"
   Image embedding を生成します。
 - **Image Generation**
   Google、OpenAI、mock provider で画像を生成・編集します。
+
+### Model Cache
+
+YuNet、D-FINE、SFace、SigLIP2 は、`model_path` が `None` の場合、初回利用時に既定モデルをダウンロードします。D-FINE は、`label_map_path` が `None` の場合、検証済みの `config.json` をダウンロードし、そこから既定ラベルを生成します。
+
+ファイルは `user_directory.get_user_cache_dir() / "models" / <implementation>` にキャッシュされます。明示したパスは常に優先され、その場合は対応するファイルをダウンロードしません。
+
+既定の download URL、SHA-256 digest、cache filename は provider settings であり、settings、環境変数、config で上書きできます。取得元を変える場合、既存 cache を再利用したくないときは filename も変更してください。
 
 ## API Reference
 

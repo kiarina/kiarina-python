@@ -18,6 +18,7 @@ English | [日本語](README.ja.md)
 | [kiarina-agi-base](../kiarina-agi-base/) | `>=2.7.0` | MIT |
 | [kiarina-agi-data](../kiarina-agi-data/) | `>=2.7.0` | MIT |
 | [kiarina-agi-file](../kiarina-agi-file/) | `>=2.6.0` | MIT |
+| [kiarina-utils-app](../kiarina-utils-app/) | `>=2.4.0` | MIT |
 | [kiarina-utils-common](../kiarina-utils-common/) | `>=2.3.0` | MIT |
 | [kiarina-utils-file](../kiarina-utils-file/) | `>=2.3.1` | MIT |
 | [NumPy](https://github.com/numpy/numpy) | `>=2.0,<3` | BSD-3-Clause |
@@ -60,6 +61,14 @@ pip install "kiarina-agi-image[all]"
   Create image embeddings.
 - **Image Generation**
   Generate and edit images with Google, OpenAI, and mock providers.
+
+### Model Cache
+
+YuNet, D-FINE, SFace, and SigLIP2 download their default model on first use when `model_path` is `None`. D-FINE also downloads a verified `config.json` and generates default labels from it when `label_map_path` is `None`.
+
+Files are cached under `user_directory.get_user_cache_dir() / "models" / <implementation>`. An explicit path always takes precedence and prevents downloading the corresponding file.
+
+The default download URL, SHA-256 digest, and cache filename are provider settings and can be overridden through settings, environment variables, or config. When changing the source, also change the filename if an existing cached file should not be reused.
 
 ## API Reference
 

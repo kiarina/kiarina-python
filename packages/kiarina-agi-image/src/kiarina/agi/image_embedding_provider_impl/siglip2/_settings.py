@@ -4,6 +4,9 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
+_MODEL_REVISION = "ba1f3b0843f24bc5417d38e19c37b287d719b2f4"
+_MODEL_FILENAME = "vision_model_int8.onnx"
+
 
 class SigLIP2ImageEmbeddingProviderSettings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -12,6 +15,17 @@ class SigLIP2ImageEmbeddingProviderSettings(BaseSettings):
     )
 
     model_path: str | Path | None = None
+
+    model_url: str = (
+        "https://huggingface.co/onnx-community/siglip2-base-patch16-224-ONNX/"
+        f"resolve/{_MODEL_REVISION}/onnx/{_MODEL_FILENAME}"
+    )
+
+    model_sha256: str = (
+        "0dd31785a2713f1113ef2272472165c69d580473dae38d7b47568ac587795e70"
+    )
+
+    model_filename: str = _MODEL_FILENAME
 
     kind: str = "object"
 

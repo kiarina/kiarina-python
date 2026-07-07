@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add `download_file` for cached downloads with SHA-256 verification and atomic placement.
+
 ## [2.3.0] - 2026-07-01
 
 ### Changed (BREAKING)

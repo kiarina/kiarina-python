@@ -1,7 +1,4 @@
-from pathlib import Path
-
 import numpy as np
-import pytest
 
 from kiarina.agi.embedding import calc_cosine_similarity
 from kiarina.agi.image_embedding_provider_impl.siglip2 import (
@@ -11,28 +8,15 @@ from kiarina.agi.image_embedding_provider_impl.siglip2 import (
 from kiarina.agi.run_context import RunContext
 
 
-@pytest.fixture
-def siglip2_model_path() -> str:
-    path = Path("models/siglip2/vision_model_int8.onnx")
-
-    if not path.exists():
-        pytest.skip(f"SigLIP2 ONNX model file not found at {path}")
-
-    return str(path)
-
-
 def _image(seed: int) -> np.ndarray:
     rng = np.random.default_rng(seed)
     return rng.integers(0, 256, size=(64, 48, 3), dtype=np.uint8)
 
 
 async def test_siglip2_image_embedding_provider(
-    siglip2_model_path: str,
     run_context: RunContext,
 ) -> None:
-    provider = SigLIP2ImageEmbeddingProvider(
-        SigLIP2ImageEmbeddingProviderSettings(model_path=siglip2_model_path)
-    )
+    provider = SigLIP2ImageEmbeddingProvider(SigLIP2ImageEmbeddingProviderSettings())
 
     space = provider.get_space()
     assert space.kind == "object"
@@ -50,12 +34,9 @@ async def test_siglip2_image_embedding_provider(
 
 
 async def test_deterministic_and_distinct(
-    siglip2_model_path: str,
     run_context: RunContext,
 ) -> None:
-    provider = SigLIP2ImageEmbeddingProvider(
-        SigLIP2ImageEmbeddingProviderSettings(model_path=siglip2_model_path)
-    )
+    provider = SigLIP2ImageEmbeddingProvider(SigLIP2ImageEmbeddingProviderSettings())
 
     a1 = await provider.embed(_image(1), run_context=run_context)
     a2 = await provider.embed(_image(1), run_context=run_context)

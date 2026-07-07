@@ -232,10 +232,27 @@ assert console1 is console_registry.get()  # 同じ object を返す
 from kiarina.utils.common import (
     ConfigString,
     ImportPath,
+    download_file,
     import_object,
     parse_config_string,
 )
 ```
+
+#### `download_file`
+
+```python
+def download_file(
+    url: str,
+    sha256: str,
+    cache_path: os.PathLike[str] | str,
+) -> Path: ...
+```
+
+`cache_path` にファイルが存在しない場合だけ、ファイルをダウンロードします。
+
+ファイルは同じ directory の一時ファイルへ書き込み、SHA-256 で検証した後、atomic に `cache_path` へ配置します。既存ファイルは hash 検証せずに再利用します。
+
+- `RuntimeError`: ダウンロードに失敗した場合、または SHA-256 digest が一致しない場合
 
 #### `import_object`
 

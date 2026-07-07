@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add the `kiarina-agi-image` package.
+- Add lazy default model downloads for YuNet, D-FINE, SFace, and SigLIP2.
+- Add configurable default download metadata for local image providers.
 
 ### Changed
 - Add concrete type annotations to package tests and remove mypy suppressions.
+- Use user cache model downloads in real local provider tests.
 
 ## [2.7.0] - 2026-07-06
 

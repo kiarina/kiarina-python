@@ -1,7 +1,4 @@
-from pathlib import Path
-
 import numpy as np
-import pytest
 
 from kiarina.agi.embedding import calc_cosine_similarity
 from kiarina.agi.image_embedding_provider_impl.sface import (
@@ -11,28 +8,15 @@ from kiarina.agi.image_embedding_provider_impl.sface import (
 from kiarina.agi.run_context import RunContext
 
 
-@pytest.fixture
-def sface_model_path() -> str:
-    path = Path("models/sface/face_recognition_sface_2021dec.onnx")
-
-    if not path.exists():
-        pytest.skip(f"SFace ONNX model file not found at {path}")
-
-    return str(path)
-
-
 def _face(seed: int) -> np.ndarray:
     rng = np.random.default_rng(seed)
     return rng.integers(0, 256, size=(112, 112, 3), dtype=np.uint8)
 
 
 async def test_sface_image_embedding_provider(
-    sface_model_path: str,
     run_context: RunContext,
 ) -> None:
-    provider = SFaceImageEmbeddingProvider(
-        SFaceImageEmbeddingProviderSettings(model_path=sface_model_path)
-    )
+    provider = SFaceImageEmbeddingProvider(SFaceImageEmbeddingProviderSettings())
 
     space = provider.get_space()
     assert space.kind == "face"
@@ -50,12 +34,9 @@ async def test_sface_image_embedding_provider(
 
 
 async def test_deterministic_and_distinct(
-    sface_model_path: str,
     run_context: RunContext,
 ) -> None:
-    provider = SFaceImageEmbeddingProvider(
-        SFaceImageEmbeddingProviderSettings(model_path=sface_model_path)
-    )
+    provider = SFaceImageEmbeddingProvider(SFaceImageEmbeddingProviderSettings())
 
     a1 = await provider.embed(_face(1), run_context=run_context)
     a2 = await provider.embed(_face(1), run_context=run_context)
@@ -66,12 +47,9 @@ async def test_deterministic_and_distinct(
 
 
 async def test_resizes_non_112(
-    sface_model_path: str,
     run_context: RunContext,
 ) -> None:
-    provider = SFaceImageEmbeddingProvider(
-        SFaceImageEmbeddingProviderSettings(model_path=sface_model_path)
-    )
+    provider = SFaceImageEmbeddingProvider(SFaceImageEmbeddingProviderSettings())
 
     rng = np.random.default_rng(3)
     pixels = rng.integers(0, 256, size=(200, 160, 3), dtype=np.uint8)

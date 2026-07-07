@@ -233,10 +233,27 @@ assert console1 is console_registry.get()  # Return the same object
 from kiarina.utils.common import (
     ConfigString,
     ImportPath,
+    download_file,
     import_object,
     parse_config_string,
 )
 ```
+
+#### `download_file`
+
+```python
+def download_file(
+    url: str,
+    sha256: str,
+    cache_path: os.PathLike[str] | str,
+) -> Path: ...
+```
+
+Download a file to `cache_path` if it does not already exist.
+
+The file is first written to a temporary file in the same directory, verified with SHA-256, and then atomically placed at `cache_path`. Existing files are reused without hash verification.
+
+- `RuntimeError`: Downloading fails or the SHA-256 digest does not match
 
 #### `import_object`
 

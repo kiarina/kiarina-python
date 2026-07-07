@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import numpy as np
@@ -9,6 +10,8 @@ from kiarina.agi.image_detection_provider import (
 )
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
+from kiarina.utils.app import user_directory
+from kiarina.utils.common import download_file
 
 from .._settings import DFineImageDetectionProviderSettings
 
@@ -30,30 +33,62 @@ class DFineImageDetectionProvider(BaseImageDetectionProvider):
         self.settings: DFineImageDetectionProviderSettings = settings
         self._session: ort.InferenceSession | None = None
         self._labels: list[str] | None = None
+        self._model_path: Path | None = None
+        self._label_map_path: Path | None = None
+        self._config_path: Path | None = None
+
+    def _resolve_model_path(self) -> Path:
+        if self._model_path is None:
+            if self.settings.model_path is not None:
+                self._model_path = Path(self.settings.model_path).expanduser()
+            else:
+                self._model_path = download_file(
+                    self.settings.model_url,
+                    self.settings.model_sha256,
+                    user_directory.get_user_cache_dir()
+                    / "models"
+                    / "dfine"
+                    / self.settings.model_filename,
+                )
+
+        return self._model_path
+
+    def _resolve_config_path(self) -> Path:
+        if self._config_path is None:
+            self._config_path = download_file(
+                self.settings.config_url,
+                self.settings.config_sha256,
+                user_directory.get_user_cache_dir()
+                / "models"
+                / "dfine"
+                / self.settings.config_filename,
+            )
+
+        return self._config_path
+
+    def _resolve_label_map_path(self) -> Path:
+        if self._label_map_path is None:
+            if self.settings.label_map_path is not None:
+                self._label_map_path = Path(self.settings.label_map_path).expanduser()
+            else:
+                raise ValueError("label_map_path is not set")
+
+        return self._label_map_path
 
     @property
     def session(self) -> ort.InferenceSession:
         if self._session is None:
-            if self.settings.model_path is None:
-                raise ValueError(
-                    "model_path must be set for DFineImageDetectionProvider"
-                )
-
-            model_path = Path(self.settings.model_path).expanduser()
-            self._session = ort.InferenceSession(str(model_path))
+            self._session = ort.InferenceSession(str(self._resolve_model_path()))
 
         return self._session
 
     @property
     def labels(self) -> list[str]:
         if self._labels is None:
-            if self.settings.label_map_path is None:
-                raise ValueError(
-                    "label_map_path must be set for DFineImageDetectionProvider"
-                )
-
-            label_map_path = Path(self.settings.label_map_path).expanduser()
-            self._labels = _load_label_map(label_map_path)
+            if self.settings.label_map_path is not None:
+                self._labels = _load_label_map(self._resolve_label_map_path())
+            else:
+                self._labels = _create_labels(self._resolve_config_path())
 
         return self._labels
 
@@ -139,3 +174,11 @@ def _load_label_map(path: Path) -> list[str]:
         raise ValueError(f"Label map is empty: {path}")
 
     return labels
+
+
+def _create_labels(config_path: Path) -> list[str]:
+    with open(config_path, encoding="utf-8") as file:
+        config = json.load(file)
+
+    id_to_label = {int(key): value for key, value in config["id2label"].items()}
+    return [id_to_label[index] for index in range(len(id_to_label))]

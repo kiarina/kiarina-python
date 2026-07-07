@@ -8,6 +8,8 @@ from kiarina.agi.image_detection_provider import (
 )
 from kiarina.agi.image_types import ImagePixels
 from kiarina.agi.run_context import RunContext
+from kiarina.utils.app import user_directory
+from kiarina.utils.common import download_file
 
 from .._settings import YuNetImageDetectionProviderSettings
 
@@ -37,19 +39,30 @@ class YuNetImageDetectionProvider(BaseImageDetectionProvider):
 
         self.settings: YuNetImageDetectionProviderSettings = settings
         self._detector: cv2.FaceDetectorYN | None = None
+        self._model_path: Path | None = None
         self._lock = Lock()
+
+    def _resolve_model_path(self) -> Path:
+        if self._model_path is None:
+            if self.settings.model_path is not None:
+                self._model_path = Path(self.settings.model_path).expanduser()
+            else:
+                self._model_path = download_file(
+                    self.settings.model_url,
+                    self.settings.model_sha256,
+                    user_directory.get_user_cache_dir()
+                    / "models"
+                    / "yunet"
+                    / self.settings.model_filename,
+                )
+
+        return self._model_path
 
     @property
     def detector(self) -> "cv2.FaceDetectorYN":
         if self._detector is None:
-            if self.settings.model_path is None:
-                raise ValueError(
-                    "model_path must be set for YuNetImageDetectionProvider"
-                )
-
-            model_path = Path(self.settings.model_path).expanduser()
             self._detector = cv2.FaceDetectorYN.create(
-                str(model_path),
+                str(self._resolve_model_path()),
                 "",
                 (0, 0),
                 self.settings.score_threshold,
