@@ -37,6 +37,8 @@ pip install kiarina-lib-google
   Centrally manage multiple authentication configurations with pydantic-settings-manager.
 - **Integrating Authentication into Service Implementations**
   Inject an authentication settings key into a service that requires Google authentication and resolve credentials when creating its client.
+- **Configuring Google Gen AI Clients**
+  Generate initialization options for `google.genai.Client` and `ChatGoogleGenerativeAI` from `GoogleSettings`.
 - **Generating a Self-Signed JWT**
   Generate a self-signed JWT for a target service from signing credentials.
 
@@ -252,6 +254,31 @@ class MyService:
 
 This pattern lets the service settings select only the authentication configuration to use, while authentication methods, key files, and scopes remain separated in `kiarina.lib.google`. When `google_settings_key=None`, the default configuration from `settings_manager` is used.
 
+### Configuring Google Gen AI Clients
+
+`get_genai_options` generates Google Gen AI client initialization options from `GoogleSettings`.
+
+```python
+from google import genai
+
+from kiarina.lib.google import get_genai_options
+
+client = genai.Client(**get_genai_options("gemini"))
+```
+
+Set `vertexai=True` with `api_key` to use Vertex AI Express Mode. In this mode, `project` and `location` are not included in the options, matching the current Express Mode behavior.
+
+```yaml
+kiarina.lib.google:
+  configs:
+    express:
+      type: api_key
+      vertexai: true
+      api_key: ${GOOGLE_API_KEY}
+```
+
+When `vertexai=True` has no `api_key`, the helper uses Vertex AI mode with Google credentials. `project_id` and `location` are included only when configured.
+
 ### Generating a Self-Signed JWT
 
 Generate a self-signed JWT from signing credentials such as a service account without making a network request.
@@ -281,6 +308,7 @@ from kiarina.lib.google import (
     SelfSignedJWT,
     get_credentials,
     get_default_credentials,
+    get_genai_options,
     get_self_signed_jwt,
     get_service_account_credentials,
     get_user_account_credentials,
@@ -305,6 +333,20 @@ Retrieve ADC, service account credentials, or user account credentials according
 `settings` takes precedence over `settings_key`, and `scopes` takes precedence over `settings.scopes`.
 
 - `ValueError`: Impersonation has no scopes, credential input is missing, a file does not exist, or `type` is unsupported
+
+#### `get_genai_options`
+
+```python
+def get_genai_options(
+    settings_key: str | None = None,
+    *,
+    settings: GoogleSettings | None = None,
+    scopes: list[str] | None = None,
+    cache: CredentialsCache | None = None,
+) -> dict[str, Any]: ...
+```
+
+Generate options to pass to Google Gen AI clients. When `vertexai=True` and `api_key` is configured, this returns only `{"vertexai": True, "api_key": ...}` for Express Mode. `vertexai=False` uses Gemini Developer API mode. When `vertexai=None`, `type="api_key"` uses Gemini Developer API mode and all other types use Vertex AI credentials mode.
 
 #### `get_self_signed_jwt`
 
@@ -384,6 +426,8 @@ class GoogleSettings(BaseSettings):
     authorized_user_file: str | None = None
     authorized_user_data: SecretStr | None = None
     api_key: SecretStr | None = None
+    vertexai: bool | None = None
+    location: str | None = None
 
     def get_service_account_data(self) -> dict[str, Any] | None: ...
 
@@ -409,10 +453,12 @@ An authentication settings model that supports environment variables with the `K
 | `authorized_user_file` | Path to an authorized user credentials file |
 | `authorized_user_data` | Authorized user credentials as a JSON string |
 | `api_key` | Google API key |
+| `vertexai` | Whether Google Gen AI clients use Vertex AI |
+| `location` | Google Cloud location for Google Gen AI Vertex AI clients |
 
 `get_service_account_data`, `get_client_secret_data`, and `get_authorized_user_data` convert their corresponding JSON strings to dictionaries. They return `None` when no value is configured and raise `json.JSONDecodeError` for invalid JSON.
 
-`get_credentials` uses `type`, `impersonate_service_account`, `scopes`, `service_account_file`, `service_account_data`, `authorized_user_file`, and `authorized_user_data` to create credentials. The remaining fields can retain related values for services that share this settings model.
+`get_credentials` uses `type`, `impersonate_service_account`, `scopes`, `service_account_file`, `service_account_data`, `authorized_user_file`, and `authorized_user_data` to create credentials. `get_genai_options` also uses `type`, `api_key`, `vertexai`, `project_id`, and `location`. The remaining fields can retain related values for services that share this settings model.
 
 `type="api_key"` and `api_key` can securely retain an API key in settings, but `get_credentials` does not convert API keys into Google credentials and raises `ValueError`.
 

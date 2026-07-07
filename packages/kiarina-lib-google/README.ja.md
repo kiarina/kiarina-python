@@ -37,6 +37,8 @@ pip install kiarina-lib-google
   pydantic-settings-manager で複数の認証設定を一元管理できます。
 - **Integrating Authentication into Service Implementations**
   Google 認証が必要な service の設定へ認証設定キーを注入し、client の生成時に認証情報を解決できます。
+- **Configuring Google Gen AI Clients**
+  `GoogleSettings` から `google.genai.Client` と `ChatGoogleGenerativeAI` の初期化 options を生成できます。
 - **Generating a Self-Signed JWT**
   署名可能な認証情報から、対象サービス向けの自己署名 JWT を生成できます。
 
@@ -252,6 +254,31 @@ class MyService:
 
 このパターンでは、service の設定が利用する認証設定だけを選択し、認証方式・鍵ファイル・scope などは `kiarina.lib.google` 側へ分離できます。`google_settings_key=None` の場合は、`settings_manager` の default 設定が使用されます。
 
+### Configuring Google Gen AI Clients
+
+`get_genai_options` は `GoogleSettings` から Google Gen AI client の初期化 options を生成します。
+
+```python
+from google import genai
+
+from kiarina.lib.google import get_genai_options
+
+client = genai.Client(**get_genai_options("gemini"))
+```
+
+`vertexai=True` と `api_key` を設定すると Vertex AI Express Mode になります。この場合、現在の Express Mode 仕様に合わせて `project` と `location` は options に含めません。
+
+```yaml
+kiarina.lib.google:
+  configs:
+    express:
+      type: api_key
+      vertexai: true
+      api_key: ${GOOGLE_API_KEY}
+```
+
+`vertexai=True` で `api_key` がない場合は、Google credentials を使う Vertex AI mode になります。`project_id` と `location` は、設定されている場合だけ options に含まれます。
+
 ### Generating a Self-Signed JWT
 
 サービスアカウントなどの署名可能な認証情報から、ネットワーク通信を行わずに自己署名 JWT を生成します。
@@ -281,6 +308,7 @@ from kiarina.lib.google import (
     SelfSignedJWT,
     get_credentials,
     get_default_credentials,
+    get_genai_options,
     get_self_signed_jwt,
     get_service_account_credentials,
     get_user_account_credentials,
@@ -305,6 +333,20 @@ def get_credentials(
 `settings` は `settings_key` より優先され、`scopes` は `settings.scopes` より優先されます。
 
 - `ValueError`: 権限借用に必要な scope がない場合、認証情報の入力がない場合、ファイルが存在しない場合、または `type` がサポートされていない場合
+
+#### `get_genai_options`
+
+```python
+def get_genai_options(
+    settings_key: str | None = None,
+    *,
+    settings: GoogleSettings | None = None,
+    scopes: list[str] | None = None,
+    cache: CredentialsCache | None = None,
+) -> dict[str, Any]: ...
+```
+
+Google Gen AI client に渡す options を生成します。`vertexai=True` と `api_key` がある場合は Express Mode として `{"vertexai": True, "api_key": ...}` のみを返します。`vertexai=False` は Gemini Developer API mode として扱います。`vertexai=None` の場合、`type="api_key"` は Gemini Developer API mode、それ以外は Vertex AI credentials mode になります。
 
 #### `get_self_signed_jwt`
 
@@ -384,6 +426,8 @@ class GoogleSettings(BaseSettings):
     authorized_user_file: str | None = None
     authorized_user_data: SecretStr | None = None
     api_key: SecretStr | None = None
+    vertexai: bool | None = None
+    location: str | None = None
 
     def get_service_account_data(self) -> dict[str, Any] | None: ...
 
@@ -409,10 +453,12 @@ class GoogleSettings(BaseSettings):
 | `authorized_user_file` | 認証済みユーザー情報ファイルのパス |
 | `authorized_user_data` | 認証済みユーザー情報の JSON 文字列 |
 | `api_key` | Google API キー |
+| `vertexai` | Google Gen AI client で Vertex AI を使うかどうか |
+| `location` | Google Gen AI Vertex AI client の Google Cloud location |
 
 `get_service_account_data`、`get_client_secret_data`、`get_authorized_user_data` は、対応する JSON 文字列を dictionary に変換します。値がない場合は `None` を返し、不正な JSON の場合は `json.JSONDecodeError` を送出します。
 
-`get_credentials` が認証情報の生成に使用するフィールドは、`type`、`impersonate_service_account`、`scopes`、`service_account_file`、`service_account_data`、`authorized_user_file`、`authorized_user_data` です。その他のフィールドは、この設定モデルを共有する関連サービスから参照できます。
+`get_credentials` が認証情報の生成に使用するフィールドは、`type`、`impersonate_service_account`、`scopes`、`service_account_file`、`service_account_data`、`authorized_user_file`、`authorized_user_data` です。`get_genai_options` は `type`、`api_key`、`vertexai`、`project_id`、`location` も参照します。その他のフィールドは、この設定モデルを共有する関連サービスから参照できます。
 
 `type="api_key"` と `api_key` は API key を安全に設定へ保持するために使用できますが、`get_credentials` は API key を Google credentials へ変換せず、`ValueError` を送出します。
 

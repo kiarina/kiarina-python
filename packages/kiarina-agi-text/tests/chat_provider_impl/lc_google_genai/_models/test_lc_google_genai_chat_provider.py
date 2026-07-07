@@ -15,8 +15,8 @@ from kiarina.utils.file import FileBlob
 
 
 @pytest.fixture
-def capabilities() -> ChatCapabilities:
-    return ChatCapabilities(
+def provider(capabilities: ChatCapabilities) -> LCGoogleGenAIChatProvider:
+    capabilities = ChatCapabilities(
         input_enabled={
             "image": True,
             "audio": True,
@@ -24,97 +24,19 @@ def capabilities() -> ChatCapabilities:
             "pdf": True,
         },
     )
-
-
-@pytest.fixture
-def provider_gemini_api(capabilities: ChatCapabilities) -> LCGoogleGenAIChatProvider:
     provider = LCGoogleGenAIChatProvider(
         LCGoogleGenAIChatProviderSettings(
-            backend_type="gemini_api",
-            google_auth_settings_key="api_key",
             input_enabled=capabilities.input_enabled,
             output_enabled=capabilities.output_enabled,
         )
     )
     provider.name = "lc_google_genai"
     return provider
-
-
-@pytest.fixture
-def provider_vertex_ai_api_key(
-    capabilities: ChatCapabilities,
-) -> LCGoogleGenAIChatProvider:
-    provider = LCGoogleGenAIChatProvider(
-        LCGoogleGenAIChatProviderSettings(
-            backend_type="vertex_ai_api_key",
-            google_auth_settings_key="api_key",
-            input_enabled=capabilities.input_enabled,
-            output_enabled=capabilities.output_enabled,
-        )
-    )
-    provider.name = "lc_google_genai"
-    return provider
-
-
-@pytest.fixture
-def provider_vertex_ai_credentials(
-    capabilities: ChatCapabilities,
-) -> LCGoogleGenAIChatProvider:
-    provider = LCGoogleGenAIChatProvider(
-        LCGoogleGenAIChatProviderSettings(
-            backend_type="vertex_ai_credentials",
-            google_auth_settings_key="service_account",
-            input_enabled=capabilities.input_enabled,
-            output_enabled=capabilities.output_enabled,
-        )
-    )
-    provider.name = "lc_google_genai"
-    return provider
-
-
-@pytest.fixture
-def provider(
-    provider_gemini_api: LCGoogleGenAIChatProvider,
-) -> LCGoogleGenAIChatProvider:
-    return provider_gemini_api
 
 
 @pytest.fixture
 def ctx(run_context: RunContext) -> LangChainChatProviderContext:
     return LangChainChatProviderContext.create(run_context=run_context)
-
-
-# --------------------------------------------------
-# Backend
-# --------------------------------------------------
-
-
-@pytest.mark.costly
-@pytest.mark.parametrize(
-    "fixture_name",
-    [
-        pytest.param("provider_gemini_api", id="1. gemini_api"),
-        # pytest.param("provider_vertex_ai_api_key", id="2. vertex_ai_api_key"),
-        pytest.param("provider_vertex_ai_credentials", id="3. vertex_ai_credentials"),
-    ],
-)
-async def test_backend(
-    fixture_name: str,
-    request: pytest.FixtureRequest,
-    ctx: LangChainChatProviderContext,
-) -> None:
-    print("\n\n" + "=" * 10 + f" {fixture_name} " + "=" * 10 + "\n")
-
-    provider: LCGoogleGenAIChatProvider = request.getfixturevalue(fixture_name)
-    print(f"__str__: {provider!s}")
-    print(f"google_auth_settings: {provider.google_auth_settings}")
-    print(f"backend_config: {provider.backend_config}")
-
-    ctx.lc_messages = [LCHumanMessage(content="Hello")]
-    lc_ai_message = await provider._invoke(ctx)
-
-    print("LCAIMessage", lc_ai_message.model_dump_json(indent=2))
-    print("LCAIMessage.text()", lc_ai_message.text())
 
 
 # --------------------------------------------------

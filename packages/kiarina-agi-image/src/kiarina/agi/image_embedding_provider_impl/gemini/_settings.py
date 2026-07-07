@@ -1,8 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsKey, SettingsManager
 
-from ._types.backend_type import BackendType
-
 
 class GeminiImageEmbeddingProviderSettings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -10,11 +8,7 @@ class GeminiImageEmbeddingProviderSettings(BaseSettings):
         extra="ignore",
     )
 
-    backend_type: BackendType = "gemini_api"
-
     google_auth_settings_key: SettingsKey | None = None
-
-    vertex_ai_location: str | None = None
 
     # Gemini Embedding 2 — natively multimodal (text/image/audio/video/pdf).
     model_name: str = "gemini-embedding-2"

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Use `kiarina-lib-google` to resolve Google Gen AI client options for Google chat and text embedding providers.
+
 ## [2.7.0] - 2026-07-06
 
 ### Added

@@ -18,7 +18,6 @@ async def test_google_image_generation_provider(
     provider = GoogleImageGenerationProvider(settings)
 
     print(str(provider))
-    print(f"google_auth_settings: {provider.google_auth_settings}")
     print(f"client: {provider.client}")
 
     result = await provider.generate(

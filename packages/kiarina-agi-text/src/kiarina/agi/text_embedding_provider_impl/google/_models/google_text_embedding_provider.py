@@ -1,5 +1,3 @@
-from typing import Any
-
 from kiarina.agi.cost_record import CostRecord
 from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.embedding import Embedding, EmbeddingSpace, l2_normalize
@@ -31,58 +29,13 @@ class GoogleTextEmbeddingProvider(BaseTextEmbeddingProvider):
         self._client: genai.Client | None = None
 
     @property
-    def google_auth_settings(self) -> kiarina.lib.google.GoogleSettings:
-        return kiarina.lib.google.settings_manager.get_settings(
-            self.settings.google_auth_settings_key
-        )
-
-    @property
-    def credentials(self) -> kiarina.lib.google.Credentials:
-        return kiarina.lib.google.get_credentials(
-            settings=self.google_auth_settings,
-            scopes=["https://www.googleapis.com/auth/cloud-platform"],
-        )
-
-    @property
-    def api_key(self) -> str | None:
-        api_key = self.google_auth_settings.api_key
-        return api_key.get_secret_value() if api_key is not None else None
-
-    @property
-    def backend_config(self) -> dict[str, Any]:
-        if self.settings.backend_type == "gemini_api":
-            if self.api_key is not None:
-                return {"api_key": self.api_key}
-
-            return {}
-
-        if self.settings.backend_type == "vertex_ai_api_key":
-            backend_config: dict[str, Any] = {
-                "api_key": self.api_key,
-                "project": self.google_auth_settings.project_id,
-                "vertexai": True,
-            }
-
-            if self.settings.vertex_ai_location:
-                backend_config["location"] = self.settings.vertex_ai_location
-
-            return backend_config
-
-        backend_config = {
-            "vertexai": True,
-            "credentials": self.credentials,
-            "project": self.google_auth_settings.project_id,
-        }
-
-        if self.settings.vertex_ai_location:
-            backend_config["location"] = self.settings.vertex_ai_location
-
-        return backend_config
-
-    @property
     def client(self) -> "genai.Client":
         if self._client is None:
-            self._client = genai.Client(**self.backend_config)
+            self._client = genai.Client(
+                **kiarina.lib.google.get_genai_options(
+                    self.settings.google_auth_settings_key,
+                )
+            )
 
         return self._client
 

@@ -4,8 +4,6 @@ from pydantic_settings_manager import SettingsKey, SettingsManager
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.file_info import FileType
 
-from ._types.backend_type import BackendType
-
 
 class LCGoogleGenAIChatProviderSettings(ChatCapabilities, BaseSettings):
     model_config = SettingsConfigDict(
@@ -13,11 +11,7 @@ class LCGoogleGenAIChatProviderSettings(ChatCapabilities, BaseSettings):
         extra="ignore",
     )
 
-    backend_type: BackendType = "gemini_api"
-
     google_auth_settings_key: SettingsKey | None = None
-
-    vertex_ai_location: str | None = None
 
     model_name: str = "gemini-3.1-pro-preview"
 

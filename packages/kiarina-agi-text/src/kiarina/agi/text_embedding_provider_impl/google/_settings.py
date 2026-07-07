@@ -1,8 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsKey, SettingsManager
 
-from ._types.backend_type import BackendType
-
 
 class GoogleTextEmbeddingProviderSettings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -10,11 +8,7 @@ class GoogleTextEmbeddingProviderSettings(BaseSettings):
         extra="ignore",
     )
 
-    backend_type: BackendType = "gemini_api"
-
     google_auth_settings_key: SettingsKey | None = None
-
-    vertex_ai_location: str | None = None
 
     model_name: str = "gemini-embedding-2"
 

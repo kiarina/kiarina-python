@@ -36,10 +36,6 @@ logger = logging.getLogger(__name__)
 
 
 class LCGoogleGenAIChatProvider(LangChainChatProvider):
-    """
-    LangChain Google Generative AI Chat Provider Implementation
-    """
-
     def __init__(self, settings: LCGoogleGenAIChatProviderSettings) -> None:
         super().__init__()
 
@@ -48,66 +44,9 @@ class LCGoogleGenAIChatProvider(LangChainChatProvider):
     def __str__(self) -> str:
         props: list[str] = [
             self.settings.model_name,
-            self.settings.backend_type,
         ]
 
         return f"{self.__class__.__name__}({', '.join(props)})"
-
-    # --------------------------------------------------
-    # Properties
-    # --------------------------------------------------
-
-    @property
-    def google_auth_settings(self) -> kiarina.lib.google.GoogleSettings:
-        return kiarina.lib.google.settings_manager.get_settings(
-            self.settings.google_auth_settings_key
-        )
-
-    @property
-    def credentials(self) -> kiarina.lib.google.Credentials:
-        credentials = kiarina.lib.google.get_credentials(
-            settings=self.google_auth_settings,
-            scopes=[
-                "https://www.googleapis.com/auth/cloud-platform",
-            ],
-        )
-
-        return credentials
-
-    @property
-    def backend_config(self) -> dict[str, Any]:
-        backend_config: dict[str, Any] = {}
-
-        if self.settings.backend_type == "gemini_api":
-            if self.google_auth_settings.api_key is not None:
-                backend_config = {
-                    "api_key": self.google_auth_settings.api_key,
-                }
-
-            return backend_config
-
-        elif self.settings.backend_type == "vertex_ai_api_key":
-            backend_config = {
-                "api_key": self.google_auth_settings.api_key,
-                "project": self.google_auth_settings.project_id,
-                "vertexai": True,
-            }
-
-            if self.settings.vertex_ai_location:
-                backend_config["location"] = self.settings.vertex_ai_location
-
-            return backend_config
-
-        else:
-            backend_config = {
-                "credentials": self.credentials,
-                "project": self.google_auth_settings.project_id,
-            }
-
-            if self.settings.vertex_ai_location:
-                backend_config["location"] = self.settings.vertex_ai_location
-
-            return backend_config
 
     # --------------------------------------------------
     # Methods (ChatProvider)
@@ -291,7 +230,9 @@ class LCGoogleGenAIChatProvider(LangChainChatProvider):
         ctx: LangChainChatProviderContext,
     ) -> BaseChatModel | Runnable[LanguageModelInput, LCAIMessage]:
         lc_chat_model = ChatGoogleGenerativeAI(
-            **self.backend_config,
+            **kiarina.lib.google.get_genai_options(
+                self.settings.google_auth_settings_key
+            ),
             model=self.settings.model_name,
             max_tokens=self.settings.max_output_tokens,
             temperature=self.settings.temperature,

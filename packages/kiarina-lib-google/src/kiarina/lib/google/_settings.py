@@ -110,6 +110,22 @@ class GoogleSettings(BaseSettings):
     )
 
     # --------------------------------------------------
+    # Fields (google-genai)
+    # --------------------------------------------------
+
+    vertexai: bool | None = Field(
+        default=None,
+        title="Vertex AI",
+        description="Whether Google Gen AI clients use Vertex AI.",
+    )
+
+    location: str | None = Field(
+        default=None,
+        title="Location",
+        description="Google Cloud location for Google Gen AI Vertex AI clients.",
+    )
+
+    # --------------------------------------------------
     # Validators
     # --------------------------------------------------
 

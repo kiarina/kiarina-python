@@ -124,6 +124,7 @@ fi
 
 # Test execution
 if [ "$costly" = "true" ]; then
+    test_cmd+=(-s)
     KIARINA_TEST_COSTLY=1 "${test_cmd[@]}"
 else
     "${test_cmd[@]}"

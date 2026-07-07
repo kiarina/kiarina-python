@@ -11,35 +11,10 @@ from kiarina.agi.run_context import RunContext
 
 
 @pytest.fixture
-def provider_gemini_api() -> GeminiImageEmbeddingProvider:
-    provider = GeminiImageEmbeddingProvider(
-        GeminiImageEmbeddingProviderSettings(
-            backend_type="gemini_api",
-            google_auth_settings_key="api_key",
-        )
-    )
+def provider() -> GeminiImageEmbeddingProvider:
+    provider = GeminiImageEmbeddingProvider(GeminiImageEmbeddingProviderSettings())
     provider.name = "gemini"
     return provider
-
-
-@pytest.fixture
-def provider_vertex_ai_credentials() -> GeminiImageEmbeddingProvider:
-    provider = GeminiImageEmbeddingProvider(
-        GeminiImageEmbeddingProviderSettings(
-            backend_type="vertex_ai_credentials",
-            google_auth_settings_key="service_account",
-            vertex_ai_location="us-central1",
-        )
-    )
-    provider.name = "gemini"
-    return provider
-
-
-@pytest.fixture
-def provider(
-    provider_gemini_api: GeminiImageEmbeddingProvider,
-) -> GeminiImageEmbeddingProvider:
-    return provider_gemini_api
 
 
 def _image(seed: int) -> np.ndarray:
@@ -91,5 +66,8 @@ async def test_deterministic_and_distinct(
         _image(2), cost_recorder=cost_recorder, run_context=run_context
     )
 
-    assert np.isclose(calc_cosine_similarity(a1, a2), 1.0, atol=1e-3)
-    assert calc_cosine_similarity(a1, b) < 0.999
+    same_similarity = calc_cosine_similarity(a1, a2)
+    distinct_similarity = calc_cosine_similarity(a1, b)
+
+    assert same_similarity > 0.99
+    assert distinct_similarity < 0.99

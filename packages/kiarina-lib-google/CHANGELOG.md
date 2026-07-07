@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add `get_genai_options` and Google Gen AI `vertexai` and `location` settings.
+
+### Changed
+- Resolve Vertex AI Express Mode options without `project` or `location`.
+
 ## [2.3.1] - 2026-07-02
 
 ### Changed

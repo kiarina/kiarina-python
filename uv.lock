@@ -1658,7 +1658,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-google"
-version = "2.3.1"
+version = "2.4.0"
 source = { editable = "packages/kiarina-lib-google" }
 dependencies = [
     { name = "google-api-python-client" },

@@ -13,8 +13,6 @@ class GoogleImageGenerationProviderSettings(BaseSettings):
 
     google_auth_settings_key: SettingsKey | None = None
 
-    location: str = "asia-northeast1"
-
     model_name: str = "gemini-3-pro-image-preview"
 
     aspect_ratio: AspectRatio = "1:1"

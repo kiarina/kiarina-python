@@ -13,8 +13,6 @@ from kiarina.agi.text_embedding_provider_impl.google import (
 def provider() -> GoogleTextEmbeddingProvider:
     provider = GoogleTextEmbeddingProvider(
         GoogleTextEmbeddingProviderSettings(
-            backend_type="gemini_api",
-            google_auth_settings_key="api_key",
             model_name="gemini-embedding-2",
             dimension=1536,
         )
@@ -25,8 +23,6 @@ def provider() -> GoogleTextEmbeddingProvider:
 
 def test_properties(provider: GoogleTextEmbeddingProvider) -> None:
     print(f"__str__: {provider}")
-    print(f"google_auth_settings: {provider.google_auth_settings}")
-    print(f"backend_config: {provider.backend_config}")
 
     space = provider.get_space()
     assert space.kind == "text"

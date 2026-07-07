@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add concrete type annotations to package tests and remove mypy suppressions.
 - Add explicit costly image test shortcuts and VS Code pytest settings.
 - Use user cache model downloads in real local provider tests.
+- Use `kiarina-lib-google` to resolve Google Gen AI client options for Gemini embedding and Google image generation providers.
 
 ## [2.7.0] - 2026-07-06
 
