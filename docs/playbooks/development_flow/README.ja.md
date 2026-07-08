@@ -45,6 +45,8 @@ development branch に実装を commit します。
 
 改行が必要になる場合は、まとめて書かず、各タスクの直前にそれぞれ書きます。
 
+pytest marker の使い方は [Pytest Markers](../pytest_markers/README.ja.md) を参照します。
+
 ```make
 .PHONY: image_generation_provider_openai_test
 image_generation_provider_openai_test:

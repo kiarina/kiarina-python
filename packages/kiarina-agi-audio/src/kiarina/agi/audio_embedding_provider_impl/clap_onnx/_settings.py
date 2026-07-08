@@ -13,15 +13,13 @@ class ClapOnnxAudioEmbeddingProviderSettings(BaseSettings):
 
     model_path: str | Path | None = None
 
-    model_url: str = (
-        "https://huggingface.co/Xenova/clap-htsat-unfused/resolve/main/onnx/model.onnx"
-    )
+    model_url: str = "https://huggingface.co/Xenova/clap-htsat-unfused/resolve/main/onnx/audio_model.onnx"
 
     model_sha256: str = (
-        "a8cbfb96dda10259964e678c1557466f925001f66b8cd1b24c84bd88b0f84345"
+        "a1c2b43c44f71e0fa841a4b86700886c199bf87699ea45632c4d831bc6c88957"
     )
 
-    model_filename: str = "model.onnx"
+    model_filename: str = "audio_model.onnx"
 
     preprocessor_config_path: str | Path | None = None
 

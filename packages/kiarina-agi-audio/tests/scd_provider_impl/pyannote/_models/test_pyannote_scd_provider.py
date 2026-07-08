@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from kiarina.agi.scd_provider_impl.pyannote import (
     PyannoteSCDProvider,
@@ -50,12 +51,9 @@ def test_pyannote_scd_provider_converts_powerset_log_probs() -> None:
     )
 
 
-async def test_pyannote_scd_provider(pyannote_scd_model_path: str) -> None:
-    provider = PyannoteSCDProvider(
-        PyannoteSCDProviderSettings(
-            model_path=pyannote_scd_model_path,
-        )
-    )
+@pytest.mark.downloads_model
+async def test_pyannote_scd_provider() -> None:
+    provider = PyannoteSCDProvider(PyannoteSCDProviderSettings())
 
     result = await provider.predict(np.zeros(16000, dtype=np.float32), 16000)
 

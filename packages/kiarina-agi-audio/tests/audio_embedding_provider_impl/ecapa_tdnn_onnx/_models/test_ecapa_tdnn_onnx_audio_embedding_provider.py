@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 import pytest
 
@@ -9,25 +7,14 @@ from kiarina.agi.audio_embedding_provider_impl.ecapa_tdnn_onnx import (
 )
 from kiarina.agi.run_context import RunContext
 
-
-@pytest.fixture
-def ecapa_tdnn_onnx_model_path() -> str:
-    path = Path("models/ecapa-tdnn-onnx/ecapa_tdnn.onnx")
-
-    if not path.exists():
-        pytest.skip(f"ECAPA-TDNN ONNX model file not found at {path}")
-
-    return str(path)
+pytestmark = [pytest.mark.downloads_model]
 
 
 async def test_ecapa_tdnn_onnx_audio_embedding_provider(
-    ecapa_tdnn_onnx_model_path: str,
     run_context: RunContext,
 ) -> None:
     provider = EcapaTDNNOnnxAudioEmbeddingProvider(
-        EcapaTDNNOnnxAudioEmbeddingProviderSettings(
-            model_path=ecapa_tdnn_onnx_model_path,
-        )
+        EcapaTDNNOnnxAudioEmbeddingProviderSettings()
     )
 
     space = provider.get_space()

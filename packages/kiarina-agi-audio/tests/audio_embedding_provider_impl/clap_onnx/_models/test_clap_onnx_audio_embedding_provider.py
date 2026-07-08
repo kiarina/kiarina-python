@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 import pytest
 
@@ -9,38 +7,13 @@ from kiarina.agi.audio_embedding_provider_impl.clap_onnx import (
 )
 from kiarina.agi.run_context import RunContext
 
-
-@pytest.fixture
-def clap_onnx_model_path() -> str:
-    path = Path("models/clap-htsat-unfused-onnx/model.onnx")
-
-    if not path.exists():
-        pytest.skip(f"CLAP ONNX model file not found at {path}")
-
-    return str(path)
-
-
-@pytest.fixture
-def clap_preprocessor_config_path() -> str:
-    path = Path("models/clap-htsat-unfused/preprocessor_config.json")
-
-    if not path.exists():
-        pytest.skip(f"CLAP preprocessor config file not found at {path}")
-
-    return str(path)
+pytestmark = [pytest.mark.downloads_model]
 
 
 async def test_clap_onnx_audio_embedding_provider(
-    clap_onnx_model_path: str,
-    clap_preprocessor_config_path: str,
     run_context: RunContext,
 ) -> None:
-    provider = ClapOnnxAudioEmbeddingProvider(
-        ClapOnnxAudioEmbeddingProviderSettings(
-            model_path=clap_onnx_model_path,
-            preprocessor_config_path=clap_preprocessor_config_path,
-        )
-    )
+    provider = ClapOnnxAudioEmbeddingProvider(ClapOnnxAudioEmbeddingProviderSettings())
 
     space = provider.get_space()
     assert space.kind == "sound"
@@ -60,16 +33,8 @@ async def test_clap_onnx_audio_embedding_provider(
     assert result.metadata["preprocessor"] == "clap-log-mel-numpy"
 
 
-def test_clap_onnx_input_features(
-    clap_onnx_model_path: str,
-    clap_preprocessor_config_path: str,
-) -> None:
-    provider = ClapOnnxAudioEmbeddingProvider(
-        ClapOnnxAudioEmbeddingProviderSettings(
-            model_path=clap_onnx_model_path,
-            preprocessor_config_path=clap_preprocessor_config_path,
-        )
-    )
+def test_clap_onnx_input_features() -> None:
+    provider = ClapOnnxAudioEmbeddingProvider(ClapOnnxAudioEmbeddingProviderSettings())
 
     input_features, is_longer = provider._extract_input_features(
         np.zeros(48000, dtype=np.float32)

@@ -27,6 +27,15 @@ def skip_costly(request: pytest.FixtureRequest) -> None:
         pytest.skip("Set KIARINA_TEST_COSTLY=1 to run this test.")
 
 
+@pytest.fixture(autouse=True)
+def skip_downloads_model_on_github_actions(request: pytest.FixtureRequest) -> None:
+    if (
+        request.node.get_closest_marker("downloads_model")
+        and os.getenv("GITHUB_ACTIONS") == "true"
+    ):
+        pytest.skip("Model download tests are skipped on GitHub Actions.")
+
+
 @pytest.fixture
 def test_data_dir() -> Path:
     return Path(__file__).parents[3] / "tests" / "assets"
@@ -76,26 +85,6 @@ def audio_samples(audio_file_path: str) -> tuple[np.ndarray, int]:
 @pytest.fixture
 def multi_speaker_audio_samples(audio_file_path: str) -> tuple[np.ndarray, int]:
     return load_audio_samples(audio_file_path)
-
-
-@pytest.fixture
-def pyannote_scd_model_path(test_data_dir: Path) -> str:
-    path = test_data_dir / "scd" / "segmentation-3.0.onnx"
-
-    if not path.exists():
-        pytest.skip(f"Pyannote SCD model file not found at {path}")
-
-    return str(path)
-
-
-@pytest.fixture
-def silero_vad_model_path(test_data_dir: Path) -> str:
-    path = test_data_dir / "vad" / "silero_vad.onnx"
-
-    if not path.exists():
-        pytest.skip(f"Silero VAD model file not found at {path}")
-
-    return str(path)
 
 
 def load_audio_samples(path: str | Path) -> tuple[np.ndarray, int]:
