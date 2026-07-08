@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **kiarina-agi-audio**: Add the Python 3.13 `audioop` compatibility dependency for TTS providers.
 - **kiarina-agi-audio**: Skip microphone source tests when PortAudio is unavailable.
+- **kiarina-agi-audio**: Avoid external credentials and missing CI assets in audio provider tests.
 
 ## [2.8.0] - 2026-07-08
 

@@ -14,7 +14,6 @@ def test_init_and_properties() -> None:
     provider = GoogleASRProvider(settings)
 
     print(str(provider))
-    print(f"client: {provider.client}")
 
 
 @pytest.mark.costly

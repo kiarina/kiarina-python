@@ -35,7 +35,6 @@ def kwargs(cost_recorder: CostRecorder, run_context: RunContext) -> _TTSKwargs:
 def test_init_and_properties(provider: OpenAITTSProvider) -> None:
     print(str(provider))
     print(f"openai_settings: {provider.openai_settings}")
-    print(f"client: {provider.client}")
 
 
 def test_output_extension(run_context: RunContext, provider: OpenAITTSProvider) -> None:

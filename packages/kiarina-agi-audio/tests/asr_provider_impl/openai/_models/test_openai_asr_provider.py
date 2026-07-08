@@ -14,7 +14,6 @@ def test_init_and_properties() -> None:
     provider = OpenAIASRProvider(settings)
 
     print(str(provider))
-    print(f"client: {provider.client}")
 
 
 @pytest.mark.costly

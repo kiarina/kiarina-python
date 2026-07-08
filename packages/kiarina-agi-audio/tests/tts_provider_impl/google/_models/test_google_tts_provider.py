@@ -34,7 +34,6 @@ def kwargs(cost_recorder: CostRecorder, run_context: RunContext) -> _TTSKwargs:
 
 def test_init_and_properties(provider: GoogleTTSProvider) -> None:
     print(str(provider))
-    print(f"client: {provider.client}")
 
 
 @pytest.mark.costly

@@ -20,3 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Add the Python 3.13 `audioop` compatibility dependency for TTS providers.
 - Skip microphone source tests when PortAudio is unavailable.
+- Avoid external credentials and missing CI assets in audio provider tests.
