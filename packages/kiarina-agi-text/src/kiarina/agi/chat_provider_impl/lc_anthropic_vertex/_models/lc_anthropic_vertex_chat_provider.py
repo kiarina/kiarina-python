@@ -55,15 +55,13 @@ class LCAnthropicVertexChatProvider(LCAnthropicChatProvider):
         )
 
     @property
-    def credentials(self) -> kiarina.lib.google.Credentials:
-        credentials = kiarina.lib.google.get_credentials(
+    def cloud_options(self) -> dict[str, Any]:
+        return kiarina.lib.google.get_cloud_options(
             settings=self.google_auth_settings,
             scopes=[
                 "https://www.googleapis.com/auth/cloud-platform",
             ],
         )
-
-        return credentials
 
     # --------------------------------------------------
     # Methods (LangChainMediaConverter)
@@ -102,11 +100,11 @@ class LCAnthropicVertexChatProvider(LCAnthropicChatProvider):
         ctx: LangChainChatProviderContext,
     ) -> BaseChatModel | Runnable[LanguageModelInput, LCAIMessage]:
         lc_chat_model = ChatAnthropicVertex(
-            credentials=self.credentials,
             location=self.settings.vertex_ai_location,
             model=self.settings.model_name,
             max_tokens=self.settings.max_output_tokens,
             temperature=self.settings.temperature,
+            **self.cloud_options,
         )
 
         bind_kwargs: Any = {}

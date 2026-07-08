@@ -4,6 +4,7 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._helpers.get_cloud_options import get_cloud_options
     from ._helpers.get_credentials import get_credentials
     from ._helpers.get_genai_options import get_genai_options
     from ._helpers.get_self_signed_jwt import get_self_signed_jwt
@@ -20,6 +21,7 @@ __version__ = version("kiarina-lib-google")
 
 __all__ = [
     # ._helpers
+    "get_cloud_options",
     "get_credentials",
     "get_genai_options",
     "get_self_signed_jwt",
@@ -46,6 +48,7 @@ def __getattr__(name: str) -> object:
 
     module_map = {
         # ._helpers
+        "get_cloud_options": "._helpers.get_cloud_options",
         "get_credentials": "._helpers.get_credentials",
         "get_genai_options": "._helpers.get_genai_options",
         "get_self_signed_jwt": "._helpers.get_self_signed_jwt",

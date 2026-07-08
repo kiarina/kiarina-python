@@ -35,8 +35,6 @@ def ctx(run_context: RunContext) -> LangChainChatProviderContext:
 
 def test_provider(provider: LCAnthropicVertexChatProvider) -> None:
     print(f"__str__: {provider!s}")
-    print(f"google_auth_settings: {provider.google_auth_settings}")
-    print(f"credentials: {provider.credentials}")
 
 
 # --------------------------------------------------

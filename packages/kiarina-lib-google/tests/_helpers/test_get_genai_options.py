@@ -81,22 +81,7 @@ def test_default_api_key_uses_gemini_developer_api_mode() -> None:
     assert options == {"api_key": "test-api-key"}
 
 
-def test_default_credentials_uses_vertex_ai_credentials_mode(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    credentials = object()
-
-    def fake_get_credentials(**kwargs: object) -> object:
-        settings = kwargs["settings"]
-        assert isinstance(settings, GoogleSettings)
-        assert settings.type == "default"
-        return credentials
-
-    monkeypatch.setattr(
-        "kiarina.lib.google._helpers.get_genai_options.get_credentials",
-        fake_get_credentials,
-    )
-
+def test_default_credentials_returns_empty_dict() -> None:
     settings = GoogleSettings(
         type="default",
         project_id="test-project",
@@ -105,9 +90,4 @@ def test_default_credentials_uses_vertex_ai_credentials_mode(
 
     options = get_genai_options(settings=settings)
 
-    assert options == {
-        "vertexai": True,
-        "credentials": credentials,
-        "project": "test-project",
-        "location": "us-central1",
-    }
+    assert options == {}

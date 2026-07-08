@@ -4,7 +4,7 @@ from datetime import timedelta
 from urllib.parse import urlparse
 
 from kiarina.agi.asset_repository import BaseAssetRepository
-from kiarina.lib.google import get_credentials
+from kiarina.lib.google import get_cloud_options
 from kiarina.utils.mime import MIMEBlob, detect_mime_type
 
 from .._settings import GCSAssetRepositorySettings
@@ -34,8 +34,8 @@ class GCSAssetRepository(BaseAssetRepository):
     @property
     def client(self) -> Client:
         if self._client is None:
-            credentials = get_credentials(self.settings.google_auth_settings_key)
-            self._client = Client(credentials=credentials)
+            options = get_cloud_options(self.settings.google_auth_settings_key)
+            self._client = Client(**options)
 
         return self._client
 

@@ -31,6 +31,9 @@ def get_genai_options(
 
         return {}
 
+    if settings.type == "default" and not settings.impersonate_service_account:
+        return {}
+
     options: dict[str, Any] = {
         "vertexai": True,
         "credentials": get_credentials(

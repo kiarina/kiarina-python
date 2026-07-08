@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Update `GCSAssetRepository` to use `get_cloud_options` from `kiarina-lib-google`.
+
 ## [2.6.0] - 2026-07-03
 
 ### Changed
