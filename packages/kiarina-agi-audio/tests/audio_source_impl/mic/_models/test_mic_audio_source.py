@@ -1,9 +1,12 @@
 import pytest
 
-from kiarina.agi.audio_source_impl.mic import (
-    MicAudioSource,
-    MicAudioSourceSettings,
-)
+try:
+    from kiarina.agi.audio_source_impl.mic import (
+        MicAudioSource,
+        MicAudioSourceSettings,
+    )
+except ImportError as exc:
+    pytest.skip(str(exc), allow_module_level=True)
 
 
 @pytest.mark.skip(reason="Requires microphone access and sounddevice library")

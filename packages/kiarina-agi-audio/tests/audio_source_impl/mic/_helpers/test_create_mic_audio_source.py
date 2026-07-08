@@ -1,4 +1,9 @@
-from kiarina.agi.audio_source_impl.mic import create_mic_audio_source
+import pytest
+
+try:
+    from kiarina.agi.audio_source_impl.mic import create_mic_audio_source
+except ImportError as exc:
+    pytest.skip(str(exc), allow_module_level=True)
 
 
 def test_create_mic_audio_source() -> None:

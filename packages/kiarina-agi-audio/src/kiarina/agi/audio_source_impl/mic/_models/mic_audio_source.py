@@ -12,9 +12,9 @@ from .._settings import MicAudioSourceSettings
 
 try:
     import sounddevice as sd  # type: ignore
-except ImportError as exc:
+except (ImportError, OSError) as exc:
     raise ImportError(
-        "sounddevice is required to use MicAudioSource. "
+        "sounddevice and PortAudio are required to use MicAudioSource. "
         "Install it with: pip install 'kiarina-agi-audio[audio-source-mic]'"
     ) from exc
 
