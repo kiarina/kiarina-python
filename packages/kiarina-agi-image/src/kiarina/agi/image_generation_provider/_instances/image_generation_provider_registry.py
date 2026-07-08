@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 image_generation_provider_registry = ComponentRegistry[ImageGenerationProvider](
-    expected_type=ImageGenerationProvider,  # type: ignore[type-abstract]
+    expected_type=ImageGenerationProvider,
     component_label="ImageGenerationProvider",
     get_presets=lambda: settings_manager.settings.presets,
     get_customs=lambda: settings_manager.settings.customs,

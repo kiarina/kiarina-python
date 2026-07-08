@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 text_embedding_provider_registry = ComponentRegistry[TextEmbeddingProvider](
-    expected_type=TextEmbeddingProvider,  # type: ignore[type-abstract]
+    expected_type=TextEmbeddingProvider,
     component_label="TextEmbeddingProvider",
     get_presets=lambda: settings_manager.settings.presets,
     get_customs=lambda: settings_manager.settings.customs,

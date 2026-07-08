@@ -23,6 +23,7 @@ test = [
 [tool.uv.workspace]
 members = [
     "packages/kiarina",
+    "packages/kiarina-agi-audio",
     "packages/kiarina-agi-base",
     "packages/kiarina-agi-data",
     "packages/kiarina-agi-file",
@@ -48,6 +49,7 @@ members = [
 
 [tool.uv.sources]
 kiarina = { workspace = true }
+kiarina-agi-audio = { workspace = true }
 kiarina-agi-base = { workspace = true }
 kiarina-agi-data = { workspace = true }
 kiarina-agi-file = { workspace = true }
@@ -93,6 +95,7 @@ combine-as-imports = true
 
 [tool.mypy]
 mypy_path = [
+    "packages/kiarina-agi-audio/src",
     "packages/kiarina-agi-base/src",
     "packages/kiarina-agi-data/src",
     "packages/kiarina-agi-file/src",
@@ -130,6 +133,7 @@ markers = [
 
 [tool.coverage.run]
 source = [
+    "packages/kiarina-agi-audio/src",
     "packages/kiarina-agi-base/src",
     "packages/kiarina-agi-data/src",
     "packages/kiarina-agi-file/src",

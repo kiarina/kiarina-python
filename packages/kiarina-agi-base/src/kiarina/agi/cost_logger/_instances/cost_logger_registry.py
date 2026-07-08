@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 cost_logger_registry = ComponentRegistry[CostLogger](
-    expected_type=CostLogger,  # type: ignore[type-abstract]
+    expected_type=CostLogger,
     component_label="CostLogger",
     get_default=lambda: settings_manager.settings.default,
     get_presets=lambda: settings_manager.settings.presets,

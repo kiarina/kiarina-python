@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 chat_provider_registry = ComponentRegistry[ChatProvider](
-    expected_type=ChatProvider,  # type: ignore[type-abstract]
+    expected_type=ChatProvider,
     component_label="ChatProvider",
     get_presets=lambda: settings_manager.settings.presets,
     get_customs=lambda: settings_manager.settings.customs,

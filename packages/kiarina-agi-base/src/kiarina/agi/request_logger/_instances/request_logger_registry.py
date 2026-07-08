@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 request_logger_registry = ComponentRegistry[RequestLogger](
-    expected_type=RequestLogger,  # type: ignore[type-abstract]
+    expected_type=RequestLogger,
     component_label="RequestLogger",
     get_default=lambda: settings_manager.settings.default,
     get_presets=lambda: settings_manager.settings.presets,

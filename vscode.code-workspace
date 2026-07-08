@@ -4,6 +4,9 @@
       "path": "packages/kiarina"
     },
     {
+      "path": "packages/kiarina-agi-audio"
+    },
+    {
       "path": "packages/kiarina-agi-base"
     },
     {

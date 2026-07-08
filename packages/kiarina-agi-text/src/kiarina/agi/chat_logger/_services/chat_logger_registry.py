@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 chat_logger_registry = ComponentRegistry[ChatLogger](
-    expected_type=ChatLogger,  # type: ignore[type-abstract]
+    expected_type=ChatLogger,
     component_label="ChatLogger",
     get_default=lambda: settings_manager.settings.default,
     get_presets=lambda: settings_manager.settings.presets,

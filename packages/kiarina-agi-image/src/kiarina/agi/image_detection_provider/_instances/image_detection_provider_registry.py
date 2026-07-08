@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 image_detection_provider_registry = ComponentRegistry[ImageDetectionProvider](
-    expected_type=ImageDetectionProvider,  # type: ignore[type-abstract]
+    expected_type=ImageDetectionProvider,
     component_label="ImageDetectionProvider",
     get_presets=lambda: settings_manager.settings.presets,
     get_customs=lambda: settings_manager.settings.customs,

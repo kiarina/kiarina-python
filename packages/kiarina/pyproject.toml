@@ -35,6 +35,7 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "kiarina-agi-audio>=2.8.0",
     "kiarina-agi-base>=2.7.0",
     "kiarina-agi-data>=2.7.0",
     "kiarina-agi-file>=2.8.0",

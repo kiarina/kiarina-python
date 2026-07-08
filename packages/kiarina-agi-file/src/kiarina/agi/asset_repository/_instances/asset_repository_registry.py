@@ -30,7 +30,7 @@ def _factory_wrapper(
 
 
 asset_repository_registry = ComponentRegistry[AssetRepository](
-    expected_type=AssetRepository,  # type: ignore[type-abstract]
+    expected_type=AssetRepository,
     component_label="AssetRepository",
     get_default=lambda: settings_manager.settings.default,
     get_presets=lambda: settings_manager.settings.presets,

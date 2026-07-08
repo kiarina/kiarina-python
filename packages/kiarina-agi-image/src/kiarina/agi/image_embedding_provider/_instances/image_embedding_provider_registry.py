@@ -18,7 +18,7 @@ def _factory_wrapper(
 
 
 image_embedding_provider_registry = ComponentRegistry[ImageEmbeddingProvider](
-    expected_type=ImageEmbeddingProvider,  # type: ignore[type-abstract]
+    expected_type=ImageEmbeddingProvider,
     component_label="ImageEmbeddingProvider",
     get_presets=lambda: settings_manager.settings.presets,
     get_customs=lambda: settings_manager.settings.customs,

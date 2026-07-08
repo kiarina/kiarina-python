@@ -19,7 +19,7 @@ class ComponentRegistry(Generic[T]):
     def __init__(
         self,
         *,
-        expected_type: type[T],
+        expected_type: object,
         component_label: str = "Component",
         get_default: Callable[[], ComponentSpecifier | None] | None = None,
         get_aliases: Callable[[], dict[ComponentAlias, ComponentName]] | None = None,
@@ -28,7 +28,7 @@ class ComponentRegistry(Generic[T]):
         factory_wrapper: Callable[[ComponentFactory[T], ComponentName, Any], T]
         | None = None,
     ) -> None:
-        self._expected_type = expected_type
+        self._expected_type = cast(type[T], expected_type)
         self._component_label = component_label
         self._get_default = get_default
         self._get_aliases = get_aliases
