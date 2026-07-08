@@ -34,8 +34,6 @@ def kwargs(cost_recorder: CostRecorder, run_context: RunContext) -> _TTSKwargs:
 
 def test_init_and_properties(provider: GoogleTTSProvider) -> None:
     print(str(provider))
-    print(f"google_auth_settings: {provider.google_auth_settings}")
-    print(f"credentials: {provider.credentials}")
     print(f"client: {provider.client}")
 
 

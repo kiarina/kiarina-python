@@ -26,10 +26,6 @@ logger = logging.getLogger(__name__)
 
 
 class OpenAIASRProvider(BaseASRProvider):
-    """
-    OpenAI ASR Provider Implementation
-    """
-
     def __init__(self, settings: OpenAIASRProviderSettings) -> None:
         super().__init__()
 
@@ -37,17 +33,13 @@ class OpenAIASRProvider(BaseASRProvider):
         self._client: AsyncOpenAI | None = None
 
     @property
-    def openai_settings(self) -> kiarina.lib.openai.OpenAISettings:
-        return kiarina.lib.openai.settings_manager.get_settings(
-            self.settings.openai_settings_key
-        )
-
-    @property
     def client(self) -> AsyncOpenAI:
         if self._client is None:
             self._client = AsyncOpenAI(
                 timeout=self.settings.timeout,
-                **self.openai_settings.to_client_kwargs(),
+                **kiarina.lib.openai.settings_manager.get_settings(
+                    self.settings.openai_settings_key
+                ).to_client_kwargs(),
             )
 
         return self._client

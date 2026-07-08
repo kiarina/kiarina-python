@@ -91,7 +91,14 @@ make test
 
 ## CHANGELOG の運用
 
-コードの変更を commit する場合は、commit 直前に `CHANGELOG.md` の `Unreleased` セクションへ変更内容を追記し、コードの変更と同じ commit に含めてください。commit するまでは `CHANGELOG.md` を更新しないでください。
+PyPI にリリースする必要がある変更を commit する場合は、commit 直前に `CHANGELOG.md` の `Unreleased` セクションへ変更内容を追記し、対象の変更と同じ commit に含めてください。commit するまでは `CHANGELOG.md` を更新しないでください。
+
+次の変更だけの場合は、`CHANGELOG.md` を更新しないでください。
+- ドキュメント
+- テスト
+- CI/CD
+
+PyPI にリリースする必要がある変更と、ドキュメント、テスト、CI/CD の変更が同じ commit に含まれる場合は、PyPI にリリースする必要がある変更だけを `Unreleased` に記録してください。
 
 ## テスト用のアセットの管理
 

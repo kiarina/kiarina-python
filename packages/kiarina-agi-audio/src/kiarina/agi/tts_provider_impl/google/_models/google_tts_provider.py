@@ -35,25 +35,12 @@ class GoogleTTSProvider(BaseTTSProvider):
         self._client: genai.Client | None = None
 
     @property
-    def google_auth_settings(self) -> kiarina.lib.google.GoogleSettings:
-        return kiarina.lib.google.settings_manager.get_settings(
-            self.settings.google_auth_settings_key
-        )
-
-    @property
-    def credentials(self) -> kiarina.lib.google.Credentials:
-        return kiarina.lib.google.get_credentials(
-            settings=self.google_auth_settings,
-            scopes=[
-                "https://www.googleapis.com/auth/cloud-platform",
-            ],
-        )
-
-    @property
     def client(self) -> genai.Client:
         if self._client is None:
             self._client = genai.Client(
-                credentials=self.credentials,
+                **kiarina.lib.google.get_genai_options(
+                    self.settings.google_auth_settings_key
+                ),
                 http_options=types.HttpOptions(
                     timeout=self.settings.timeout_milliseconds,
                 ),

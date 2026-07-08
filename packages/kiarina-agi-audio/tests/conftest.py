@@ -67,7 +67,7 @@ def audio_file_path(test_data_dir: Path) -> str:
 
 @pytest.fixture
 def speech_audio_file_path(test_data_dir: Path) -> str:
-    return str(test_data_dir / "mp3" / "tone_2s_16kb.mp3")
+    return str(test_data_dir / "mp3" / "conversation_2speaker_14s_16k.mp3")
 
 
 @pytest.fixture
@@ -83,8 +83,8 @@ def audio_samples(audio_file_path: str) -> tuple[np.ndarray, int]:
 
 
 @pytest.fixture
-def multi_speaker_audio_samples(audio_file_path: str) -> tuple[np.ndarray, int]:
-    return load_audio_samples(audio_file_path)
+def multi_speaker_audio_samples(speech_audio_file_path: str) -> tuple[np.ndarray, int]:
+    return load_audio_samples(speech_audio_file_path)
 
 
 def load_audio_samples(path: str | Path) -> tuple[np.ndarray, int]:
