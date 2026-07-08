@@ -1120,7 +1120,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.7.0"
+version = "2.8.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1235,7 +1235,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-file"
-version = "2.6.0"
+version = "2.8.0"
 source = { editable = "packages/kiarina-agi-file" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1269,7 +1269,7 @@ provides-extras = ["asset-repository-gcs"]
 
 [[package]]
 name = "kiarina-agi-image"
-version = "2.7.0"
+version = "2.8.0"
 source = { editable = "packages/kiarina-agi-image" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1353,7 +1353,7 @@ provides-extras = ["all", "image-detection-provider-dfine", "image-detection-pro
 
 [[package]]
 name = "kiarina-agi-text"
-version = "2.7.0"
+version = "2.8.0"
 source = { editable = "packages/kiarina-agi-text" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1658,7 +1658,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-google"
-version = "2.4.0"
+version = "2.8.0"
 source = { editable = "packages/kiarina-lib-google" }
 dependencies = [
     { name = "google-api-python-client" },
@@ -1764,7 +1764,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-utils-common"
-version = "2.3.0"
+version = "2.8.0"
 source = { editable = "packages/kiarina-utils-common" }
 dependencies = [
     { name = "pydantic" },

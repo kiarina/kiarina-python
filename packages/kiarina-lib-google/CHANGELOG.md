@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-07-08
+
 ### Added
 - Add `get_cloud_options` helper for dynamic Google Cloud client configuration
 - Add `get_genai_options` and Google Gen AI `vertexai` and `location` settings.

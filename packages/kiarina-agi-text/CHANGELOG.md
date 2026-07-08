@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-07-08
+
 ### Changed
 - Update `LCAnthropicVertexChatProvider` to use `get_cloud_options` from `kiarina-lib-google`.
 - Use `kiarina-lib-google` to resolve Google Gen AI client options for Google chat and text embedding providers.

@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "2.7.0"
+version = "2.8.0"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"
@@ -37,9 +37,9 @@ requires-python = ">=3.12"
 dependencies = [
     "kiarina-agi-base>=2.7.0",
     "kiarina-agi-data>=2.7.0",
-    "kiarina-agi-file>=2.6.0",
-    "kiarina-agi-image>=2.7.0",
-    "kiarina-agi-text>=2.7.0",
+    "kiarina-agi-file>=2.8.0",
+    "kiarina-agi-image>=2.8.0",
+    "kiarina-agi-text>=2.8.0",
     "kiarina-currency>=2.3.1",
     "kiarina-i18n>=2.3.1",
     "kiarina-lib-anthropic>=2.3.1",
@@ -48,13 +48,13 @@ dependencies = [
     "kiarina-lib-falkordb>=2.3.1",
     "kiarina-lib-firebase>=2.3.1",
     "kiarina-lib-firebase-rtdb>=2.3.1",
-    "kiarina-lib-google>=2.3.1",
+    "kiarina-lib-google>=2.8.0",
     "kiarina-lib-openai>=2.3.1",
     "kiarina-lib-redis>=2.3.1",
     "kiarina-lib-redisearch>=2.3.1",
     "kiarina-lib-slack>=2.3.1",
     "kiarina-utils-app>=2.4.0",
-    "kiarina-utils-common>=2.3.0",
+    "kiarina-utils-common>=2.8.0",
     "kiarina-utils-file>=2.3.1",
 ]
 
