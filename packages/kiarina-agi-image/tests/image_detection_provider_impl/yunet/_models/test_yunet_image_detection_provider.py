@@ -1,12 +1,15 @@
 from collections.abc import Callable
 
 import numpy as np
+import pytest
 
 from kiarina.agi.image_detection_provider_impl.yunet import (
     YuNetImageDetectionProvider,
     YuNetImageDetectionProviderSettings,
 )
 from kiarina.agi.run_context import RunContext
+
+pytestmark = [pytest.mark.downloads_model]
 
 
 async def test_yunet_image_detection_provider(

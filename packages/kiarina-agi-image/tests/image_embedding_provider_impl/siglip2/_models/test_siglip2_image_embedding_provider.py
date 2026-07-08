@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from kiarina.agi.embedding import calc_cosine_similarity
 from kiarina.agi.image_embedding_provider_impl.siglip2 import (
@@ -6,6 +7,8 @@ from kiarina.agi.image_embedding_provider_impl.siglip2 import (
     SigLIP2ImageEmbeddingProviderSettings,
 )
 from kiarina.agi.run_context import RunContext
+
+pytestmark = [pytest.mark.downloads_model]
 
 
 def _image(seed: int) -> np.ndarray:

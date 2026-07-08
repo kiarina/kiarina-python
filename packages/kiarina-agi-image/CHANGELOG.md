@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Mark local model download tests explicitly and skip them on GitHub Actions.
+
 ## [2.8.0] - 2026-07-08
 
 ### Added
