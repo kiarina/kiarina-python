@@ -22,6 +22,9 @@
       "path": "packages/kiarina-agi-text"
     },
     {
+      "path": "packages/kiarina-agi-video"
+    },
+    {
       "path": "packages/kiarina-currency"
     },
     {

@@ -2,7 +2,7 @@ from kiarina.agi.audio_types import AudioSamples
 from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.run_context import RunContext
 
-from .._services.asr_model_registry import asr_model_registry
+from .._instances.asr_model_registry import asr_model_registry
 from .._types.asr_options import ASROptions
 
 

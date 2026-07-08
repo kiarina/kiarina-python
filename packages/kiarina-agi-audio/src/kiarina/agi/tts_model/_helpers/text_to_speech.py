@@ -2,8 +2,8 @@ from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.run_context import RunContext
 
 from ...tts_provider import AudioFilePath
+from .._instances.tts_model_registry import tts_model_registry
 from .._models.tts_model import TTSModel
-from .._services.tts_model_registry import tts_model_registry
 from .._types.tts_options import TTSOptions
 
 

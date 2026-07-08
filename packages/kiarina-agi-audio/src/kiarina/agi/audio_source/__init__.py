@@ -2,9 +2,9 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._instances.audio_source_registry import audio_source_registry
     from ._models.base_audio_source import BaseAudioSource
     from ._schemas.audio_chunk import AudioChunk
-    from ._services.audio_source_registry import audio_source_registry
     from ._settings import AudioSourceSettings, settings_manager
     from ._types.audio_source import AudioSource
     from ._types.audio_source_name import AudioSourceName
@@ -15,7 +15,7 @@ __all__ = [
     "BaseAudioSource",
     # ._schemas
     "AudioChunk",
-    # ._services
+    # ._instances
     "audio_source_registry",
     # ._settings
     "AudioSourceSettings",
@@ -36,8 +36,8 @@ def __getattr__(name: str) -> object:
         "BaseAudioSource": "._models.base_audio_source",
         # ._schemas
         "AudioChunk": "._schemas.audio_chunk",
-        # ._services
-        "audio_source_registry": "._services.audio_source_registry",
+        # ._instances
+        "audio_source_registry": "._instances.audio_source_registry",
         # ._settings
         "AudioSourceSettings": "._settings",
         "settings_manager": "._settings",

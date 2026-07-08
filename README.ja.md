@@ -40,6 +40,7 @@
 | [kiarina-agi-file](packages/kiarina-agi-file/) | AI agent 向けの local・cloud asset repository、cache、file resolution |
 | [kiarina-agi-image](packages/kiarina-agi-image/) | AI agent 向けの image detection、embedding、generation |
 | [kiarina-agi-text](packages/kiarina-agi-text/) | AI agent 向けの chat、logging、text embedding |
+| [kiarina-agi-video](packages/kiarina-agi-video/) | AI agent 向けの video source と video generation |
 
 ### Data Stores
 

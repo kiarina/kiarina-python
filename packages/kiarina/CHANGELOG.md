@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-video**: Add video sources and video generation APIs for AI agents.
+
 ## [2.9.0] - 2026-07-09
 
 ### Added

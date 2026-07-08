@@ -41,6 +41,7 @@ dependencies = [
     "kiarina-agi-file>=2.8.0",
     "kiarina-agi-image>=2.9.0",
     "kiarina-agi-text>=2.8.0",
+    "kiarina-agi-video>=2.9.0",
     "kiarina-currency>=2.3.1",
     "kiarina-i18n>=2.3.1",
     "kiarina-lib-anthropic>=2.3.1",

@@ -2,9 +2,9 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._instances.scd_provider_registry import scd_provider_registry
     from ._models.base_scd_provider import BaseSCDProvider
     from ._schemas.scd_result import SCDResult
-    from ._services.scd_provider_registry import scd_provider_registry
     from ._settings import SCDProviderSettings, settings_manager
     from ._types.scd_provider import SCDProvider
     from ._types.scd_provider_name import SCDProviderName
@@ -29,7 +29,7 @@ def __getattr__(name: str) -> object:
     module_map = {
         "BaseSCDProvider": "._models.base_scd_provider",
         "SCDResult": "._schemas.scd_result",
-        "scd_provider_registry": "._services.scd_provider_registry",
+        "scd_provider_registry": "._instances.scd_provider_registry",
         "SCDProviderSettings": "._settings",
         "settings_manager": "._settings",
         "SCDProvider": "._types.scd_provider",

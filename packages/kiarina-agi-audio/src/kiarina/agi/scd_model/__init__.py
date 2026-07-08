@@ -2,9 +2,9 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._instances.scd_model_registry import scd_model_registry
     from ._models.scd_model import SCDModel
     from ._schemas.scd_model_config import SCDModelConfig
-    from ._services.scd_model_registry import scd_model_registry
     from ._settings import SCDModelSettings, settings_manager
     from ._types.scd_model_alias import SCDModelAlias
     from ._types.scd_model_name import SCDModelName
@@ -15,7 +15,7 @@ __all__ = [
     "SCDModel",
     # ._schemas
     "SCDModelConfig",
-    # ._services
+    # ._instances
     "scd_model_registry",
     # ._settings
     "SCDModelSettings",
@@ -36,8 +36,8 @@ def __getattr__(name: str) -> object:
         "SCDModel": "._models.scd_model",
         # ._schemas
         "SCDModelConfig": "._schemas.scd_model_config",
-        # ._services
-        "scd_model_registry": "._services.scd_model_registry",
+        # ._instances
+        "scd_model_registry": "._instances.scd_model_registry",
         # ._settings
         "SCDModelSettings": "._settings",
         "settings_manager": "._settings",

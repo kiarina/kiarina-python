@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._helpers.speech_to_segments import speech_to_segments
     from ._helpers.speech_to_text import speech_to_text
+    from ._instances.asr_model_registry import asr_model_registry
     from ._models.asr_model import ASRModel
     from ._schemas.asr_model_config import ASRModelConfig
-    from ._services.asr_model_registry import asr_model_registry
     from ._settings import ASRModelSettings, settings_manager
     from ._types.asr_model_alias import ASRModelAlias
     from ._types.asr_model_name import ASRModelName
@@ -21,7 +21,7 @@ __all__ = [
     "ASRModel",
     # ._schemas
     "ASRModelConfig",
-    # ._services
+    # ._instances
     "asr_model_registry",
     # ._settings
     "ASRModelSettings",
@@ -46,8 +46,8 @@ def __getattr__(name: str) -> object:
         "ASRModel": "._models.asr_model",
         # ._schemas
         "ASRModelConfig": "._schemas.asr_model_config",
-        # ._services
-        "asr_model_registry": "._services.asr_model_registry",
+        # ._instances
+        "asr_model_registry": "._instances.asr_model_registry",
         # ._settings
         "ASRModelSettings": "._settings",
         "settings_manager": "._settings",

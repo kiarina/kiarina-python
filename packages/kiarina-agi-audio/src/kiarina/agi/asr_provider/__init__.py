@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.parse_srt import parse_srt
+    from ._instances.asr_provider_registry import asr_provider_registry
     from ._models.base_asr_provider import BaseASRProvider
     from ._schemas.asr_segment import ASRSegment
-    from ._services.asr_provider_registry import asr_provider_registry
     from ._settings import ASRProviderSettings, settings_manager
     from ._types.asr_provider import ASRProvider
     from ._types.asr_provider_name import ASRProviderName
@@ -20,7 +20,7 @@ __all__ = [
     "BaseASRProvider",
     # ._schemas
     "ASRSegment",
-    # ._services
+    # ._instances
     "asr_provider_registry",
     # ._settings
     "ASRProviderSettings",
@@ -46,8 +46,8 @@ def __getattr__(name: str) -> object:
         "BaseASRProvider": "._models.base_asr_provider",
         # ._schemas
         "ASRSegment": "._schemas.asr_segment",
-        # ._services
-        "asr_provider_registry": "._services.asr_provider_registry",
+        # ._instances
+        "asr_provider_registry": "._instances.asr_provider_registry",
         # ._settings
         "ASRProviderSettings": "._settings",
         "settings_manager": "._settings",

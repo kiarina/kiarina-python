@@ -13,7 +13,7 @@ set -e
 REPO="kiarina/test-assets"
 RELEASE_VERSION="v2026.06"  # e.g. "v2026.06"
 PROJECT_NAME="kiarina-python"     # e.g. "my-project"
-ASSETS_VERSION="v2.0.0"   # e.g. "v1.0.0"
+ASSETS_VERSION="v2.1.0"   # e.g. "v1.0.0"
 OUTPUT_DIR="tests/assets"
 # -----------------------------------------------------------------------------
 

@@ -1,0 +1,70 @@
+[project]
+name = "kiarina-agi-video"
+version = "2.9.0"
+description = "Video sources and video generation for AI agents"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "kiarina", email = "kiarinadawa@gmail.com" }]
+maintainers = [{ name = "kiarina", email = "kiarinadawa@gmail.com" }]
+keywords = ["ai", "agents", "video", "video-generation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+requires-python = ">=3.12"
+dependencies = [
+    "kiarina-agi-base>=2.7.0",
+    "kiarina-agi-image>=2.9.0",
+    "kiarina-utils-app>=2.4.0",
+    "kiarina-utils-common>=2.8.0",
+    "kiarina-utils-file>=2.3.1",
+    "numpy>=2.0,<3",
+    "pydantic>=2.11.7,<3",
+    "pydantic-settings>=2.10.1,<3",
+    "pydantic-settings-manager>=3.2.0",
+]
+
+[project.optional-dependencies]
+all = [
+    "google-genai>=1.65.0,<3",
+    "kiarina-lib-google>=2.8.0",
+    "kiarina-lib-openai>=2.3.1",
+    "moviepy>=2.2.1,<3",
+    "opencv-python>=4.12.0,<5",
+    "openai>=2.0.1,<3",
+    "pillow>=11.3.0,<12",
+]
+video-generation-provider-google = [
+    "google-genai>=1.65.0,<3",
+    "kiarina-lib-google>=2.8.0",
+]
+video-generation-provider-mock = []
+video-generation-provider-openai = [
+    "kiarina-lib-openai>=2.3.1",
+    "openai>=2.0.1,<3",
+    "pillow>=11.3.0,<12",
+]
+video-source-camera = ["opencv-python>=4.12.0,<5"]
+video-source-file = ["moviepy>=2.2.1,<3"]
+video-source-numpy = []
+video-source-queue = []
+
+[project.urls]
+Homepage = "https://github.com/kiarina/kiarina-python"
+Repository = "https://github.com/kiarina/kiarina-python"
+Issues = "https://github.com/kiarina/kiarina-python/issues"
+Changelog = "https://github.com/kiarina/kiarina-python/blob/main/packages/kiarina-agi-video/CHANGELOG.md"
+Documentation = "https://github.com/kiarina/kiarina-python/tree/main/packages/kiarina-agi-video#readme"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kiarina"]

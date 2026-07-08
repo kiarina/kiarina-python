@@ -40,6 +40,7 @@ English | [日本語](README.ja.md)
 | [kiarina-agi-file](packages/kiarina-agi-file/) | Local and cloud asset repositories, caching, and file resolution for AI agents |
 | [kiarina-agi-image](packages/kiarina-agi-image/) | Image detection, embedding, and generation for AI agents |
 | [kiarina-agi-text](packages/kiarina-agi-text/) | Chat, logging, and text embeddings for AI agents |
+| [kiarina-agi-video](packages/kiarina-agi-video/) | Video sources and video generation for AI agents |
 
 ### Data Stores
 

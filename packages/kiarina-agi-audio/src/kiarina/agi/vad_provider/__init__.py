@@ -2,8 +2,8 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._instances.vad_provider_registry import vad_provider_registry
     from ._models.base_vad_provider import BaseVADProvider
-    from ._services.vad_provider_registry import vad_provider_registry
     from ._settings import VADProviderSettings, settings_manager
     from ._types.speech_probability import SpeechProbability
     from ._types.vad_provider import VADProvider
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 __all__ = [
     # ._models
     "BaseVADProvider",
-    # ._services
+    # ._instances
     "vad_provider_registry",
     # ._settings
     "VADProviderSettings",
@@ -31,8 +31,8 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._models
         "BaseVADProvider": "._models.base_vad_provider",
-        # ._services
-        "vad_provider_registry": "._services.vad_provider_registry",
+        # ._instances
+        "vad_provider_registry": "._instances.vad_provider_registry",
         # ._settings
         "VADProviderSettings": "._settings",
         "settings_manager": "._settings",

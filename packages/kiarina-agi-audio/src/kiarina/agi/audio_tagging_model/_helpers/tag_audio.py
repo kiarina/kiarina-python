@@ -3,7 +3,7 @@ from kiarina.agi.audio_types import AudioSamples
 from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.run_context import RunContext
 
-from .._services.audio_tagging_model_registry import audio_tagging_model_registry
+from .._instances.audio_tagging_model_registry import audio_tagging_model_registry
 from .._types.audio_tagging_options import AudioTaggingOptions
 
 

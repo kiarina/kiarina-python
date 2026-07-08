@@ -3,7 +3,7 @@ from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.embedding import Embedding
 from kiarina.agi.run_context import RunContext
 
-from .._services.audio_embedding_model_registry import audio_embedding_model_registry
+from .._instances.audio_embedding_model_registry import audio_embedding_model_registry
 from .._types.audio_embedding_options import AudioEmbeddingOptions
 
 

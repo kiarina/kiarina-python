@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.tag_audio import tag_audio
+    from ._instances.audio_tagging_model_registry import audio_tagging_model_registry
     from ._models.audio_tagging_model import AudioTaggingModel
     from ._schemas.audio_tagging_model_config import AudioTaggingModelConfig
-    from ._services.audio_tagging_model_registry import audio_tagging_model_registry
     from ._settings import AudioTaggingModelSettings, settings_manager
     from ._types.audio_tagging_model_alias import AudioTaggingModelAlias
     from ._types.audio_tagging_model_name import AudioTaggingModelName
@@ -34,7 +34,7 @@ def __getattr__(name: str) -> object:
         "tag_audio": "._helpers.tag_audio",
         "AudioTaggingModel": "._models.audio_tagging_model",
         "AudioTaggingModelConfig": "._schemas.audio_tagging_model_config",
-        "audio_tagging_model_registry": "._services.audio_tagging_model_registry",
+        "audio_tagging_model_registry": "._instances.audio_tagging_model_registry",
         "AudioTaggingModelSettings": "._settings",
         "settings_manager": "._settings",
         "AudioTaggingModelAlias": "._types.audio_tagging_model_alias",

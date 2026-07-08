@@ -3,11 +3,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.embed_audio import embed_audio
-    from ._models.audio_embedding_model import AudioEmbeddingModel
-    from ._schemas.audio_embedding_model_config import AudioEmbeddingModelConfig
-    from ._services.audio_embedding_model_registry import (
+    from ._instances.audio_embedding_model_registry import (
         audio_embedding_model_registry,
     )
+    from ._models.audio_embedding_model import AudioEmbeddingModel
+    from ._schemas.audio_embedding_model_config import AudioEmbeddingModelConfig
     from ._settings import AudioEmbeddingModelSettings, settings_manager
     from ._types.audio_embedding_model_alias import AudioEmbeddingModelAlias
     from ._types.audio_embedding_model_name import AudioEmbeddingModelName
@@ -21,7 +21,7 @@ __all__ = [
     "AudioEmbeddingModel",
     # ._schemas
     "AudioEmbeddingModelConfig",
-    # ._services
+    # ._instances
     "audio_embedding_model_registry",
     # ._settings
     "AudioEmbeddingModelSettings",
@@ -45,8 +45,8 @@ def __getattr__(name: str) -> object:
         "AudioEmbeddingModel": "._models.audio_embedding_model",
         # ._schemas
         "AudioEmbeddingModelConfig": "._schemas.audio_embedding_model_config",
-        # ._services
-        "audio_embedding_model_registry": "._services.audio_embedding_model_registry",
+        # ._instances
+        "audio_embedding_model_registry": "._instances.audio_embedding_model_registry",
         # ._settings
         "AudioEmbeddingModelSettings": "._settings",
         "settings_manager": "._settings",

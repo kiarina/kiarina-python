@@ -2,9 +2,9 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._instances.audio_consumer_registry import audio_consumer_registry
     from ._models.base_audio_consumer import BaseAudioConsumer
     from ._schemas.audio_event import AudioEvent
-    from ._services.audio_consumer_registry import audio_consumer_registry
     from ._settings import AudioConsumerSettings, settings_manager
     from ._types.audio_consumer import AudioConsumer
     from ._types.audio_consumer_name import AudioConsumerName
@@ -15,7 +15,7 @@ __all__ = [
     "BaseAudioConsumer",
     # ._schemas
     "AudioEvent",
-    # ._services
+    # ._instances
     "audio_consumer_registry",
     # ._settings
     "AudioConsumerSettings",
@@ -36,8 +36,8 @@ def __getattr__(name: str) -> object:
         "BaseAudioConsumer": "._models.base_audio_consumer",
         # ._schemas
         "AudioEvent": "._schemas.audio_event",
-        # ._services
-        "audio_consumer_registry": "._services.audio_consumer_registry",
+        # ._instances
+        "audio_consumer_registry": "._instances.audio_consumer_registry",
         # ._settings
         "AudioConsumerSettings": "._settings",
         "settings_manager": "._settings",
