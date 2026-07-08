@@ -31,6 +31,7 @@ English | [日本語](README.ja.md)
 | Package | Extras |
 | --- | --- |
 | ai-edge-litert | `audio-tagging-provider-yamnet` |
+| audioop-lts | `tts-provider-command`<br>`tts-provider-google`<br>`tts-provider-mock`<br>`tts-provider-openai` |
 | google-genai | `asr-provider-google`<br>`tts-provider-google` |
 | kiarina-lib-google | `asr-provider-google`<br>`tts-provider-google` |
 | kiarina-lib-openai | `asr-provider-openai`<br>`tts-provider-openai` |

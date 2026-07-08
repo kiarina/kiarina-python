@@ -16,3 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Mark tests that download models or configs with `pytest.mark.downloads_model` and skip them on GitHub Actions.
 - Update the CLAP default ONNX model filename, URL, and checksum to use `audio_model.onnx`.
+
+### Fixed
+- Add the Python 3.13 `audioop` compatibility dependency for TTS providers.
