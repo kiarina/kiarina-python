@@ -1250,7 +1250,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.9.0"
+version = "2.10.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1739,7 +1739,7 @@ provides-extras = ["all", "chat-provider-lc-anthropic", "chat-provider-lc-anthro
 
 [[package]]
 name = "kiarina-agi-video"
-version = "2.9.0"
+version = "2.10.0"
 source = { editable = "packages/kiarina-agi-video" }
 dependencies = [
     { name = "kiarina-agi-base" },
