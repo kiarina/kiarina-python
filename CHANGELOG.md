@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-07-09
+
 ### Added
 - **kiarina-agi-flow**: Add prompt, section, state, and workflow orchestration APIs for AI agents.
 

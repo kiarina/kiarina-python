@@ -1251,7 +1251,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.10.0"
+version = "2.11.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1538,7 +1538,7 @@ provides-extras = ["asset-repository-gcs"]
 
 [[package]]
 name = "kiarina-agi-flow"
-version = "2.10.0"
+version = "2.11.0"
 source = { editable = "packages/kiarina-agi-flow" }
 dependencies = [
     { name = "kiarina-agi-base" },

@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-flow"
-version = "2.10.0"
+version = "2.11.0"
 description = "Prompt, section, state, and workflow orchestration for AI agents"
 readme = "README.md"
 license = "MIT"
