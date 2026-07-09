@@ -1254,7 +1254,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.13.0"
+version = "2.14.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1730,7 +1730,7 @@ provides-extras = ["all", "image-detection-provider-dfine", "image-detection-pro
 
 [[package]]
 name = "kiarina-agi-runner"
-version = "2.13.0"
+version = "2.14.0"
 source = { editable = "packages/kiarina-agi-runner" }
 dependencies = [
     { name = "kiarina-agi-base" },

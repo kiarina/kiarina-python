@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-runner"
-version = "2.13.0"
+version = "2.14.0"
 description = "Agent, task runner, and structured output helpers for AI agents"
 readme = "README.md"
 license = "MIT"
