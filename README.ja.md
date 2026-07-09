@@ -38,6 +38,7 @@
 | [kiarina-agi-base](packages/kiarina-agi-base/) | AI agent 向けの context、cost・request logging、recording、token utility |
 | [kiarina-agi-data](packages/kiarina-agi-data/) | AI agent 向けの message、event、embedding、file metadata などの data model |
 | [kiarina-agi-file](packages/kiarina-agi-file/) | AI agent 向けの local・cloud asset repository、cache、file resolution |
+| [kiarina-agi-flow](packages/kiarina-agi-flow/) | AI agent 向けの prompt、section、state、workflow orchestration |
 | [kiarina-agi-image](packages/kiarina-agi-image/) | AI agent 向けの image detection、embedding、generation |
 | [kiarina-agi-text](packages/kiarina-agi-text/) | AI agent 向けの chat、logging、text embedding |
 | [kiarina-agi-video](packages/kiarina-agi-video/) | AI agent 向けの video source と video generation |

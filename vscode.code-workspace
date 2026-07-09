@@ -16,6 +16,9 @@
       "path": "packages/kiarina-agi-file"
     },
     {
+      "path": "packages/kiarina-agi-flow"
+    },
+    {
       "path": "packages/kiarina-agi-image"
     },
     {

@@ -15,6 +15,7 @@ members = [
     "kiarina-agi-base",
     "kiarina-agi-data",
     "kiarina-agi-file",
+    "kiarina-agi-flow",
     "kiarina-agi-image",
     "kiarina-agi-text",
     "kiarina-agi-video",
@@ -1257,6 +1258,7 @@ dependencies = [
     { name = "kiarina-agi-base" },
     { name = "kiarina-agi-data" },
     { name = "kiarina-agi-file" },
+    { name = "kiarina-agi-flow" },
     { name = "kiarina-agi-image" },
     { name = "kiarina-agi-text" },
     { name = "kiarina-agi-video" },
@@ -1284,6 +1286,7 @@ requires-dist = [
     { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
     { name = "kiarina-agi-data", editable = "packages/kiarina-agi-data" },
     { name = "kiarina-agi-file", editable = "packages/kiarina-agi-file" },
+    { name = "kiarina-agi-flow", editable = "packages/kiarina-agi-flow" },
     { name = "kiarina-agi-image", editable = "packages/kiarina-agi-image" },
     { name = "kiarina-agi-text", editable = "packages/kiarina-agi-text" },
     { name = "kiarina-agi-video", editable = "packages/kiarina-agi-video" },
@@ -1532,6 +1535,33 @@ requires-dist = [
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
 ]
 provides-extras = ["asset-repository-gcs"]
+
+[[package]]
+name = "kiarina-agi-flow"
+version = "2.10.0"
+source = { editable = "packages/kiarina-agi-flow" }
+dependencies = [
+    { name = "kiarina-agi-base" },
+    { name = "kiarina-agi-data" },
+    { name = "kiarina-agi-text" },
+    { name = "kiarina-i18n" },
+    { name = "kiarina-utils-common" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
+    { name = "kiarina-agi-data", editable = "packages/kiarina-agi-data" },
+    { name = "kiarina-agi-text", editable = "packages/kiarina-agi-text" },
+    { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
+    { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
+    { name = "pydantic", specifier = ">=2.11.7,<3" },
+    { name = "pydantic-settings", specifier = ">=2.10.1,<3" },
+    { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
+]
 
 [[package]]
 name = "kiarina-agi-image"
