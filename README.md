@@ -37,6 +37,7 @@ English | [日本語](README.ja.md)
 | [kiarina-agi-audio](packages/kiarina-agi-audio/) | Audio sources, speech, tagging, embeddings, and voice activity for AI agents |
 | [kiarina-agi-base](packages/kiarina-agi-base/) | Core contexts, cost and request logging, recording, and token utilities for AI agents |
 | [kiarina-agi-data](packages/kiarina-agi-data/) | Messages, events, embeddings, file metadata, and other data models for AI agents |
+| [kiarina-agi-data-builder](packages/kiarina-agi-data-builder/) | Builders for AI agent messages, events, histories, tools, files, and file segments |
 | [kiarina-agi-file](packages/kiarina-agi-file/) | Local and cloud asset repositories, caching, and file resolution for AI agents |
 | [kiarina-agi-flow](packages/kiarina-agi-flow/) | Prompt, section, state, and workflow orchestration for AI agents |
 | [kiarina-agi-image](packages/kiarina-agi-image/) | Image detection, embedding, and generation for AI agents |

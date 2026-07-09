@@ -13,6 +13,9 @@
       "path": "packages/kiarina-agi-data"
     },
     {
+      "path": "packages/kiarina-agi-data-builder"
+    },
+    {
       "path": "packages/kiarina-agi-file"
     },
     {
