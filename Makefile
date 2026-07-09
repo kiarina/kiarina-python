@@ -13,6 +13,13 @@ upgrade:
 clean:
 	mise run clean
 #--------------------------------------------------
+download-test-assets:
+	mise run test-assets:download
+download-test-settings:
+	mise run test-settings:download --force
+upload-test-settings:
+	mise run test-settings:upload
+#--------------------------------------------------
 format:
 	mise run format
 lint:
