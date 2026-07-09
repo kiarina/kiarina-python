@@ -31,10 +31,7 @@
 | --- | --- |
 | google-genai | `video-generation-provider-google` |
 | kiarina-lib-google | `video-generation-provider-google` |
-| kiarina-lib-openai | `video-generation-provider-openai` |
 | moviepy | `video-source-file` |
 | opencv-python | `video-source-camera` |
-| openai | `video-generation-provider-openai` |
-| pillow | `video-generation-provider-openai` |
 
 `all` Extra は、上記の optional dependency をすべてインストールします。

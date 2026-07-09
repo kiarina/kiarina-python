@@ -20,10 +20,6 @@ check:
 video_generation_provider_google_test:
 	mise run test --costly --path tests/video_generation_provider_impl/google
 
-.PHONY: video_generation_provider_openai_test
-video_generation_provider_openai_test:
-	mise run test --costly --path tests/video_generation_provider_impl/openai
-
 .PHONY: video_generation_model_test
 video_generation_model_test:
 	mise run test --costly --path tests/video_generation_model

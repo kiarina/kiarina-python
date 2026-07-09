@@ -16,7 +16,6 @@ class VideoGenerationProviderSettings(BaseSettings):
     presets: dict[VideoGenerationProviderName, ImportPath] = Field(
         default_factory=lambda: {
             "mock": "kiarina.agi.video_generation_provider_impl.mock:create_mock_video_generation_provider",
-            "openai": "kiarina.agi.video_generation_provider_impl.openai:create_openai_video_generation_provider",
             "google": "kiarina.agi.video_generation_provider_impl.google:create_google_video_generation_provider",
         }
     )

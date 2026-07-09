@@ -15,8 +15,8 @@ A string in one of the following formats:
 - {VideoGenerationModelAlias}?{ConfigString}
 
 Examples:
-- "sora-2"
-- "sora-2?resolution=720p"
-- "openai"
-- "openai?duration_seconds=10"
+- "veo-3.1"
+- "veo-3.1?resolution=720p"
+- "google"
+- "google?duration_seconds=8"
 """

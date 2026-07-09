@@ -31,10 +31,7 @@ English | [日本語](README.ja.md)
 | --- | --- |
 | google-genai | `video-generation-provider-google` |
 | kiarina-lib-google | `video-generation-provider-google` |
-| kiarina-lib-openai | `video-generation-provider-openai` |
 | moviepy | `video-source-file` |
 | opencv-python | `video-source-camera` |
-| openai | `video-generation-provider-openai` |
-| pillow | `video-generation-provider-openai` |
 
 The `all` Extra installs every optional dependency listed above.
