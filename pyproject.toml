@@ -30,6 +30,7 @@ members = [
     "packages/kiarina-agi-file",
     "packages/kiarina-agi-flow",
     "packages/kiarina-agi-image",
+    "packages/kiarina-agi-runner",
     "packages/kiarina-agi-text",
     "packages/kiarina-agi-tool",
     "packages/kiarina-agi-video",
@@ -60,6 +61,7 @@ kiarina-agi-data-builder = { workspace = true }
 kiarina-agi-file = { workspace = true }
 kiarina-agi-flow = { workspace = true }
 kiarina-agi-image = { workspace = true }
+kiarina-agi-runner = { workspace = true }
 kiarina-agi-text = { workspace = true }
 kiarina-agi-tool = { workspace = true }
 kiarina-agi-video = { workspace = true }
@@ -110,6 +112,7 @@ mypy_path = [
     "packages/kiarina-agi-file/src",
     "packages/kiarina-agi-flow/src",
     "packages/kiarina-agi-image/src",
+    "packages/kiarina-agi-runner/src",
     "packages/kiarina-agi-text/src",
     "packages/kiarina-agi-tool/src",
     "packages/kiarina-agi-video/src",
@@ -153,6 +156,7 @@ source = [
     "packages/kiarina-agi-file/src",
     "packages/kiarina-agi-flow/src",
     "packages/kiarina-agi-image/src",
+    "packages/kiarina-agi-runner/src",
     "packages/kiarina-agi-text/src",
     "packages/kiarina-agi-tool/src",
     "packages/kiarina-agi-video/src",

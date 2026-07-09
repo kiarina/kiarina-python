@@ -42,6 +42,7 @@ dependencies = [
     "kiarina-agi-file>=2.8.0",
     "kiarina-agi-flow>=2.11.0",
     "kiarina-agi-image>=2.9.0",
+    "kiarina-agi-runner>=2.13.0",
     "kiarina-agi-text>=2.8.0",
     "kiarina-agi-tool>=2.12.0",
     "kiarina-agi-video>=2.10.0",

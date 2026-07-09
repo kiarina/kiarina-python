@@ -18,6 +18,7 @@ members = [
     "kiarina-agi-file",
     "kiarina-agi-flow",
     "kiarina-agi-image",
+    "kiarina-agi-runner",
     "kiarina-agi-text",
     "kiarina-agi-tool",
     "kiarina-agi-video",
@@ -1263,6 +1264,7 @@ dependencies = [
     { name = "kiarina-agi-file" },
     { name = "kiarina-agi-flow" },
     { name = "kiarina-agi-image" },
+    { name = "kiarina-agi-runner" },
     { name = "kiarina-agi-text" },
     { name = "kiarina-agi-tool" },
     { name = "kiarina-agi-video" },
@@ -1293,6 +1295,7 @@ requires-dist = [
     { name = "kiarina-agi-file", editable = "packages/kiarina-agi-file" },
     { name = "kiarina-agi-flow", editable = "packages/kiarina-agi-flow" },
     { name = "kiarina-agi-image", editable = "packages/kiarina-agi-image" },
+    { name = "kiarina-agi-runner", editable = "packages/kiarina-agi-runner" },
     { name = "kiarina-agi-text", editable = "packages/kiarina-agi-text" },
     { name = "kiarina-agi-tool", editable = "packages/kiarina-agi-tool" },
     { name = "kiarina-agi-video", editable = "packages/kiarina-agi-video" },
@@ -1724,6 +1727,41 @@ requires-dist = [
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
 ]
 provides-extras = ["all", "image-detection-provider-dfine", "image-detection-provider-yunet", "image-embedding-provider-gemini", "image-embedding-provider-qwen3-vl", "image-embedding-provider-sface", "image-embedding-provider-siglip2", "image-generation-provider-google", "image-generation-provider-openai"]
+
+[[package]]
+name = "kiarina-agi-runner"
+version = "2.13.0"
+source = { editable = "packages/kiarina-agi-runner" }
+dependencies = [
+    { name = "kiarina-agi-base" },
+    { name = "kiarina-agi-data" },
+    { name = "kiarina-agi-data-builder" },
+    { name = "kiarina-agi-file" },
+    { name = "kiarina-agi-flow" },
+    { name = "kiarina-agi-text" },
+    { name = "kiarina-agi-tool" },
+    { name = "kiarina-utils-common" },
+    { name = "kiarina-utils-file" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
+    { name = "kiarina-agi-data", editable = "packages/kiarina-agi-data" },
+    { name = "kiarina-agi-data-builder", editable = "packages/kiarina-agi-data-builder" },
+    { name = "kiarina-agi-file", editable = "packages/kiarina-agi-file" },
+    { name = "kiarina-agi-flow", editable = "packages/kiarina-agi-flow" },
+    { name = "kiarina-agi-text", editable = "packages/kiarina-agi-text" },
+    { name = "kiarina-agi-tool", editable = "packages/kiarina-agi-tool" },
+    { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
+    { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
+    { name = "pydantic", specifier = ">=2.11.7,<3" },
+    { name = "pydantic-settings", specifier = ">=2.10.1,<3" },
+    { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
+]
 
 [[package]]
 name = "kiarina-agi-text"

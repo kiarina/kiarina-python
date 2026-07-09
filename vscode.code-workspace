@@ -25,6 +25,9 @@
       "path": "packages/kiarina-agi-image"
     },
     {
+      "path": "packages/kiarina-agi-runner"
+    },
+    {
       "path": "packages/kiarina-agi-text"
     },
     {

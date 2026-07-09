@@ -41,6 +41,7 @@ English | [日本語](README.ja.md)
 | [kiarina-agi-file](packages/kiarina-agi-file/) | Local and cloud asset repositories, caching, and file resolution for AI agents |
 | [kiarina-agi-flow](packages/kiarina-agi-flow/) | Prompt, section, state, and workflow orchestration for AI agents |
 | [kiarina-agi-image](packages/kiarina-agi-image/) | Image detection, embedding, and generation for AI agents |
+| [kiarina-agi-runner](packages/kiarina-agi-runner/) | Agent execution, task runners, and structured output helpers for AI agents |
 | [kiarina-agi-text](packages/kiarina-agi-text/) | Chat, logging, and text embeddings for AI agents |
 | [kiarina-agi-tool](packages/kiarina-agi-tool/) | Tool execution, hooks, and tool logging for AI agents |
 | [kiarina-agi-video](packages/kiarina-agi-video/) | Video sources and video generation for AI agents |

@@ -15,6 +15,7 @@
 | --- | --- | --- |
 | [kiarina-agi-base](https://pypi.org/project/kiarina-agi-base/) | `>=2.3.1` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) |
 | [kiarina-agi-flow](https://pypi.org/project/kiarina-agi-flow/) | `>=2.10.0` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) |
+| [kiarina-agi-runner](https://pypi.org/project/kiarina-agi-runner/) | `>=2.13.0` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) |
 | [kiarina-currency](https://pypi.org/project/kiarina-currency/) | `>=1.27.0` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) |
 | [kiarina-i18n](https://pypi.org/project/kiarina-i18n/) | `>=1.15.1` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) |
 | [kiarina-lib-anthropic](https://pypi.org/project/kiarina-lib-anthropic/) | `>=1.10.0` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) |
