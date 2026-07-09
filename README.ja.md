@@ -41,6 +41,7 @@
 | [kiarina-agi-flow](packages/kiarina-agi-flow/) | AI agent 向けの prompt、section、state、workflow orchestration |
 | [kiarina-agi-image](packages/kiarina-agi-image/) | AI agent 向けの image detection、embedding、generation |
 | [kiarina-agi-text](packages/kiarina-agi-text/) | AI agent 向けの chat、logging、text embedding |
+| [kiarina-agi-tool](packages/kiarina-agi-tool/) | AI agent 向けの tool 実行、hook、tool logging |
 | [kiarina-agi-video](packages/kiarina-agi-video/) | AI agent 向けの video source と video generation |
 
 ### Data Stores

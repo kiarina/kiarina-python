@@ -25,6 +25,9 @@
       "path": "packages/kiarina-agi-text"
     },
     {
+      "path": "packages/kiarina-agi-tool"
+    },
+    {
       "path": "packages/kiarina-agi-video"
     },
     {
