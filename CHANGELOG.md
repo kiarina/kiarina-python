@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.13.0] - 2026-07-10
+
+### Added
+- **kiarina-agi-data-builder**: Add builders for AI agent messages, events, histories, tools, files, and file segments.
+
 ## [2.12.0] - 2026-07-10
 
 ### Added
