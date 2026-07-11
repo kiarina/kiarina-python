@@ -2,7 +2,7 @@ import pytest
 
 
 def test_create_file_video_source() -> None:
-    pytest.importorskip("moviepy")
+    pytest.importorskip("imageio_ffmpeg")
     from kiarina.agi.video_source_impl.file import create_file_video_source
 
     video_source = create_file_video_source(fps=2, start_timestamp=100.0)

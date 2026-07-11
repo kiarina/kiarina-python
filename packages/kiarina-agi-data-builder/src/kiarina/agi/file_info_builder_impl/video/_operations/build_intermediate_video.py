@@ -1,16 +1,17 @@
 import asyncio
+import logging
 import os
-from typing import TypeAlias, cast
+import shlex
+import subprocess
+from pathlib import Path
+from typing import TypeAlias
 
 from kiarina.agi.file_utils import normalize_time
 
-try:
-    from moviepy import VideoFileClip  # type: ignore
-except ImportError as exc:
-    raise ImportError(
-        "moviepy is required to use VideoFileInfoBuilder. Install it with: "
-        "pip install 'kiarina-agi-data-builder[file-info-builder-video]'"
-    ) from exc
+from .._utils.get_ffmpeg_exe import get_ffmpeg_exe
+from .read_video_metadata import read_video_metadata
+
+logger = logging.getLogger(__name__)
 
 OutputFilePath: TypeAlias = str
 
@@ -34,10 +35,20 @@ async def build_intermediate_video(
     start_time: float = 0.0,
     end_time: float = -1.0,
 ) -> OutputFilePath | None:
+    metadata = await read_video_metadata(input_file_path)
+    start_time = normalize_time(start_time, metadata.duration)
+    end_time = normalize_time(end_time, metadata.duration)
+
+    if start_time >= end_time:
+        raise ValueError("start_time must be earlier than end_time")
+
     return await asyncio.to_thread(
         _build_intermediate_video,
         input_file_path,
         output_base_path,
+        duration=metadata.duration,
+        width=metadata.width,
+        height=metadata.height,
         start_time=start_time,
         end_time=end_time,
     )
@@ -47,32 +58,29 @@ def _build_intermediate_video(
     input_file_path: str,
     output_base_path: str,
     *,
+    duration: float,
+    width: int,
+    height: int,
     start_time: float = 0.0,
     end_time: float = -1.0,
 ) -> OutputFilePath | None:
-    video = VideoFileClip(input_file_path)
-
-    start_time = normalize_time(start_time, video.duration)
-    end_time = normalize_time(end_time, video.duration)
-
     output_file_path = _get_output_file_path(
-        output_base_path, start_time, end_time, video.duration
+        output_base_path, start_time, end_time, duration
     )
 
     if os.path.exists(output_file_path):
-        video.close()
         return output_file_path
 
     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
-
-    if _should_clip(start_time, end_time, video.duration):
-        _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
-            video.subclipped(start_time, end_time), output_file_path
-        )
-    else:
-        _export_1fps_resized_mp3_mono_16kbps_h264_mp4(video, output_file_path)
-
-    video.close()
+    _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
+        input_file_path,
+        output_file_path,
+        duration=duration,
+        width=width,
+        height=height,
+        start_time=start_time,
+        end_time=end_time,
+    )
 
     if not _is_optimized(input_file_path, output_file_path):
         os.remove(output_file_path)
@@ -98,19 +106,60 @@ def _should_clip(start_time: float, end_time: float, duration: float) -> bool:
 
 
 def _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
-    video: VideoFileClip,
+    input_file_path: str,
     output_file_path: OutputFilePath,
+    *,
+    duration: float,
+    width: int,
+    height: int,
+    start_time: float,
+    end_time: float,
 ) -> None:
-    width, height = _calc_resized_dimensions(video.w, video.h)
+    resized_width, resized_height = _calc_resized_dimensions(width, height)
+    command = [
+        get_ffmpeg_exe(),
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-y",
+        "-i",
+        input_file_path,
+    ]
 
-    cast(
-        VideoFileClip, cast(VideoFileClip, video.with_fps(1)).resized((width, height))
-    ).write_videofile(
-        output_file_path,
-        codec=CODEC,
-        audio_codec=AUDIO_CODEC,
-        ffmpeg_params=FFMPEG_PARAMS,
+    if _should_clip(start_time, end_time, duration):
+        command.extend(["-ss", str(start_time), "-t", str(end_time - start_time)])
+
+    command.extend(
+        [
+            "-map",
+            "0:v:0",
+            "-map",
+            "0:a:0?",
+            "-vf",
+            f"fps=1,scale={resized_width}:{resized_height}",
+            "-codec:v",
+            CODEC,
+            "-pix_fmt",
+            "yuv420p",
+            "-codec:a",
+            AUDIO_CODEC,
+            *FFMPEG_PARAMS,
+            output_file_path,
+        ]
     )
+
+    logger.debug("ffmpeg: %s", shlex.join(command))
+
+    result = subprocess.run(
+        command,
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        Path(output_file_path).unlink(missing_ok=True)
+        raise RuntimeError(result.stderr.strip() or "Failed to encode video.")
 
 
 def _calc_resized_dimensions(width: int, height: int) -> tuple[int, int]:

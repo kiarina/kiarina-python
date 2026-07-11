@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Replace MoviePy file video decoding with direct FFmpeg processing through imageio-ffmpeg.
+
 ## [2.10.0] - 2026-07-09
 
 ### Added

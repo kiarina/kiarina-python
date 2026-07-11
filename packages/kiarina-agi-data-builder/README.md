@@ -32,7 +32,7 @@ English | [日本語](README.ja.md)
 | Package | Extras |
 | --- | --- |
 | imageio-ffmpeg | `file-info-builder-audio` |
-| MoviePy | `file-info-builder-video` |
+| imageio-ffmpeg | `file-info-builder-video` |
 | Pillow | `file-info-builder-image` |
 | pypdf | `file-info-builder-pdf` |
 | soundfile | `file-info-builder-audio` |

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-agi-data-builder, kiarina-agi-video**: Replace MoviePy with direct FFmpeg processing through imageio-ffmpeg.
+
 ## [2.14.0] - 2026-07-10
 
 ### Added

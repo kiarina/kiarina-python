@@ -38,7 +38,6 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "imageio-ffmpeg>=0.6.0,<1",
-    "moviepy>=2.2.1,<3",
     "pillow>=11.3.0,<12",
     "pypdf>=6.7.4,<7",
     "soundfile>=0.13.1,<1",
@@ -49,7 +48,7 @@ file-info-builder-audio = [
 ]
 file-info-builder-image = ["pillow>=11.3.0,<12"]
 file-info-builder-pdf = ["pypdf>=6.7.4,<7"]
-file-info-builder-video = ["moviepy>=2.2.1,<3"]
+file-info-builder-video = ["imageio-ffmpeg>=0.6.0,<1"]
 
 [project.urls]
 Homepage = "https://github.com/kiarina/kiarina-python"

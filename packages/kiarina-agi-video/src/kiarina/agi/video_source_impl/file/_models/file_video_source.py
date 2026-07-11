@@ -1,7 +1,7 @@
 import asyncio
 import time
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, closing
 from pathlib import Path
 
 from kiarina.agi.video_source import (
@@ -10,15 +10,9 @@ from kiarina.agi.video_source import (
     ensure_image_pixels,
 )
 
+from .._operations.read_video_frames import read_video_frames
+from .._operations.read_video_metadata import read_video_metadata
 from .._settings import FileVideoSourceSettings
-
-try:
-    from moviepy import VideoFileClip  # type: ignore
-except ImportError as exc:
-    raise ImportError(
-        "moviepy is required to use FileVideoSource. "
-        "Install it with: pip install 'kiarina-agi-video[video-source-file]'"
-    ) from exc
 
 
 class FileVideoSource(BaseVideoSource):
@@ -62,12 +56,18 @@ class FileVideoSource(BaseVideoSource):
             self._start_timestamp = None
 
     async def read(self, *stop_events: asyncio.Event) -> AsyncIterator[VideoFrame]:
-        with VideoFileClip(str(self.file_path)) as clip:
-            fps = self.settings.fps or float(clip.fps)
+        metadata = read_video_metadata(str(self.file_path))
+        fps = self.settings.fps or metadata.fps
 
-            for frame_index, pixels in enumerate(
-                clip.iter_frames(fps=fps, dtype="uint8")
-            ):
+        with closing(
+            read_video_frames(
+                str(self.file_path),
+                width=metadata.width,
+                height=metadata.height,
+                fps=fps,
+            )
+        ) as frames:
+            for frame_index, pixels in enumerate(frames):
                 if any(event.is_set() for event in stop_events):
                     break
 

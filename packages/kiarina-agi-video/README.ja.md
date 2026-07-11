@@ -31,7 +31,7 @@
 | --- | --- |
 | google-genai | `video-generation-provider-google` |
 | kiarina-lib-google | `video-generation-provider-google` |
-| moviepy | `video-source-file` |
+| imageio-ffmpeg | `video-source-file` |
 | opencv-python | `video-source-camera` |
 
 `all` Extra は、上記の optional dependency をすべてインストールします。

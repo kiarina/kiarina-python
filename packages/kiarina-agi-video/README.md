@@ -31,7 +31,7 @@ English | [日本語](README.ja.md)
 | --- | --- |
 | google-genai | `video-generation-provider-google` |
 | kiarina-lib-google | `video-generation-provider-google` |
-| moviepy | `video-source-file` |
+| imageio-ffmpeg | `video-source-file` |
 | opencv-python | `video-source-camera` |
 
 The `all` Extra installs every optional dependency listed above.
