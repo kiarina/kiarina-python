@@ -18,6 +18,7 @@ class ImageGenerationProviderSettings(BaseSettings):
             "mock": "kiarina.agi.image_generation_provider_impl.mock:create_mock_image_generation_provider",
             "openai": "kiarina.agi.image_generation_provider_impl.openai:create_openai_image_generation_provider",
             "google": "kiarina.agi.image_generation_provider_impl.google:create_google_image_generation_provider",
+            "kiapi": "kiarina.agi.image_generation_provider_impl.kiapi:create_kiapi_image_generation_provider",
         }
     )
 

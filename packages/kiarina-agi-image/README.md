@@ -33,7 +33,7 @@ English | [日本語](README.ja.md)
 | Package | Extras |
 | --- | --- |
 | google-genai | `image-embedding-provider-gemini`<br>`image-generation-provider-google` |
-| httpx | `image-embedding-provider-qwen3-vl`<br>`image-generation-provider-openai` |
+| httpx | `image-embedding-provider-qwen3-vl`<br>`image-generation-provider-kiapi`<br>`image-generation-provider-openai` |
 | kiarina-lib-google | `image-embedding-provider-gemini`<br>`image-generation-provider-google` |
 | kiarina-lib-openai | `image-generation-provider-openai` |
 | onnxruntime | `image-detection-provider-dfine`<br>`image-embedding-provider-siglip2` |
@@ -60,7 +60,24 @@ pip install "kiarina-agi-image[all]"
 - **Image Embedding**
   Create image embeddings.
 - **Image Generation**
-  Generate and edit images with Google, OpenAI, and mock providers.
+  Generate and edit images with Google, OpenAI, kiapi, and mock providers.
+
+### Image Generation through kiapi
+
+The `kiapi` model alias uses kiapi at `http://localhost:8000` and the `qwen` family by default. Select `flux2`, `qwen`, or `ernie` with `family`, and pass family-specific request parameters in `extra_params`.
+
+```python
+from kiarina.agi.image_generation_model import generate_image
+
+result = await generate_image(
+    "A cafe sign that reads KIARINA",
+    image_generation_options={
+        "image_generation_model": "kiapi?family=flux2&extra_params.width=512&extra_params.height=512"
+    },
+)
+```
+
+When `file_paths` are supplied, the files are uploaded to kiapi and passed to the selected family's edit endpoint. The `ernie` family accepts one input image.
 
 ### Model Cache
 
@@ -97,3 +114,45 @@ Exports image generation model settings, registry, and generation helper.
 Exports the image generation provider protocol, base class, result view, and registry.
 
 Import provider implementations from the matching `kiarina.agi.*_provider_impl.<name>` path.
+
+### `kiarina.agi.image_generation_provider_impl.kiapi`
+
+```python
+from kiarina.agi.image_generation_provider_impl.kiapi import (
+    KiapiImageGenerationProvider,
+    KiapiImageGenerationProviderSettings,
+    create_kiapi_image_generation_provider,
+    settings_manager,
+)
+```
+
+#### `create_kiapi_image_generation_provider`
+
+```python
+def create_kiapi_image_generation_provider(
+    **kwargs: Any,
+) -> KiapiImageGenerationProvider: ...
+```
+
+Creates a provider from managed settings, with keyword arguments applied as overrides.
+
+#### `KiapiImageGenerationProvider`
+
+```python
+class KiapiImageGenerationProvider(BaseImageGenerationProvider):
+    def __init__(self, settings: KiapiImageGenerationProviderSettings) -> None: ...
+```
+
+Generates and edits images with the kiapi `flux2`, `qwen`, and `ernie` families.
+
+#### `KiapiImageGenerationProviderSettings`
+
+```python
+class KiapiImageGenerationProviderSettings(BaseSettings):
+    kiapi_base_url: str = "http://localhost:8000"
+    family: Literal["flux2", "qwen", "ernie"] = "qwen"
+    timeout: float = 1800.0
+    extra_params: dict[str, Any] = {}
+```
+
+`settings_manager` is the `SettingsManager` instance for these settings.

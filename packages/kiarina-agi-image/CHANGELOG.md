@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add a kiapi image generation provider with Flux2, Qwen, and ERNIE families.
+
 ## [2.9.0] - 2026-07-09
 
 ### Changed

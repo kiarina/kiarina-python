@@ -1665,6 +1665,9 @@ image-generation-provider-google = [
     { name = "google-genai" },
     { name = "kiarina-lib-google" },
 ]
+image-generation-provider-kiapi = [
+    { name = "httpx" },
+]
 image-generation-provider-openai = [
     { name = "httpx" },
     { name = "kiarina-lib-openai" },
@@ -1678,6 +1681,7 @@ requires-dist = [
     { name = "google-genai", marker = "extra == 'image-generation-provider-google'", specifier = ">=1.65.0,<3" },
     { name = "httpx", marker = "extra == 'all'", specifier = ">=0.28.1,<1" },
     { name = "httpx", marker = "extra == 'image-embedding-provider-qwen3-vl'", specifier = ">=0.28.1,<1" },
+    { name = "httpx", marker = "extra == 'image-generation-provider-kiapi'", specifier = ">=0.28.1,<1" },
     { name = "httpx", marker = "extra == 'image-generation-provider-openai'", specifier = ">=0.28.1,<1" },
     { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
     { name = "kiarina-agi-data", editable = "packages/kiarina-agi-data" },
@@ -1702,7 +1706,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10.1,<3" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
 ]
-provides-extras = ["all", "image-detection-provider-dfine", "image-detection-provider-yunet", "image-embedding-provider-gemini", "image-embedding-provider-qwen3-vl", "image-embedding-provider-sface", "image-embedding-provider-siglip2", "image-generation-provider-google", "image-generation-provider-openai"]
+provides-extras = ["all", "image-detection-provider-dfine", "image-detection-provider-yunet", "image-embedding-provider-gemini", "image-embedding-provider-qwen3-vl", "image-embedding-provider-sface", "image-embedding-provider-siglip2", "image-generation-provider-google", "image-generation-provider-openai", "image-generation-provider-kiapi"]
 
 [[package]]
 name = "kiarina-agi-runner"

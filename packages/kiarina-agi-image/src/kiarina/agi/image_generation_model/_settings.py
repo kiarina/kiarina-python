@@ -20,6 +20,7 @@ class ImageGenerationModelSettings(BaseSettings):
         default_factory=lambda: {
             "openai": "gpt-image-1.5",
             "google": "gemini-3.1-flash-image-preview",
+            "kiapi": "kiapi-image",
         }
     )
 
@@ -71,6 +72,12 @@ class ImageGenerationModelSettings(BaseSettings):
                     "output_text_cost_microdollars_per_1k_tokens": 12_000,
                     "output_image_cost_microdollars_per_1k_tokens": 120_000,
                 },
+            ),
+            # --------------------------------------------------
+            # kiapi
+            # --------------------------------------------------
+            "kiapi-image": ImageGenerationModelConfig(
+                provider_name="kiapi",
             ),
         }
     )
