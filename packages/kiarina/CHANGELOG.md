@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-video**: Add a kiapi video generation provider with the LTX-2 family.
+
 ## [2.14.0] - 2026-07-10
 
 ### Added

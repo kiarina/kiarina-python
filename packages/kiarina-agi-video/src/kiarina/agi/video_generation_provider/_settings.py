@@ -17,6 +17,7 @@ class VideoGenerationProviderSettings(BaseSettings):
         default_factory=lambda: {
             "mock": "kiarina.agi.video_generation_provider_impl.mock:create_mock_video_generation_provider",
             "google": "kiarina.agi.video_generation_provider_impl.google:create_google_video_generation_provider",
+            "kiapi": "kiarina.agi.video_generation_provider_impl.kiapi:create_kiapi_video_generation_provider",
         }
     )
 

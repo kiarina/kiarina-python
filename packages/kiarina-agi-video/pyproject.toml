@@ -33,6 +33,7 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "google-genai>=1.65.0,<3",
+    "httpx>=0.28.1,<1",
     "imageio-ffmpeg>=0.6.0,<1",
     "kiarina-lib-google>=2.8.0",
     "opencv-python>=4.12.0,<5",
@@ -41,6 +42,7 @@ video-generation-provider-google = [
     "google-genai>=1.65.0,<3",
     "kiarina-lib-google>=2.8.0",
 ]
+video-generation-provider-kiapi = ["httpx>=0.28.1,<1"]
 video-generation-provider-mock = []
 video-source-camera = ["opencv-python>=4.12.0,<5"]
 video-source-file = ["imageio-ffmpeg>=0.6.0,<1"]

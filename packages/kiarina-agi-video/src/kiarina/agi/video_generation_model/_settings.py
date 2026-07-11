@@ -20,6 +20,7 @@ class VideoGenerationModelSettings(BaseSettings):
     aliases: dict[VideoGenerationModelAlias, VideoGenerationModelName] = Field(
         default_factory=lambda: {
             "google": "veo-3.1",
+            "kiapi": "kiapi-video",
         }
     )
 
@@ -59,6 +60,12 @@ class VideoGenerationModelSettings(BaseSettings):
                     edit_enabled=False,
                     extend_enabled=True,
                 ),
+            ),
+            # --------------------------------------------------
+            # kiapi
+            # --------------------------------------------------
+            "kiapi-video": VideoGenerationModelConfig(
+                provider_name="kiapi",
             ),
         },
     )

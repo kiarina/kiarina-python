@@ -30,8 +30,71 @@ English | [日本語](README.ja.md)
 | Package | Extras |
 | --- | --- |
 | google-genai | `video-generation-provider-google` |
+| httpx | `video-generation-provider-kiapi` |
 | kiarina-lib-google | `video-generation-provider-google` |
 | imageio-ffmpeg | `video-source-file` |
 | opencv-python | `video-source-camera` |
 
 The `all` Extra installs every optional dependency listed above.
+
+## Video Generation through kiapi
+
+The `kiapi` model alias uses kiapi at `http://localhost:8000` and the `ltx2` family by default. Pass family-specific request parameters in `extra_params`.
+
+```python
+from kiarina.agi.video_generation_model import create_video
+
+session_id = await create_video(
+    "A cat walking through tall grass",
+    video_generation_options={
+        "video_generation_model": "kiapi?family=ltx2&extra_params.width=512&extra_params.num_frames=97"
+    },
+    run_context=run_context,
+)
+```
+
+When `first_image_file_path` is supplied, the file is uploaded to kiapi and used as first-frame conditioning. Generation starts as an asynchronous job that can be managed with the existing `is_video_running`, `get_video`, and `delete_video` helpers.
+
+## Public API
+
+### `kiarina.agi.video_generation_provider_impl.kiapi`
+
+```python
+from kiarina.agi.video_generation_provider_impl.kiapi import (
+    KiapiVideoGenerationProvider,
+    KiapiVideoGenerationProviderSettings,
+    create_kiapi_video_generation_provider,
+    settings_manager,
+)
+```
+
+#### `create_kiapi_video_generation_provider`
+
+```python
+def create_kiapi_video_generation_provider(
+    **kwargs: Any,
+) -> KiapiVideoGenerationProvider: ...
+```
+
+Creates a provider from managed settings, with keyword arguments applied as overrides.
+
+#### `KiapiVideoGenerationProvider`
+
+```python
+class KiapiVideoGenerationProvider(BaseVideoGenerationProvider):
+    def __init__(self, settings: KiapiVideoGenerationProviderSettings) -> None: ...
+```
+
+Generates, retrieves, and deletes videos through the kiapi asynchronous job API. kiapi does not currently support video editing or extension.
+
+#### `KiapiVideoGenerationProviderSettings`
+
+```python
+class KiapiVideoGenerationProviderSettings(BaseSettings):
+    kiapi_base_url: str = "http://localhost:8000"
+    family: Literal["ltx2"] = "ltx2"
+    timeout: float = 1800.0
+    extra_params: dict[str, Any] = {}
+```
+
+`settings_manager` is the `SettingsManager` instance for these settings.

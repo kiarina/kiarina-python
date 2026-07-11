@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-video**: Add a kiapi video generation provider with the LTX-2 family.
+
 ### Changed
 - **kiarina-agi-data-builder, kiarina-agi-video**: Replace MoviePy with direct FFmpeg processing through imageio-ffmpeg.
 

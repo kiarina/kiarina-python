@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add a kiapi video generation provider with the LTX-2 family.
+
 ### Changed
 
 - Replace MoviePy file video decoding with direct FFmpeg processing through imageio-ffmpeg.

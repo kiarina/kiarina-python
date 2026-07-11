@@ -30,8 +30,71 @@
 | Package | Extras |
 | --- | --- |
 | google-genai | `video-generation-provider-google` |
+| httpx | `video-generation-provider-kiapi` |
 | kiarina-lib-google | `video-generation-provider-google` |
 | imageio-ffmpeg | `video-source-file` |
 | opencv-python | `video-source-camera` |
 
 `all` Extra は、上記の optional dependency をすべてインストールします。
+
+## Video Generation through kiapi
+
+`kiapi` model alias は、既定で `http://localhost:8000` の kiapi と `ltx2` family を使用します。family 固有の request parameter は `extra_params` に指定します。
+
+```python
+from kiarina.agi.video_generation_model import create_video
+
+session_id = await create_video(
+    "A cat walking through tall grass",
+    video_generation_options={
+        "video_generation_model": "kiapi?family=ltx2&extra_params.width=512&extra_params.num_frames=97"
+    },
+    run_context=run_context,
+)
+```
+
+`first_image_file_path` を指定すると、file を kiapi に upload し、先頭 frame の条件画像として使用します。生成は非同期 job として開始され、既存の `is_video_running`、`get_video`、`delete_video` helper で管理できます。
+
+## Public API
+
+### `kiarina.agi.video_generation_provider_impl.kiapi`
+
+```python
+from kiarina.agi.video_generation_provider_impl.kiapi import (
+    KiapiVideoGenerationProvider,
+    KiapiVideoGenerationProviderSettings,
+    create_kiapi_video_generation_provider,
+    settings_manager,
+)
+```
+
+#### `create_kiapi_video_generation_provider`
+
+```python
+def create_kiapi_video_generation_provider(
+    **kwargs: Any,
+) -> KiapiVideoGenerationProvider: ...
+```
+
+管理された settings から provider を作成し、keyword argument を上書きとして適用します。
+
+#### `KiapiVideoGenerationProvider`
+
+```python
+class KiapiVideoGenerationProvider(BaseVideoGenerationProvider):
+    def __init__(self, settings: KiapiVideoGenerationProviderSettings) -> None: ...
+```
+
+kiapi の非同期 job API を使用して動画を生成、取得、削除します。kiapi は現在、動画の編集と延長には対応していません。
+
+#### `KiapiVideoGenerationProviderSettings`
+
+```python
+class KiapiVideoGenerationProviderSettings(BaseSettings):
+    kiapi_base_url: str = "http://localhost:8000"
+    family: Literal["ltx2"] = "ltx2"
+    timeout: float = 1800.0
+    extra_params: dict[str, Any] = {}
+```
+
+`settings_manager` は、この settings 用の `SettingsManager` instance です。
