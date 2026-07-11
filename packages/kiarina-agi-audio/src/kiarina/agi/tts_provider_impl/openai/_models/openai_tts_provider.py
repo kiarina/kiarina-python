@@ -1,6 +1,8 @@
+import asyncio
 import logging
 import math
-from io import BytesIO
+import shlex
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -10,16 +12,16 @@ from kiarina.agi.run_context import RunContext
 from kiarina.agi.tts_provider import AudioFilePath, BaseTTSProvider, OutputFormat
 
 from .._settings import OpenAITTSProviderSettings
+from .._utils.get_ffmpeg_exe import get_ffmpeg_exe
 
 try:
     import tiktoken
     from openai import AsyncOpenAI
-    from pydub import AudioSegment  # type: ignore
 
     import kiarina.lib.openai
 except ImportError as exc:
     raise ImportError(
-        "kiarina-lib-openai, openai, pydub, and tiktoken are required to use "
+        "kiarina-lib-openai, openai, and tiktoken are required to use "
         "OpenAITTSProvider. "
         "Install them with: pip install 'kiarina-agi-audio[tts-provider-openai]'"
     ) from exc
@@ -105,24 +107,14 @@ class OpenAITTSProvider(BaseTTSProvider):
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_bytes(audio_data)
 
-        audio_segment = self._load_audio_segment(audio_data, output_format)
-        duration_seconds = len(audio_segment) / 1000
+        duration_seconds = await asyncio.to_thread(
+            _get_audio_duration_seconds, audio_data, output_format
+        )
 
         encoding = tiktoken.encoding_for_model(self.settings.tiktoken_model_name)
         input_tokens = len(encoding.encode(text))
 
         cost_recorder.add(self._build_cost_record(input_tokens, duration_seconds))
-
-    def _load_audio_segment(
-        self,
-        audio_data: bytes,
-        output_format: OutputFormat,
-    ) -> AudioSegment:
-        decode_formats = {
-            "opus": "ogg",
-        }
-        decode_format = decode_formats.get(output_format, output_format)
-        return AudioSegment.from_file(BytesIO(audio_data), format=decode_format)
 
     def _build_cost_record(
         self, input_tokens: int, duration_seconds: float
@@ -144,3 +136,42 @@ class OpenAITTSProvider(BaseTTSProvider):
                 "duration_seconds": duration_seconds,
             },
         )
+
+
+def _get_audio_duration_seconds(
+    audio_data: bytes,
+    input_format: OutputFormat,
+) -> float:
+    sample_rate = 24000
+    sample_width = 2
+    channels = 1
+    command = [
+        get_ffmpeg_exe(),
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-f",
+        "ogg" if input_format == "opus" else input_format,
+        "-i",
+        "pipe:0",
+        "-f",
+        "s16le",
+        "-codec:a",
+        "pcm_s16le",
+        "-ar",
+        str(sample_rate),
+        "-ac",
+        str(channels),
+        "pipe:1",
+    ]
+    logger.debug("ffmpeg: %s", shlex.join(command))
+
+    result = subprocess.run(command, input=audio_data, capture_output=True)
+
+    if result.returncode != 0:
+        raise RuntimeError(
+            result.stderr.decode(errors="replace").strip()
+            or "Failed to decode OpenAI TTS audio."
+        )
+
+    return len(result.stdout) / (sample_rate * sample_width * channels)

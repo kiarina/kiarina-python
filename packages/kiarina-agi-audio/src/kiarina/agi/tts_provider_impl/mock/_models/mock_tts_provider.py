@@ -1,5 +1,7 @@
+import asyncio
 import logging
-from io import BytesIO
+import shlex
+import subprocess
 from pathlib import Path
 
 from kiarina.agi.cost_recorder import CostRecorder
@@ -8,14 +10,7 @@ from kiarina.agi.tts_provider import AudioFilePath, BaseTTSProvider, OutputForma
 from kiarina.utils.file.asyncio import read_file
 
 from .._settings import MockTTSProviderSettings
-
-try:
-    from pydub import AudioSegment  # type: ignore
-except ImportError as exc:
-    raise ImportError(
-        "pydub is required to use MockTTSProvider. "
-        "Install it with: pip install 'kiarina-agi-audio[all]'"
-    ) from exc
+from .._utils.get_ffmpeg_exe import get_ffmpeg_exe
 
 logger = logging.getLogger(__name__)
 
@@ -52,5 +47,35 @@ class MockTTSProvider(BaseTTSProvider):
 
         output_path = Path(output_file_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        audio_segment = AudioSegment.from_file(BytesIO(file_blob.mime_blob.raw_data))
-        audio_segment.export(output_path, format=output_format)
+        command = [
+            get_ffmpeg_exe(),
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-i",
+            "pipe:0",
+            "-vn",
+            "-f",
+            _get_ffmpeg_output_format(output_format),
+            str(output_path),
+        ]
+        logger.debug("ffmpeg: %s", shlex.join(command))
+
+        result = await asyncio.to_thread(
+            subprocess.run,
+            command,
+            input=file_blob.mime_blob.raw_data,
+            capture_output=True,
+        )
+
+        if result.returncode != 0:
+            output_path.unlink(missing_ok=True)
+            raise RuntimeError(
+                result.stderr.decode(errors="replace").strip()
+                or "Failed to convert mock TTS audio."
+            )
+
+
+def _get_ffmpeg_output_format(output_format: OutputFormat) -> str:
+    return "adts" if output_format == "aac" else output_format

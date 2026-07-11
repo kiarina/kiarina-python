@@ -31,13 +31,12 @@
 | Package | Extras |
 | --- | --- |
 | ai-edge-litert | `audio-tagging-provider-yamnet` |
-| audioop-lts | `tts-provider-command`<br>`tts-provider-google`<br>`tts-provider-mock`<br>`tts-provider-openai` |
 | google-genai | `asr-provider-google`<br>`tts-provider-google` |
+| imageio-ffmpeg | `tts-provider-command`<br>`tts-provider-google`<br>`tts-provider-mock`<br>`tts-provider-openai` |
 | kiarina-lib-google | `asr-provider-google`<br>`tts-provider-google` |
 | kiarina-lib-openai | `asr-provider-openai`<br>`tts-provider-openai` |
 | onnxruntime | `audio-embedding-provider-clap-onnx`<br>`audio-embedding-provider-ecapa-tdnn-onnx`<br>`scd-provider-pyannote`<br>`vad-provider-silero` |
 | openai | `asr-provider-openai`<br>`tts-provider-openai` |
-| pydub | `tts-provider-command`<br>`tts-provider-google`<br>`tts-provider-mock`<br>`tts-provider-openai` |
 | sounddevice | `audio-source-mic` |
 | soundfile | `audio-source-file` |
 | tiktoken | `tts-provider-openai` |

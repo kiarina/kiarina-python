@@ -1,5 +1,4 @@
 from pathlib import Path
-from shutil import which
 
 import pytest
 
@@ -27,9 +26,6 @@ async def test_text_to_speech(
     audio_file_path: str,
     provider: MockTTSProvider,
 ) -> None:
-    if which("ffprobe") is None:
-        pytest.skip("ffprobe is required to load the mock TTS fixture.")
-
     provider.settings.result_audio_file_path = audio_file_path
 
     result = await provider.text_to_speech(

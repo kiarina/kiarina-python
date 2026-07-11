@@ -1,6 +1,8 @@
 import asyncio
 import logging
 import math
+import shlex
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -10,16 +12,16 @@ from kiarina.agi.run_context import RunContext
 from kiarina.agi.tts_provider import AudioFilePath, BaseTTSProvider, OutputFormat
 
 from .._settings import GoogleTTSProviderSettings
+from .._utils.get_ffmpeg_exe import get_ffmpeg_exe
 
 try:
     from google import genai
     from google.genai import types
-    from pydub import AudioSegment  # type: ignore
 
     import kiarina.lib.google
 except ImportError as exc:
     raise ImportError(
-        "google-genai, kiarina-lib-google-auth, and pydub are required to use "
+        "google-genai and kiarina-lib-google are required to use "
         "GoogleTTSProvider. "
         "Install them with: pip install 'kiarina-agi-audio[tts-provider-google]'"
     ) from exc
@@ -172,19 +174,37 @@ def _save_audio(
     if not pcm_data:
         raise RuntimeError("Failed to generate audio data")
 
-    audio_segment = AudioSegment(
-        data=pcm_data,
-        sample_width=2,  # 16-bit = 2 bytes
-        frame_rate=24000,  # 24kHz
-        channels=1,  # mono
+    output_path = Path(output_file_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    command = [
+        get_ffmpeg_exe(),
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-y",
+        "-f",
+        "s16le",
+        "-ar",
+        "24000",
+        "-ac",
+        "1",
+        "-i",
+        "pipe:0",
+    ]
+
+    if output_format == "aac":
+        command.extend(["-codec:a", "aac", "-b:a", "128k"])
+
+    command.extend(
+        ["-f", "adts" if output_format == "aac" else output_format, str(output_path)]
     )
+    logger.debug("ffmpeg: %s", shlex.join(command))
 
-    Path(output_file_path).parent.mkdir(parents=True, exist_ok=True)
+    result = subprocess.run(command, input=pcm_data, capture_output=True)
 
-    match output_format:
-        case "aac":
-            audio_segment.export(
-                output_file_path, format="adts", codec="aac", bitrate="128k"
-            )
-        case _:
-            audio_segment.export(output_file_path, format=output_format)
+    if result.returncode != 0:
+        output_path.unlink(missing_ok=True)
+        raise RuntimeError(
+            result.stderr.decode(errors="replace").strip()
+            or "Failed to encode Google TTS audio."
+        )

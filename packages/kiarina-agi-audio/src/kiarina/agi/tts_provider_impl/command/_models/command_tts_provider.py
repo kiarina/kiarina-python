@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import shlex
+import subprocess
 from pathlib import Path
 from typing import Any, cast
 
@@ -8,14 +10,7 @@ from kiarina.agi.run_context import RunContext
 from kiarina.agi.tts_provider import AudioFilePath, BaseTTSProvider, OutputFormat
 
 from .._settings import CommandTTSProviderSettings
-
-try:
-    from pydub import AudioSegment  # type: ignore
-except ImportError as exc:
-    raise ImportError(
-        "pydub is required to use CommandTTSProvider. "
-        "Install it with: pip install 'kiarina-agi-audio[all]'"
-    ) from exc
+from .._utils.get_ffmpeg_exe import get_ffmpeg_exe
 
 logger = logging.getLogger(__name__)
 
@@ -193,12 +188,36 @@ def _convert_audio(
     output_file_path: Path,
     output_format: OutputFormat,
 ) -> None:
-    audio_segment: AudioSegment = AudioSegment.from_file(input_file_path, format="wav")
+    command = [
+        get_ffmpeg_exe(),
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-y",
+        "-f",
+        "wav",
+        "-i",
+        str(input_file_path),
+        "-vn",
+    ]
 
-    match output_format:
-        case "aac":
-            audio_segment.export(
-                output_file_path, format="adts", codec="aac", bitrate="128k"
-            )
-        case _:
-            audio_segment.export(output_file_path, format=output_format)
+    if output_format == "aac":
+        command.extend(["-codec:a", "aac", "-b:a", "128k"])
+
+    command.extend(
+        [
+            "-f",
+            "adts" if output_format == "aac" else output_format,
+            str(output_file_path),
+        ]
+    )
+    logger.debug("ffmpeg: %s", shlex.join(command))
+
+    result = subprocess.run(command, capture_output=True)
+
+    if result.returncode != 0:
+        output_file_path.unlink(missing_ok=True)
+        raise RuntimeError(
+            result.stderr.decode(errors="replace").strip()
+            or "Failed to convert command TTS audio."
+        )

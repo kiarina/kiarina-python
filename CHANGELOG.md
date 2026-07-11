@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **kiarina-agi-data-builder, kiarina-agi-video**: Replace MoviePy with direct FFmpeg processing through imageio-ffmpeg.
+- **kiarina-agi-audio**: Replace pydub and ffprobe-dependent TTS audio processing with direct FFmpeg processing through imageio-ffmpeg.
 
 ## [2.14.0] - 2026-07-10
 

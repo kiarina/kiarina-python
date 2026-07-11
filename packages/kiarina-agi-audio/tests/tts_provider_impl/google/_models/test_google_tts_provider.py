@@ -1,14 +1,17 @@
 from pathlib import Path
-from typing import TypedDict
+from types import SimpleNamespace
+from typing import Any, TypedDict, cast
 
 import pytest
 
 from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.run_context import RunContext
+from kiarina.agi.tts_provider import OutputFormat
 from kiarina.agi.tts_provider_impl.google import (
     GoogleTTSProvider,
     GoogleTTSProviderSettings,
 )
+from kiarina.agi.tts_provider_impl.google._models.google_tts_provider import _save_audio
 
 
 class _TTSKwargs(TypedDict):
@@ -91,3 +94,32 @@ Bob: Not too bad, how about you?
     print(f"Audio saved to: '{result}'")
 
     assert Path(result).stat().st_size > 0
+
+
+@pytest.mark.parametrize(
+    ("output_format", "suffix"),
+    [("aac", ".aac"), ("wav", ".wav")],
+)
+def test_save_audio(
+    tmp_path: Path,
+    output_format: OutputFormat,
+    suffix: str,
+) -> None:
+    response = SimpleNamespace(
+        candidates=[
+            SimpleNamespace(
+                content=SimpleNamespace(
+                    parts=[
+                        SimpleNamespace(
+                            inline_data=SimpleNamespace(data=b"\0\0" * 2400)
+                        )
+                    ]
+                )
+            )
+        ]
+    )
+    output_file_path = tmp_path / f"output{suffix}"
+
+    _save_audio(cast(Any, response), output_format, str(output_file_path))
+
+    assert output_file_path.stat().st_size > 0

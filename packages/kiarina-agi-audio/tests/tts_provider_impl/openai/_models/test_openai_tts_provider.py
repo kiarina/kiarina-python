@@ -9,6 +9,9 @@ from kiarina.agi.tts_provider_impl.openai import (
     OpenAITTSProvider,
     OpenAITTSProviderSettings,
 )
+from kiarina.agi.tts_provider_impl.openai._models.openai_tts_provider import (
+    _get_audio_duration_seconds,
+)
 
 
 class _TTSKwargs(TypedDict):
@@ -106,3 +109,12 @@ async def test_text_to_speech_with_instructions(
     print(f"Audio saved to: '{result}'")
 
     assert Path(result).stat().st_size > 0
+
+
+def test_get_audio_duration_seconds(audio_file_path: str) -> None:
+    duration_seconds = _get_audio_duration_seconds(
+        Path(audio_file_path).read_bytes(),
+        "mp3",
+    )
+
+    assert duration_seconds == pytest.approx(2.0, abs=0.1)
