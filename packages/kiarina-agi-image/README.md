@@ -36,8 +36,9 @@ English | [日本語](README.ja.md)
 | httpx | `image-embedding-provider-qwen3-vl`<br>`image-generation-provider-kiapi`<br>`image-generation-provider-openai` |
 | kiarina-lib-google | `image-embedding-provider-gemini`<br>`image-generation-provider-google` |
 | kiarina-lib-openai | `image-generation-provider-openai` |
-| onnxruntime | `image-detection-provider-dfine`<br>`image-embedding-provider-siglip2` |
+| onnxruntime | `image-detection-provider-dfine`<br>`image-embedding-provider-siglip2`<br>`ocr-provider-rapidocr` |
 | openai | `image-generation-provider-openai` |
+| rapidocr | `ocr-provider-rapidocr` |
 
 The `all` Extra installs every optional dependency listed above.
 
@@ -61,6 +62,23 @@ pip install "kiarina-agi-image[all]"
   Create image embeddings.
 - **Image Generation**
   Generate and edit images with Google, OpenAI, kiapi, and mock providers.
+- **OCR**
+  Extract text, confidence scores, and normalized polygons from RGB images.
+
+### OCR with RapidOCR
+
+The RapidOCR provider runs PP-OCRv6-small text detection and Japanese text recognition on ONNX Runtime CPU. Input images must be RGB arrays shaped as `[height, width, 3]` with `uint8` values.
+
+```python
+from kiarina.agi.ocr_model import ocr_image
+
+results = await ocr_image(pixels, run_context=run_context)
+
+for result in results:
+    print(result.text, result.score, result.polygon)
+```
+
+Each `polygon` contains four points normalized from `0.0` to `1.0` against the source image.
 
 ### Image Generation through kiapi
 
@@ -156,3 +174,109 @@ class KiapiImageGenerationProviderSettings(BaseSettings):
 ```
 
 `settings_manager` is the `SettingsManager` instance for these settings.
+
+### `kiarina.agi.ocr_model`
+
+```python
+async def ocr_image(
+    pixels: ImagePixels,
+    *,
+    ocr_options: OCROptions | None = None,
+    cost_recorder: CostRecorder | None = None,
+    run_context: RunContext,
+) -> list[OCRResult]: ...
+
+class OCRModel:
+    def __init__(self, name: OCRModelName, config: OCRModelConfig) -> None: ...
+    @property
+    def provider_name(self) -> OCRProviderName: ...
+    @property
+    def provider_config(self) -> dict[str, Any]: ...
+    @property
+    def provider(self) -> OCRProvider: ...
+    async def ocr(
+        self,
+        pixels: ImagePixels,
+        *,
+        cost_recorder: CostRecorder | None = None,
+        run_context: RunContext,
+    ) -> list[OCRResult]: ...
+
+class OCRModelConfig(BaseModel):
+    provider_name: OCRProviderName
+    provider_config: dict[str, Any] = {}
+    visible: bool = True
+
+class OCRModelSettings(BaseSettings):
+    default: OCRModelSpecifier = "rapidocr"
+    aliases: dict[OCRModelAlias, OCRModelName]
+    presets: dict[OCRModelName, OCRModelConfig]
+    customs: dict[OCRModelName, OCRModelConfig]
+
+class OCROptions(TypedDict, total=False):
+    ocr_model: OCRModel | OCRModelSpecifier | None
+
+OCRModelAlias: TypeAlias = str
+OCRModelName: TypeAlias = str
+OCRModelSpecifier: TypeAlias = str
+```
+
+`ocr_model_registry` is the OCR model registry. `settings_manager` manages `OCRModelSettings`.
+
+### `kiarina.agi.ocr_provider`
+
+```python
+class OCRProvider(Protocol):
+    name: OCRProviderName
+    async def ocr(
+        self,
+        pixels: ImagePixels,
+        *,
+        cost_recorder: CostRecorder | None = None,
+        run_context: RunContext,
+    ) -> list[OCRResult]: ...
+
+class BaseOCRProvider(OCRProvider, ABC):
+    def __init__(self) -> None: ...
+
+class OCRProviderSettings(BaseSettings):
+    presets: dict[OCRProviderName, ImportPath]
+    customs: dict[OCRProviderName, ImportPath]
+
+@dataclass
+class OCRResult:
+    text: str
+    score: float
+    polygon: list[list[float]]
+
+OCRProviderName: TypeAlias = str
+```
+
+`ocr_provider_registry` is the OCR provider registry. `settings_manager` manages `OCRProviderSettings`.
+
+### `kiarina.agi.ocr_provider_impl.mock`
+
+```python
+def create_mock_ocr_provider(**kwargs: Any) -> MockOCRProvider: ...
+
+class MockOCRProvider(BaseOCRProvider):
+    def __init__(self, settings: MockOCRProviderSettings) -> None: ...
+
+class MockOCRProviderSettings(BaseSettings):
+    results: list[OCRResult]
+```
+
+### `kiarina.agi.ocr_provider_impl.rapidocr`
+
+```python
+def create_rapidocr_provider(**kwargs: Any) -> RapidOCRProvider: ...
+
+class RapidOCRProvider(BaseOCRProvider):
+    def __init__(self, settings: RapidOCRProviderSettings) -> None: ...
+    @property
+    def engine(self) -> Any: ...
+
+class RapidOCRProviderSettings(BaseSettings):
+    text_score: float = 0.5
+    box_threshold: float = 0.5
+```
