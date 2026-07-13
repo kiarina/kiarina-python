@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add a kiapi image generation provider with Flux2, Qwen, and ERNIE families.
 - Add image segmentation APIs with mock and BiRefNet ONNX providers.
+- Add a file-based background removal helper with PNG and WebP output.
 - Add OCR model and provider APIs with mock and RapidOCR implementations.
 
 ## [2.9.0] - 2026-07-09

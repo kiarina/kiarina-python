@@ -79,6 +79,18 @@ result = await segment_image(pixels, run_context=run_context)
 
 `result.mask` is a `uint8` array shaped as `[height, width]` at the source image resolution and contains only `0` or `255`. `result.confidence_map` is a `float32` array with the same shape and values from `0.0` to `1.0`.
 
+Use `remove_background` to create a transparent image from a file. It returns a PNG or WebP `MIMEBlob`.
+
+```python
+from kiarina.agi.image_segmentation_model import remove_background
+
+mime_blob = await remove_background(
+    "input.jpg",
+    output_format="png",
+    run_context=run_context,
+)
+```
+
 ### OCR with RapidOCR
 
 The RapidOCR provider runs PP-OCRv6-small text detection and Japanese text recognition on ONNX Runtime CPU. Input images must be RGB arrays shaped as `[height, width, 3]` with `uint8` values.
@@ -150,6 +162,15 @@ Import provider implementations from the matching `kiarina.agi.*_provider_impl.<
 ### `kiarina.agi.image_segmentation_model`
 
 ```python
+async def remove_background(
+    file_path: str,
+    *,
+    output_format: Literal["png", "webp"] = "png",
+    image_segmentation_options: ImageSegmentationOptions | None = None,
+    cost_recorder: CostRecorder | None = None,
+    run_context: RunContext,
+) -> MIMEBlob: ...
+
 async def segment_image(
     pixels: ImagePixels,
     *,

@@ -79,6 +79,18 @@ result = await segment_image(pixels, run_context=run_context)
 
 `result.mask` は元画像と同じ `[height, width]`、`uint8` で、値は `0` または `255` です。`result.confidence_map` は同じ shape の `float32` で、値は `0.0` から `1.0` です。
 
+File から背景を削除した透過画像を作る場合は、`remove_background` を使用します。出力は PNG または WebP の `MIMEBlob` です。
+
+```python
+from kiarina.agi.image_segmentation_model import remove_background
+
+mime_blob = await remove_background(
+    "input.jpg",
+    output_format="png",
+    run_context=run_context,
+)
+```
+
 ### OCR with RapidOCR
 
 RapidOCR provider は ONNX Runtime CPU 上で PP-OCRv6-small の文字検出と日本語文字認識を実行します。入力は `[height, width, 3]`、`uint8` の RGB image です。
@@ -150,6 +162,15 @@ Provider implementation は、対応する `kiarina.agi.*_provider_impl.<name>` 
 ### `kiarina.agi.image_segmentation_model`
 
 ```python
+async def remove_background(
+    file_path: str,
+    *,
+    output_format: Literal["png", "webp"] = "png",
+    image_segmentation_options: ImageSegmentationOptions | None = None,
+    cost_recorder: CostRecorder | None = None,
+    run_context: RunContext,
+) -> MIMEBlob: ...
+
 async def segment_image(
     pixels: ImagePixels,
     *,

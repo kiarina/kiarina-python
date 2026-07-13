@@ -2,6 +2,7 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ._helpers.remove_background import remove_background
     from ._helpers.segment_image import segment_image
     from ._instances.image_segmentation_model_registry import (
         image_segmentation_model_registry,
@@ -18,6 +19,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     # ._helpers
+    "remove_background",
     "segment_image",
     # ._instances
     "image_segmentation_model_registry",
@@ -41,6 +43,7 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
     module_map = {
         # ._helpers
+        "remove_background": "._helpers.remove_background",
         "segment_image": "._helpers.segment_image",
         # ._instances
         "image_segmentation_model_registry": "._instances.image_segmentation_model_registry",
