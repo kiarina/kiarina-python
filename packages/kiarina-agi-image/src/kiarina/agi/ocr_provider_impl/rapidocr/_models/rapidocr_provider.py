@@ -10,7 +10,7 @@ from kiarina.agi.run_context import RunContext
 from .._settings import RapidOCRProviderSettings
 
 try:
-    from rapidocr import (  # type: ignore[import-not-found]
+    from rapidocr import (  # type: ignore[import-untyped]
         EngineType,
         LangDet,
         LangRec,
