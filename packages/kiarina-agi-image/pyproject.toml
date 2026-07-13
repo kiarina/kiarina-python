@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-image"
-version = "2.9.0"
+version = "2.15.0"
 description = "Image detection, embedding, generation, segmentation, and OCR for AI agents"
 readme = "README.md"
 license = "MIT"

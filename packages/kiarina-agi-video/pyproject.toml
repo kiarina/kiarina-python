@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-video"
-version = "2.10.0"
+version = "2.15.0"
 description = "Video sources and video generation for AI agents"
 readme = "README.md"
 license = "MIT"

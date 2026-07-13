@@ -1194,7 +1194,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.14.0"
+version = "2.15.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1259,7 +1259,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-audio"
-version = "2.9.0"
+version = "2.15.0"
 source = { editable = "packages/kiarina-agi-audio" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1443,7 +1443,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-data-builder"
-version = "2.13.0"
+version = "2.15.0"
 source = { editable = "packages/kiarina-agi-data-builder" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1574,7 +1574,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-image"
-version = "2.9.0"
+version = "2.15.0"
 source = { editable = "packages/kiarina-agi-image" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1856,7 +1856,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-video"
-version = "2.10.0"
+version = "2.15.0"
 source = { editable = "packages/kiarina-agi-video" }
 dependencies = [
     { name = "kiarina-agi-base" },

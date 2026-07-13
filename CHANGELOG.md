@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.15.0] - 2026-07-14
+
 ### Added
+- **kiarina-agi-image**: Add kiapi image generation with Flux2, Qwen, and ERNIE families.
+- **kiarina-agi-image**: Add image segmentation APIs, BiRefNet ONNX and mock providers, and a background removal helper.
+- **kiarina-agi-image**: Add OCR APIs with RapidOCR and mock providers.
 - **kiarina-agi-video**: Add a kiapi video generation provider with the LTX-2 family.
 
 ### Changed

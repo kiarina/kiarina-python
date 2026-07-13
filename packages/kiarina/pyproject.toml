@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "2.14.0"
+version = "2.15.0"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"
@@ -35,17 +35,17 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "kiarina-agi-audio>=2.9.0",
+    "kiarina-agi-audio>=2.15.0",
     "kiarina-agi-base>=2.7.0",
     "kiarina-agi-data>=2.7.0",
-    "kiarina-agi-data-builder>=2.13.0",
+    "kiarina-agi-data-builder>=2.15.0",
     "kiarina-agi-file>=2.8.0",
     "kiarina-agi-flow>=2.11.0",
-    "kiarina-agi-image>=2.9.0",
+    "kiarina-agi-image>=2.15.0",
     "kiarina-agi-runner>=2.14.0",
     "kiarina-agi-text>=2.8.0",
     "kiarina-agi-tool>=2.12.0",
-    "kiarina-agi-video>=2.10.0",
+    "kiarina-agi-video>=2.15.0",
     "kiarina-currency>=2.3.1",
     "kiarina-i18n>=2.3.1",
     "kiarina-lib-anthropic>=2.3.1",

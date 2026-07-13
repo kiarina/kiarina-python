@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-audio"
-version = "2.9.0"
+version = "2.15.0"
 description = "Audio sources, speech, tagging, embeddings, and voice activity for AI agents"
 readme = "README.md"
 license = "MIT"
