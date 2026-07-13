@@ -1626,6 +1626,9 @@ image-generation-provider-openai = [
     { name = "kiarina-lib-openai" },
     { name = "openai" },
 ]
+image-segmentation-provider-birefnet = [
+    { name = "onnxruntime" },
+]
 ocr-provider-rapidocr = [
     { name = "onnxruntime" },
     { name = "rapidocr" },
@@ -1655,6 +1658,7 @@ requires-dist = [
     { name = "onnxruntime", marker = "extra == 'all'", specifier = ">=1.25.1" },
     { name = "onnxruntime", marker = "extra == 'image-detection-provider-dfine'", specifier = ">=1.25.1" },
     { name = "onnxruntime", marker = "extra == 'image-embedding-provider-siglip2'", specifier = ">=1.25.1" },
+    { name = "onnxruntime", marker = "extra == 'image-segmentation-provider-birefnet'", specifier = ">=1.25.1" },
     { name = "onnxruntime", marker = "extra == 'ocr-provider-rapidocr'", specifier = ">=1.27" },
     { name = "openai", marker = "extra == 'all'", specifier = ">=2.0.1,<3" },
     { name = "openai", marker = "extra == 'image-generation-provider-openai'", specifier = ">=2.0.1,<3" },
@@ -1666,7 +1670,7 @@ requires-dist = [
     { name = "rapidocr", marker = "extra == 'all'", specifier = ">=3.9,<4" },
     { name = "rapidocr", marker = "extra == 'ocr-provider-rapidocr'", specifier = ">=3.9,<4" },
 ]
-provides-extras = ["all", "image-detection-provider-dfine", "image-detection-provider-yunet", "image-embedding-provider-gemini", "image-embedding-provider-qwen3-vl", "image-embedding-provider-sface", "image-embedding-provider-siglip2", "image-generation-provider-google", "image-generation-provider-openai", "image-generation-provider-kiapi", "ocr-provider-rapidocr"]
+provides-extras = ["all", "image-detection-provider-dfine", "image-detection-provider-yunet", "image-embedding-provider-gemini", "image-embedding-provider-qwen3-vl", "image-embedding-provider-sface", "image-embedding-provider-siglip2", "image-generation-provider-google", "image-generation-provider-openai", "image-generation-provider-kiapi", "image-segmentation-provider-birefnet", "ocr-provider-rapidocr"]
 
 [[package]]
 name = "kiarina-agi-runner"

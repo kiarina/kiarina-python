@@ -35,3 +35,7 @@ image_generation_provider_kiapi_test:
 .PHONY: image_generation_model_test
 image_generation_model_test:
 	mise run test --costly --path tests/image_generation_model
+
+.PHONY: image_segmentation_provider_birefnet_test
+image_segmentation_provider_birefnet_test:
+	mise run test --path tests/image_segmentation_provider_impl/birefnet

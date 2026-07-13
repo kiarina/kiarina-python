@@ -40,7 +40,7 @@
 | [kiarina-agi-data-builder](packages/kiarina-agi-data-builder/) | AI agent 向けの message、event、history、tool、file、file segment builder |
 | [kiarina-agi-file](packages/kiarina-agi-file/) | AI agent 向けの local・cloud asset repository、cache、file resolution |
 | [kiarina-agi-flow](packages/kiarina-agi-flow/) | AI agent 向けの prompt、section、state、workflow orchestration |
-| [kiarina-agi-image](packages/kiarina-agi-image/) | AI agent 向けの image detection、embedding、generation、OCR |
+| [kiarina-agi-image](packages/kiarina-agi-image/) | AI agent 向けの image detection、embedding、generation、segmentation、OCR |
 | [kiarina-agi-runner](packages/kiarina-agi-runner/) | AI agent 向けの agent 実行、task runner、structured output helper |
 | [kiarina-agi-text](packages/kiarina-agi-text/) | AI agent 向けの chat、logging、text embedding |
 | [kiarina-agi-tool](packages/kiarina-agi-tool/) | AI agent 向けの tool 実行、hook、tool logging |

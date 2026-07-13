@@ -7,7 +7,7 @@ English | [日本語](README.ja.md)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
 > [!NOTE] What is this?
-> `kiarina-agi-image` provides image detection, embedding, and generation for AI agents.
+> `kiarina-agi-image` provides image detection, embedding, generation, segmentation, and OCR for AI agents.
 
 ## Dependencies
 
@@ -36,7 +36,7 @@ English | [日本語](README.ja.md)
 | httpx | `image-embedding-provider-qwen3-vl`<br>`image-generation-provider-kiapi`<br>`image-generation-provider-openai` |
 | kiarina-lib-google | `image-embedding-provider-gemini`<br>`image-generation-provider-google` |
 | kiarina-lib-openai | `image-generation-provider-openai` |
-| onnxruntime | `image-detection-provider-dfine`<br>`image-embedding-provider-siglip2`<br>`ocr-provider-rapidocr` |
+| onnxruntime | `image-detection-provider-dfine`<br>`image-embedding-provider-siglip2`<br>`image-segmentation-provider-birefnet`<br>`ocr-provider-rapidocr` |
 | openai | `image-generation-provider-openai` |
 | rapidocr | `ocr-provider-rapidocr` |
 
@@ -62,8 +62,22 @@ pip install "kiarina-agi-image[all]"
   Create image embeddings.
 - **Image Generation**
   Generate and edit images with Google, OpenAI, kiapi, and mock providers.
+- **Image Segmentation**
+  Create binary masks and confidence maps at the source image resolution.
 - **OCR**
   Extract text, confidence scores, and normalized polygons from RGB images.
+
+### Image Segmentation with BiRefNet
+
+The BiRefNet provider segments the foreground of an RGB image. Input images must be RGB arrays shaped as `[height, width, 3]` with `uint8` values.
+
+```python
+from kiarina.agi.image_segmentation_model import segment_image
+
+result = await segment_image(pixels, run_context=run_context)
+```
+
+`result.mask` is a `uint8` array shaped as `[height, width]` at the source image resolution and contains only `0` or `255`. `result.confidence_map` is a `float32` array with the same shape and values from `0.0` to `1.0`.
 
 ### OCR with RapidOCR
 
@@ -99,7 +113,7 @@ When `file_paths` are supplied, the files are uploaded to kiapi and passed to th
 
 ### Model Cache
 
-YuNet, D-FINE, SFace, and SigLIP2 download their default model on first use when `model_path` is `None`. D-FINE also downloads a verified `config.json` and generates default labels from it when `label_map_path` is `None`.
+YuNet, D-FINE, SFace, SigLIP2, and BiRefNet download their default model on first use when `model_path` is `None`. D-FINE also downloads a verified `config.json` and generates default labels from it when `label_map_path` is `None`.
 
 Files are cached under `user_directory.get_user_cache_dir() / "models" / <implementation>`. An explicit path always takes precedence and prevents downloading the corresponding file.
 
@@ -132,6 +146,138 @@ Exports image generation model settings, registry, and generation helper.
 Exports the image generation provider protocol, base class, result view, and registry.
 
 Import provider implementations from the matching `kiarina.agi.*_provider_impl.<name>` path.
+
+### `kiarina.agi.image_segmentation_model`
+
+```python
+async def segment_image(
+    pixels: ImagePixels,
+    *,
+    image_segmentation_options: ImageSegmentationOptions | None = None,
+    cost_recorder: CostRecorder | None = None,
+    run_context: RunContext,
+) -> ImageSegmentationResult: ...
+
+class ImageSegmentationModel:
+    def __init__(
+        self,
+        name: ImageSegmentationModelName,
+        config: ImageSegmentationModelConfig,
+    ) -> None: ...
+    @property
+    def provider_name(self) -> ImageSegmentationProviderName: ...
+    @property
+    def provider_config(self) -> dict[str, Any]: ...
+    @property
+    def provider(self) -> ImageSegmentationProvider: ...
+    async def segment(
+        self,
+        pixels: ImagePixels,
+        *,
+        cost_recorder: CostRecorder | None = None,
+        run_context: RunContext,
+    ) -> ImageSegmentationResult: ...
+
+class ImageSegmentationModelConfig(BaseModel):
+    provider_name: ImageSegmentationProviderName
+    provider_config: dict[str, Any] = {}
+    visible: bool = True
+
+class ImageSegmentationModelSettings(BaseSettings):
+    default: ImageSegmentationModelSpecifier = "birefnet"
+    aliases: dict[ImageSegmentationModelAlias, ImageSegmentationModelName]
+    presets: dict[ImageSegmentationModelName, ImageSegmentationModelConfig]
+    customs: dict[ImageSegmentationModelName, ImageSegmentationModelConfig]
+
+class ImageSegmentationOptions(TypedDict, total=False):
+    image_segmentation_model: (
+        ImageSegmentationModel | ImageSegmentationModelSpecifier | None
+    )
+
+ImageSegmentationModelAlias: TypeAlias = str
+ImageSegmentationModelName: TypeAlias = str
+ImageSegmentationModelSpecifier: TypeAlias = str
+```
+
+`image_segmentation_model_registry` is the image segmentation model registry. `settings_manager` manages `ImageSegmentationModelSettings`.
+
+### `kiarina.agi.image_segmentation_provider`
+
+```python
+class ImageSegmentationProvider(Protocol):
+    name: ImageSegmentationProviderName
+    async def segment(
+        self,
+        pixels: ImagePixels,
+        *,
+        cost_recorder: CostRecorder | None = None,
+        run_context: RunContext,
+    ) -> ImageSegmentationResult: ...
+
+class BaseImageSegmentationProvider(ImageSegmentationProvider, ABC):
+    def __init__(self) -> None: ...
+
+class ImageSegmentationProviderSettings(BaseSettings):
+    presets: dict[ImageSegmentationProviderName, ImportPath]
+    customs: dict[ImageSegmentationProviderName, ImportPath]
+
+@dataclass
+class ImageSegmentationResult:
+    mask: ImageSegmentationMask
+    confidence_map: ImageSegmentationConfidenceMap | None = None
+
+ImageSegmentationConfidenceMap: TypeAlias = NDArray[np.float32]
+ImageSegmentationMask: TypeAlias = NDArray[np.uint8]
+ImageSegmentationProviderName: TypeAlias = str
+```
+
+`image_segmentation_provider_registry` is the image segmentation provider registry. `settings_manager` manages `ImageSegmentationProviderSettings`.
+
+### `kiarina.agi.image_segmentation_provider_impl.mock`
+
+```python
+def create_mock_image_segmentation_provider(
+    **kwargs: Any,
+) -> MockImageSegmentationProvider: ...
+
+class MockImageSegmentationProvider(BaseImageSegmentationProvider):
+    def __init__(self, settings: MockImageSegmentationProviderSettings) -> None: ...
+
+class MockImageSegmentationProviderSettings(BaseSettings):
+    mask_value: Literal[0, 255] = 255
+    confidence: float | None = None
+```
+
+### `kiarina.agi.image_segmentation_provider_impl.birefnet`
+
+```python
+def create_birefnet_image_segmentation_provider(
+    **kwargs: Any,
+) -> BiRefNetImageSegmentationProvider: ...
+
+class BiRefNetImageSegmentationProvider(BaseImageSegmentationProvider):
+    def __init__(
+        self,
+        settings: BiRefNetImageSegmentationProviderSettings,
+    ) -> None: ...
+    @property
+    def session(self) -> InferenceSession: ...
+
+class BiRefNetImageSegmentationProviderSettings(BaseSettings):
+    model_path: str | Path | None = None
+    model_url: str
+    model_sha256: str
+    model_filename: str
+    input_size: int = 1024
+    threshold: float = 0.5
+    image_mean: list[float]
+    image_std: list[float]
+    image_input_name: str = "input_image"
+    output_name: str = "output_image"
+    execution_providers: list[str] = ["CPUExecutionProvider"]
+```
+
+Each implementation exposes a `settings_manager` for its settings.
 
 ### `kiarina.agi.image_generation_provider_impl.kiapi`
 
