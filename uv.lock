@@ -1226,19 +1226,35 @@ dependencies = [
     { name = "kiarina-utils-file" },
 ]
 
+[package.optional-dependencies]
+all = [
+    { name = "kiarina-agi-audio", extra = ["all"] },
+    { name = "kiarina-agi-data-builder", extra = ["all"] },
+    { name = "kiarina-agi-file", extra = ["all"] },
+    { name = "kiarina-agi-image", extra = ["all"] },
+    { name = "kiarina-agi-text", extra = ["all"] },
+    { name = "kiarina-agi-video", extra = ["all"] },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "kiarina-agi-audio", editable = "packages/kiarina-agi-audio" },
+    { name = "kiarina-agi-audio", extras = ["all"], marker = "extra == 'all'", editable = "packages/kiarina-agi-audio" },
     { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
     { name = "kiarina-agi-data", editable = "packages/kiarina-agi-data" },
     { name = "kiarina-agi-data-builder", editable = "packages/kiarina-agi-data-builder" },
+    { name = "kiarina-agi-data-builder", extras = ["all"], marker = "extra == 'all'", editable = "packages/kiarina-agi-data-builder" },
     { name = "kiarina-agi-file", editable = "packages/kiarina-agi-file" },
+    { name = "kiarina-agi-file", extras = ["all"], marker = "extra == 'all'", editable = "packages/kiarina-agi-file" },
     { name = "kiarina-agi-flow", editable = "packages/kiarina-agi-flow" },
     { name = "kiarina-agi-image", editable = "packages/kiarina-agi-image" },
+    { name = "kiarina-agi-image", extras = ["all"], marker = "extra == 'all'", editable = "packages/kiarina-agi-image" },
     { name = "kiarina-agi-runner", editable = "packages/kiarina-agi-runner" },
     { name = "kiarina-agi-text", editable = "packages/kiarina-agi-text" },
+    { name = "kiarina-agi-text", extras = ["all"], marker = "extra == 'all'", editable = "packages/kiarina-agi-text" },
     { name = "kiarina-agi-tool", editable = "packages/kiarina-agi-tool" },
     { name = "kiarina-agi-video", editable = "packages/kiarina-agi-video" },
+    { name = "kiarina-agi-video", extras = ["all"], marker = "extra == 'all'", editable = "packages/kiarina-agi-video" },
     { name = "kiarina-currency", editable = "packages/kiarina-currency" },
     { name = "kiarina-i18n", editable = "packages/kiarina-i18n" },
     { name = "kiarina-lib-anthropic", editable = "packages/kiarina-lib-anthropic" },
@@ -1256,6 +1272,7 @@ requires-dist = [
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
     { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
 ]
+provides-extras = ["all"]
 
 [[package]]
 name = "kiarina-agi-audio"
@@ -1527,12 +1544,16 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+all = [
+    { name = "google-cloud-storage" },
+]
 asset-repository-gcs = [
     { name = "google-cloud-storage" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "google-cloud-storage", marker = "extra == 'all'", specifier = ">=3.4.0" },
     { name = "google-cloud-storage", marker = "extra == 'asset-repository-gcs'", specifier = ">=3.4.0" },
     { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
     { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
@@ -1543,7 +1564,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
 ]
-provides-extras = ["asset-repository-gcs"]
+provides-extras = ["all", "asset-repository-gcs"]
 
 [[package]]
 name = "kiarina-agi-flow"

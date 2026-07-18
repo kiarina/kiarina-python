@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina**: Add the `all` extra that installs every bundled package with its own `all` extra enabled.
+- **kiarina-agi-file**: Add the `all` extra that installs every optional dependency.
+
 ## [2.15.0] - 2026-07-14
 
 ### Added

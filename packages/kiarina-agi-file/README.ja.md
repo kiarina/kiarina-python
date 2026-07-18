@@ -26,13 +26,11 @@
 
 ### Optional Dependencies
 
-#### `asset-repository-gcs`
+| Package | Version | License | Extras |
+| --- | --- | --- | --- |
+| [google-cloud-storage](https://github.com/googleapis/python-storage) | `>=3.4.0` | [Apache-2.0](https://github.com/googleapis/python-storage/blob/main/LICENSE) | `asset-repository-gcs` |
 
-Google Cloud Storage asset repository に使用します。
-
-| Package | Version | License |
-| --- | --- | --- |
-| [google-cloud-storage](https://github.com/googleapis/python-storage) | `>=3.4.0` | [Apache-2.0](https://github.com/googleapis/python-storage/blob/main/LICENSE) |
+`all` Extra は、上記の optional dependency をすべてインストールします。
 
 ## Installation
 
@@ -45,7 +43,7 @@ pip install kiarina-agi-file
 Google Cloud Storage も使用する場合:
 
 ```bash
-pip install "kiarina-agi-file[asset-repository-gcs]"
+pip install "kiarina-agi-file[all]"
 ```
 
 ## Features

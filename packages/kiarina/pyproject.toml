@@ -64,6 +64,16 @@ dependencies = [
     "kiarina-utils-file>=2.3.1",
 ]
 
+[project.optional-dependencies]
+all = [
+    "kiarina-agi-audio[all]>=2.15.0",
+    "kiarina-agi-data-builder[all]>=2.15.0",
+    "kiarina-agi-file[all]>=2.8.0",
+    "kiarina-agi-image[all]>=2.15.0",
+    "kiarina-agi-text[all]>=2.8.0",
+    "kiarina-agi-video[all]>=2.15.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/kiarina/kiarina-python"
 Repository = "https://github.com/kiarina/kiarina-python.git"

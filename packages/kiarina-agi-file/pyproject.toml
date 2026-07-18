@@ -35,6 +35,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+all = [
+    "google-cloud-storage>=3.4.0",
+]
 asset-repository-gcs = [
     "google-cloud-storage>=3.4.0",
 ]
