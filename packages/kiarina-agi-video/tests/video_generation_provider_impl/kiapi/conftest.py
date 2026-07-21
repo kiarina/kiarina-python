@@ -31,9 +31,9 @@ def check_health(setup_settings: None) -> None:
     from kiarina.agi.video_generation_provider_impl.kiapi import settings_manager
 
     url = f"{settings_manager.settings.kiapi_base_url}/health"
-    response = httpx.get(url)
 
-    if response.status_code != 200:
-        pytest.skip(
-            f"kiapi is not healthy: {url} (status code: {response.status_code})"
-        )
+    try:
+        response = httpx.get(url, timeout=2.0)
+        response.raise_for_status()
+    except Exception as exc:
+        pytest.skip(f"kiapi is not healthy: {url} ({exc})")
