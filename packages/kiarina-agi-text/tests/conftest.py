@@ -68,12 +68,14 @@ def configure_app() -> Iterator[None]:
 @pytest.fixture(scope="session")
 def load_settings() -> Iterator[None]:
     test_settings_path = Path(__file__).resolve().parent / "test_settings.yaml"
+
+    if not test_settings_path.is_file():
+        pytest.skip(f"test_settings.yaml does not exist: {test_settings_path}")
+
     user_configs = read_yaml_dict(test_settings_path)
 
     if not user_configs:
-        raise ValueError(
-            f"test_settings.yaml is not found or empty: {test_settings_path}"
-        )
+        pytest.skip(f"test_settings.yaml is empty: {test_settings_path}")
 
     load_user_configs(user_configs)
     yield

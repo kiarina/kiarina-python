@@ -31,10 +31,13 @@ def create_tool_call_message(chat_model_name: str) -> Callable[..., HumanMessage
 
 @pytest.fixture(autouse=True)
 def setup(
-    load_settings: None,
+    request: pytest.FixtureRequest,
     chat_model_name: str,
 ) -> Iterator[None]:
     from kiarina.agi.chat_model import settings_manager
+
+    if chat_model_name != "mock":
+        request.getfixturevalue("load_settings")
 
     settings = settings_manager.settings_cls().model_dump()
     settings["default"] = chat_model_name
