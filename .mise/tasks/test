@@ -5,6 +5,7 @@
 #USAGE flag "-c --coverage" help="Run with coverage"
 #USAGE flag "--costly" help="Run tests marked as costly"
 #USAGE flag "--path <path>" help="Test path relative to the package directory"
+#USAGE flag "--no-pytest-args" help="Ignore the package tests/.pytest-args file"
 #USAGE flag "--no-clean" help="Skip cleaning previous coverage data (for CI)"
 #USAGE flag "--no-docker" help="Skip Docker Compose up/down (only used when running all)"
 
@@ -15,6 +16,7 @@ verbose="${usage_verbose:-false}"
 coverage="${usage_coverage:-false}"
 costly="${usage_costly:-false}"
 test_path="${usage_path:-tests/}"
+no_pytest_args="${usage_no_pytest_args:-false}"
 no_clean="${usage_no_clean:-false}"
 no_docker="${usage_no_docker:-false}"
 
@@ -40,6 +42,7 @@ if [ "$target" = "all" ]; then
         test_args=("$package")
         [ "$verbose" = "true" ] && test_args+=(--verbose)
         [ "$costly" = "true" ] && test_args+=(--costly)
+        [ "$no_pytest_args" = "true" ] && test_args+=(--no-pytest-args)
         if [ "$coverage" = "true" ]; then
             test_args+=(--coverage --no-clean)
         fi
@@ -91,7 +94,7 @@ if [ "$verbose" = "true" ]; then
 fi
 
 pytest_args_file="packages/$target/tests/.pytest-args"
-if [ -f "$pytest_args_file" ]; then
+if [ "$no_pytest_args" = "false" ] && [ -f "$pytest_args_file" ]; then
     while IFS= read -r line || [ -n "$line" ]; do
         line_args=()
         read -r -a line_args <<< "$line"
