@@ -30,7 +30,10 @@ def create_tool_call_message(chat_model_name: str) -> Callable[..., HumanMessage
 
 
 @pytest.fixture(autouse=True)
-def setup(chat_model_name: str) -> Iterator[None]:
+def setup(
+    load_settings: None,
+    chat_model_name: str,
+) -> Iterator[None]:
     from kiarina.agi.chat_model import settings_manager
 
     settings = settings_manager.settings_cls().model_dump()

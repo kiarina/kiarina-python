@@ -1,10 +1,4 @@
-.PHONY: format lint test build clean check \
-	chat_provider_lc_anthropic_test \
-	chat_provider_lc_anthropic_vertex_test \
-	chat_provider_lc_google_genai_test \
-	chat_provider_lc_openai_test \
-	text_embedding_provider_google_test \
-	text_embedding_provider_openai_test
+.PHONY: format lint test build clean check
 .DEFAULT_GOAL := check
 
 format:
@@ -34,3 +28,7 @@ text_embedding_provider_google_test:
 	mise run test --costly --path tests/text_embedding_provider_impl/google
 text_embedding_provider_openai_test:
 	mise run test --costly --path tests/text_embedding_provider_impl/openai
+
+tmp_test:
+	KIARINA_AGI_TEXT_TEST_CHAT_MODEL=claude-sonnet-5 \
+	mise run test kiarina-agi-text --costly --path tests/chat_model/_helpers/

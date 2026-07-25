@@ -112,6 +112,7 @@ async def test_post_request(
 
 @pytest.mark.costly
 async def test_invoke(
+    load_settings: None,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -123,6 +124,7 @@ async def test_invoke(
 
 @pytest.mark.costly
 async def test_stream(
+    load_settings: None,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -142,6 +144,7 @@ async def test_stream(
 
 @pytest.mark.costly
 async def test_get_cost_record(
+    load_settings: None,
     large_text_file_blob: FileBlob,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
@@ -196,6 +199,7 @@ async def test_get_cost_record(
 
 @pytest.mark.costly
 async def test_is_safety_error(
+    load_settings: None,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -211,6 +215,7 @@ async def test_is_safety_error(
 
 @pytest.mark.costly
 async def test_is_max_token_error(
+    load_settings: None,
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
 ) -> None:
@@ -233,6 +238,7 @@ async def test_is_max_token_error(
 
 @pytest.mark.costly
 async def test_tool_calls(
+    load_settings: None,
     lc_tool_infos: list[LCToolInfo],
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,
@@ -247,6 +253,7 @@ async def test_tool_calls(
 
 @pytest.mark.costly
 async def test_parallel_tool_calls(
+    load_settings: None,
     lc_tool_infos: list[LCToolInfo],
     provider: LCAnthropicChatProvider,
     ctx: LangChainChatProviderContext,

@@ -170,6 +170,7 @@ Git-ignored `.env` and `test_settings.yaml` files can be encrypted with age and 
 - [uv Workspace Operations](docs/concepts/uv_workspace_operations/README.md)
 - [Sensitive Data Security](docs/concepts/sensitive_data_security/README.md)
 - [Adding a Package](docs/runbooks/add_new_package/README.md)
+- [Update Chat Model Presets](docs/runbooks/update_chat_model_presets/README.md)
 - [Release](docs/runbooks/release/README.md)
 
 ## Contributing

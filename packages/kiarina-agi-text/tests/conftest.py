@@ -6,6 +6,7 @@ from typing import Any
 
 import pytest
 from pydantic import BaseModel, Field
+from pydantic_settings_manager import clear_user_configs, load_user_configs
 
 from kiarina.agi.chat_model import ChatModel, chat_model_registry
 from kiarina.agi.chat_provider import ChatCapabilities
@@ -33,7 +34,7 @@ from kiarina.agi.message import (
 from kiarina.agi.run_context import RunContext
 from kiarina.agi.tool_info import ToolInfo, create_tool_info
 from kiarina.utils.app import configure, reset
-from kiarina.utils.file import FileBlob, read_file
+from kiarina.utils.file import FileBlob, read_file, read_yaml_dict
 from kiarina.utils.mime import MIMEBlob
 
 
@@ -62,6 +63,21 @@ def configure_app() -> Iterator[None]:
     configure(app_author="kiarina", app_name="kiarina-agi-text")
     yield
     reset()
+
+
+@pytest.fixture(scope="session")
+def load_settings() -> Iterator[None]:
+    test_settings_path = Path(__file__).resolve().parent / "test_settings.yaml"
+    user_configs = read_yaml_dict(test_settings_path)
+
+    if not user_configs:
+        raise ValueError(
+            f"test_settings.yaml is not found or empty: {test_settings_path}"
+        )
+
+    load_user_configs(user_configs)
+    yield
+    clear_user_configs(user_configs)
 
 
 @pytest.fixture(autouse=True)

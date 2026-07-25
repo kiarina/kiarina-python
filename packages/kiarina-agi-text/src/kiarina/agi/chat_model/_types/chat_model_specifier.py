@@ -13,8 +13,8 @@ A string in one of the following formats:
 - {ChatModelAlias}?{ConfigString}
 
 Examples:
-- "gpt-5.4"
-- "gpt-5.4?reasoning_effort=high"
+- "gpt-5.6-sol"
+- "gpt-5.6-sol?reasoning_effort=high"
 - "openai"
 - "openai?reasoning_effort=high"
 """

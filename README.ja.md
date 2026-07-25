@@ -170,6 +170,7 @@ gitignore された `.env` と `test_settings.yaml` は、age で暗号化して
 - [uv Workspace Operations](docs/concepts/uv_workspace_operations/README.ja.md)
 - [Sensitive Data Security](docs/concepts/sensitive_data_security/README.ja.md)
 - [Adding a Package](docs/runbooks/add_new_package/README.ja.md)
+- [Update Chat Model Presets](docs/runbooks/update_chat_model_presets/README.ja.md)
 - [Release](docs/runbooks/release/README.ja.md)
 
 ## Contributing
