@@ -27,7 +27,7 @@ def write_binary(
 
 def write_binary(
     mode: Literal["sync", "async"], file_path: str | os.PathLike[str], raw_data: bytes
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     file_path = os.path.expanduser(os.path.expandvars(os.fspath(file_path)))
 
     if os.path.lexists(file_path):  # Check if path exists (including broken symlinks)

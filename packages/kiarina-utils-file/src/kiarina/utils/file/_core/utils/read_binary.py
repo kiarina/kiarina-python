@@ -31,7 +31,7 @@ def read_binary(
     file_path: str | os.PathLike[str],
     *,
     default: bytes | None = None,
-) -> bytes | None | Awaitable[bytes | None]:
+) -> bytes | Awaitable[bytes | None] | None:
     file_path = os.path.expanduser(os.path.expandvars(os.fspath(file_path)))
 
     if os.path.lexists(file_path):  # Check if path exists (including broken symlinks)

@@ -23,7 +23,7 @@ def write_text(
 
 def write_text(
     mode: Literal["sync", "async"], file_path: str | os.PathLike[str], raw_text: str
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     raw_data = raw_text.encode("utf-8", errors="replace")
 
     def _sync() -> None:

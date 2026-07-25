@@ -34,7 +34,7 @@ def read_file(
     *,
     fallback_mime_type: str = "application/octet-stream",
     default: FileBlob | None = None,
-) -> FileBlob | None | Awaitable[FileBlob | None]:
+) -> FileBlob | Awaitable[FileBlob | None] | None:
 
     def _after(raw_data: bytes | None) -> FileBlob | None:
         if raw_data is None:

@@ -30,7 +30,7 @@ def read_yaml_dict(
     file_path: str | os.PathLike[str],
     *,
     default: dict[str, Any] | None = None,
-) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]:
+) -> dict[str, Any] | Awaitable[dict[str, Any] | None] | None:
 
     def _after(raw_text: str | None) -> dict[str, Any] | None:
         if raw_text is None:

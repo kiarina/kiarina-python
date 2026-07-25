@@ -32,7 +32,7 @@ def set(
     mapping: dict[str, Any],
     *,
     id: str | None = None,
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     if id is None:
         if "id" not in mapping:
             raise ValueError(

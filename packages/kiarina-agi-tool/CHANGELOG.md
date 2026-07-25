@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update async iterator type narrowing for the latest mypy release.
+
 ## [2.12.0] - 2026-07-10
 
 ### Added

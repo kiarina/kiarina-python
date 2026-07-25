@@ -27,7 +27,7 @@ def get(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
     id: str,
-) -> Document | None | Awaitable[Document | None]:
+) -> Document | Awaitable[Document | None] | None:
     key = get_key(ctx, id)
 
     def _after(mapping: dict[bytes, bytes]) -> Document | None:

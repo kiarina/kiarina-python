@@ -38,7 +38,7 @@ def write_json_dict(
     indent: int = 2,
     ensure_ascii: bool = False,
     sort_keys: bool = False,
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     json_text = json.dumps(
         json_dict, indent=indent, ensure_ascii=ensure_ascii, sort_keys=sort_keys
     )

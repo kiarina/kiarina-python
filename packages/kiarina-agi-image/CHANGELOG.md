@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Remove an obsolete RapidOCR typing suppression.
+
 ## [2.15.0] - 2026-07-14
 
 ### Added

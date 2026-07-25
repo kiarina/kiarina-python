@@ -25,7 +25,7 @@ def delete(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
     id: str,
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     key = get_key(ctx, id)
 
     def _sync() -> None:

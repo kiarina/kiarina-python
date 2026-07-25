@@ -29,7 +29,7 @@ def read_markdown(
     file_path: str | os.PathLike[str],
     *,
     default: MarkdownContent | None = None,
-) -> MarkdownContent | None | Awaitable[MarkdownContent | None]:
+) -> MarkdownContent | Awaitable[MarkdownContent | None] | None:
 
     def _parse_markdown(raw_text: str | None) -> MarkdownContent | None:
         if raw_text is None:

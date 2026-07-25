@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-agi-image, kiarina-agi-tool, kiarina-lib-redisearch, kiarina-utils-file**: Update type annotations for the latest Ruff and mypy releases.
+
 ## [2.16.0] - 2026-07-19
 
 ### Added

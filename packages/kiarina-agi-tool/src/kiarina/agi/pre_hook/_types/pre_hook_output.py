@@ -3,4 +3,4 @@ from typing import TypeAlias
 
 from kiarina.agi.event import Event
 
-PreHookOutput: TypeAlias = None | Awaitable[None] | AsyncIterator[Event]
+PreHookOutput: TypeAlias = Awaitable[None] | AsyncIterator[Event] | None

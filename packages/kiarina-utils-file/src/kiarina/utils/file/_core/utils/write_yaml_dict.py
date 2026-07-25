@@ -36,7 +36,7 @@ def write_yaml_dict(
     *,
     allow_unicode: bool = True,
     sort_keys: bool = False,
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     yaml_text = yaml.dump(yaml_dict, allow_unicode=allow_unicode, sort_keys=sort_keys)
 
     def _sync() -> None:

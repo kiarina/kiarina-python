@@ -1,6 +1,6 @@
 import inspect
 from collections.abc import AsyncIterator, Callable
-from typing import overload
+from typing import cast, overload
 
 from kiarina.agi.event import Event
 
@@ -39,7 +39,7 @@ def prehook(
                 result = func(ctx)
 
                 if inspect.isasyncgen(result):
-                    async for event in result:
+                    async for event in cast(AsyncIterator[Event], result):
                         yield event
                 elif inspect.isawaitable(result):
                     await result

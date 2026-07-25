@@ -26,7 +26,7 @@ def write_file(
     mode: Literal["sync", "async"],
     file_blob: FileBlob,
     file_path: str | os.PathLike[str] | None = None,
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     if file_path is None:
         file_path = file_blob.file_path
 

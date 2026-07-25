@@ -30,7 +30,7 @@ def read_text(
     file_path: str | os.PathLike[str],
     *,
     default: str | None = None,
-) -> str | None | Awaitable[str | None]:
+) -> str | Awaitable[str | None] | None:
 
     def _after(raw_data: bytes | None) -> str | None:
         if raw_data is None:

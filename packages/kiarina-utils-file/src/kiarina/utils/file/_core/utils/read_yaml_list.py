@@ -30,7 +30,7 @@ def read_yaml_list(
     file_path: str | os.PathLike[str],
     *,
     default: list[Any] | None = None,
-) -> list[Any] | None | Awaitable[list[Any] | None]:
+) -> list[Any] | Awaitable[list[Any] | None] | None:
 
     def _after(raw_text: str | None) -> list[Any] | None:
         if raw_text is None:

@@ -24,7 +24,7 @@ def remove_file(
 def remove_file(
     mode: Literal["sync", "async"],
     file_path: str | os.PathLike[str],
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     file_path = os.path.expanduser(os.path.expandvars(os.fspath(file_path)))
 
     lock_file_path = get_lock_file_path(file_path)

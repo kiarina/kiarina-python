@@ -23,7 +23,7 @@ def create_index(
 def create_index(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
-) -> None | Awaitable[None]:
+) -> Awaitable[None] | None:
     fields = ctx.schema.to_fields()
 
     definition = IndexDefinition(  # type: ignore[no-untyped-call]

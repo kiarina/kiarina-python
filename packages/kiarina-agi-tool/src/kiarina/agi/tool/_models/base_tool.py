@@ -72,7 +72,7 @@ class BaseTool(Tool, ABC):
         result = self._run(*run_args, **run_kwargs)
 
         if inspect.isasyncgen(result):
-            async for output in result:
+            async for output in cast(AsyncIterator[ToolOutput], result):
                 yield output_to_event(ctx, self, output)
         elif inspect.isawaitable(result):
             yield output_to_event(ctx, self, await result)
