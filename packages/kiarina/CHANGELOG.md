@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.17.0] - 2026-07-26
+
+### Changed
+- **kiarina-agi-text**: Update chat model presets and aliases for current OpenAI, Anthropic, and Google models.
+- **kiarina-agi-image, kiarina-agi-tool, kiarina-lib-redisearch, kiarina-utils-file**: Update type annotations for the latest Ruff and mypy releases.
+
+### Fixed
+- **kiarina-agi-text**: Omit the deprecated `temperature` parameter from Claude 5 requests.
+
 ## [2.16.0] - 2026-07-19
 
 ### Added
