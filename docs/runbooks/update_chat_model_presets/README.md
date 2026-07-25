@@ -100,8 +100,10 @@ Run the costly chat model helper tests for each new preset only when adding that
 
 ```bash
 KIARINA_AGI_TEXT_TEST_CHAT_MODEL=<preset-name> \
-mise run test kiarina-agi-text --costly --path tests/chat_model/_helpers/
+mise run test kiarina-agi-text --no-pytest-args --costly --path tests/chat_model/_helpers/
 ```
+
+`--no-pytest-args` ignores the package's entire `.pytest-args` file. This also disables `--reruns`, preventing pointless retries of compatibility errors from newly added models.
 
 When multiple presets are added, run the command separately for every preset. Run them sequentially by default to avoid unnecessary API load and rate limits.
 

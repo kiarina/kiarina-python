@@ -48,7 +48,7 @@ class LCAnthropicChatProviderSettings(ChatCapabilities, BaseSettings):
 
     output_cost_microdollars_per_1k_tokens: int = 15_000
 
-    temperature: float = 0.0
+    temperature: float | None = 0.0
 
     parallel_tool_calls: bool | None = False
 

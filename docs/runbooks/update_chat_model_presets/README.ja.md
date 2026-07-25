@@ -100,8 +100,10 @@ rg 'old-model-name' packages/kiarina-agi-text docs
 
 ```bash
 KIARINA_AGI_TEXT_TEST_CHAT_MODEL=<preset-name> \
-mise run test kiarina-agi-text --costly --path tests/chat_model/_helpers/
+mise run test kiarina-agi-text --no-pytest-args --costly --path tests/chat_model/_helpers/
 ```
+
+`--no-pytest-args` は package の `.pytest-args` 全体を無視します。これにより `--reruns` も適用されず、新しい model の互換性エラーを無駄に再試行することを防げます。
 
 追加した preset が複数ある場合は、すべてについて個別に実行します。API 負荷と rate limit を避けるため、原則として逐次実行します。
 

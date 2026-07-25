@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update chat model presets and aliases for current OpenAI, Anthropic, and Google models.
 
+### Fixed
+- Omit the deprecated `temperature` parameter from Claude 5 requests.
+
 ## [2.8.0] - 2026-07-08
 
 ### Changed

@@ -1,4 +1,5 @@
 import pytest
+from langchain_anthropic import ChatAnthropic
 
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.chat_provider_impl.lc_anthropic import (
@@ -37,6 +38,18 @@ def test_provider(provider: LCAnthropicChatProvider) -> None:
     print(f"__str__: {provider!s}")
     print(f"anthropic_settings: {provider.anthropic_settings}")
     print(f"token_count_limit: {provider.token_count_limit}")
+
+
+def test_create_lc_chat_model_without_temperature(
+    provider: LCAnthropicChatProvider,
+    ctx: LangChainChatProviderContext,
+) -> None:
+    provider.settings.temperature = None
+
+    lc_chat_model = provider._create_lc_chat_model(ctx)
+
+    assert isinstance(lc_chat_model, ChatAnthropic)
+    assert lc_chat_model.temperature is None
 
 
 # --------------------------------------------------
