@@ -11,12 +11,12 @@ if TYPE_CHECKING:
     from ._types.scd_model_specifier import SCDModelSpecifier
 
 __all__ = [
+    # ._instances
+    "scd_model_registry",
     # ._models
     "SCDModel",
     # ._schemas
     "SCDModelConfig",
-    # ._instances
-    "scd_model_registry",
     # ._settings
     "SCDModelSettings",
     "settings_manager",
@@ -32,12 +32,12 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
+        # ._instances
+        "scd_model_registry": "._instances.scd_model_registry",
         # ._models
         "SCDModel": "._models.scd_model",
         # ._schemas
         "SCDModelConfig": "._schemas.scd_model_config",
-        # ._instances
-        "scd_model_registry": "._instances.scd_model_registry",
         # ._settings
         "SCDModelSettings": "._settings",
         "settings_manager": "._settings",

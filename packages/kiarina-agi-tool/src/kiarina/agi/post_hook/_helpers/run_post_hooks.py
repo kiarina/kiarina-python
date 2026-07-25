@@ -7,8 +7,8 @@ from kiarina.agi.history import History
 from kiarina.agi.message import ToolCall
 from kiarina.agi.run_context import RunContext
 
+from .._instances.post_hook_registry import post_hook_registry
 from .._schemas.post_hook_context import PostHookContext
-from .._services.post_hook_registry import post_hook_registry
 from .._types.post_hook import PostHook
 from .._types.post_hook_name import PostHookName
 

@@ -207,7 +207,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-i18n**: Change `get_system_language()` return type annotation to `Language`.
 - **kiarina-i18n**: Allow `get_i18n()` to omit `language` and automatically use `get_system_language()`.
 - **kiarina-i18n**: Allow `get_i18n()` to accept regular Pydantic `BaseModel` classes and derive their scope from the public module path.
-- **kiarina-i18n**: Move the module-level `catalog` singleton into the `_instances` layer.
 - Add a `package` mise task and `make package` shortcut for choosing package workflows with fzf.
 - Allow `package:*` mise tasks to select a package with fzf when no package name is provided.
 - Rename the setup mise tasks to `setup` and `download-test-assets`.

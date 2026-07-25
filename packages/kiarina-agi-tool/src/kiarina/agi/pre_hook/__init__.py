@@ -1,9 +1,9 @@
 from ._decorators.prehook import prehook
 from ._exceptions.pre_hook_error import PreHookError
 from ._helpers.run_pre_hooks import run_pre_hooks
+from ._instances.pre_hook_registry import pre_hook_registry
 from ._models.base_pre_hook import BasePreHook
 from ._schemas.pre_hook_context import PreHookContext
-from ._services.pre_hook_registry import pre_hook_registry
 from ._settings import PreHookSettings, settings_manager
 from ._types.pre_hook import PreHook
 from ._types.pre_hook_name import PreHookName
@@ -17,12 +17,12 @@ __all__ = [
     "PreHookError",
     # ._helpers
     "run_pre_hooks",
+    # ._instances
+    "pre_hook_registry",
     # ._models
     "BasePreHook",
     # ._schemas
     "PreHookContext",
-    # ._services
-    "pre_hook_registry",
     # ._settings
     "PreHookSettings",
     "settings_manager",

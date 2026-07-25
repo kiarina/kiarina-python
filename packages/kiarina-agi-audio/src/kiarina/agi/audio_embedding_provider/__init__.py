@@ -11,10 +11,10 @@ if TYPE_CHECKING:
     from ._types.audio_embedding_provider_name import AudioEmbeddingProviderName
 
 __all__ = [
-    # ._models
-    "BaseAudioEmbeddingProvider",
     # ._instances
     "audio_embedding_provider_registry",
+    # ._models
+    "BaseAudioEmbeddingProvider",
     # ._settings
     "AudioEmbeddingProviderSettings",
     "settings_manager",
@@ -29,10 +29,10 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
-        # ._models
-        "BaseAudioEmbeddingProvider": "._models.base_audio_embedding_provider",
         # ._instances
         "audio_embedding_provider_registry": "._instances.audio_embedding_provider_registry",
+        # ._models
+        "BaseAudioEmbeddingProvider": "._models.base_audio_embedding_provider",
         # ._settings
         "AudioEmbeddingProviderSettings": "._settings",
         "settings_manager": "._settings",

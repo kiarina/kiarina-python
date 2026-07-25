@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._helpers.build_file_info import build_file_info
     from ._helpers.rebuild_file_info import rebuild_file_info
+    from ._instances.file_info_builder_registry import file_info_builder_registry
     from ._models.base_file_info_builder import BaseFileInfoBuilder
     from ._schemas.build_result import BuildResult
-    from ._services.file_info_builder_registry import file_info_builder_registry
     from ._settings import settings_manager
     from ._types.file_info_builder import FileInfoBuilder
     from ._types.file_info_builder_alias import FileInfoBuilderAlias
@@ -19,10 +19,10 @@ __all__ = [
     # ._helpers
     "build_file_info",
     "rebuild_file_info",
+    # ._instances
+    "file_info_builder_registry",
     # ._models
     "BaseFileInfoBuilder",
-    # ._services
-    "file_info_builder_registry",
     # ._schemas
     "BuildResult",
     # ._settings
@@ -45,10 +45,10 @@ def __getattr__(name: str) -> object:
         # ._helpers
         "build_file_info": "._helpers.build_file_info",
         "rebuild_file_info": "._helpers.rebuild_file_info",
+        # ._instances
+        "file_info_builder_registry": "._instances.file_info_builder_registry",
         # ._models
         "BaseFileInfoBuilder": "._models.base_file_info_builder",
-        # ._services
-        "file_info_builder_registry": "._services.file_info_builder_registry",
         # ._schemas
         "BuildResult": "._schemas.build_result",
         # ._settings

@@ -9,7 +9,7 @@ from kiarina.agi.history import History
 from kiarina.agi.prompt import PromptOptions
 from kiarina.agi.run_context import RunContext
 
-from .._services.workflow_registry import workflow_registry
+from .._instances.workflow_registry import workflow_registry
 from .._types.workflow import Workflow
 from .._types.workflow_options import WorkflowOptions
 

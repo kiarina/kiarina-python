@@ -16,12 +16,12 @@ if TYPE_CHECKING:
 __all__ = [
     # ._helpers
     "parse_srt",
+    # ._instances
+    "asr_provider_registry",
     # ._models
     "BaseASRProvider",
     # ._schemas
     "ASRSegment",
-    # ._instances
-    "asr_provider_registry",
     # ._settings
     "ASRProviderSettings",
     "settings_manager",
@@ -42,12 +42,12 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._helpers
         "parse_srt": "._helpers.parse_srt",
+        # ._instances
+        "asr_provider_registry": "._instances.asr_provider_registry",
         # ._models
         "BaseASRProvider": "._models.base_asr_provider",
         # ._schemas
         "ASRSegment": "._schemas.asr_segment",
-        # ._instances
-        "asr_provider_registry": "._instances.asr_provider_registry",
         # ._settings
         "ASRProviderSettings": "._settings",
         "settings_manager": "._settings",

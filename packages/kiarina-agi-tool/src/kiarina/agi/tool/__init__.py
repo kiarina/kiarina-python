@@ -2,10 +2,10 @@ from ._decorators.tool import tool
 from ._exceptions.tool_error import ToolError
 from ._exceptions.tool_not_found_error import ToolNotFoundError
 from ._helpers.run_tool import run_tool
+from ._instances.tool_registry import tool_registry
 from ._models.base_tool import BaseTool
 from ._schemas.additional_field_config import AdditionalFieldConfig
 from ._schemas.tool_context import ToolContext
-from ._services.tool_registry import tool_registry
 from ._settings import ToolSettings, settings_manager
 from ._types.post_hook_binding import PostHookBinding
 from ._types.post_hook_binding_specifier import PostHookBindingSpecifier
@@ -26,13 +26,13 @@ __all__ = [
     "ToolNotFoundError",
     # ._helpers
     "run_tool",
+    # ._instances
+    "tool_registry",
     # ._models
     "BaseTool",
     # ._schemas
     "AdditionalFieldConfig",
     "ToolContext",
-    # ._services
-    "tool_registry",
     # ._settings
     "ToolSettings",
     "settings_manager",

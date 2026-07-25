@@ -17,12 +17,12 @@ if TYPE_CHECKING:
 __all__ = [
     # ._helpers
     "embed_audio",
+    # ._instances
+    "audio_embedding_model_registry",
     # ._models
     "AudioEmbeddingModel",
     # ._schemas
     "AudioEmbeddingModelConfig",
-    # ._instances
-    "audio_embedding_model_registry",
     # ._settings
     "AudioEmbeddingModelSettings",
     "settings_manager",
@@ -41,12 +41,12 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._helpers
         "embed_audio": "._helpers.embed_audio",
+        # ._instances
+        "audio_embedding_model_registry": "._instances.audio_embedding_model_registry",
         # ._models
         "AudioEmbeddingModel": "._models.audio_embedding_model",
         # ._schemas
         "AudioEmbeddingModelConfig": "._schemas.audio_embedding_model_config",
-        # ._instances
-        "audio_embedding_model_registry": "._instances.audio_embedding_model_registry",
         # ._settings
         "AudioEmbeddingModelSettings": "._settings",
         "settings_manager": "._settings",

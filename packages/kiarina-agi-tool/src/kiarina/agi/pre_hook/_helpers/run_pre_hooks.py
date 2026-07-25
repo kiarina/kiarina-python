@@ -7,8 +7,8 @@ from kiarina.agi.history import History
 from kiarina.agi.message import ToolCall
 from kiarina.agi.run_context import RunContext
 
+from .._instances.pre_hook_registry import pre_hook_registry
 from .._schemas.pre_hook_context import PreHookContext
-from .._services.pre_hook_registry import pre_hook_registry
 from .._types.pre_hook import PreHook
 from .._types.pre_hook_name import PreHookName
 

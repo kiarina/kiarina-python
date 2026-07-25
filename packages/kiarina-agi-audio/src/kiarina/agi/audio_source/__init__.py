@@ -11,12 +11,12 @@ if TYPE_CHECKING:
     from ._types.audio_source_specifier import AudioSourceSpecifier
 
 __all__ = [
+    # ._instances
+    "audio_source_registry",
     # ._models
     "BaseAudioSource",
     # ._schemas
     "AudioChunk",
-    # ._instances
-    "audio_source_registry",
     # ._settings
     "AudioSourceSettings",
     "settings_manager",
@@ -32,12 +32,12 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
+        # ._instances
+        "audio_source_registry": "._instances.audio_source_registry",
         # ._models
         "BaseAudioSource": "._models.base_audio_source",
         # ._schemas
         "AudioChunk": "._schemas.audio_chunk",
-        # ._instances
-        "audio_source_registry": "._instances.audio_source_registry",
         # ._settings
         "AudioSourceSettings": "._settings",
         "settings_manager": "._settings",

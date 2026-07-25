@@ -15,8 +15,8 @@ from kiarina.agi.tool import ToolOptions
 from kiarina.agi.workflow import WorkflowOptions
 
 from .._exceptions.missing_tools_error import MissingToolsError
+from .._instances.agent_registry import agent_registry
 from .._schemas.agent_context import AgentContext
-from .._services.agent_registry import agent_registry
 from .._settings import settings_manager
 from .._types.agent import Agent
 from .._types.agent_options import AgentOptions

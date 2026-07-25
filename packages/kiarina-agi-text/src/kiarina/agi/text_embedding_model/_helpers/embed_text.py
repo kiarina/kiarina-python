@@ -2,7 +2,7 @@ from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.embedding import Embedding
 from kiarina.agi.run_context import RunContext
 
-from .._services.text_embedding_model_registry import text_embedding_model_registry
+from .._instances.text_embedding_model_registry import text_embedding_model_registry
 from .._types.text_embedding_options import TextEmbeddingOptions
 
 

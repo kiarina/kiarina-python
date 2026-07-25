@@ -12,12 +12,12 @@ if TYPE_CHECKING:
     from ._utils.ensure_image_pixels import ensure_image_pixels
 
 __all__ = [
+    # ._instances
+    "video_source_registry",
     # ._models
     "BaseVideoSource",
     # ._schemas
     "VideoFrame",
-    # ._instances
-    "video_source_registry",
     # ._settings
     "VideoSourceSettings",
     "settings_manager",
@@ -35,12 +35,12 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
+        # ._instances
+        "video_source_registry": "._instances.video_source_registry",
         # ._models
         "BaseVideoSource": "._models.base_video_source",
         # ._schemas
         "VideoFrame": "._schemas.video_frame",
-        # ._instances
-        "video_source_registry": "._instances.video_source_registry",
         # ._settings
         "VideoSourceSettings": "._settings",
         "settings_manager": "._settings",

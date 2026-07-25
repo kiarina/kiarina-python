@@ -11,12 +11,12 @@ if TYPE_CHECKING:
     from ._types.audio_consumer_specifier import AudioConsumerSpecifier
 
 __all__ = [
+    # ._instances
+    "audio_consumer_registry",
     # ._models
     "BaseAudioConsumer",
     # ._schemas
     "AudioEvent",
-    # ._instances
-    "audio_consumer_registry",
     # ._settings
     "AudioConsumerSettings",
     "settings_manager",
@@ -32,12 +32,12 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
+        # ._instances
+        "audio_consumer_registry": "._instances.audio_consumer_registry",
         # ._models
         "BaseAudioConsumer": "._models.base_audio_consumer",
         # ._schemas
         "AudioEvent": "._schemas.audio_event",
-        # ._instances
-        "audio_consumer_registry": "._instances.audio_consumer_registry",
         # ._settings
         "AudioConsumerSettings": "._settings",
         "settings_manager": "._settings",

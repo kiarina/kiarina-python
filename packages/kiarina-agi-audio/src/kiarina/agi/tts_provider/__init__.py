@@ -7,10 +7,10 @@ from ._types.tts_provider import TTSProvider
 from ._types.tts_provider_name import TTSProviderName
 
 __all__ = [
-    # ._models
-    "BaseTTSProvider",
     # ._instances
     "tts_provider_registry",
+    # ._models
+    "BaseTTSProvider",
     # ._settings
     "TTSProviderSettings",
     "settings_manager",

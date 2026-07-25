@@ -2,10 +2,10 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._models.base_text_embedding_provider import BaseTextEmbeddingProvider
-    from ._services.text_embedding_provider_registry import (
+    from ._instances.text_embedding_provider_registry import (
         text_embedding_provider_registry,
     )
+    from ._models.base_text_embedding_provider import BaseTextEmbeddingProvider
     from ._settings import TextEmbeddingProviderSettings, settings_manager
     from ._types.text_embedding_provider import TextEmbeddingProvider
     from ._types.text_embedding_provider_name import TextEmbeddingProviderName
@@ -26,7 +26,7 @@ def __getattr__(name: str) -> object:
 
     module_map = {
         "BaseTextEmbeddingProvider": "._models.base_text_embedding_provider",
-        "text_embedding_provider_registry": "._services.text_embedding_provider_registry",
+        "text_embedding_provider_registry": "._instances.text_embedding_provider_registry",
         "TextEmbeddingProviderSettings": "._settings",
         "settings_manager": "._settings",
         "TextEmbeddingProvider": "._types.text_embedding_provider",

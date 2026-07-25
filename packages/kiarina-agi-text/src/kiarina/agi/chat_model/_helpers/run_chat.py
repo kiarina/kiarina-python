@@ -6,8 +6,8 @@ from kiarina.agi.message import AIMessage, AIMessageChunk, Message
 from kiarina.agi.run_context import RunContext
 from kiarina.agi.tool_info import ToolInfo
 
+from .._instances.chat_model_registry import chat_model_registry
 from .._models.chat_model import ChatModel
-from .._services.chat_model_registry import chat_model_registry
 from .._types.chat_options import ChatOptions
 
 

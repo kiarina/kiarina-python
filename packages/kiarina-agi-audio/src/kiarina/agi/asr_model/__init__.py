@@ -17,12 +17,12 @@ __all__ = [
     # ._helpers
     "speech_to_segments",
     "speech_to_text",
+    # ._instances
+    "asr_model_registry",
     # ._models
     "ASRModel",
     # ._schemas
     "ASRModelConfig",
-    # ._instances
-    "asr_model_registry",
     # ._settings
     "ASRModelSettings",
     "settings_manager",
@@ -42,12 +42,12 @@ def __getattr__(name: str) -> object:
         # ._helpers
         "speech_to_segments": "._helpers.speech_to_segments",
         "speech_to_text": "._helpers.speech_to_text",
+        # ._instances
+        "asr_model_registry": "._instances.asr_model_registry",
         # ._models
         "ASRModel": "._models.asr_model",
         # ._schemas
         "ASRModelConfig": "._schemas.asr_model_config",
-        # ._instances
-        "asr_model_registry": "._instances.asr_model_registry",
         # ._settings
         "ASRModelSettings": "._settings",
         "settings_manager": "._settings",

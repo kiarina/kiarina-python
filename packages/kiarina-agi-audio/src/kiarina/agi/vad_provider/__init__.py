@@ -10,10 +10,10 @@ if TYPE_CHECKING:
     from ._types.vad_provider_name import VADProviderName
 
 __all__ = [
-    # ._models
-    "BaseVADProvider",
     # ._instances
     "vad_provider_registry",
+    # ._models
+    "BaseVADProvider",
     # ._settings
     "VADProviderSettings",
     "settings_manager",
@@ -29,10 +29,10 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
-        # ._models
-        "BaseVADProvider": "._models.base_vad_provider",
         # ._instances
         "vad_provider_registry": "._instances.vad_provider_registry",
+        # ._models
+        "BaseVADProvider": "._models.base_vad_provider",
         # ._settings
         "VADProviderSettings": "._settings",
         "settings_manager": "._settings",

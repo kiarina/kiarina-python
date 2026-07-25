@@ -11,12 +11,12 @@ from ._types.tts_options import TTSOptions
 __all__ = [
     # ._helpers
     "text_to_speech",
+    # ._instances
+    "tts_model_registry",
     # ._models
     "TTSModel",
     # ._schemas
     "TTSModelConfig",
-    # ._instances
-    "tts_model_registry",
     # ._settings
     "TTSModelSettings",
     "settings_manager",

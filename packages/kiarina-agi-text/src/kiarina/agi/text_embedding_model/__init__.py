@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._helpers.embed_text import embed_text
+    from ._instances.text_embedding_model_registry import text_embedding_model_registry
     from ._models.text_embedding_model import TextEmbeddingModel
     from ._schemas.text_embedding_model_config import TextEmbeddingModelConfig
-    from ._services.text_embedding_model_registry import text_embedding_model_registry
     from ._settings import TextEmbeddingModelSettings, settings_manager
     from ._types.text_embedding_model_alias import TextEmbeddingModelAlias
     from ._types.text_embedding_model_name import TextEmbeddingModelName
@@ -34,7 +34,7 @@ def __getattr__(name: str) -> object:
         "embed_text": "._helpers.embed_text",
         "TextEmbeddingModel": "._models.text_embedding_model",
         "TextEmbeddingModelConfig": "._schemas.text_embedding_model_config",
-        "text_embedding_model_registry": "._services.text_embedding_model_registry",
+        "text_embedding_model_registry": "._instances.text_embedding_model_registry",
         "TextEmbeddingModelSettings": "._settings",
         "settings_manager": "._settings",
         "TextEmbeddingModelAlias": "._types.text_embedding_model_alias",

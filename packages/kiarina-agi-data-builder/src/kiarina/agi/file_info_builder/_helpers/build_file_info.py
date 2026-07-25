@@ -6,8 +6,8 @@ from kiarina.agi.run_context import RunContext
 from kiarina.utils.common import parse_config_string
 from kiarina.utils.file import FileBlob
 
+from .._instances.file_info_builder_registry import file_info_builder_registry
 from .._schemas.build_result import BuildResult
-from .._services.file_info_builder_registry import file_info_builder_registry
 from .._types.file_info_spec import FileInfoSpec
 from .._types.file_info_specifier import FileInfoSpecifier
 

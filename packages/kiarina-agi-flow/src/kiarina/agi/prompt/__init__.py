@@ -2,8 +2,8 @@ from ._decorators.prompt import prompt
 from ._helpers.invoke_prompt import invoke_prompt
 from ._helpers.run_prompt import run_prompt
 from ._helpers.stream_prompt import stream_prompt
+from ._instances.prompt_registry import prompt_registry
 from ._models.base_prompt import BasePrompt
-from ._services.prompt_registry import prompt_registry
 from ._settings import PromptSettings, settings_manager
 from ._types.prompt import Prompt
 from ._types.prompt_name import PromptName
@@ -17,10 +17,10 @@ __all__ = [
     "invoke_prompt",
     "run_prompt",
     "stream_prompt",
+    # ._instances
+    "prompt_registry",
     # ._models
     "BasePrompt",
-    # ._services
-    "prompt_registry",
     # ._settings
     "PromptSettings",
     "settings_manager",

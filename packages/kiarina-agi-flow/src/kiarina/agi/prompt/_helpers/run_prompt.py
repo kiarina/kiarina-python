@@ -17,7 +17,7 @@ from kiarina.agi.event import Event, message_to_event
 from kiarina.agi.history import History
 from kiarina.agi.run_context import RunContext
 
-from .._services.prompt_registry import prompt_registry
+from .._instances.prompt_registry import prompt_registry
 from .._types.prompt import Prompt
 from .._types.prompt_options import PromptOptions
 

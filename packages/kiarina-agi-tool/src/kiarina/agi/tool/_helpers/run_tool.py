@@ -23,9 +23,9 @@ from kiarina.agi.tool_info import ToolName
 from kiarina.agi.tool_logger import tool_logger_registry
 
 from .._exceptions.tool_not_found_error import ToolNotFoundError
+from .._instances.tool_registry import tool_registry
 from .._operations.error_to_event import error_to_event
 from .._schemas.tool_context import ToolContext
-from .._services.tool_registry import tool_registry
 from .._types.post_hook_binding import PostHookBinding
 from .._types.post_hook_binding_specifier import PostHookBindingSpecifier
 from .._types.pre_hook_binding import PreHookBinding

@@ -11,12 +11,12 @@ if TYPE_CHECKING:
     from ._types.vad_model_specifier import VADModelSpecifier
 
 __all__ = [
+    # ._instances
+    "vad_model_registry",
     # ._models
     "VADModel",
     # ._schemas
     "VADModelConfig",
-    # ._instances
-    "vad_model_registry",
     # ._settings
     "VADModelSettings",
     "settings_manager",
@@ -32,12 +32,12 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module {__name__} has no attribute {name}")
 
     module_map = {
+        # ._instances
+        "vad_model_registry": "._instances.vad_model_registry",
         # ._models
         "VADModel": "._models.vad_model",
         # ._schemas
         "VADModelConfig": "._schemas.vad_model_config",
-        # ._instances
-        "vad_model_registry": "._instances.vad_model_registry",
         # ._settings
         "VADModelSettings": "._settings",
         "settings_manager": "._settings",

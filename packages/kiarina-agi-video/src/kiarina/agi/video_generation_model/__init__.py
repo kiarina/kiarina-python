@@ -22,13 +22,13 @@ __all__ = [
     "extend_video",
     "get_video",
     "is_video_running",
+    # ._instances
+    "video_generation_model_registry",
     # ._models
     "VideoGenerationModel",
     # ._schemas
     "VideoGenerationCapabilities",
     "VideoGenerationModelConfig",
-    # ._instances
-    "video_generation_model_registry",
     # ._settings
     "VideoGenerationModelSettings",
     "settings_manager",
