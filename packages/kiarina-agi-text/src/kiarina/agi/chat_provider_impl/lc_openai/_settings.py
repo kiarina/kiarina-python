@@ -1,5 +1,6 @@
 from typing import Any, Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsKey, SettingsManager
 
@@ -37,6 +38,30 @@ class LCOpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
     cached_input_cost_microdollars_per_1k_tokens: int = 5
 
     output_cost_microdollars_per_1k_tokens: int = 400
+
+    cache_write_cost_multiplier: float = Field(
+        default=1.0,
+        title="Cache Write Cost Multiplier",
+        description="Multiplier applied to uncached input pricing for cache writes.",
+    )
+
+    extended_cost_threshold_tokens: int | None = Field(
+        default=None,
+        title="Extended Cost Threshold Tokens",
+        description="Input token threshold above which extended pricing applies.",
+    )
+
+    extended_input_cost_multiplier: float = Field(
+        default=1.0,
+        title="Extended Input Cost Multiplier",
+        description="Input cost multiplier applied above the extended cost threshold.",
+    )
+
+    extended_output_cost_multiplier: float = Field(
+        default=1.0,
+        title="Extended Output Cost Multiplier",
+        description="Output cost multiplier applied above the extended cost threshold.",
+    )
 
     temperature: float = 1.0
 

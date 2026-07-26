@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Support OpenAI tiered pricing and prompt cache write costs in cost records.
+
 ## [2.17.0] - 2026-07-26
 
 ### Changed

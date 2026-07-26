@@ -10,7 +10,6 @@ The primary files are:
 
 - `packages/kiarina-agi-text/src/kiarina/agi/chat_model/_settings.py`
 - `packages/kiarina-agi-text/src/kiarina/agi/chat_model/_types/chat_model_specifier.py`
-- `packages/kiarina-agi-text/tests/chat_model/test_settings.py`
 
 Change a provider implementation's standalone default model only when explicitly requested. Do not change public APIs or settings schemas solely for a preset update.
 
@@ -72,27 +71,19 @@ Multiply `$/MTok` by 1,000 to convert it to microdollars per 1K tokens. For exam
 
 Enable settings representing long-context surcharges only when the model actually has an additional charge. Do not enable them when the full context uses standard pricing.
 
+For OpenAI GPT-5.6 presets, prompts over 272K input tokens apply a 2x input and 1.5x output multiplier to the full request. Cache writes cost 1.25x the uncached input rate. Use input tokens including cache reads and cache writes when evaluating the threshold.
+
 Search for references to removed presets in types and documentation.
 
 ```bash
 rg 'old-model-name' packages/kiarina-agi-text docs
 ```
 
-### 4. Add deterministic settings tests
+### 4. Do not add settings tests
 
-Use `packages/kiarina-agi-text/tests/chat_model/test_settings.py` to verify the following without an external API:
+Do not add tests that only fix the preset values of `ChatModelSettings`. Such tests duplicate the settings values and require both declarations to change for every model update.
 
-- exact final set of default presets
-- absence of removed presets
-- every alias refers to an existing preset
-- provider and model ID of each new preset
-- context, maximum output, and token count limit
-- input, cached input, cache write, and output prices
-- input modalities
-- correspondence between direct and Vertex presets
-- `visible` settings
-
-Use exact-set validation so the test also detects unintended additions and retained presets.
+Verify API compatibility for new presets through the addition-only API tests. When changing provider logic such as cost calculation, test the provider behavior instead of the settings values.
 
 ### 5. Run addition-only API tests
 
@@ -146,5 +137,6 @@ The first update following this procedure made these changes:
 - Anthropic: added Claude Sonnet 5, Opus 5, Fable 5, and their Vertex presets; removed the 4.6 presets
 - Google: added Gemini 3.6 Flash and 3.5 Flash-Lite; removed the 3.1 models and the 3 Flash preview
 - retained GPT-5.4 Mini, GPT-5.4 Nano, and Claude Haiku 4.5 for their distinct lower-cost roles
+- applied GPT-5.6 pricing for prompts over 272K tokens and cache writes to cost records
 - set Fable 5 and Vertex Claude presets to `visible=False`
 - updated the `llm`, `vlm`, `openai`, `anthropic`, `google`, and `omni` aliases to the new presets
