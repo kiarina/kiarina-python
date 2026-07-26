@@ -1211,7 +1211,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.17.0"
+version = "2.18.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -2247,7 +2247,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-utils-common"
-version = "2.8.0"
+version = "2.18.0"
 source = { editable = "packages/kiarina-utils-common" }
 dependencies = [
     { name = "pydantic" },

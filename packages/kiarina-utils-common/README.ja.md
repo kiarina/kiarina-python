@@ -410,7 +410,7 @@ class ComponentRegistry(Generic[T]):
     def __init__(
         self,
         *,
-        expected_type: type[T],
+        expected_type: object,
         component_label: str = "Component",
         get_default: Callable[[], ComponentSpecifier | None] | None = None,
         get_aliases: Callable[

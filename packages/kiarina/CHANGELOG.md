@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.0] - 2026-07-26
+
+### Changed
+- **kiarina-utils-common**: Allow runtime-checkable protocol classes to be passed to `ComponentRegistry` as `expected_type` without static type errors.
+
 ## [2.17.0] - 2026-07-26
 
 ### Changed
