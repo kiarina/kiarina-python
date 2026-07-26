@@ -18,7 +18,7 @@ download-test-assets:
 download-test-settings:
 	mise run test-settings:download --force
 upload-test-settings:
-	mise run test-settings:upload
+	mise run test-settings:upload .env test_settings.yaml
 #--------------------------------------------------
 format:
 	mise run format
