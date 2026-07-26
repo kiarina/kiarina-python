@@ -10,7 +10,6 @@
 
 - `packages/kiarina-agi-text/src/kiarina/agi/chat_model/_settings.py`
 - `packages/kiarina-agi-text/src/kiarina/agi/chat_model/_types/chat_model_specifier.py`
-- `packages/kiarina-agi-text/tests/chat_model/test_settings.py`
 
 provider 実装単体の default model は、明示的に依頼された場合だけ変更します。公開 API や設定 schema は、preset 更新だけを理由に変更しません。
 
@@ -72,27 +71,19 @@ alias は、通常利用する安定した preset にだけ割り当てます。
 
 長い context に追加料金がある場合だけ、その料金を表す設定を有効化します。標準料金で全 context を利用できる model では有効化しません。
 
+OpenAI の GPT-5.6 preset では、272K input tokens を超えた場合にリクエスト全体の input 料金へ2倍、output 料金へ1.5倍を適用します。cache write は uncached input 料金の1.25倍として計算します。閾値の判定には cache read と cache write を含む input tokens を使用します。
+
 削除した preset が型の例や文書に残っていないか検索します。
 
 ```bash
 rg 'old-model-name' packages/kiarina-agi-text docs
 ```
 
-### 4. Add deterministic settings tests
+### 4. Do not add settings tests
 
-`packages/kiarina-agi-text/tests/chat_model/test_settings.py` で、外部 API を使わずに次を検証します。
+`ChatModelSettings` の preset 値だけを固定する test は追加しません。model 更新のたびに設定と同じ値を test に重複して記述することになるためです。
 
-- default preset の最終集合
-- 削除した preset が存在しないこと
-- すべての alias が存在する preset を参照すること
-- 新しい preset の provider と model ID
-- context、max output、token count limit
-- input、cached input、cache write、output の料金
-- input modalities
-- direct preset と Vertex preset の対応
-- `visible` の設定
-
-最終集合を完全一致で検証し、意図しない preset の追加や残存も検出します。
+新しい preset の API 互換性は追加時の API test で確認します。料金計算など provider のロジックを変更する場合は、settings の値ではなくproviderの振る舞いをunit testで検証します。
 
 ### 5. Run addition-only API tests
 
@@ -146,5 +137,6 @@ costly test は追加時だけ実行しますが、通常の package test と `m
 - Anthropic: Claude Sonnet 5、Opus 5、Fable 5とVertex presetを追加し、4.6系を削除
 - Google: Gemini 3.6 Flashと3.5 Flash-Liteを追加し、3.1系と3 Flash previewを削除
 - GPT-5.4 Mini、GPT-5.4 Nano、Claude Haiku 4.5は、低価格の独自ポジションがあるため維持
+- GPT-5.6の272K超に対する段階料金とcache write料金をcost記録へ反映
 - Fable 5とVertex Claude presetは`visible=False`に設定
 - `llm`、`vlm`、`openai`、`anthropic`、`google`、`omni`のaliasを新しいpresetへ更新

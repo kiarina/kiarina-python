@@ -188,6 +188,96 @@ async def test_stream(
 # --------------------------------------------------
 
 
+def test_get_cost_record_without_usage(
+    provider: LCOpenAIChatProvider,
+) -> None:
+    lc_ai_message = LCAIMessage(content="")
+
+    assert provider._get_cost_record(lc_ai_message) is None
+
+
+@pytest.mark.parametrize(
+    ("prompt_tokens", "expected_microdollars"),
+    [
+        (272_000, 27_335),
+        (272_001, 54_571),
+    ],
+)
+def test_get_cost_record_extended_pricing(
+    prompt_tokens: int,
+    expected_microdollars: int,
+) -> None:
+    provider = LCOpenAIChatProvider(
+        LCOpenAIChatProviderSettings(
+            input_cost_microdollars_per_1k_tokens=100,
+            cached_input_cost_microdollars_per_1k_tokens=10,
+            output_cost_microdollars_per_1k_tokens=200,
+            cache_write_cost_multiplier=1.25,
+            extended_cost_threshold_tokens=272_000,
+            extended_input_cost_multiplier=2.0,
+            extended_output_cost_multiplier=1.5,
+        )
+    )
+    provider.name = "lc_openai"
+    lc_ai_message = LCAIMessage(
+        content="",
+        usage_metadata={
+            "input_tokens": prompt_tokens,
+            "output_tokens": 1_000,
+            "total_tokens": prompt_tokens + 1_000,
+            "input_token_details": {
+                "cache_creation": 1_000,
+                "cache_read": 1_000,
+            },
+        },
+    )
+
+    cost_record = provider._get_cost_record(lc_ai_message)
+
+    assert cost_record is not None
+    assert cost_record.microdollars == expected_microdollars
+    assert cost_record.metadata == {
+        "model_name": "gpt-5.5",
+        "input_tokens": prompt_tokens - 2_000,
+        "cache_write_tokens": 1_000,
+        "cached_input_tokens": 1_000,
+        "output_tokens": 1_000,
+    }
+
+
+def test_get_cost_record_cache_write_uses_input_cost_by_default(
+    provider: LCOpenAIChatProvider,
+) -> None:
+    without_cache_write = LCAIMessage(
+        content="",
+        usage_metadata={
+            "input_tokens": 1_001,
+            "output_tokens": 0,
+            "total_tokens": 1_001,
+        },
+    )
+    with_cache_write = LCAIMessage(
+        content="",
+        usage_metadata={
+            "input_tokens": 1_001,
+            "output_tokens": 0,
+            "total_tokens": 1_001,
+            "input_token_details": {"cache_creation": 1_001},
+        },
+    )
+
+    without_cache_write_cost = provider._get_cost_record(without_cache_write)
+    with_cache_write_cost = provider._get_cost_record(with_cache_write)
+
+    assert without_cache_write_cost is not None
+    assert with_cache_write_cost is not None
+    assert without_cache_write_cost.microdollars == 51
+    assert with_cache_write_cost.microdollars == 51
+    assert without_cache_write_cost.metadata.get("cache_write_tokens") == 0
+    assert with_cache_write_cost.metadata.get("input_tokens") == 0
+    assert with_cache_write_cost.metadata.get("cache_write_tokens") == 1_001
+
+
 @pytest.mark.costly
 async def test_get_cost_record(
     large_text_file_blob: FileBlob,
