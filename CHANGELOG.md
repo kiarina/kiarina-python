@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.0] - 2026-07-28
+
+### Added
+- **kiarina-lib-firebase-firestore**: Add read-only Cloud Firestore REST client with Firebase ID token authentication.
+
 ## [2.19.0] - 2026-07-27
 
 ### Added

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.0] - 2026-07-28
+
 ### Added
 
 - Add `get_document()` for retrieving a Cloud Firestore document with a Firebase ID token

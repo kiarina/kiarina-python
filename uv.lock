@@ -1212,7 +1212,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.19.0"
+version = "2.20.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -2119,7 +2119,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-firebase-firestore"
-version = "2.19.0"
+version = "2.20.0"
 source = { editable = "packages/kiarina-lib-firebase-firestore" }
 dependencies = [
     { name = "httpx" },

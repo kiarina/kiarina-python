@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-firebase-firestore"
-version = "2.19.0"
+version = "2.20.0"
 description = "Read-only Cloud Firestore REST client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"

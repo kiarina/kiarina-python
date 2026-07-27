@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "2.19.0"
+version = "2.20.0"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"
@@ -53,7 +53,7 @@ dependencies = [
     "kiarina-lib-cloudflare-d1>=2.3.1",
     "kiarina-lib-falkordb>=2.3.1",
     "kiarina-lib-firebase>=2.3.1",
-    "kiarina-lib-firebase-firestore>=2.19.0",
+    "kiarina-lib-firebase-firestore>=2.20.0",
     "kiarina-lib-firebase-rtdb>=2.3.1",
     "kiarina-lib-google>=2.8.0",
     "kiarina-lib-openai>=2.3.1",
