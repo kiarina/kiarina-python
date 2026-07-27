@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.19.0] - 2026-07-27
+
+### Added
+- **kiarina-agi-data, kiarina-agi-data-builder, kiarina-agi-text**: Add capability-aware video and PDF analysis bundles with model-specific fallbacks.
+
+### Fixed
+- **kiarina-agi-text**: Support OpenAI tiered pricing and prompt cache write costs in cost records.
+
 ## [2.18.0] - 2026-07-26
 
 ### Changed
