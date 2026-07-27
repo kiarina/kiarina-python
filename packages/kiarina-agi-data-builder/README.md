@@ -31,10 +31,105 @@ English | [日本語](README.ja.md)
 
 | Package | Extras |
 | --- | --- |
-| imageio-ffmpeg | `file-info-builder-audio` |
-| imageio-ffmpeg | `file-info-builder-video` |
-| Pillow | `file-info-builder-image` |
+| imageio-ffmpeg | `file-info-builder-audio`<br>`file-info-builder-video` |
+| Pillow | `file-info-builder-image`<br>`file-info-builder-video` |
 | pypdf | `file-info-builder-pdf` |
 | soundfile | `file-info-builder-audio` |
 
 The `all` Extra installs every optional dependency listed above.
+
+## Installation
+
+```bash
+pip install "kiarina-agi-data-builder[all]"
+```
+
+## Features
+
+### Capability-aware video fallback
+
+Video analysis bundles select content from chat model capabilities.
+
+| Capabilities | Content |
+| --- | --- |
+| Text only | Audio transcript and ambient analysis |
+| Image | Timestamped video frames, transcript, and ambient analysis |
+| Video | Video with its audio track |
+
+Set `analysis_fps` on the video file specification to control the frame rate of the prepared video and fallback images.
+
+```python
+from kiarina.agi.file_info_builder_impl.video import (
+    create_video_file_info_builder,
+)
+from kiarina.agi.run_context import RunContext
+from kiarina.utils.file.asyncio import read_file
+
+
+async def build_video_info():
+    file_blob = await read_file("/path/to/video.mp4")
+    assert file_blob is not None
+    builder = create_video_file_info_builder(
+        analysis_enabled=True,
+        audio_consumers=["stt", "ambient"],
+    )
+    return await builder.build(
+        {
+            "uri_or_file_path": file_blob.file_path,
+            "analysis_fps": 1.0,
+        },
+        file_blob,
+        run_context=RunContext(),
+    )
+```
+
+## API Reference
+
+### `kiarina.agi.file_info_builder_impl.video`
+
+```python
+from kiarina.agi.file_info_builder_impl.video import (
+    VideoFileInfoBuilder,
+    VideoFileInfoBuilderSettings,
+    create_video_file_info_builder,
+    settings_manager,
+)
+```
+
+#### `create_video_file_info_builder`
+
+```python
+def create_video_file_info_builder(**kwargs: Any) -> VideoFileInfoBuilder: ...
+```
+
+Creates a video file info builder from managed settings and optional overrides.
+
+#### `VideoFileInfoBuilder`
+
+```python
+class VideoFileInfoBuilder(BaseFileInfoBuilder):
+    def __init__(self, settings: VideoFileInfoBuilderSettings) -> None: ...
+
+    async def build(
+        self,
+        file_info_spec: FileInfoSpec,
+        file_blob: FileBlob,
+        *,
+        run_context: RunContext,
+    ) -> BuildResult: ...
+```
+
+#### `VideoFileInfoBuilderSettings`
+
+```python
+class VideoFileInfoBuilderSettings(BaseSettings):
+    analysis_enabled: bool = False
+    audio_source: AudioSourceSpecifier = "file?sample_rate=16000&start_timestamp=0.0"
+    audio_consumers: list[AudioConsumerSpecifier] = [
+        "stt?diarization_enabled=true",
+        "ambient?window_seconds=10.0&top_k=3",
+    ]
+    audio_event_bundlers: list[AudioEventBundlerSpecifier] = ["stt", "ambient"]
+```
+
+`settings_manager` is the `SettingsManager[VideoFileInfoBuilderSettings]` instance used by the factory.

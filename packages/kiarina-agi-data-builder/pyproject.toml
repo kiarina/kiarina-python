@@ -48,7 +48,10 @@ file-info-builder-audio = [
 ]
 file-info-builder-image = ["pillow>=11.3.0,<12"]
 file-info-builder-pdf = ["pypdf>=6.7.4,<7"]
-file-info-builder-video = ["imageio-ffmpeg>=0.6.0,<1"]
+file-info-builder-video = [
+    "imageio-ffmpeg>=0.6.0,<1",
+    "pillow>=11.3.0,<12",
+]
 
 [project.urls]
 Homepage = "https://github.com/kiarina/kiarina-python"

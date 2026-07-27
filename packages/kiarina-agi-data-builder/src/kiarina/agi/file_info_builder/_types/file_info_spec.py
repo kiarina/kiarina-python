@@ -30,6 +30,9 @@ class FileInfoSpec(TypedDict):
     start_time: NotRequired[float]
     end_time: NotRequired[float]
 
+    # video
+    analysis_fps: NotRequired[float]
+
     # pdf
     start_page: NotRequired[int]
     end_page: NotRequired[int]

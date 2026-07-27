@@ -107,6 +107,7 @@ def video_file_info() -> VideoFileInfo:
         ),
         width=640,
         height=480,
+        fps=30.0,
         duration=10.0,
     )
 

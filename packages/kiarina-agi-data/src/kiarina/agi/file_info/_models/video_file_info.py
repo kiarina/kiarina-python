@@ -15,6 +15,17 @@ class VideoFileInfo(BaseFileInfo):
     end_time: float = -1.0
     width: int
     height: int
+    fps: float = Field(
+        gt=0,
+        title="Frames Per Second",
+        description="Frame rate of the source video.",
+    )
+    analysis_fps: float = Field(
+        default=1.0,
+        gt=0,
+        title="Analysis Frames Per Second",
+        description="Frame rate used to prepare the video for analysis.",
+    )
     duration: float
 
     @property
@@ -33,7 +44,12 @@ class VideoFileInfo(BaseFileInfo):
 
     @property
     def optional_export_fields(self) -> tuple[str, ...]:
-        return (*super().optional_export_fields, "start_time", "end_time")
+        return (
+            *super().optional_export_fields,
+            "start_time",
+            "end_time",
+            "analysis_fps",
+        )
 
     @property
     def normalized_start_time(self) -> float:

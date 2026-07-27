@@ -350,6 +350,7 @@ def video_file_info(
         **file_info_factory(uri_or_file_path=video_file_path, mime_type="video/mp4"),
         width=1600,
         height=900,
+        fps=24.0,
         duration=13.0,
     )
 

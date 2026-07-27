@@ -39,7 +39,7 @@ class FileBuilderSettings(BaseSettings):
                 "other": "kiarina.agi.file_info_builder_impl.other:OtherFileInfoBuilder",
                 "pdf": "kiarina.agi.file_info_builder_impl.pdf:PDFFileInfoBuilder",
                 "text": "kiarina.agi.file_info_builder_impl.text:TextFileInfoBuilder",
-                "video": "kiarina.agi.file_info_builder_impl.video:VideoFileInfoBuilder",
+                "video": "kiarina.agi.file_info_builder_impl.video:create_video_file_info_builder",
             },
         )
     )

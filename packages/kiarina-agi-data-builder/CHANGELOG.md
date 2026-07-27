@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add capability-aware video analysis bundles with video, timestamped frames, transcripts, and ambient events.
+
 ## [2.15.0] - 2026-07-14
 
 ### Changed

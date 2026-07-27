@@ -10,3 +10,4 @@ class FileBundleMediaContent(BaseModel):
     file_path: FileBundleFilePath
     mime_type: str
     visibility: FileBundleContentVisibility = "always"
+    timestamp: float | None = None

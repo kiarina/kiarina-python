@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from kiarina.agi.file_info_builder_impl.video._operations.build_intermediate_video import (
-    _export_1fps_resized_mp3_mono_16kbps_h264_mp4,
+    _export_intermediate_video,
     build_intermediate_video,
 )
 from kiarina.agi.file_info_builder_impl.video._operations.read_video_metadata import (
@@ -68,7 +68,7 @@ def test_build_intermediate_video_removes_failed_output(
     )
 
     with pytest.raises(RuntimeError, match="encode failed"):
-        _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
+        _export_intermediate_video(
             "input.mp4",
             str(output_file_path),
             duration=1.0,
@@ -76,6 +76,24 @@ def test_build_intermediate_video_removes_failed_output(
             height=720,
             start_time=0.0,
             end_time=1.0,
+            analysis_fps=1.0,
         )
 
     assert not output_file_path.exists()
+
+
+async def test_build_intermediate_video_uses_analysis_fps(
+    short_video_file_path: Path,
+    tmp_path: Path,
+) -> None:
+    output_file_path = await build_intermediate_video(
+        str(short_video_file_path),
+        str(tmp_path / "optimized_video"),
+        analysis_fps=2.0,
+        keep_larger=True,
+    )
+
+    assert output_file_path is not None
+    metadata = await read_video_metadata(output_file_path)
+    assert metadata.fps == pytest.approx(2.0)
+    assert metadata.total_frames == 26

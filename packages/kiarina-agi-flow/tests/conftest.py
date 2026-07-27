@@ -244,6 +244,7 @@ def video_file_info(video_file_path: str) -> FileInfo:
         ),
         width=1600,
         height=900,
+        fps=24.0,
         duration=13.0,
     )
 

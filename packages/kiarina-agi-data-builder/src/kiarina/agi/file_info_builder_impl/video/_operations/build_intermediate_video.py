@@ -34,6 +34,8 @@ async def build_intermediate_video(
     *,
     start_time: float = 0.0,
     end_time: float = -1.0,
+    analysis_fps: float = 1.0,
+    keep_larger: bool = False,
 ) -> OutputFilePath | None:
     metadata = await read_video_metadata(input_file_path)
     start_time = normalize_time(start_time, metadata.duration)
@@ -41,6 +43,8 @@ async def build_intermediate_video(
 
     if start_time >= end_time:
         raise ValueError("start_time must be earlier than end_time")
+    if analysis_fps <= 0:
+        raise ValueError("analysis_fps must be greater than 0")
 
     return await asyncio.to_thread(
         _build_intermediate_video,
@@ -51,6 +55,8 @@ async def build_intermediate_video(
         height=metadata.height,
         start_time=start_time,
         end_time=end_time,
+        analysis_fps=analysis_fps,
+        keep_larger=keep_larger,
     )
 
 
@@ -63,16 +69,22 @@ def _build_intermediate_video(
     height: int,
     start_time: float = 0.0,
     end_time: float = -1.0,
+    analysis_fps: float = 1.0,
+    keep_larger: bool = False,
 ) -> OutputFilePath | None:
     output_file_path = _get_output_file_path(
-        output_base_path, start_time, end_time, duration
+        output_base_path,
+        start_time,
+        end_time,
+        duration,
+        analysis_fps,
     )
 
     if os.path.exists(output_file_path):
         return output_file_path
 
     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
-    _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
+    _export_intermediate_video(
         input_file_path,
         output_file_path,
         duration=duration,
@@ -80,9 +92,10 @@ def _build_intermediate_video(
         height=height,
         start_time=start_time,
         end_time=end_time,
+        analysis_fps=analysis_fps,
     )
 
-    if not _is_optimized(input_file_path, output_file_path):
+    if not keep_larger and not _is_optimized(input_file_path, output_file_path):
         os.remove(output_file_path)
         return None
 
@@ -94,18 +107,21 @@ def _get_output_file_path(
     start_time: float,
     end_time: float,
     duration: float,
+    analysis_fps: float,
 ) -> OutputFilePath:
+    fps_suffix = "" if analysis_fps == 1.0 else f"_fps_{analysis_fps:g}"
+
     if start_time != 0.0 or end_time != duration:
-        return f"{output_base_path}_{start_time:.1f}_{end_time:.1f}.mp4"
+        return f"{output_base_path}_{start_time:.1f}_{end_time:.1f}{fps_suffix}.mp4"
     else:
-        return f"{output_base_path}.mp4"
+        return f"{output_base_path}{fps_suffix}.mp4"
 
 
 def _should_clip(start_time: float, end_time: float, duration: float) -> bool:
     return start_time > 0.0 or end_time < duration
 
 
-def _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
+def _export_intermediate_video(
     input_file_path: str,
     output_file_path: OutputFilePath,
     *,
@@ -114,6 +130,7 @@ def _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
     height: int,
     start_time: float,
     end_time: float,
+    analysis_fps: float,
 ) -> None:
     resized_width, resized_height = _calc_resized_dimensions(width, height)
     command = [
@@ -136,7 +153,7 @@ def _export_1fps_resized_mp3_mono_16kbps_h264_mp4(
             "-map",
             "0:a:0?",
             "-vf",
-            f"fps=1,scale={resized_width}:{resized_height}",
+            f"fps={analysis_fps},scale={resized_width}:{resized_height}",
             "-codec:v",
             CODEC,
             "-pix_fmt",

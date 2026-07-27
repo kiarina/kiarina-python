@@ -37,6 +37,7 @@ def test_model_dump_with_mixed_contents() -> None:
                 "file_path": "audio.mp3",
                 "mime_type": "audio/mpeg",
                 "visibility": "supported",
+                "timestamp": None,
             },
             {
                 "type": "text",

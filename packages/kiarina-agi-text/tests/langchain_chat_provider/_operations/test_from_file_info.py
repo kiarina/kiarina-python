@@ -7,6 +7,7 @@ from kiarina.agi.content import Content
 from kiarina.agi.file_info import (
     AudioFileInfo,
     FileInfo,
+    FileType,
     ImageFileInfo,
     OtherFileInfo,
     PDFFileInfo,
@@ -94,6 +95,58 @@ def bundle_blob() -> FileBlob:
 
     return FileBlob(
         "bundle.zip",
+        mime_type=FileBundle.MIME_TYPE,
+        raw_data=bundle.to_bytes(),
+    )
+
+
+@pytest.fixture
+def video_bundle_blob() -> FileBlob:
+    from kiarina.agi.file_bundle import (
+        FileBundle,
+        FileBundleMediaContent,
+        FileBundleTextContent,
+    )
+
+    bundle = FileBundle.create(
+        [
+            FileBundleMediaContent(
+                type="video",
+                file_path="video.mp4",
+                mime_type="video/mp4",
+                visibility="supported",
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="frames/000000.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                timestamp=0.0,
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="frames/000001.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                timestamp=1.0,
+            ),
+            FileBundleTextContent(
+                text="<transcript>speech</transcript>",
+                visibility="unsupported",
+            ),
+            FileBundleTextContent(
+                text="<ambient>music</ambient>",
+                visibility="unsupported",
+            ),
+        ],
+        files={
+            "video.mp4": b"video-data",
+            "frames/000000.jpg": b"frame-0",
+            "frames/000001.jpg": b"frame-1",
+        },
+    )
+    return FileBlob(
+        "video_bundle.zip",
         mime_type=FileBundle.MIME_TYPE,
         raw_data=bundle.to_bytes(),
     )
@@ -222,6 +275,67 @@ async def test_zip_bundle_extends_multiple_media_items(
             "mime_type": "image/jpeg",
         },
     ]
+
+
+@pytest.mark.parametrize(
+    "input_enabled,expected_media_dicts",
+    [
+        pytest.param(
+            {},
+            [
+                {"type": "text", "text": "<transcript>speech</transcript>"},
+                {"type": "text", "text": "<ambient>music</ambient>"},
+            ],
+            id="llm",
+        ),
+        pytest.param(
+            {"image": True},
+            [
+                {"type": "text", "text": '<image timestamp="0.000" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": '<image timestamp="1.000" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": "<transcript>speech</transcript>"},
+                {"type": "text", "text": "<ambient>music</ambient>"},
+            ],
+            id="vlm",
+        ),
+        pytest.param(
+            {"image": True, "audio": True, "video": True},
+            [{"type": "video", "mime_type": "video/mp4"}],
+            id="omni",
+        ),
+    ],
+)
+async def test_video_bundle_capability_fallback(
+    input_enabled: dict[FileType, bool],
+    expected_media_dicts: list[dict[str, str]],
+    video_file_info: VideoFileInfo,
+    video_bundle_blob: FileBlob,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    video_file_info.asset_uri = "asset://video_bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        return video_bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+
+    result = await from_file_info(
+        video_file_info,
+        capabilities=ChatCapabilities(input_enabled=input_enabled),
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.media_dicts == expected_media_dicts
 
 
 async def test_unsupported(

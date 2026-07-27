@@ -448,6 +448,7 @@ class FileBundleMediaContentSpec(TypedDict):
     file_path: FileBundleFilePath
     mime_type: str
     visibility: NotRequired[FileBundleContentVisibility]
+    timestamp: NotRequired[float | None]
 
 class FileBundleTextContent:
     type: Literal["text"] = "text"
@@ -459,6 +460,7 @@ class FileBundleMediaContent:
     file_path: FileBundleFilePath
     mime_type: str
     visibility: FileBundleContentVisibility = "always"
+    timestamp: float | None = None
 
 class FileBundleManifest:
     FILE_NAME: ClassVar[str] = "manifest.json"
@@ -622,10 +624,22 @@ class AudioFileInfo(BaseFileInfo):
     @property
     def segment_duration(self) -> float: ...
 
-class VideoFileInfo(AudioFileInfo):
+class VideoFileInfo(BaseFileInfo):
     type: Literal["video"] = "video"
+    start_time: float = 0.0
+    end_time: float = -1.0
     width: int
     height: int
+    fps: float
+    analysis_fps: float = 1.0
+    duration: float
+
+    @property
+    def normalized_start_time(self) -> float: ...
+    @property
+    def normalized_end_time(self) -> float: ...
+    @property
+    def segment_duration(self) -> float: ...
 
 class PDFFileInfo(BaseFileInfo):
     type: Literal["pdf"] = "pdf"
