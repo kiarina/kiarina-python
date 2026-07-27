@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **kiarina-agi-text**: Support OpenAI tiered pricing and prompt cache write costs in cost records.
+- **kiarina-agi-data**: Omit unset optional values from serialized file bundle manifests.
 
 ## [2.18.0] - 2026-07-26
 

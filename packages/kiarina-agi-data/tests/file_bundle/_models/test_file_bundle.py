@@ -86,7 +86,7 @@ def test_to_bytes_writes_manifest_json_entry(sample_bundle: FileBundle) -> None:
         assert "audio.mp3" in names
 
         manifest_dict = json.loads(zip_file.read("manifest.json").decode("utf-8"))
-        assert manifest_dict == sample_bundle.manifest.model_dump()
+        assert manifest_dict == sample_bundle.manifest.model_dump(exclude_none=True)
 
 
 def test_to_bytes_rejects_missing_referenced_file() -> None:

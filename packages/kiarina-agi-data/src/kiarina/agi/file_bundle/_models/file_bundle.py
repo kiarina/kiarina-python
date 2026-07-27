@@ -25,7 +25,7 @@ class FileBundle:
         with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED) as zip_file:
             zip_file.writestr(
                 FileBundleManifest.FILE_NAME,
-                self.manifest.model_dump_json(),
+                self.manifest.model_dump_json(exclude_none=True),
             )
 
             for content in self.manifest.contents:

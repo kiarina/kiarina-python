@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add analysis resolution to PDF file metadata.
 - Add optional prefix text to file bundle media contents.
 
+### Fixed
+
+- Omit unset optional values from serialized file bundle manifests.
+
 ## [2.7.0] - 2026-07-06
 
 ### Changed
