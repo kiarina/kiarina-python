@@ -10,4 +10,4 @@ class FileBundleMediaContentSpec(TypedDict):
     file_path: FileBundleFilePath
     mime_type: str
     visibility: NotRequired[FileBundleContentVisibility]
-    timestamp: NotRequired[float | None]
+    prefix_text: NotRequired[str | None]

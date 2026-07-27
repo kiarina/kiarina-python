@@ -14,6 +14,12 @@ class PDFFileInfo(BaseFileInfo):
     start_page: int = 1
     end_page: int = -1
     page_count: int
+    analysis_dpi: int = Field(
+        default=144,
+        gt=0,
+        title="Analysis DPI",
+        description="Resolution used to render PDF pages for analysis.",
+    )
 
     @property
     def xml_attributes(self) -> dict[str, Any]:
@@ -29,7 +35,12 @@ class PDFFileInfo(BaseFileInfo):
 
     @property
     def optional_export_fields(self) -> tuple[str, ...]:
-        return (*super().optional_export_fields, "start_page", "end_page")
+        return (
+            *super().optional_export_fields,
+            "start_page",
+            "end_page",
+            "analysis_dpi",
+        )
 
     @property
     def normalized_start_page(self) -> int:

@@ -163,13 +163,11 @@ def _from_file_bundle(
             raise AssertionError(f"Unsupported content type in bundle: {content.type}")
 
         if media_dict:
-            if content.timestamp is not None:
+            if content.prefix_text:
                 media_dicts.append(
                     {
                         "type": "text",
-                        "text": (
-                            f'<{content.type} timestamp="{content.timestamp:.3f}" />'
-                        ),
+                        "text": content.prefix_text,
                     }
                 )
             media_dicts.append(media_dict)

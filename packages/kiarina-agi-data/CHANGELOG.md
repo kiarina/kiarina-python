@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add source and analysis frame rates to video file metadata.
-- Add optional timestamps to file bundle media contents.
+- Add analysis resolution to PDF file metadata.
+- Add optional prefix text to file bundle media contents.
 
 ## [2.7.0] - 2026-07-06
 

@@ -17,7 +17,7 @@ def test_model_dump() -> None:
         "file_path": "audio.mp3",
         "mime_type": "audio/mpeg",
         "visibility": "supported",
-        "timestamp": None,
+        "prefix_text": None,
     }
 
 
@@ -35,19 +35,19 @@ def test_model_validate() -> None:
     assert content.file_path == "image.png"
     assert content.mime_type == "image/png"
     assert content.visibility == "always"
-    assert content.timestamp is None
+    assert content.prefix_text is None
 
 
-def test_accepts_timestamp() -> None:
+def test_accepts_prefix_text() -> None:
     content = FileBundleMediaContent(
         type="image",
         file_path="frames/000001.jpg",
         mime_type="image/jpeg",
         visibility="unsupported",
-        timestamp=1.25,
+        prefix_text='<image timestamp="1.250" />',
     )
 
-    assert content.timestamp == 1.25
+    assert content.prefix_text == '<image timestamp="1.250" />'
 
 
 def test_default_visibility_is_always() -> None:

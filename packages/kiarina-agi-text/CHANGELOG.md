@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add timestamp markers for supported file bundle media in chat messages.
+- Add prefix text for converted file bundle media in chat messages.
 
 ### Fixed
 - Support OpenAI tiered pricing and prompt cache write costs in cost records.

@@ -27,7 +27,7 @@ from .build_intermediate_video import build_intermediate_video
 from .extract_audio_track import extract_audio_track
 from .read_video_metadata import read_video_metadata
 
-BUNDLE_VERSION = 1
+BUNDLE_VERSION = 2
 
 
 async def build_analysis_enabled(

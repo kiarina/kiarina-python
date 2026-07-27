@@ -32,8 +32,9 @@
 | Package | Extras |
 | --- | --- |
 | imageio-ffmpeg | `file-info-builder-audio`<br>`file-info-builder-video` |
-| Pillow | `file-info-builder-image`<br>`file-info-builder-video` |
+| Pillow | `file-info-builder-image`<br>`file-info-builder-pdf`<br>`file-info-builder-video` |
 | pypdf | `file-info-builder-pdf` |
+| pypdfium2 | `file-info-builder-pdf` |
 | soundfile | `file-info-builder-audio` |
 
 `all` Extra は、上記の optional dependency をすべてインストールします。
@@ -45,6 +46,38 @@ pip install "kiarina-agi-data-builder[all]"
 ```
 
 ## Features
+
+### Capability-aware PDF fallback
+
+PDF analysis bundle は、chat model の capabilities に応じて content を選択します。
+
+| Capabilities | Content |
+| --- | --- |
+| Text only | PDFから抽出したテキスト |
+| Image | ページ番号付きページ画像とPDFから抽出したテキスト |
+| PDF | 元PDFまたは選択したページsegment |
+
+PDF file specification の `analysis_dpi` で、fallbackページ画像の解像度を指定できます。
+
+```python
+from kiarina.agi.file_info_builder_impl.pdf import create_pdf_file_info_builder
+from kiarina.agi.run_context import RunContext
+from kiarina.utils.file.asyncio import read_file
+
+
+async def build_pdf_info():
+    file_blob = await read_file("/path/to/document.pdf")
+    assert file_blob is not None
+    builder = create_pdf_file_info_builder(analysis_enabled=True)
+    return await builder.build(
+        {
+            "uri_or_file_path": file_blob.file_path,
+            "analysis_dpi": 144,
+        },
+        file_blob,
+        run_context=RunContext(),
+    )
+```
 
 ### Capability-aware video fallback
 
@@ -84,6 +117,49 @@ async def build_video_info():
 ```
 
 ## API Reference
+
+### `kiarina.agi.file_info_builder_impl.pdf`
+
+```python
+from kiarina.agi.file_info_builder_impl.pdf import (
+    PDFFileInfoBuilder,
+    PDFFileInfoBuilderSettings,
+    create_pdf_file_info_builder,
+    settings_manager,
+)
+```
+
+#### `create_pdf_file_info_builder`
+
+```python
+def create_pdf_file_info_builder(**kwargs: Any) -> PDFFileInfoBuilder: ...
+```
+
+管理された settings と任意の override から PDF file info builder を作成します。
+
+#### `PDFFileInfoBuilder`
+
+```python
+class PDFFileInfoBuilder(BaseFileInfoBuilder):
+    def __init__(self, settings: PDFFileInfoBuilderSettings) -> None: ...
+
+    async def build(
+        self,
+        file_info_spec: FileInfoSpec,
+        file_blob: FileBlob,
+        *,
+        run_context: RunContext,
+    ) -> BuildResult: ...
+```
+
+#### `PDFFileInfoBuilderSettings`
+
+```python
+class PDFFileInfoBuilderSettings(BaseSettings):
+    analysis_enabled: bool = False
+```
+
+`settings_manager` は、factory が使用する `SettingsManager[PDFFileInfoBuilderSettings]` instance です。
 
 ### `kiarina.agi.file_info_builder_impl.video`
 

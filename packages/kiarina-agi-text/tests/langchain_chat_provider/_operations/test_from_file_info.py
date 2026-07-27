@@ -121,14 +121,14 @@ def video_bundle_blob() -> FileBlob:
                 file_path="frames/000000.jpg",
                 mime_type="image/jpeg",
                 visibility="unsupported",
-                timestamp=0.0,
+                prefix_text='<image timestamp="0.000" />',
             ),
             FileBundleMediaContent(
                 type="image",
                 file_path="frames/000001.jpg",
                 mime_type="image/jpeg",
                 visibility="unsupported",
-                timestamp=1.0,
+                prefix_text='<image timestamp="1.000" />',
             ),
             FileBundleTextContent(
                 text="<transcript>speech</transcript>",
@@ -147,6 +147,54 @@ def video_bundle_blob() -> FileBlob:
     )
     return FileBlob(
         "video_bundle.zip",
+        mime_type=FileBundle.MIME_TYPE,
+        raw_data=bundle.to_bytes(),
+    )
+
+
+@pytest.fixture
+def pdf_bundle_blob() -> FileBlob:
+    from kiarina.agi.file_bundle import (
+        FileBundle,
+        FileBundleMediaContent,
+        FileBundleTextContent,
+    )
+
+    bundle = FileBundle.create(
+        [
+            FileBundleMediaContent(
+                type="pdf",
+                file_path="document.pdf",
+                mime_type="application/pdf",
+                visibility="supported",
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="pages/page_0005.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                prefix_text='<image page_number="5" />',
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="pages/page_0006.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                prefix_text='<image page_number="6" />',
+            ),
+            FileBundleTextContent(
+                text="extracted PDF text",
+                visibility="unsupported",
+            ),
+        ],
+        files={
+            "document.pdf": b"pdf-data",
+            "pages/page_0005.jpg": b"page-5",
+            "pages/page_0006.jpg": b"page-6",
+        },
+    )
+    return FileBlob(
+        "pdf_bundle.zip",
         mime_type=FileBundle.MIME_TYPE,
         raw_data=bundle.to_bytes(),
     )
@@ -336,6 +384,99 @@ async def test_video_bundle_capability_fallback(
     )
 
     assert result.media_dicts == expected_media_dicts
+
+
+@pytest.mark.parametrize(
+    "input_enabled,expected_media_dicts",
+    [
+        pytest.param(
+            {},
+            [{"type": "text", "text": "extracted PDF text"}],
+            id="llm",
+        ),
+        pytest.param(
+            {"image": True},
+            [
+                {"type": "text", "text": '<image page_number="5" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": '<image page_number="6" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": "extracted PDF text"},
+            ],
+            id="vlm",
+        ),
+        pytest.param(
+            {"image": True, "pdf": True},
+            [
+                {
+                    "type": "pdf",
+                    "mime_type": "application/pdf",
+                    "display_name": "document.pdf",
+                }
+            ],
+            id="pdf",
+        ),
+    ],
+)
+async def test_pdf_bundle_capability_fallback(
+    input_enabled: dict[FileType, bool],
+    expected_media_dicts: list[dict[str, str]],
+    pdf_file_info: PDFFileInfo,
+    pdf_bundle_blob: FileBlob,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pdf_file_info.asset_uri = "asset://pdf_bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        return pdf_bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+
+    result = await from_file_info(
+        pdf_file_info,
+        capabilities=ChatCapabilities(input_enabled=input_enabled),
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.media_dicts == expected_media_dicts
+
+
+async def test_page_marker_is_omitted_when_image_conversion_fails(
+    pdf_file_info: PDFFileInfo,
+    pdf_bundle_blob: FileBlob,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pdf_file_info.asset_uri = "asset://pdf_bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        return pdf_bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+    monkeypatch.setattr(media_converter, "to_image_content", lambda mime_blob: None)
+
+    result = await from_file_info(
+        pdf_file_info,
+        capabilities=ChatCapabilities(input_enabled={"image": True}),
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.media_dicts == [{"type": "text", "text": "extracted PDF text"}]
 
 
 async def test_unsupported(

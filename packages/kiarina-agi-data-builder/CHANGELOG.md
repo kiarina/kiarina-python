@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add capability-aware video analysis bundles with video, timestamped frames, transcripts, and ambient events.
+- Add capability-aware PDF analysis bundles with PDF documents, page images, and extracted text.
 
 ## [2.15.0] - 2026-07-14
 

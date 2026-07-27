@@ -31,7 +31,7 @@ async def build_frame_bundle(
                     file_path=file_path,
                     mime_type="image/jpeg",
                     visibility="unsupported",
-                    timestamp=frame.timestamp,
+                    prefix_text=f'<image timestamp="{frame.timestamp:.3f}" />',
                 )
             )
             files[file_path] = encode_video_frame_jpeg(frame.pixels)

@@ -448,7 +448,7 @@ class FileBundleMediaContentSpec(TypedDict):
     file_path: FileBundleFilePath
     mime_type: str
     visibility: NotRequired[FileBundleContentVisibility]
-    timestamp: NotRequired[float | None]
+    prefix_text: NotRequired[str | None]
 
 class FileBundleTextContent:
     type: Literal["text"] = "text"
@@ -460,7 +460,7 @@ class FileBundleMediaContent:
     file_path: FileBundleFilePath
     mime_type: str
     visibility: FileBundleContentVisibility = "always"
-    timestamp: float | None = None
+    prefix_text: str | None = None
 
 class FileBundleManifest:
     FILE_NAME: ClassVar[str] = "manifest.json"
@@ -646,6 +646,7 @@ class PDFFileInfo(BaseFileInfo):
     start_page: int = 1
     end_page: int = -1
     page_count: int
+    analysis_dpi: int = 144
 
     @property
     def normalized_start_page(self) -> int: ...

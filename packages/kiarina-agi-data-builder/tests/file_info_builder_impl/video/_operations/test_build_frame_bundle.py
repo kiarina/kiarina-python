@@ -22,8 +22,8 @@ async def test_build_frame_bundle(short_video_file_path: Path) -> None:
     assert isinstance(last, FileBundleMediaContent)
     assert first.type == "image"
     assert first.visibility == "unsupported"
-    assert first.timestamp == 0.0
-    assert last.timestamp == 12.0
+    assert first.prefix_text == '<image timestamp="0.000" />'
+    assert last.prefix_text == '<image timestamp="12.000" />'
 
     image_path = first.file_path
     image = Image.open(__import__("io").BytesIO(bundle.files[image_path]))

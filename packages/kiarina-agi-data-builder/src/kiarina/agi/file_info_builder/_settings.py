@@ -37,7 +37,7 @@ class FileBuilderSettings(BaseSettings):
                 "audio": "kiarina.agi.file_info_builder_impl.audio:create_audio_file_info_builder",
                 "image": "kiarina.agi.file_info_builder_impl.image:ImageFileInfoBuilder",
                 "other": "kiarina.agi.file_info_builder_impl.other:OtherFileInfoBuilder",
-                "pdf": "kiarina.agi.file_info_builder_impl.pdf:PDFFileInfoBuilder",
+                "pdf": "kiarina.agi.file_info_builder_impl.pdf:create_pdf_file_info_builder",
                 "text": "kiarina.agi.file_info_builder_impl.text:TextFileInfoBuilder",
                 "video": "kiarina.agi.file_info_builder_impl.video:create_video_file_info_builder",
             },

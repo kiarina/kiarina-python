@@ -36,3 +36,4 @@ class FileInfoSpec(TypedDict):
     # pdf
     start_page: NotRequired[int]
     end_page: NotRequired[int]
+    analysis_dpi: NotRequired[int]

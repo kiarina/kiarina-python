@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .._types.file_bundle_content_visibility import FileBundleContentVisibility
 from .._types.file_bundle_file_path import FileBundleFilePath
@@ -10,4 +10,8 @@ class FileBundleMediaContent(BaseModel):
     file_path: FileBundleFilePath
     mime_type: str
     visibility: FileBundleContentVisibility = "always"
-    timestamp: float | None = None
+    prefix_text: str | None = Field(
+        default=None,
+        title="Prefix Text",
+        description="Text inserted immediately before converted media content.",
+    )
