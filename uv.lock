@@ -29,6 +29,7 @@ members = [
     "kiarina-lib-cloudflare-d1",
     "kiarina-lib-falkordb",
     "kiarina-lib-firebase",
+    "kiarina-lib-firebase-firestore",
     "kiarina-lib-firebase-rtdb",
     "kiarina-lib-google",
     "kiarina-lib-openai",
@@ -1232,6 +1233,7 @@ dependencies = [
     { name = "kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase" },
+    { name = "kiarina-lib-firebase-firestore" },
     { name = "kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google" },
     { name = "kiarina-lib-openai" },
@@ -1279,6 +1281,7 @@ requires-dist = [
     { name = "kiarina-lib-cloudflare-d1", editable = "packages/kiarina-lib-cloudflare-d1" },
     { name = "kiarina-lib-falkordb", editable = "packages/kiarina-lib-falkordb" },
     { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },
+    { name = "kiarina-lib-firebase-firestore", editable = "packages/kiarina-lib-firebase-firestore" },
     { name = "kiarina-lib-firebase-rtdb", editable = "packages/kiarina-lib-firebase-rtdb" },
     { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-openai", editable = "packages/kiarina-lib-openai" },
@@ -2111,6 +2114,39 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "firebase-admin", specifier = ">=6.6.0" },
+    { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
+]
+
+[[package]]
+name = "kiarina-lib-firebase-firestore"
+version = "2.19.0"
+source = { editable = "packages/kiarina-lib-firebase-firestore" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pydantic-settings-manager" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "firebase-admin" },
+    { name = "kiarina-lib-firebase" },
+    { name = "kiarina-lib-google" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "pydantic", specifier = ">=2.10.6" },
+    { name = "pydantic-settings", specifier = ">=2.10.1" },
+    { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "firebase-admin", specifier = ">=6.6.0" },
+    { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },
     { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
 ]
 

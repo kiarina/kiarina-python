@@ -62,6 +62,7 @@ English | [日本語](README.ja.md)
 | [kiarina-lib-cloudflare](packages/kiarina-lib-cloudflare/) | Cloudflare account authentication settings |
 | [kiarina-lib-cloudflare-d1](packages/kiarina-lib-cloudflare-d1/) | Synchronous and asynchronous clients for the Cloudflare D1 REST API |
 | [kiarina-lib-firebase](packages/kiarina-lib-firebase/) | Firebase Authentication token management |
+| [kiarina-lib-firebase-firestore](packages/kiarina-lib-firebase-firestore/) | Read-only REST client for Cloud Firestore |
 | [kiarina-lib-firebase-rtdb](packages/kiarina-lib-firebase-rtdb/) | REST client for Firebase Realtime Database |
 | [kiarina-lib-google](packages/kiarina-lib-google/) | Google Cloud authentication settings and credential management |
 | [kiarina-lib-openai](packages/kiarina-lib-openai/) | OpenAI API connection settings |

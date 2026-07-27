@@ -58,6 +58,9 @@
       "path": "packages/kiarina-lib-firebase"
     },
     {
+      "path": "packages/kiarina-lib-firebase-firestore"
+    },
+    {
       "path": "packages/kiarina-lib-firebase-rtdb"
     },
     {

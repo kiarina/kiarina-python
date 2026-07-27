@@ -62,6 +62,7 @@
 | [kiarina-lib-cloudflare](packages/kiarina-lib-cloudflare/) | Cloudflare account の認証設定 |
 | [kiarina-lib-cloudflare-d1](packages/kiarina-lib-cloudflare-d1/) | Cloudflare D1 REST API の同期・非同期 client |
 | [kiarina-lib-firebase](packages/kiarina-lib-firebase/) | Firebase Authentication の token 管理 |
+| [kiarina-lib-firebase-firestore](packages/kiarina-lib-firebase-firestore/) | Cloud Firestore の読み取り専用 REST client |
 | [kiarina-lib-firebase-rtdb](packages/kiarina-lib-firebase-rtdb/) | Firebase Realtime Database の REST client |
 | [kiarina-lib-google](packages/kiarina-lib-google/) | Google Cloud の認証設定と credentials 管理 |
 | [kiarina-lib-openai](packages/kiarina-lib-openai/) | OpenAI API の接続設定 |
