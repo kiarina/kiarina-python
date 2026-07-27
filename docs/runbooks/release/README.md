@@ -62,11 +62,30 @@ git tag -s v2.2.0 -m "Release v2.2.0"
 git push --tags
 ```
 
+## First Release of a New Package
+
+PyPI publication uses Trusted Publishing (OIDC), which cannot create new PyPI
+projects. Before releasing a new package for the first time, register a
+**pending publisher** at https://pypi.org/manage/account/publishing/ with:
+
+| Field | Value |
+| --- | --- |
+| PyPI Project Name | `<new-package-name>` |
+| Owner | `kiarina` |
+| Repository name | `kiarina-python` |
+| Workflow name | `release-pypi.yml` |
+| Environment name | `pypi` |
+
+If you forget this, the release job fails at the new package's upload with
+`400 Non-user identities cannot create new projects`, after some packages may
+already be uploaded. Register the pending publisher, then re-run the failed
+job — `skip-existing: true` makes the re-run safe (2026-07-28, v2.20.0).
+
 ## Automated Processes
 
-When you push a tag, the `.github/workflows/release.yml` workflow in GitHub Actions automatically executes the following processes:
+When you push a tag, the `.github/workflows/release-pypi.yml` workflow in GitHub Actions automatically executes the following processes:
 
 1. **CI Checks**: Runs lint, test, and build
 2. **GitHub Release**: Automatically creates a GitHub Release with release notes
 3. **Release Build**: Builds only packages whose version matches the tag
-4. **PyPI Publication**: Publishes all release packages in a single operation (if `PYPI_API_TOKEN` is configured)
+4. **PyPI Publication**: Publishes all release packages in a single operation via Trusted Publishing (OIDC)

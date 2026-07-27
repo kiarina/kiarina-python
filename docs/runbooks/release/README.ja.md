@@ -65,11 +65,25 @@ git tag -s v2.2.0 -m "Release v2.2.0"
 git push --tags
 ```
 
+## First Release of a New Package
+
+PyPI 公開は Trusted Publishing（OIDC）を使用しており、新規の PyPI プロジェクトを作成できません。新しいパッケージを初めてリリースする前に、https://pypi.org/manage/account/publishing/ で **pending publisher** を登録してください。
+
+| Field | Value |
+| --- | --- |
+| PyPI Project Name | `<new-package-name>` |
+| Owner | `kiarina` |
+| Repository name | `kiarina-python` |
+| Workflow name | `release-pypi.yml` |
+| Environment name | `pypi` |
+
+登録を忘れると、release job は新パッケージのアップロード時点で `400 Non-user identities cannot create new projects` で失敗し、一部のパッケージだけがアップロード済みの状態になることがあります。pending publisher を登録してから失敗した job を再実行してください。`skip-existing: true` により再実行は安全です（2026-07-28、v2.20.0 で発生）。
+
 ## Automated Processes
 
-タグを push すると、GitHub Actions の `.github/workflows/release.yml` workflow が次のプロセスを自動実行します。
+タグを push すると、GitHub Actions の `.github/workflows/release-pypi.yml` workflow が次のプロセスを自動実行します。
 
 1. **CI Checks**: lint、test、build を実行します
 2. **GitHub Release**: release notes 付きの GitHub Release を自動作成します
 3. **Release Build**: tag とversionが一致するパッケージだけをbuildします
-4. **PyPI Publication**: すべてのリリース対象パッケージを一度の処理で公開します（`PYPI_API_TOKEN` が設定されている場合）
+4. **PyPI Publication**: すべてのリリース対象パッケージを Trusted Publishing（OIDC）で一度の処理で公開します
