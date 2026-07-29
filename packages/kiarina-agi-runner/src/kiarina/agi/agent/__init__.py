@@ -5,6 +5,8 @@ from ._helpers.stream_agent import stream_agent
 from ._instances.agent_registry import agent_registry
 from ._models.base_agent import BaseAgent
 from ._schemas.agent_context import AgentContext
+from ._schemas.remote_workflow_request import RemoteWorkflowRequest
+from ._schemas.remote_workflow_result import RemoteWorkflowResult
 from ._settings import AgentSettings, settings_manager
 from ._types.agent import Agent
 from ._types.agent_name import AgentName
@@ -22,6 +24,8 @@ __all__ = [
     "BaseAgent",
     # ._schemas
     "AgentContext",
+    "RemoteWorkflowRequest",
+    "RemoteWorkflowResult",
     # ._instances
     "agent_registry",
     # ._settings

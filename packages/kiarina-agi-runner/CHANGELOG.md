@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add transport-neutral `RemoteWorkflowRequest` and `RemoteWorkflowResult` models for Agent workflow delegation.
+
 ## [2.14.0] - 2026-07-10
 
 ### Added
