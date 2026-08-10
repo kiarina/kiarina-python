@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.21.1] - 2026-08-10
+
+### Changed
+- **kiarina-agi-data-builder, kiarina-agi-image**: Require Pillow 12.3.0 or later for security fixes.
+
 ## [2.21.0] - 2026-07-29
 
 ### Added

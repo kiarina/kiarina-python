@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-data-builder"
-version = "2.19.0"
+version = "2.21.1"
 description = "Data building utilities for AI agents"
 readme = "README.md"
 license = "MIT"
@@ -38,7 +38,7 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "imageio-ffmpeg>=0.6.0,<1",
-    "pillow>=11.3.0,<12",
+    "pillow>=12.3.0,<13",
     "pypdf>=6.7.4,<7",
     "pypdfium2>=5.12.1,<6",
     "soundfile>=0.13.1,<1",
@@ -47,15 +47,15 @@ file-info-builder-audio = [
     "imageio-ffmpeg>=0.6.0,<1",
     "soundfile>=0.13.1,<1",
 ]
-file-info-builder-image = ["pillow>=11.3.0,<12"]
+file-info-builder-image = ["pillow>=12.3.0,<13"]
 file-info-builder-pdf = [
-    "pillow>=11.3.0,<12",
+    "pillow>=12.3.0,<13",
     "pypdf>=6.7.4,<7",
     "pypdfium2>=5.12.1,<6",
 ]
 file-info-builder-video = [
     "imageio-ffmpeg>=0.6.0,<1",
-    "pillow>=11.3.0,<12",
+    "pillow>=12.3.0,<13",
 ]
 
 [project.urls]
