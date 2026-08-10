@@ -19,14 +19,4 @@ async def read_yaml_list(
 async def read_yaml_list(
     file_path: str | os.PathLike[str], *, default: list[Any] | None = None
 ) -> list[Any] | None:
-    """
-    Read YAML list file asynchronously
-
-    Args:
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (list[Any] | None): Default value to return if the file does not exist
-
-    Returns:
-        list[Any] | None: File content. Returns default if the file does not exist
-    """
     return await _read_yaml_list("async", file_path, default=default)

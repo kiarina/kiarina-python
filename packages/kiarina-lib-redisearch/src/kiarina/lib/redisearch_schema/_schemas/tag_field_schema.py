@@ -7,36 +7,41 @@ from .base_field_schema import BaseFieldSchema
 
 
 class TagFieldSchema(BaseFieldSchema):
-    """
-    Schema for tag fields
-    """
+    """Schema for a tag field."""
 
-    type: Literal["tag"] = "tag"
-
-    separator: str = ","
-    """Tag separator"""
-
-    case_sensitive: bool = False
-    """Flag to indicate if case sensitivity is enabled"""
-
-    no_index: bool = False
-    """Flag to prevent index creation"""
-
-    sortable: bool | None = False
-    """Flag to indicate if the field is sortable"""
-
-    multiple: bool = Field(False, exclude=True)
-    """
-    Flag to indicate if multiple tags are allowed
-
-    This field is not a feature of Redisearch and is only used within this library.
-    Therefore, it does not affect the migration.
-    """
+    type: Literal["tag"] = Field(
+        default="tag",
+        title="Field Type",
+        description="RediSearch field type.",
+    )
+    separator: str = Field(
+        default=",",
+        title="Separator",
+        description="Character used to separate tags.",
+    )
+    case_sensitive: bool = Field(
+        default=False,
+        title="Case Sensitive",
+        description="Preserve case when indexing and matching tags.",
+    )
+    no_index: bool = Field(
+        default=False,
+        title="Exclude from Index",
+        description="Store the field without indexing it.",
+    )
+    sortable: bool | None = Field(
+        default=False,
+        title="Sortable",
+        description="Allow results to be sorted by this field.",
+    )
+    multiple: bool = Field(
+        default=False,
+        exclude=True,
+        title="Multiple Values",
+        description="Decode stored values as multiple tags.",
+    )
 
     def to_field(self) -> TagField:
-        """
-        Convert the field schema to a Redisearch field
-        """
         return TagField(
             self.name,
             separator=self.separator,

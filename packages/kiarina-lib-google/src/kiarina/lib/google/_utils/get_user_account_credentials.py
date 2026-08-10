@@ -1,8 +1,8 @@
 import json
 import os
 
-from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 
 from .._types.credentials_cache import CredentialsCache
 

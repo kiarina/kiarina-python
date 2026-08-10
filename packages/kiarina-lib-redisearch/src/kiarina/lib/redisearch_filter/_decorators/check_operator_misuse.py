@@ -1,11 +1,9 @@
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable
+from typing import Any
 
 
 def check_operator_misuse(func: Callable[..., Any]) -> Callable[..., Any]:
-    """
-    Decorator to check misuse of the equality operator
-    """
 
     @wraps(func)
     def wrapper(instance: Any, *args: Any, **kwargs: Any) -> Any:

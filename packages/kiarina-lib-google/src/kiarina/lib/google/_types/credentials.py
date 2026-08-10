@@ -11,3 +11,4 @@ Credentials: TypeAlias = (
     | google.oauth2.credentials.Credentials
     | impersonated_credentials.Credentials
 )
+"""Google credential types returned by this package."""

@@ -22,6 +22,7 @@ def __getattr__(name: str) -> object:
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
     module_map = {
+        # ._settings
         "AnthropicSettings": "._settings",
         "settings_manager": "._settings",
     }

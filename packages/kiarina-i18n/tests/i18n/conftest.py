@@ -1,10 +1,15 @@
+from collections.abc import Iterator
+from typing import TypeAlias
+
 import pytest
 
 from kiarina.i18n import catalog, settings_manager
 
+CatalogData: TypeAlias = dict[str, dict[str, dict[str, str]]]
+
 
 @pytest.fixture(autouse=True)
-def clear_i18n_caches():
+def clear_i18n_caches() -> Iterator[None]:
     """Clear i18n caches and settings before and after each test."""
     catalog.clear()
 
@@ -16,7 +21,7 @@ def clear_i18n_caches():
 
 
 @pytest.fixture
-def sample_catalog():
+def sample_catalog() -> CatalogData:
     """Sample translation catalog for testing."""
     return {
         "en": {

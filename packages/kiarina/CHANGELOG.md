@@ -7,6 +7,175 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.21.0] - 2026-07-29
+
+### Added
+- Add remote Agent workflow request and result contracts through `kiarina-agi-runner`.
+
+## [2.20.0] - 2026-07-28
+
+### Added
+- **kiarina-lib-firebase-firestore**: Add read-only Cloud Firestore REST client with Firebase ID token authentication.
+
+## [2.19.0] - 2026-07-27
+
+### Added
+- **kiarina-agi-data, kiarina-agi-data-builder, kiarina-agi-text**: Add capability-aware video and PDF analysis bundles with model-specific fallbacks.
+
+### Fixed
+- **kiarina-agi-text**: Support OpenAI tiered pricing and prompt cache write costs in cost records.
+- **kiarina-agi-data**: Omit unset optional values from serialized file bundle manifests.
+
+## [2.18.0] - 2026-07-26
+
+### Changed
+- **kiarina-utils-common**: Allow runtime-checkable protocol classes to be passed to `ComponentRegistry` as `expected_type` without static type errors.
+
+## [2.17.0] - 2026-07-26
+
+### Changed
+- **kiarina-agi-text**: Update chat model presets and aliases for current OpenAI, Anthropic, and Google models.
+- **kiarina-agi-image, kiarina-agi-tool, kiarina-lib-redisearch, kiarina-utils-file**: Update type annotations for the latest Ruff and mypy releases.
+
+### Fixed
+- **kiarina-agi-text**: Omit the deprecated `temperature` parameter from Claude 5 requests.
+
+## [2.16.0] - 2026-07-19
+
+### Added
+- **kiarina**: Add the `all` extra that installs every bundled package with its own `all` extra enabled.
+- **kiarina-agi-file**: Add the `all` extra that installs every optional dependency.
+
+## [2.15.0] - 2026-07-14
+
+### Added
+- **kiarina-agi-image**: Add kiapi image generation with Flux2, Qwen, and ERNIE families.
+- **kiarina-agi-image**: Add image segmentation APIs, BiRefNet ONNX and mock providers, and a background removal helper.
+- **kiarina-agi-image**: Add OCR APIs with RapidOCR and mock providers.
+- **kiarina-agi-video**: Add a kiapi video generation provider with the LTX-2 family.
+
+### Changed
+- **kiarina-agi-data-builder, kiarina-agi-video**: Replace MoviePy with direct FFmpeg processing through imageio-ffmpeg.
+- **kiarina-agi-audio**: Replace pydub and ffprobe-dependent TTS audio processing with direct FFmpeg processing through imageio-ffmpeg.
+
+## [2.14.0] - 2026-07-10
+
+### Added
+- **kiarina-agi-runner**: Add the runner package to the meta-package dependencies.
+
+## [2.13.0] - 2026-07-10
+
+### Added
+- **kiarina-agi-data-builder**: Add the data builder package to the meta-package dependencies.
+
+## [2.12.0] - 2026-07-10
+
+### Added
+- **kiarina-agi-tool**: Add the tool package to the meta-package dependencies.
+
+## [2.11.0] - 2026-07-09
+
+### Added
+- **kiarina-agi-flow**: Add the flow package to the meta-package dependencies.
+
+## [2.10.0] - 2026-07-09
+
+### Added
+- **kiarina-agi-video**: Add video sources and video generation APIs for AI agents.
+
+### Changed
+- **kiarina-agi-video**: Remove the OpenAI video generation provider.
+
+## [2.9.0] - 2026-07-09
+
+### Added
+- **kiarina-agi-audio**: Add audio sources, speech, tagging, embeddings, and voice activity APIs for AI agents.
+
+### Changed
+- **kiarina-agi-audio**: Mark model download tests explicitly, skip them on GitHub Actions, and document pytest marker usage.
+- **kiarina-agi-image**: Mark local model download tests explicitly and skip them on GitHub Actions.
+
+### Fixed
+- **kiarina-agi-audio**: Add the Python 3.13 `audioop` compatibility dependency for TTS providers.
+- **kiarina-agi-audio**: Skip microphone source tests when PortAudio is unavailable.
+- **kiarina-agi-audio**: Avoid external credentials and missing CI assets in audio provider tests.
+
+## [2.8.0] - 2026-07-08
+
+### Added
+- **kiarina-lib-google**: Add `get_cloud_options` helper for dynamic Google Cloud client configuration
+
+### Changed
+- **kiarina-agi-file**: Update `GCSAssetRepository` to use `get_cloud_options`
+- **kiarina-agi-text**: Update `LCAnthropicVertexChatProvider` to use `get_cloud_options`
+- **kiarina-agi-image**: Add concrete type annotations to package tests and remove mypy suppressions.
+- **kiarina-agi-image**: Add explicit costly image test shortcuts and VS Code pytest settings.
+- **kiarina-lib-google, kiarina-agi-image, kiarina-agi-text**: Centralize Google Gen AI client options in `kiarina-lib-google` and remove provider-local backend settings.
+
+## [2.7.0] - 2026-07-06
+
+### Added
+- **kiarina-agi-text**: Add chat, logging, and text embedding APIs for AI agents.
+
+### Changed
+- **kiarina-agi-base**: Default run context identifiers to `default` and add an option to require explicit identifiers.
+- **kiarina-agi-data**: Replace broad `Any` annotations in package tests with concrete types.
+- **kiarina-agi-text**: Add an `all` extra and consolidate optional dependency documentation.
+- **kiarina-agi-text**: Add concrete type annotations to package tests and remove file-wide mypy suppressions.
+- **kiarina-agi-text**: Add the GPT-5.5 chat model preset and remove obsolete OpenAI presets.
+- **kiarina-agi-text**: Select chat model helper tests through `KIARINA_AGI_TEXT_TEST_CHAT_MODEL`, default to the mock model, configure verbose parallel retries and timeouts, use a smaller text fixture, and hide unsupported chat model presets.
+- **kiarina-agi-text**: Show the selected chat model in pytest output and load package test variables from `.env.vscode` in VS Code.
+- **kiarina-agi-text**: Move manually run chat and token overflow checks from skipped tests to package scripts.
+- **kiarina-agi-text**: Enable targeted costly tests through `KIARINA_TEST_COSTLY`, the test task, and package Make shortcuts.
+- Include package `scripts` directories in formatting, linting, and type checking.
+- Add opt-in pytest arguments for package tests through `packages/<package>/tests/.pytest-args`.
+- Add AI agent packages to the VS Code workspace.
+- Standardize package README optional dependency tables and `all` extra installation guidance.
+
+### Fixed
+- **kiarina-agi-text**: Allow chat helpers to create a run context when one is not provided.
+
+## [2.6.0] - 2026-07-03
+
+### Added
+- **kiarina-agi-data**: Add messages, events, embeddings, file metadata, and related data models for AI agents.
+
+### Changed
+- **kiarina-agi-data**: Align internal modules and mirrored tests with Crystal Architecture responsibilities.
+- **kiarina-agi-data**: Move the `kiarina.agi.data` public modules directly under `kiarina.agi`.
+- **kiarina-agi-file, kiarina-agi-data**: Move the `kiarina.agi.file` public modules directly under `kiarina.agi`.
+- **kiarina-agi-base, kiarina-agi-data, kiarina-agi-file**: Move the `kiarina.agi.base` public modules directly under `kiarina.agi`.
+- **kiarina-agi-data**: Correct test fixture type annotations.
+- Run mypy against package tests and add the required test type annotations.
+
+## [2.5.0] - 2026-07-03
+
+### Changed
+- **kiarina-agi-file**: Make Google Cloud Storage support optional through the `asset-repository-gcs` extra.
+
+## [2.4.0] - 2026-07-03
+
+### Added
+- Add `kiarina-agi-base` to the meta-package dependencies.
+
+## [2.3.1] - 2026-07-02
+
+### Changed
+- Streamline the repository README files and organize the package catalog, installation, development, and documentation guidance.
+- Standardize README headers so status badges appear before language links.
+- Replace the duplicate Test Settings runbook with a reference to `kiarina/test-settings`.
+- **kiarina**: Streamline the meta-package README and document all included packages as dependencies.
+- **kiarina-currency, kiarina-lib-firebase**: Improve package documentation, comments, docstrings, and settings metadata.
+- **kiarina-i18n, kiarina-utils-file**: Expand and refine package documentation and simplify comments and docstrings.
+- **kiarina-lib-cloudflare-d1**: Improve documentation, comments, and docstrings, and fix lazy imports for settings from the asynchronous API.
+- **kiarina-lib-firebase-rtdb**: Improve documentation, simplify comments and docstrings, and replace the obsolete `kiarina-lib-firebase-auth` dependency.
+- **kiarina-lib-google**: Clarify settings metadata, streamline comments and docstrings, and document ADC credential search order and all settings fields.
+- **kiarina-lib-redis**: Clarify settings metadata, streamline comments and docstrings, and document all public APIs and client behavior.
+- **kiarina-lib-redisearch**: Remove empty internal package initializers, improve documentation, and add metadata to public Pydantic fields.
+- **kiarina-lib-anthropic, kiarina-lib-cloudflare, kiarina-lib-falkordb, kiarina-lib-openai, kiarina-lib-slack**: Clarify settings metadata, streamline comments and docstrings, and document all public APIs and configuration behavior.
+
+## [2.3.0] - 2026-07-01
+
 ### Changed (BREAKING)
 - **kiarina-utils-common**: Rename the public `ConfigStr` type alias to `ConfigString`.
 

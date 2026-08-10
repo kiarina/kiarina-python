@@ -4,9 +4,7 @@ from typing import Any, Literal
 
 @dataclass
 class DataChangeEvent:
-    """
-    Represents a data change event from Firebase RTDB.
-    """
+    """A data change received from Firebase Realtime Database."""
 
     event_type: Literal["put", "patch"]
     path: str

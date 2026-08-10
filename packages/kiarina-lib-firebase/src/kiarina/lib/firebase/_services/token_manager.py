@@ -7,12 +7,6 @@ from .._utils.refresh_id_token import refresh_id_token
 
 
 class TokenManager:
-    """
-    Service class for automatic ID token lifecycle management.
-
-    Automatically refreshes ID tokens before expiration with thread-safe operations.
-    """
-
     def __init__(
         self,
         *,
@@ -21,8 +15,7 @@ class TokenManager:
         token_data: TokenData | None = None,
         token_data_cache: TokenDataCache | None = None,
         refresh_buffer_seconds: int = 300,
-    ):
-        # Validate that at least one token source is provided
+    ) -> None:
         if not refresh_token and not token_data and not token_data_cache:
             raise ValueError(
                 "At least one of 'refresh_token', 'token_data', or 'token_data_cache' must be provided."
@@ -61,10 +54,6 @@ class TokenManager:
         return self.token_data.expires_at
 
     async def get_id_token(self) -> str:
-        """
-        Get current ID token (auto-refreshes if needed).
-        """
-        # Load from cache if needed
         if not self._token_data and self._token_data_cache:
             async with self._refresh_lock:
                 if self._token_data is None:
@@ -73,16 +62,12 @@ class TokenManager:
 
         if self._needs_refresh():
             async with self._refresh_lock:
-                # Double-check after acquiring lock
                 if self._needs_refresh():
                     await self._do_refresh()
 
         return self.id_token
 
     async def refresh(self) -> TokenData:
-        """
-        Manually refresh ID token.
-        """
         async with self._refresh_lock:
             return await self._do_refresh()
 

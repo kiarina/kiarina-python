@@ -1,4 +1,5 @@
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from ..schemas.redisearch_context import RedisearchContext
 from .get_key import get_key
@@ -24,10 +25,7 @@ def delete(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
     id: str,
-) -> None | Awaitable[None]:
-    """
-    Delete a document from the index.
-    """
+) -> Awaitable[None] | None:
     key = get_key(ctx, id)
 
     def _sync() -> None:

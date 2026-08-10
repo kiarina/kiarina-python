@@ -4,22 +4,25 @@ from pydantic import BaseModel, Field
 
 
 class Document(BaseModel):
-    """
-    Redisearch Document
-    """
+    """A document returned by RediSearch."""
 
-    key: str = ""
-    """
-    Redis key
-
-    {key_prefix}:{id} is the key
-    """
-
-    id: str = ""
-    """Redisearch document ID"""
-
-    score: float = 0.0
-    """Redisearch document score"""
-
-    mapping: dict[str, Any] = Field(default_factory=dict)
-    """Redisearch document mapping"""
+    key: str = Field(
+        default="",
+        title="Redis Key",
+        description="Full Redis key for the document.",
+    )
+    id: str = Field(
+        default="",
+        title="Document ID",
+        description="Document identifier without the configured key prefix.",
+    )
+    score: float = Field(
+        default=0.0,
+        title="Score",
+        description="Similarity score returned by a vector search.",
+    )
+    mapping: dict[str, Any] = Field(
+        default_factory=dict,
+        title="Fields",
+        description="Document fields.",
+    )

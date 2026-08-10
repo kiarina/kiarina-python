@@ -4,26 +4,6 @@ from .._enums.redisearch_filter_operator import RedisearchFilterOperator
 
 
 class RedisearchFilter:
-    """
-    A class representing the filter condition expression for a Redisearch query.
-
-    RedisearchFilter can be combined using & and | operators to create
-    complex logical expressions that are evaluated in the Redis Query language.
-
-    This interface allows users to construct complex queries without needing to know
-    the Redis Query language.
-
-    Filter-based fields are not initialised directly.
-    Instead, they are constructed by combining RedisFilterFields
-    using the & and | operators.
-
-    Examples:
-        >>> import kiarina.lib.redisearch.filter as rf
-        >>> filter = (rf.Tag("color") == "blue") & (rf.Numeric("price") < 100)
-        >>> print(str(filter))
-        (@color:{blue} @price:[-inf (100)])
-    """
-
     def __init__(
         self,
         query: str | None = None,
@@ -32,25 +12,15 @@ class RedisearchFilter:
         operator: RedisearchFilterOperator | None = None,
         right: Self | None = None,
     ):
-        """
-        Initialization
-        """
         self._query: str | None = query
-        """Query string"""
 
         self._left: Self | None = left
-        """Left operand"""
 
         self._operator: RedisearchFilterOperator | None = operator
-        """Logical operator"""
 
         self._right: Self | None = right
-        """Right operand"""
 
     def __and__(self, other: Self) -> Self:
-        """
-        AND operator for concatenation
-        """
         return type(self)(
             left=self,
             operator=RedisearchFilterOperator.AND,
@@ -58,9 +28,6 @@ class RedisearchFilter:
         )
 
     def __or__(self, other: Self) -> Self:
-        """
-        OR operator for concatenation
-        """
         return type(self)(
             left=self,
             operator=RedisearchFilterOperator.OR,
@@ -68,9 +35,6 @@ class RedisearchFilter:
         )
 
     def __str__(self) -> str:
-        """
-        Stringification
-        """
         if self._query:
             return self._query
 

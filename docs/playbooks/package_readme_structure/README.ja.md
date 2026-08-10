@@ -29,6 +29,10 @@
 
 ## Dependencies
 
+### Required Dependencies
+
+### Optional Dependencies
+
 ## Installation
 
 ## Features
@@ -65,15 +69,31 @@ NOTE は詳細な機能一覧ではなく、「何を提供するパッケージ
 ### Dependencies
 
 利用者が導入する runtime dependency を表で記載します。
+optional dependency がある場合は、required dependency と optional dependency の表を分けます。
 
 ```markdown
 ## Dependencies
 
+### Required Dependencies
+
 | Package | Version | License |
 | --- | --- | --- |
 | [Pydantic](https://github.com/pydantic/pydantic) | `>=2.0.0` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+
+### Optional Dependencies
+
+| Package | Version | License | Extras |
+| --- | --- | --- | --- |
+| [puremagic](https://github.com/cdgriffith/puremagic) | `>=1.30` | [MIT](https://github.com/cdgriffith/puremagic/blob/main/LICENSE) | `mime` |
+
+`all` Extra は、上記の optional dependency をすべて導入します。
 ```
 
+optional dependency は一つの表にまとめ、`Extras` 列にその依存を導入する Extra を列挙します。
+複数の Extra を記載する場合は、`<br>` で区切って一つずつ改行します。
+同じ依存を複数の Extra が使用する場合も、依存の行は一つだけ記載します。
+`all` のように表内のすべての依存を導入する Extra は、表の下でその旨を説明し、optional dependency の全行には繰り返し記載しません。
+optional dependency がない場合は、`Required Dependencies` の見出しを省略できます。
 Python 標準ライブラリだけを使用する場合は、その旨を簡潔に記載します。
 development dependency や test dependency は含めません。
 
@@ -89,7 +109,15 @@ pip install <package-name>
 ```
 ````
 
-optional dependency がある場合は、`### Optional Dependencies` を追加できます。
+Extra がある場合は、Extra ごとの導入コマンドも記載します。
+
+````markdown
+```bash
+pip install "<package-name>[<extra-name>]"
+```
+````
+
+`all` Extra がある場合は、そのインストールコマンドだけを記載します。
 
 ### Features
 
@@ -187,5 +215,12 @@ class Registry(Generic[T]):
 
     def clear(self) -> None: ...
 ```
+
+`__all__` を定義している module であっても、
+内部向けであり、ユーザーに対して紹介する意味がない module があります。
+そのような module は、API Reference では省略します。
+
+そのようなモジュールかどうかは、パッケージ内のコードからは判断できないため、
+〜〜は、API Reference から除外して良いという指示がある場合に、従ってください。
 
 `README.md` と `README.ja.md` の signature とコード例の実行内容は同一にし、説明文やコメントだけを翻訳します。

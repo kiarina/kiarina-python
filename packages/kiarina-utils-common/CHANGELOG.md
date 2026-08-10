@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.0] - 2026-07-26
+
+### Changed
+- Allow runtime-checkable protocol classes to be passed to `ComponentRegistry` as `expected_type` without static type errors.
+
+## [2.8.0] - 2026-07-08
+
+### Added
+- Add `download_file` for cached downloads with SHA-256 verification and atomic placement.
+
+## [2.3.0] - 2026-07-01
+
 ### Changed (BREAKING)
 - Rename the public `ConfigStr` type alias to `ConfigString`.
 

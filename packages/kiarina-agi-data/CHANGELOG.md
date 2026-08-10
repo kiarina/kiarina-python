@@ -1,0 +1,37 @@
+# Changelog
+
+All notable changes to the kiarina-agi-data package will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [2.19.0] - 2026-07-27
+
+### Added
+
+- Add source and analysis frame rates to video file metadata.
+- Add analysis resolution to PDF file metadata.
+- Add optional prefix text to file bundle media contents.
+
+### Fixed
+
+- Omit unset optional values from serialized file bundle manifests.
+
+## [2.7.0] - 2026-07-06
+
+### Changed
+- Replace broad `Any` annotations in package tests with concrete types.
+
+## [2.6.0] - 2026-07-03
+
+### Added
+- Add messages, events, embeddings, file metadata, and related data models for AI agents.
+
+### Changed
+- Align internal modules and mirrored tests with Crystal Architecture responsibilities.
+- Move public modules from `kiarina.agi.data` to `kiarina.agi`.
+- Import AI agent file APIs directly from `kiarina.agi`.
+- Import shared AI agent utilities from `kiarina.agi`.
+- Correct test fixture type annotations.

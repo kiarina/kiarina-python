@@ -1,7 +1,6 @@
 def test_catalog_singleton_behavior() -> None:
     """Test that catalog behaves as a singleton at module level."""
-    from kiarina.i18n import catalog as catalog1
-    from kiarina.i18n import catalog as catalog2
+    from kiarina.i18n import catalog as catalog1, catalog as catalog2
 
     assert catalog1 is catalog2
 

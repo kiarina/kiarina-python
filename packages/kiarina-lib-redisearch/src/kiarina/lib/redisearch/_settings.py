@@ -1,33 +1,28 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
 
 class RedisearchSettings(BaseSettings):
+    """Settings for a RediSearch index."""
+
     model_config = SettingsConfigDict(env_prefix="KIARINA_LIB_REDISEARCH_")
 
-    key_prefix: str = ""
-    """
-    Redis key prefix
-
-    The prefix for keys of documents registered with Redisearch.
-    Specify a string ending with a colon. e.g. "myapp:"
-    """
-
-    index_name: str = "default"
-    """
-    Redisearch index name
-
-    Only alphanumeric characters, underscores, hyphens, and periods.
-    The beginning consists solely of letters.
-    """
-
-    protect_index_deletion: bool = False
-    """
-    Protect index deletion
-
-    When set to True, the delete_index operation is protected,
-    preventing the index from being accidentally deleted.
-    """
+    key_prefix: str = Field(
+        default="",
+        title="Key Prefix",
+        description="Prefix for document keys, such as 'myapp:'.",
+    )
+    index_name: str = Field(
+        default="default",
+        title="Index Name",
+        description="Name of the RediSearch index.",
+    )
+    protect_index_deletion: bool = Field(
+        default=False,
+        title="Protect Index Deletion",
+        description="Prevent the client from dropping the index.",
+    )
 
 
 settings_manager = SettingsManager(RedisearchSettings, multi=True)

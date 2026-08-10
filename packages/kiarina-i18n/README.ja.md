@@ -1,14 +1,22 @@
 # kiarina-i18n
 
+[![PyPI version](https://badge.fury.io/py/kiarina-i18n.svg)](https://badge.fury.io/py/kiarina-i18n)
+[![Python](https://img.shields.io/pypi/pyversions/kiarina-i18n.svg)](https://pypi.org/project/kiarina-i18n/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [English](README.md) | 日本語
 
-Python applications 向けのシンプルな internationalization (i18n) utility です。
+> [!NOTE] これは何？
+> dictionary や YAML の翻訳 catalog を、関数または型付き Pydantic model から利用するパッケージ。
 
-## Purpose
+## Dependencies
 
-`kiarina-i18n` は、Python application に軽量で予測しやすい i18n の仕組みを提供します。複雑な文法規則や plural form は扱わず、単純な translation key、scope、fallback に集中しています。
-
-plural form など高度な localization が必要な場合は、`gettext` などの既存ツールの利用を検討してください。
+| Package | Version | License |
+| --- | --- | --- |
+| [Pydantic](https://github.com/pydantic/pydantic) | `>=2.0.0` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
+| [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.0.0` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
+| [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
+| [PyYAML](https://github.com/yaml/pyyaml) | `>=6.0.0` | [MIT](https://github.com/yaml/pyyaml/blob/main/LICENSE) |
 
 ## Installation
 
@@ -16,211 +24,295 @@ plural form など高度な localization が必要な場合は、`gettext` な�
 pip install kiarina-i18n
 ```
 
-## Quick Start
+## Features
 
-### Basic Usage (Functional API)
+- **Translating Text**
+  language、scope、key で catalog の text を取得し、template 変数を展開できます。
+- **Loading Catalogs**
+  dictionary、file system、package resource の YAML から catalog を構成できます。
+- **Defining Typed Translations**
+  Pydantic model の field として翻訳 key と既定 text を定義できます。
+- **Translating Pydantic Schemas**
+  Pydantic model の docstring と field description を言語別に変換できます。
 
-```python
-from kiarina.i18n import catalog, get_translator
+### Translating Text
 
-catalog.add_from_dict({
-    "en": {"app.greeting": {"hello": "Hello, $name!"}},
-    "ja": {"app.greeting": {"hello": "こんにちは、$name!"}},
-})
-
-t = get_translator("ja", "app.greeting")
-print(t("hello", name="World"))
-```
-
-### Automatic Language Detection
-
-`get_system_language()` は環境変数や locale からユーザーの system language を検出します。
-
-```python
-from kiarina.i18n import get_system_language
-
-language = get_system_language()  # "ja-JP" や "en-US" などの BCP 47 tag
-```
-
-### Type-Safe Class-Based API (Recommended)
-
-型安全性と IDE 補完を重視する場合は class-based API を推奨します。
-
-```python
-from pydantic import BaseModel
-from kiarina.i18n import I18n, catalog, get_i18n
-
-
-class AppI18n(I18n, scope="app.greeting"):
-    hello: str = "Hello, $name!"
-    goodbye: str = "Goodbye!"
-
-
-class AppText(BaseModel):
-    hello: str = "Hello, $name!"
-    goodbye: str = "Goodbye!"
-
-
-catalog.add_from_dict({
-    "ja": {
-        "app.greeting": {
-            "hello": "こんにちは、$name!",
-            "goodbye": "さようなら!",
-        },
-    },
-})
-
-t = get_i18n(AppI18n, "ja")
-print(t.hello)
-
-# language を省略すると system language が自動で使われます
-system_t = get_i18n(AppI18n)
-print(system_t.hello)
-```
-
-### Using Catalog Files
-
-#### From File System
+catalog は `language → scope → key → text` の順に構成します。
 
 ```python
 from kiarina.i18n import catalog, get_translator
 
-catalog.add_from_file("i18n_catalog.yaml")
-catalog.add_from_dir("translations/")
+catalog.add_from_dict(
+    {
+        "en": {"app.greeting": {"hello": "Hello, $name!"}},
+        "ja": {"app.greeting": {"hello": "こんにちは、$name!"}},
+    }
+)
 
-t = get_translator("en", "app.greeting")
+translate = get_translator("ja", "app.greeting")
+message = translate("hello", name="World")
 ```
 
-#### Language-Named Files
+翻訳は指定 language の詳細な tag から親 tag、続いて default language の順に検索します。たとえば `ja-JP` では `ja-JP`、`ja`、`en` の順です。
 
-file name が `en.yaml`、`en-US.yaml`、`zh-Hant.yaml` のような BCP 47 language tag の場合、top-level の language key は省略できます。file content は file name から得た language の下に自動で登録されます。
+該当する翻訳がない場合は `default`、それもなければ `<scope>#<key>` を返します。`$name` 形式の template 変数には `string.Template.safe_substitute` を使用するため、値が渡されていない変数はそのまま残ります。
 
-例: `zh-Hant.yaml`
+### Loading Catalogs
 
-```yaml
-app.greeting:
-  hello: "你好，$name!"
-  goodbye: "再見!"
-```
-
-#### From Package Resources
+複数回追加した catalog は深く merge され、同じ language、scope、key の値は後から追加した値で置き換わります。
 
 ```python
 from kiarina.i18n import catalog
 
-catalog.add_from_package_file("myapp.i18n", "catalogs/en.yaml")
-catalog.add_from_package_dir("myapp.i18n.catalogs")
+catalog.add_from_file("translations.yaml")
+catalog.add_from_dir("translations")
+catalog.add_from_package_file("my_app.catalogs", "ja.yaml")
+catalog.add_from_package_dir("my_app.catalogs")
 ```
 
-### Pydantic Integration for LLM Tools
+`add_from_dir` は子 directory も検索します。`add_from_package_dir` は指定 package の直下だけを検索します。
 
-#### Basic Usage
+YAML file name が `ja.yaml` や `en-US.yaml` のような language tag の場合、file の内容をその language の catalog として扱えます。
 
-`translate_pydantic_model` を使うと、LLM tool schema の description を runtime で言語別に変換できます。
+```yaml
+app.greeting:
+  hello: "こんにちは、$name!"
+```
+
+それ以外の file nameでは、top level に language を記述します。
+
+```yaml
+en:
+  app.greeting:
+    hello: "Hello, $name!"
+ja:
+  app.greeting:
+    hello: "こんにちは、$name!"
+```
+
+### Defining Typed Translations
+
+`I18n` の subclass では、field name が key、default value が翻訳の fallback になります。
 
 ```python
-from pydantic import Field
-from kiarina.i18n import I18n, catalog
+from kiarina.i18n import I18n, catalog, get_i18n
+
+
+class ProfileText(I18n, scope="app.profile"):
+    title: str = "Profile"
+    description: str = "Edit your profile."
+
+
+catalog.add_from_dict(
+    {
+        "ja": {
+            "app.profile": {
+                "title": "プロフィール",
+                "description": "プロフィールを編集します。",
+            }
+        }
+    }
+)
+
+text = get_i18n(ProfileText, "ja")
+```
+
+`scope` を省略すると `<module>.<class name>` を使用します。`get_i18n` の `language` を省略すると system language を使用します。
+
+通常の Pydantic model も `get_i18n` に渡せます。この場合、最初の private module より前の public module path を scope として使用します。
+
+### Translating Pydantic Schemas
+
+`translate_pydantic_model` は元の model を変更せず、翻訳した model class を新しく作成します。`__doc__` key で model の docstring、各 field name の key で field description を翻訳します。
+
+```python
+from pydantic import BaseModel, Field
+
+from kiarina.i18n import catalog
 from kiarina.i18n_pydantic import translate_pydantic_model
 
 
-class ArgsSchema(I18n, scope="hoge_tool.args_schema"):
-    """Hoge tool for processing data."""
-
-    name: str = Field(description="Your Name")
-    age: int = Field(description="Your Age")
+class UserInput(BaseModel):
+    name: str = Field(description="Your name")
 
 
-catalog.add_from_dict({
-    "ja": {
-        "hoge_tool.args_schema": {
-            "__doc__": "データ処理用のHogeツール。",
-            "name": "あなたの名前",
-            "age": "あなたの年齢",
-        },
-    },
-})
+catalog.add_from_dict(
+    {
+        "ja": {
+            "__main__": {
+                "__doc__": "ユーザー入力",
+                "name": "名前",
+            }
+        }
+    }
+)
 
-translated_schema = translate_pydantic_model(ArgsSchema, "ja")
+JapaneseUserInput = translate_pydantic_model(UserInput, "ja")
 ```
 
-#### Nested I18n Models
-
-`translate_pydantic_model` は、`list[I18n]` や `dict[str, I18n]` に含まれる nested I18n model の翻訳にも対応します。
+`list[I18nSubclass]` と `dict[str, I18nSubclass]` の field annotation は、内側の model も再帰的に変換します。
 
 ## API Reference
 
-### Class-Based API
+### `kiarina.i18n`
+
+```python
+from kiarina.i18n import (
+    Catalog,
+    I18n,
+    I18nKey,
+    I18nScope,
+    I18nSettings,
+    Language,
+    Translator,
+    catalog,
+    get_i18n,
+    get_system_language,
+    get_translator,
+    settings_manager,
+)
+```
+
+#### Translation functions
+
+```python
+def get_i18n(
+    model_class: type[T],
+    language: Language | None = None,
+) -> T: ...
+
+def get_system_language() -> Language: ...
+
+def get_translator(
+    language: Language,
+    scope: I18nScope,
+) -> Translator: ...
+```
+
+`get_i18n` は model の各 field を翻訳した instance を返します。`language` を省略した場合は `get_system_language` の結果を使用します。
+
+`get_system_language` は `LANG`、`LC_ALL`、`LC_MESSAGES`、`LANGUAGE` の順に環境変数を確認し、次に `locale.getlocale()` を使用します。検出できない場合と `C` / `POSIX` locale の場合は `en` を返します。
+
+`get_translator` は共有 `catalog` と `settings_manager.settings.default_language` を使用して `Translator` を作成します。
+
+#### `Translator`
+
+```python
+class Translator:
+    def __init__(
+        self,
+        *,
+        catalog: Catalog,
+        language: Language,
+        scope: I18nScope,
+        default_language: Language = "en",
+    ) -> None: ...
+
+    def __call__(
+        self,
+        key: I18nKey,
+        default: str | None = None,
+        **kwargs: Any,
+    ) -> str: ...
+```
+
+`language` と `default_language` は初期化時に正規化されます。無効な language tag を指定すると `ValueError` を送出します。
+
+#### `Catalog`
+
+```python
+class Catalog:
+    def __init__(self) -> None: ...
+
+    def add_from_dict(
+        self,
+        data: dict[
+            Language,
+            dict[I18nScope, dict[I18nKey, str]],
+        ],
+    ) -> None: ...
+
+    def add_from_file(self, file_path: str) -> None: ...
+
+    def add_from_dir(self, dir_path: str) -> None: ...
+
+    def add_from_package_file(
+        self,
+        package: str,
+        file_path: str,
+    ) -> None: ...
+
+    def add_from_package_dir(self, package: str) -> None: ...
+
+    def clear(self) -> None: ...
+
+    def get_text(
+        self,
+        language: Language,
+        scope: I18nScope,
+        key: I18nKey,
+    ) -> str | None: ...
+```
+
+`add_from_file` と `add_from_dir` は file system の YAML を読みます。`add_from_package_file` と `add_from_package_dir` は import 可能な package resource を読みます。
+
+directory が存在しない場合は `NotADirectoryError`、対象の YAML や package が見つからない場合は `FileNotFoundError` を送出します。`get_text` は language tag が無効な場合を含め、該当する text がなければ `None` を返します。
 
 #### `I18n`
 
-翻訳 field を型付き class として宣言するための base class です。`scope="..."` を明示するか、module / class name から自動生成できます。
-
-#### `get_i18n(model_class: type[T], language: str | None = None) -> T`
-
-指定言語に翻訳された Pydantic model instance を返します。`language` を省略するか `None` を渡した場合は、`get_system_language()` の結果を自動で使います。`I18n` subclass は class-level scope を使い、通常の `BaseModel` は `__module__` を scope として使います。module path に `_schemas` など `_` prefix の word が含まれる場合は、その word 以降を除外した public module path を使います。
-
-### Pydantic Model Translation (kiarina.i18n_pydantic)
-
-#### `translate_pydantic_model(model: type[T], language: str) -> type[T]`
-
-Pydantic model の class docstring と field description を catalog に基づいて翻訳した model class を返します。`I18n` subclass は class-level scope を使い、通常の `BaseModel` は `get_i18n()` と同じく public module path を scope として使います。
-
-### Catalog Management
-
-`catalog.add_from_dict()`、`catalog.add_from_file()`、`catalog.add_from_dir()`、`catalog.add_from_package_file()`、`catalog.add_from_package_dir()`、`catalog.clear()` を利用できます。
-
-### Functional API
-
-#### `get_system_language() -> Language`
-
-system language を BCP 47 language tag として検出し、検出できない場合や C/POSIX locale の場合は `"en"` にフォールバックします。
-
-#### `get_translator(language: str, scope: str) -> Translator`
-
-指定 language / scope の translator を返します。
-
-### `Translator(catalog, language, scope, default_language="en")`
-
-translation key と template variables を受け取り、翻訳済み文字列を返します。
-
-### Translation Behavior
-
-指定 language に key がない場合は、`zh-Hant-TW -> zh-Hant -> zh` のように parent tag を参照します。それでもない場合は default language とその parent tag を参照し、最後に default value や key を使います。
-
-## Configuration
-
-### Catalog Management
-
-YAML file や dictionary から catalog を読み込めます。複数 catalog の merge にも対応します。
-
-### Settings Configuration
-
-設定管理には pydantic-settings-manager を利用できます。
-
-### Settings Fields
-
-catalog loading や default language など、application 側の設定に合わせて管理できます。
-
-## Testing
-
-```bash
-mise run test kiarina-i18n
-mise run test kiarina-i18n --coverage
+```python
+class I18n(BaseModel):
+    def __init_subclass__(
+        cls,
+        scope: I18nScope = "",
+        **kwargs: Any,
+    ) -> None: ...
 ```
 
-## Dependencies
+subclass は frozen Pydantic model になり、未定義 field の入力を拒否します。翻訳対象の field は subclass で定義します。
 
-- `pydantic`
-- `pydantic-settings`
-- `pydantic-settings-manager`
-- `pyyaml`
+#### Settings
 
-## License
+```python
+class I18nSettings(BaseSettings):
+    default_language: Language = "en"
 
-MIT License です。詳細は [LICENSE](../../LICENSE) を参照してください。
+settings_manager: SettingsManager[I18nSettings]
+```
 
-## Related Projects
+`default_language` は翻訳が見つからない場合に使用する language です。`settings_manager` は `pydantic-settings-manager` による共有設定 manager です。
 
-- [kiarina-python](https://github.com/kiarina/kiarina-python)
-- [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager)
+#### Catalog instance
+
+```python
+catalog: Catalog
+```
+
+package 内で共有する catalog instance です。test 間などで状態を破棄する場合は `catalog.clear()` を呼びます。
+
+#### Types
+
+```python
+Language: TypeAlias = str
+I18nScope: TypeAlias = str
+I18nKey: TypeAlias = str
+```
+
+`Language` は BCP 47 language tag、`I18nScope` は key の namespace、`I18nKey` は scope 内の翻訳 key を表します。
+
+### `kiarina.i18n_pydantic`
+
+```python
+from kiarina.i18n_pydantic import translate_pydantic_model
+```
+
+#### `translate_pydantic_model`
+
+```python
+def translate_pydantic_model(
+    model: type[T],
+    language: str,
+) -> type[T]: ...
+```
+
+元の Pydantic model の config、base class、module、field attributes を維持しながら、docstring と field description を翻訳した新しい model class を返します。

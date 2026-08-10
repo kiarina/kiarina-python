@@ -9,7 +9,10 @@ if TYPE_CHECKING:
     from ._exceptions.app_not_configured_error import AppNotConfiguredError
     from ._helpers.configure import configure
     from ._helpers.reset import reset
-    from ._services import single_instance, user_directory  # noqa: F401
+    from ._instances.app import app
+    from ._schemas.app import App
+    from ._services import single_instance, user_directory
+    from ._settings import AppSettings, settings_manager
 
 __version__ = version("kiarina-utils-app")
 
@@ -21,9 +24,16 @@ __all__ = [
     # ._helpers
     "configure",
     "reset",
+    # ._instances
+    "app",
+    # ._schemas
+    "App",
     # ._services (exposed as modules)
     "single_instance",
     "user_directory",
+    # ._settings
+    "AppSettings",
+    "settings_manager",
 ]
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -41,9 +51,16 @@ def __getattr__(name: str) -> object:
         # ._helpers
         "configure": "._helpers.configure",
         "reset": "._helpers.reset",
+        # ._instances
+        "app": "._instances.app",
+        # ._schemas
+        "App": "._schemas.app",
         # ._services (exposed as modules)
         "single_instance": "._services.single_instance",
         "user_directory": "._services.user_directory",
+        # ._settings
+        "AppSettings": "._settings",
+        "settings_manager": "._settings",
     }
 
     try:

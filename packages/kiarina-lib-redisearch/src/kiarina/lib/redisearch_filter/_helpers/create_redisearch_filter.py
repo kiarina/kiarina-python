@@ -12,21 +12,6 @@ def create_redisearch_filter(
     filter: RedisearchFilter | RedisearchFilterConditions,
     schema: RedisearchSchema,
 ) -> RedisearchFilter | None:
-    """
-    Create a RedisearchFilter from a list of conditions.
-
-    Each condition is combined using the & operator.
-
-    Examples:
-        >>> create_redisearch_filter(
-        ...     schema=schema,
-        ...     conditions=[
-        ...         ["color", "in", ["blue", "red"]],
-        ...         ["price", "<", 1000],
-        ...         ["title", "like", "*hello*"]
-        ...     ],
-        ... )
-    """
     if isinstance(filter, RedisearchFilter):
         return filter
 
@@ -66,9 +51,6 @@ def create_redisearch_filter(
 
 
 def _create_tag_filter(condition: list[str | tuple[str]]) -> RedisearchFilter:
-    """
-    Create a Redisearch tag filter.
-    """
     field, operator, values = condition
 
     tag_field = Tag(str(field))
@@ -90,9 +72,6 @@ def _create_tag_filter(condition: list[str | tuple[str]]) -> RedisearchFilter:
 
 
 def _create_numeric_filter(condition: list[str | int | float]) -> RedisearchFilter:
-    """
-    Create a Redisearch numeric filter.
-    """
     field, operator, value = condition
 
     if isinstance(value, str):
@@ -121,9 +100,6 @@ def _create_numeric_filter(condition: list[str | int | float]) -> RedisearchFilt
 
 
 def _create_text_filter(condition: list[str]) -> RedisearchFilter:
-    """
-    Create a Redisearch text filter.
-    """
     field, operator, value = condition
 
     text_field = Text(str(field))
@@ -143,9 +119,6 @@ def _create_text_filter(condition: list[str]) -> RedisearchFilter:
 
 
 def _combine_filters(filters: list[RedisearchFilter]) -> RedisearchFilter:
-    """
-    Combine multiple RedisearchFilter instances using the & operator.
-    """
     combined = filters[0]
 
     for filter in filters[1:]:

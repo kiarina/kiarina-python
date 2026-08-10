@@ -7,7 +7,7 @@ import kiarina.utils.file as kf
 
 
 @pytest.fixture(scope="session")
-def load_settings():
+def load_settings() -> None:
     env_var = "KIARINA_LIB_CLOUDFLARE_D1_TEST_SETTINGS_FILE"
 
     if env_var not in os.environ:

@@ -1,4 +1,5 @@
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from ..schemas.redisearch_context import RedisearchContext
 from ..utils.marshal_mappings import marshal_mappings
@@ -31,13 +32,7 @@ def set(
     mapping: dict[str, Any],
     *,
     id: str | None = None,
-) -> None | Awaitable[None]:
-    """
-    Set a document in the index.
-
-    Fields not present in the schema are saved as they are.
-    Fields present in the schema are converted to the appropriate type and stored.
-    """
+) -> Awaitable[None] | None:
     if id is None:
         if "id" not in mapping:
             raise ValueError(

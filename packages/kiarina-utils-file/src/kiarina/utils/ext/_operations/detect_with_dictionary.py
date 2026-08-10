@@ -1,6 +1,6 @@
+from .._settings import settings_manager
 from .._utils.normalize_extension import normalize_extension
 from .._utils.normalize_mime_type import normalize_mime_type
-from .._settings import settings_manager
 
 
 def detect_with_dictionary(
@@ -8,21 +8,6 @@ def detect_with_dictionary(
     *,
     custom_extensions: dict[str, str] | None = None,
 ) -> str | None:
-    """
-    Detect the file extension based on MIME type using a dictionary.
-
-    This function attempts to determine the file extension using a custom MIME type to extension mapping.
-    Extensions in the dictionary can be provided with or without the leading dot - it will be automatically added if missing.
-
-    Args:
-        mime_type (str): MIME type to convert to an extension.
-        custom_extensions (dict[str, str] | None): Custom MIME type to extension mapping.
-            If provided, it will be merged with the default settings, with custom values taking precedence.
-            Extensions can be provided with or without the leading dot (e.g., both ".txt" and "txt" are acceptable).
-
-    Returns:
-        (str | None): Extension (lowercase, including the dot)
-    """
     mime_type = normalize_mime_type(mime_type)
 
     if custom_extensions is not None and mime_type in custom_extensions:

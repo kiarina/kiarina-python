@@ -1,18 +1,23 @@
 import pytest
-
-from kiarina.lib.redisearch_schema import RedisearchSchema
+from redis import Redis
 
 from kiarina.lib.redis import get_redis
 from kiarina.lib.redisearch import RedisearchClient, RedisearchSettings
+from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
 @pytest.fixture
-def redis():
+def redis() -> Redis:
     return get_redis(cache_key="kiarina.lib.redisearch")
 
 
 @pytest.fixture
-def client(key_prefix, index_name, redis, fields):
+def client(
+    key_prefix: str,
+    index_name: str,
+    redis: Redis,
+    fields: list[dict[str, object]],
+) -> RedisearchClient:
     return RedisearchClient(
         RedisearchSettings(
             key_prefix=key_prefix,

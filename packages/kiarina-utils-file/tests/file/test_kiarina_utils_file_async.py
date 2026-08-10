@@ -8,7 +8,7 @@ import kiarina.utils.file.asyncio as kfa
 
 
 @pytest.mark.asyncio
-async def test_main():
+async def test_main() -> None:
     with tempfile.TemporaryDirectory() as tmp_dir:
         # 1. write_binary
         binary_path = os.path.join(tmp_dir, "test.bin")
@@ -174,7 +174,7 @@ async def test_main():
 
 
 @pytest.mark.asyncio
-async def test_symlink_operations():
+async def test_symlink_operations() -> None:
     """Test read/write operations with symbolic links"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Create a real file
@@ -238,7 +238,7 @@ async def test_symlink_operations():
 
 
 @pytest.mark.asyncio
-async def test_yaml_comment_only_files():
+async def test_yaml_comment_only_files() -> None:
     """Test reading YAML files with only comments asynchronously"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Test read_yaml_dict with comment-only file
@@ -269,7 +269,7 @@ async def test_yaml_comment_only_files():
 
 
 @pytest.mark.asyncio
-async def test_broken_symlink_operations():
+async def test_broken_symlink_operations() -> None:
     """Test read/write operations with broken symbolic links"""
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Create a real file

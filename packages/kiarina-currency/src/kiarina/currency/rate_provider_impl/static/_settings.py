@@ -6,11 +6,17 @@ from kiarina.currency.currency_code import CurrencyCode
 
 
 class StaticRateProviderSettings(BaseSettings):
+    """Static exchange rate settings."""
+
     model_config = SettingsConfigDict(
         env_prefix="KIARINA_CURRENCY_RATE_PROVIDER_IMPL_STATIC_",
     )
 
-    base_currency: CurrencyCode = "USD"
+    base_currency: CurrencyCode = Field(
+        default="USD",
+        title="Base Currency",
+        description="Currency used to resolve indirect rates.",
+    )
 
     rates: dict[CurrencyCode, dict[CurrencyCode, float]] = Field(
         default_factory=lambda: {
@@ -30,16 +36,9 @@ class StaticRateProviderSettings(BaseSettings):
                 "INR": 90.439582,  # Indian Rupee
             },
         },
+        title="Rates",
+        description="Exchange rates grouped by source and target currency.",
     )
-    """
-    Exchange rates in nested dictionary format.
-
-    Example:
-        {
-            "USD": {"JPY": 150.0, "EUR": 0.85},
-            "EUR": {"GBP": 0.86}
-        }
-    """
 
 
 settings_manager = SettingsManager(StaticRateProviderSettings)

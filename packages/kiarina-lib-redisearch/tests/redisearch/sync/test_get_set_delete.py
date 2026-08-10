@@ -1,7 +1,7 @@
 from kiarina.lib.redisearch import RedisearchClient
 
 
-def test_get_set_delete(client: RedisearchClient):
+def test_get_set_delete(client: RedisearchClient) -> None:
     client.reset_index()
 
     id = "test_id"

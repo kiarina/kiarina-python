@@ -1,10 +1,10 @@
 # kiarina-utils-common
 
-[English](README.md) | 日本語
-
 [![PyPI version](https://badge.fury.io/py/kiarina-utils-common.svg)](https://badge.fury.io/py/kiarina-utils-common)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-common.svg)](https://pypi.org/project/kiarina-utils-common/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[English](README.md) | 日本語
 
 > [!NOTE] これは何？
 > 軽量な設定解決・動的 import・registry 基盤を提供するパッケージ。
@@ -232,10 +232,27 @@ assert console1 is console_registry.get()  # 同じ object を返す
 from kiarina.utils.common import (
     ConfigString,
     ImportPath,
+    download_file,
     import_object,
     parse_config_string,
 )
 ```
+
+#### `download_file`
+
+```python
+def download_file(
+    url: str,
+    sha256: str,
+    cache_path: os.PathLike[str] | str,
+) -> Path: ...
+```
+
+`cache_path` にファイルが存在しない場合だけ、ファイルをダウンロードします。
+
+ファイルは同じ directory の一時ファイルへ書き込み、SHA-256 で検証した後、atomic に `cache_path` へ配置します。既存ファイルは hash 検証せずに再利用します。
+
+- `RuntimeError`: ダウンロードに失敗した場合、または SHA-256 digest が一致しない場合
 
 #### `import_object`
 
@@ -393,7 +410,7 @@ class ComponentRegistry(Generic[T]):
     def __init__(
         self,
         *,
-        expected_type: type[T],
+        expected_type: object,
         component_label: str = "Component",
         get_default: Callable[[], ComponentSpecifier | None] | None = None,
         get_aliases: Callable[

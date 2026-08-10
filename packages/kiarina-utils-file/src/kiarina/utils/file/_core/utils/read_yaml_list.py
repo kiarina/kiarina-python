@@ -1,5 +1,6 @@
 import os
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 import yaml
 
@@ -29,18 +30,7 @@ def read_yaml_list(
     file_path: str | os.PathLike[str],
     *,
     default: list[Any] | None = None,
-) -> list[Any] | None | Awaitable[list[Any] | None]:
-    """
-    Read YAML list file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (list[Any] | None): Default value to return if file doesn't exist
-
-    Returns:
-        list[Any] | None: File content. Returns default if file doesn't exist
-    """
+) -> list[Any] | Awaitable[list[Any] | None] | None:
 
     def _after(raw_text: str | None) -> list[Any] | None:
         if raw_text is None:
@@ -51,7 +41,6 @@ def read_yaml_list(
 
         data = yaml.safe_load(raw_text)
 
-        # Handle comment-only YAML files (yaml.safe_load returns None)
         if data is None:
             return [] if default is None else default
 

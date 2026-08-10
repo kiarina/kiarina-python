@@ -1,9 +1,11 @@
 import copy
 import logging
-from typing import Any, Callable, Generic, TypeVar, cast
+from collections.abc import Callable
+from typing import Any, Generic, TypeVar, cast
+
+from pydantic import BaseModel
 
 from kiarina.utils.common import parse_config_string
-from pydantic import BaseModel
 
 from .._types.config_alias import ConfigAlias
 from .._types.config_name import ConfigName

@@ -1,5 +1,6 @@
 import logging
-from typing import Any, cast
+from collections.abc import Callable
+from typing import cast
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
@@ -10,7 +11,9 @@ from kiarina.utils.object_registry import ObjectRegistry
 
 
 class MyObject:
-    def __init__(self, message: str = "", options: dict[str, Any] | None = None):
+    def __init__(
+        self, message: str = "", options: dict[str, object] | None = None
+    ) -> None:
         self.message = message
         self.options = options or {}
         self.name = ""
@@ -18,7 +21,7 @@ class MyObject:
 
 class MyConfig(BaseModel):
     message: str = ""
-    options: dict[str, Any] = Field(default_factory=dict)
+    options: dict[str, object] = Field(default_factory=dict)
 
 
 class MyObjectSettings(BaseSettings):
@@ -37,7 +40,7 @@ def create_object(name: str, config: MyConfig) -> MyObject:
 def test_object_registry(caplog: LogCaptureFixture) -> None:
     settings_manager = SettingsManager(MyObjectSettings)
 
-    def configure(config: MyConfig, values: dict[str, Any]) -> MyConfig:
+    def configure(config: MyConfig, values: dict[str, object]) -> MyConfig:
         config.options.update(values)
         return config
 
@@ -145,7 +148,7 @@ def test_object_registry(caplog: LogCaptureFixture) -> None:
 
 
 def test_dict_config() -> None:
-    registry = ObjectRegistry[MyObject, dict[str, Any]](
+    registry = ObjectRegistry[MyObject, dict[str, object]](
         expected_type=MyObject,
         get_presets=lambda: {"test1": {"message": "preset", "level": "normal"}},
         factory=lambda name, config: MyObject(
@@ -160,7 +163,7 @@ def test_dict_config() -> None:
 
 
 def test_default_factory_with_dict_config() -> None:
-    registry = ObjectRegistry[MyObject, dict[str, Any]](
+    registry = ObjectRegistry[MyObject, dict[str, object]](
         expected_type=MyObject,
         get_presets=lambda: {
             "test1": {"message": "preset", "options": {"level": "normal"}}
@@ -178,7 +181,7 @@ def test_default_factory_with_object_config() -> None:
         pass
 
     class ConfiguredObject:
-        def __init__(self, config: ConfigObject):
+        def __init__(self, config: ConfigObject) -> None:
             self.config = config
 
     config = ConfigObject()
@@ -201,14 +204,16 @@ def test_invalid_registered_object() -> None:
     )
 
     with raises(ValueError, match="Registered object is not a MyObject"):
-        registry.register("bad", cast(Any, object()))
+        registry.register("bad", cast(MyObject, object()))
 
 
 def test_invalid_created_object() -> None:
     registry = ObjectRegistry[MyObject, MyConfig](
         expected_type=MyObject,
         get_presets=lambda: {"test1": MyConfig()},
-        factory=cast(Any, lambda name, config: object()),
+        factory=cast(
+            Callable[[str, MyConfig], MyObject], lambda name, config: object()
+        ),
     )
 
     with raises(ValueError, match="Created object is not a MyObject"):

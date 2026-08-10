@@ -1,0 +1,44 @@
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings_manager import SettingsManager
+
+from kiarina.agi.audio_consumer import AudioConsumerSpecifier
+from kiarina.agi.audio_event_bundler import AudioEventBundlerSpecifier
+from kiarina.agi.audio_source import AudioSourceSpecifier
+
+
+class VideoFileInfoBuilderSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="KIARINA_AGI_FILE_INFO_BUILDER_IMPL_VIDEO_",
+        extra="ignore",
+    )
+
+    analysis_enabled: bool = Field(
+        default=False,
+        title="Analysis Enabled",
+        description="Whether to build capability-aware video analysis bundles.",
+    )
+
+    audio_source: AudioSourceSpecifier = Field(
+        default="file?sample_rate=16000&start_timestamp=0.0",
+        title="Audio Source",
+        description="Audio source used to analyze the video audio track.",
+    )
+
+    audio_consumers: list[AudioConsumerSpecifier] = Field(
+        default_factory=lambda: [
+            "stt?diarization_enabled=true",
+            "ambient?window_seconds=10.0&top_k=3",
+        ],
+        title="Audio Consumers",
+        description="Audio consumers used to analyze the video audio track.",
+    )
+
+    audio_event_bundlers: list[AudioEventBundlerSpecifier] = Field(
+        default_factory=lambda: ["stt", "ambient"],
+        title="Audio Event Bundlers",
+        description="Bundlers used to format video audio analysis events.",
+    )
+
+
+settings_manager = SettingsManager(VideoFileInfoBuilderSettings)

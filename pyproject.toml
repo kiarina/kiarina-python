@@ -15,11 +15,25 @@ test = [
     "pytest-cov>=6.2.0",
     "pytest-asyncio>=1.1.0",
     "pytest-mock>=3.14.0",
+    "pytest-rerunfailures>=16.3",
+    "pytest-timeout>=2.4.0",
+    "pytest-xdist>=3.8.0",
 ]
 
 [tool.uv.workspace]
 members = [
     "packages/kiarina",
+    "packages/kiarina-agi-audio",
+    "packages/kiarina-agi-base",
+    "packages/kiarina-agi-data",
+    "packages/kiarina-agi-data-builder",
+    "packages/kiarina-agi-file",
+    "packages/kiarina-agi-flow",
+    "packages/kiarina-agi-image",
+    "packages/kiarina-agi-runner",
+    "packages/kiarina-agi-text",
+    "packages/kiarina-agi-tool",
+    "packages/kiarina-agi-video",
     "packages/kiarina-currency",
     "packages/kiarina-i18n",
     "packages/kiarina-lib-anthropic",
@@ -27,6 +41,7 @@ members = [
     "packages/kiarina-lib-cloudflare-d1",
     "packages/kiarina-lib-falkordb",
     "packages/kiarina-lib-firebase",
+    "packages/kiarina-lib-firebase-firestore",
     "packages/kiarina-lib-firebase-rtdb",
     "packages/kiarina-lib-google",
     "packages/kiarina-lib-openai",
@@ -40,6 +55,17 @@ members = [
 
 [tool.uv.sources]
 kiarina = { workspace = true }
+kiarina-agi-audio = { workspace = true }
+kiarina-agi-base = { workspace = true }
+kiarina-agi-data = { workspace = true }
+kiarina-agi-data-builder = { workspace = true }
+kiarina-agi-file = { workspace = true }
+kiarina-agi-flow = { workspace = true }
+kiarina-agi-image = { workspace = true }
+kiarina-agi-runner = { workspace = true }
+kiarina-agi-text = { workspace = true }
+kiarina-agi-tool = { workspace = true }
+kiarina-agi-video = { workspace = true }
 kiarina-currency = { workspace = true }
 kiarina-i18n = { workspace = true }
 kiarina-lib-anthropic = { workspace = true }
@@ -47,6 +73,7 @@ kiarina-lib-cloudflare = { workspace = true }
 kiarina-lib-cloudflare-d1 = { workspace = true }
 kiarina-lib-falkordb = { workspace = true }
 kiarina-lib-firebase = { workspace = true }
+kiarina-lib-firebase-firestore = { workspace = true }
 kiarina-lib-firebase-rtdb = { workspace = true }
 kiarina-lib-google = { workspace = true }
 kiarina-lib-openai = { workspace = true }
@@ -57,8 +84,40 @@ kiarina-utils-app = { workspace = true }
 kiarina-utils-common = { workspace = true }
 kiarina-utils-file = { workspace = true }
 
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "RUF", # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long: let the formatter handle it (ignore long strings/comments)
+    "B008",   # function call in argument defaults: required for FastAPI Depends()
+    "RUF022", # unsorted __all__: keep intentional comment-based grouping
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["kiarina"]
+combine-as-imports = true
+
 [tool.mypy]
 mypy_path = [
+    "packages/kiarina-agi-audio/src",
+    "packages/kiarina-agi-base/src",
+    "packages/kiarina-agi-data/src",
+    "packages/kiarina-agi-data-builder/src",
+    "packages/kiarina-agi-file/src",
+    "packages/kiarina-agi-flow/src",
+    "packages/kiarina-agi-image/src",
+    "packages/kiarina-agi-runner/src",
+    "packages/kiarina-agi-text/src",
+    "packages/kiarina-agi-tool/src",
+    "packages/kiarina-agi-video/src",
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
@@ -66,6 +125,7 @@ mypy_path = [
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-firebase/src",
+    "packages/kiarina-lib-firebase-firestore/src",
     "packages/kiarina-lib-firebase-rtdb/src",
     "packages/kiarina-lib-google/src",
     "packages/kiarina-lib-openai/src",
@@ -85,9 +145,24 @@ strict = true
 asyncio_mode = "auto"
 asyncio_default_test_loop_scope = "session"
 asyncio_default_fixture_loop_scope = "session"
+markers = [
+    "costly: marks tests that call paid external services",
+    "downloads_model: marks tests that may download model or config files",
+]
 
 [tool.coverage.run]
 source = [
+    "packages/kiarina-agi-audio/src",
+    "packages/kiarina-agi-base/src",
+    "packages/kiarina-agi-data/src",
+    "packages/kiarina-agi-data-builder/src",
+    "packages/kiarina-agi-file/src",
+    "packages/kiarina-agi-flow/src",
+    "packages/kiarina-agi-image/src",
+    "packages/kiarina-agi-runner/src",
+    "packages/kiarina-agi-text/src",
+    "packages/kiarina-agi-tool/src",
+    "packages/kiarina-agi-video/src",
     "packages/kiarina-currency/src",
     "packages/kiarina-i18n/src",
     "packages/kiarina-lib-anthropic/src",
@@ -95,6 +170,7 @@ source = [
     "packages/kiarina-lib-cloudflare-d1/src",
     "packages/kiarina-lib-falkordb/src",
     "packages/kiarina-lib-firebase/src",
+    "packages/kiarina-lib-firebase-firestore/src",
     "packages/kiarina-lib-firebase-rtdb/src",
     "packages/kiarina-lib-google/src",
     "packages/kiarina-lib-openai/src",

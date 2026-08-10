@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from kiarina.lib.redisearch_schema import RedisearchSchema
 
@@ -30,9 +31,6 @@ def migrate_index(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
 ) -> bool | Awaitable[bool]:
-    """
-    Reset the search index.
-    """
 
     def _log_create_new_index() -> None:
         logger.info("Createing new index '%s'", ctx.settings.index_name)
@@ -126,12 +124,10 @@ def _diff_dict(
         v1, v2 = d1.get(k), d2.get(k)
         path = f"{prefix}.{k}" if prefix else k
 
-        # Nested dict
         if isinstance(v1, dict) and isinstance(v2, dict):
             nested_diff = _diff_dict(v1, v2, prefix=path)
             diffs.update(nested_diff)
 
-        # Nested list
         elif isinstance(v1, list) and isinstance(v2, list):
             max_len = max(len(v1), len(v2))
 
@@ -154,7 +150,6 @@ def _diff_dict(
                 elif item1 != item2:
                     diffs[p] = (item1, item2)
 
-        # Different values
         elif v1 != v2:
             diffs[path] = (v1, v2)
 

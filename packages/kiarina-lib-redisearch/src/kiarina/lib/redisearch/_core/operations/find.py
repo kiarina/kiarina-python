@@ -1,4 +1,5 @@
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from redis.commands.search.query import Query
 from redis.commands.search.result import Result
@@ -51,15 +52,6 @@ def find(
     limit: int | None = None,
     return_fields: list[str] | None = None,
 ) -> SearchResult | Awaitable[SearchResult]:
-    """
-    Find documents matching the filter criteria.
-
-    Args:
-        limit (int | None):
-            Number of documents to retrieve. If None, retrieves all documents
-        return_fields (list[str] | None):
-            Fields to return. If None, returns no content, only IDs.
-    """
     if filter is not None:
         filter = create_redisearch_filter(filter=filter, schema=ctx.schema)
 

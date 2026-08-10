@@ -1,4 +1,5 @@
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from ..schemas.document import Document
 from ..schemas.redisearch_context import RedisearchContext
@@ -26,10 +27,7 @@ def get(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
     id: str,
-) -> Document | None | Awaitable[Document | None]:
-    """
-    Get a document from the index.
-    """
+) -> Document | Awaitable[Document | None] | None:
     key = get_key(ctx, id)
 
     def _after(mapping: dict[bytes, bytes]) -> Document | None:

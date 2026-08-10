@@ -1,6 +1,7 @@
 import json
 import os
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from .write_text import write_text
 
@@ -37,18 +38,7 @@ def write_json_dict(
     indent: int = 2,
     ensure_ascii: bool = False,
     sort_keys: bool = False,
-) -> None | Awaitable[None]:
-    """
-    Write JSON dictionary data to a file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to write
-        json_dict (dict[str, Any]): JSON dictionary data to write
-        indent (int): Indentation width
-        ensure_ascii (bool): Whether to escape non-ASCII characters
-        sort_keys (bool): Whether to sort keys
-    """
+) -> Awaitable[None] | None:
     json_text = json.dumps(
         json_dict, indent=indent, ensure_ascii=ensure_ascii, sort_keys=sort_keys
     )

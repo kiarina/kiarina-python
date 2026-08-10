@@ -1,5 +1,7 @@
-import pytest
 from pathlib import Path
+
+import pytest
+from _pytest.fixtures import FixtureRequest
 
 
 @pytest.fixture
@@ -8,20 +10,20 @@ def assets_dir() -> Path:
 
 
 @pytest.fixture
-def key_prefix(request):
+def key_prefix(request: FixtureRequest) -> str:
     return f"pytest:{request.module.__name__}:{request.node.name}:"
 
 
 @pytest.fixture
-def index_name(request):
+def index_name(request: FixtureRequest) -> str:
     return f"pytest_{request.module.__name__}_{request.node.name}"
 
 
 @pytest.fixture
-def fields():
+def fields() -> list[dict[str, object]]:
     return [{"type": "text", "name": "title"}]
 
 
 @pytest.fixture
-def redis():
+def redis() -> None:
     raise NotImplementedError("Override this fixture in conftest.py")

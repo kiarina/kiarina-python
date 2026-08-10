@@ -4,13 +4,13 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._sync.helpers.get_falkordb import get_falkordb
     from ._settings import FalkorDBSettings, settings_manager
+    from ._sync.helpers.get_falkordb import get_falkordb
 
 __version__ = version("kiarina-lib-falkordb")
 
 __all__ = [
-    # ._sync._helpers
+    # ._sync.helpers
     "get_falkordb",
     # ._settings
     "FalkorDBSettings",

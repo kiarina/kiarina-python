@@ -6,13 +6,6 @@ from .._schemas.token_data import TokenData
 
 
 async def refresh_id_token(refresh_token: str, api_key: str) -> TokenData:
-    """
-    Refresh ID token using refresh token.
-
-    Raises:
-        InvalidRefreshTokenError: If refresh token is invalid or expired
-        FirebaseAPIError: If Firebase API returns an error
-    """
     url = f"https://securetoken.googleapis.com/v1/token?key={api_key}"
 
     payload = {
@@ -30,7 +23,6 @@ async def refresh_id_token(refresh_token: str, api_key: str) -> TokenData:
             error_message = error_data.get("error", {}).get("message", str(e))
             error_code = error_data.get("error", {}).get("code")
 
-            # Check for invalid refresh token error
             if (
                 "INVALID_REFRESH_TOKEN" in error_message
                 or "TOKEN_EXPIRED" in error_message

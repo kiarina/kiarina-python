@@ -7,23 +7,32 @@ from .base_field_schema import BaseFieldSchema
 
 
 class BaseVectorFieldSchema(BaseFieldSchema):
-    """
-    Base class for vector field schemas
-    """
+    """Base schema for a vector field."""
 
-    type: Literal["vector"] = "vector"
-
-    dims: int = Field(...)
-    """Dimensionality"""
-
-    datatype: Literal["FLOAT32", "FLOAT64"] = "FLOAT32"
-    """Data type"""
-
-    distance_metric: Literal["L2", "COSINE", "IP"] = "COSINE"
-    """Distance metric"""
-
-    initial_cap: int | None = None
-    """Initial capacity"""
+    type: Literal["vector"] = Field(
+        default="vector",
+        title="Field Type",
+        description="RediSearch field type.",
+    )
+    dims: int = Field(
+        title="Dimensions",
+        description="Number of vector dimensions.",
+    )
+    datatype: Literal["FLOAT32", "FLOAT64"] = Field(
+        default="FLOAT32",
+        title="Data Type",
+        description="Numeric type used to store vector elements.",
+    )
+    distance_metric: Literal["L2", "COSINE", "IP"] = Field(
+        default="COSINE",
+        title="Distance Metric",
+        description="Metric used to compare vectors.",
+    )
+    initial_cap: int | None = Field(
+        default=None,
+        title="Initial Capacity",
+        description="Initial vector index capacity.",
+    )
 
     # --------------------------------------------------
     # Properties
@@ -31,9 +40,6 @@ class BaseVectorFieldSchema(BaseFieldSchema):
 
     @property
     def dtype(self) -> Any:
-        """
-        Get the numpy data type
-        """
         if self.datatype == "FLOAT32":
             return np.float32
         elif self.datatype == "FLOAT64":
@@ -46,9 +52,6 @@ class BaseVectorFieldSchema(BaseFieldSchema):
     # --------------------------------------------------
 
     def _get_attributes(self) -> dict[str, Any]:
-        """
-        Get attributes for the vector field
-        """
         attributes = {
             "TYPE": self.datatype,
             "DIM": self.dims,

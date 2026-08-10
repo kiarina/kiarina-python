@@ -4,8 +4,8 @@ from importlib.metadata import version
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ._sync.helpers.get_redis import get_redis
     from ._settings import RedisSettings, settings_manager
+    from ._sync.helpers.get_redis import get_redis
 
 __version__ = version("kiarina-lib-redis")
 

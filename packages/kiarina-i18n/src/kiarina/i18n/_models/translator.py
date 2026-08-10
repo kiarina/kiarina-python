@@ -12,28 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class Translator:
-    """Translator for internationalization (i18n) support.
-
-    This class provides translation functionality with fallback support.
-    It supports template substitution using Python's string.Template.
-
-    Args:
-        catalog: Catalog instance for managing translation data.
-        language: Target language for translation.
-        scope: Scope for translation keys (e.g., "kiarina.app.greeting").
-        default_language: Default language when translation is not found.
-
-    Example:
-        >>> from kiarina.i18n import catalog, Translator
-        >>> catalog.add_from_dict({
-        ...     "en": {"app.greeting": {"hello": "Hello, $name!"}},
-        ...     "ja": {"app.greeting": {"hello": "こんにちは、$name!"}}
-        ... })
-        >>> t = Translator(catalog=catalog, language="ja", scope="app.greeting")
-        >>> t("hello", name="World")
-        'こんにちは、World!'
-    """
-
     def __init__(
         self,
         *,

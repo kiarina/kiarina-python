@@ -1,4 +1,5 @@
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from ..schemas.redisearch_context import RedisearchContext
 from .get_info import get_info
@@ -22,9 +23,6 @@ def exists_index(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
 ) -> bool | Awaitable[bool]:
-    """
-    Check if the index exists.
-    """
 
     def _handle_exception(e: Exception) -> bool:
         msg = str(e)

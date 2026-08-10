@@ -4,6 +4,39 @@
       "path": "packages/kiarina"
     },
     {
+      "path": "packages/kiarina-agi-audio"
+    },
+    {
+      "path": "packages/kiarina-agi-base"
+    },
+    {
+      "path": "packages/kiarina-agi-data"
+    },
+    {
+      "path": "packages/kiarina-agi-data-builder"
+    },
+    {
+      "path": "packages/kiarina-agi-file"
+    },
+    {
+      "path": "packages/kiarina-agi-flow"
+    },
+    {
+      "path": "packages/kiarina-agi-image"
+    },
+    {
+      "path": "packages/kiarina-agi-runner"
+    },
+    {
+      "path": "packages/kiarina-agi-text"
+    },
+    {
+      "path": "packages/kiarina-agi-tool"
+    },
+    {
+      "path": "packages/kiarina-agi-video"
+    },
+    {
       "path": "packages/kiarina-currency"
     },
     {
@@ -25,6 +58,9 @@
       "path": "packages/kiarina-lib-firebase"
     },
     {
+      "path": "packages/kiarina-lib-firebase-firestore"
+    },
+    {
       "path": "packages/kiarina-lib-firebase-rtdb"
     },
     {
@@ -41,6 +77,9 @@
     },
     {
       "path": "packages/kiarina-lib-slack"
+    },
+    {
+      "path": "packages/kiarina-utils-app"
     },
     {
       "path": "packages/kiarina-utils-common"

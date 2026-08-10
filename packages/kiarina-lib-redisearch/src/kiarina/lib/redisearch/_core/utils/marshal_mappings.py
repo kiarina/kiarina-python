@@ -10,9 +10,6 @@ def marshal_mappings(
     schema: RedisearchSchema,
     mapping: dict[str, Any],
 ) -> dict[str, Any]:
-    """
-    Convert the mapping to the appropriate format based on the schema
-    """
     marshaled: dict[str, Any] = {}
 
     for key, value in mapping.items():
@@ -36,10 +33,10 @@ def marshal_mappings(
         elif field.type == "numeric":
             try:
                 marshaled[key] = float(value)
-            except (TypeError, ValueError):
+            except (TypeError, ValueError) as e:
                 raise ValueError(
                     f"Field '{key}' requires a numeric value. Got: {value}"
-                )
+                ) from e
 
         elif field.type == "text":
             marshaled[key] = str(value)

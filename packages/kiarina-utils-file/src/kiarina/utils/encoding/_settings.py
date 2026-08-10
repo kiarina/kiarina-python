@@ -4,38 +4,39 @@ from pydantic_settings_manager import SettingsManager
 
 
 class EncodingSettings(BaseSettings):
-    """
-    Encoding detection and processing settings
-    """
+    """Settings for encoding detection."""
 
     model_config = SettingsConfigDict(env_prefix="KIARINA_UTILS_ENCODING_")
 
-    use_nkf: bool | None = None
-    """
-    Whether to use the nkf command for encoding detection
-
-    If None, nkf will be automatically used when available in Japanese environments.
-    """
+    use_nkf: bool | None = Field(
+        default=None,
+        title="Use nkf",
+        description="Use nkf for encoding detection. Detect automatically when unset.",
+    )
 
     fallback_encodings: list[str] = Field(
-        default_factory=lambda: ["utf-8", "shift_jis", "euc-jp", "iso2022_jp"]
+        default_factory=lambda: ["utf-8", "shift_jis", "euc-jp", "iso2022_jp"],
+        title="Fallback encodings",
+        description="Encodings to try when detection fails.",
     )
-    """
-    List of encodings to try during fallback detection
 
-    Note: ASCII is not included as it's a subset of UTF-8 and would be
-    redundant. UTF-8 detection will handle ASCII text correctly.
-    """
+    default_encoding: str = Field(
+        default="utf-8",
+        title="Default encoding",
+        description="Encoding to use when detection fails.",
+    )
 
-    default_encoding: str = "utf-8"
-    """Default encoding when all detection methods fail"""
+    max_sample_size: int = Field(
+        default=8192,
+        title="Maximum sample size",
+        description="Maximum number of bytes used for detection.",
+    )
 
-    max_sample_size: int = 8192
-    """Maximum bytes to sample for encoding detection (default: 8KB)"""
-
-    charset_normalizer_confidence_threshold: float = 0.6
-    """Minimum confidence threshold for charset_normalizer detection (default: 0.6)"""
+    charset_normalizer_confidence_threshold: float = Field(
+        default=0.6,
+        title="Charset Normalizer confidence threshold",
+        description="Minimum confidence accepted from Charset Normalizer.",
+    )
 
 
 settings_manager = SettingsManager(EncodingSettings)
-"""Encoding settings manager"""

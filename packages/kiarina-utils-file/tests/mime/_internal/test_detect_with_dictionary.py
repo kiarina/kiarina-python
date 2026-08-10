@@ -3,7 +3,6 @@ import pytest
 from kiarina.utils.mime._operations.detect_with_dictionary import detect_with_dictionary
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "file_name_hint,expected",
     [
@@ -28,8 +27,7 @@ from kiarina.utils.mime._operations.detect_with_dictionary import detect_with_di
         ("test.jpeg", None),
     ],
 )
-# fmt: on
-def test_detect_with_dictionary(file_name_hint, expected):
+def test_detect_with_dictionary(file_name_hint: str, expected: str | None) -> None:
     assert (
         detect_with_dictionary(
             file_name_hint,

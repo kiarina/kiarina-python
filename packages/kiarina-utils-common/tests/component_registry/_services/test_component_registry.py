@@ -1,14 +1,12 @@
-from typing import Any
-
-from kiarina.utils.common import ImportPath
 from pydantic_settings import BaseSettings
 from pydantic_settings_manager import SettingsManager
 
+from kiarina.utils.common import ImportPath
 from kiarina.utils.component_registry import ComponentFactory, ComponentRegistry
 
 
 class MyClass:
-    def __init__(self, message: str = ""):
+    def __init__(self, message: str = "") -> None:
         self.message = message
         self.name = ""
 
@@ -24,8 +22,8 @@ def create_sub_my_class(message: str = "") -> SubMyClass:
 def _factory_wrapper(
     factory: ComponentFactory[MyClass],
     component_name: str,
-    *args: Any,
-    **kwargs: Any,
+    *args: object,
+    **kwargs: object,
 ) -> MyClass:
     instance = factory(*args, **kwargs)
     instance.name = component_name

@@ -22,17 +22,6 @@ def detect_with_puremagic(
     stream: BinaryIO | None = None,
     file_name_hint: str | os.PathLike[str] | None = None,
 ) -> str | None:
-    """
-    Detect MIME type using puremagic.
-
-    Args:
-        raw_data (bytes | None): Raw data to analyze for MIME type.
-        stream (BinaryIO | None): File stream to analyze for MIME type.
-        file_name_hint (str | os.PathLike[str] | None): File name hint for MIME type detection.
-
-    Returns:
-        (str | None): Detected MIME type or None if not found.
-    """
     if puremagic is None:
         return None
 
@@ -42,7 +31,6 @@ def detect_with_puremagic(
     try:
         if raw_data is not None:
             if not raw_data:
-                # Empty binary data causes ValueError in puremagic, so return None
                 return None
 
             infos = puremagic.magic_stream(BytesIO(raw_data), filename=file_name_hint)

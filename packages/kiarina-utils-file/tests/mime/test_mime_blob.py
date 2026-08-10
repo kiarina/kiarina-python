@@ -1,7 +1,7 @@
 from kiarina.utils.mime import MIMEBlob
 
 
-def test_mime_blob_comprehensive():
+def test_mime_blob_comprehensive() -> None:
     """Comprehensive test for MIMEBlob class"""
 
     data = MIMEBlob(mime_type="text/plain", raw_text="Hello, World!")

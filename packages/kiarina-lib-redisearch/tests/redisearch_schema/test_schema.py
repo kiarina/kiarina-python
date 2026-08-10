@@ -3,7 +3,7 @@ import pytest
 from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
-def test_redisearch_schema():
+def test_redisearch_schema() -> None:
     schema = RedisearchSchema.model_validate(
         {
             "fields": [
@@ -32,7 +32,7 @@ def test_redisearch_schema():
     assert len(schema.to_fields()) == 4
 
 
-def test_redisearch_schema_invalid_field_names():
+def test_redisearch_schema_invalid_field_names() -> None:
     with pytest.raises(ValueError):
         RedisearchSchema.model_validate(
             {

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-07-08
+
+### Added
+- Add `get_cloud_options` helper for dynamic Google Cloud client configuration
+- Add `get_genai_options` and Google Gen AI `vertexai` and `location` settings.
+
+### Changed
+- Update `get_genai_options` to omit explicit credentials when not required.
+- Resolve Vertex AI Express Mode options without `project` or `location`.
+
+## [2.3.1] - 2026-07-02
+
+### Changed
+- Clarified settings metadata, streamlined comments and docstrings, and documented ADC credential search order and all settings fields.
+
+## [2.3.0] - 2026-07-01
+
 ### Changed
 - Restructured the package README, corrected pydantic-settings-manager v3 configuration examples, documented all public APIs, and added a service integration pattern.
 

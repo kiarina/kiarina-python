@@ -17,14 +17,4 @@ def read_yaml_list(
 def read_yaml_list(
     file_path: str | os.PathLike[str], *, default: list[Any] | None = None
 ) -> list[Any] | None:
-    """
-    Read YAML list file
-
-    Args:
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (list[Any] | None): Default value to return if file doesn't exist
-
-    Returns:
-        list[Any] | None: File content. Returns default if file doesn't exist
-    """
     return _read_yaml_list("sync", file_path, default=default)

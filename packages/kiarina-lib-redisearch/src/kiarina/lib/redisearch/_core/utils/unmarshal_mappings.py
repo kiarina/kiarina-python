@@ -10,9 +10,6 @@ def unmarshal_mappings(
     schema: RedisearchSchema,
     mapping: dict[bytes, bytes],
 ) -> dict[str, Any]:
-    """
-    Convert the mapping from the appropriate format based on the schema
-    """
     unmarshaled: dict[str, Any] = {}
 
     for bkey, value in mapping.items():

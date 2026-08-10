@@ -1,6 +1,6 @@
 import redis
 
-from kiarina.lib.redisearch_schema import RedisearchSchema, RedisearchFieldDicts
+from kiarina.lib.redisearch_schema import RedisearchFieldDicts, RedisearchSchema
 
 from ..._settings import settings_manager
 from ..models.redisearch_client import RedisearchClient

@@ -18,7 +18,7 @@ from kiarina.utils.file._core.utils.get_lock_file_path import (
 )
 
 
-def test_normalize_path_basic():
+def test_normalize_path_basic() -> None:
     """Test basic path normalization."""
     path = "/tmp/test/../file.txt"
     normalized = _normalize_path(path)
@@ -26,7 +26,7 @@ def test_normalize_path_basic():
     assert normalized.endswith("file.txt")
 
 
-def test_normalize_path_expanduser():
+def test_normalize_path_expanduser() -> None:
     """Test user home directory expansion."""
     path = "~/test.txt"
     normalized = _normalize_path(path)
@@ -34,7 +34,7 @@ def test_normalize_path_expanduser():
     assert normalized.startswith("/")
 
 
-def test_normalize_path_expandvars():
+def test_normalize_path_expandvars() -> None:
     """Test environment variable expansion."""
     with patch.dict(os.environ, {"TEST_VAR": "test_value"}):
         path = "$TEST_VAR/file.txt"
@@ -42,7 +42,7 @@ def test_normalize_path_expandvars():
         assert "test_value" in normalized
 
 
-def test_normalize_path_pathlike_object():
+def test_normalize_path_pathlike_object() -> None:
     """Test Path-like object handling."""
     path = Path("/tmp/test.txt")
     normalized = _normalize_path(path)
@@ -50,7 +50,7 @@ def test_normalize_path_pathlike_object():
     assert "test.txt" in normalized
 
 
-def test_normalize_path_error_handling():
+def test_normalize_path_error_handling() -> None:
     """Test error handling in path normalization."""
     # Test with invalid path that might cause realpath to fail
     with patch("os.path.realpath", side_effect=OSError("Mock error")):
@@ -61,7 +61,7 @@ def test_normalize_path_error_handling():
         assert len(normalized) > 0
 
 
-def test_get_lock_file_path_consistent():
+def test_get_lock_file_path_consistent() -> None:
     """Test that same input produces same lock file path."""
     path = "/tmp/test.txt"
     lock1 = get_lock_file_path(path)
@@ -69,7 +69,7 @@ def test_get_lock_file_path_consistent():
     assert lock1 == lock2
 
 
-def test_get_lock_file_path_different_inputs():
+def test_get_lock_file_path_different_inputs() -> None:
     """Test that different inputs produce different lock file paths."""
     path1 = "/tmp/test1.txt"
     path2 = "/tmp/test2.txt"
@@ -78,14 +78,14 @@ def test_get_lock_file_path_different_inputs():
     assert lock1 != lock2
 
 
-def test_get_lock_file_path_extension():
+def test_get_lock_file_path_extension() -> None:
     """Test that lock files have .lock extension."""
     path = "/tmp/test.txt"
     lock_path = get_lock_file_path(path)
     assert lock_path.endswith(".lock")
 
 
-def test_get_lock_file_path_sharding():
+def test_get_lock_file_path_sharding() -> None:
     """Test that lock files are properly sharded into subdirectories."""
     path = "/tmp/test.txt"
     lock_path = get_lock_file_path(path)
@@ -97,7 +97,7 @@ def test_get_lock_file_path_sharding():
     assert len(parts[-2]) == 2  # Second shard dir
 
 
-def test_get_lock_file_path_unicode():
+def test_get_lock_file_path_unicode() -> None:
     """Test handling of Unicode file paths."""
     path = "/tmp/テスト.txt"
     lock_path = get_lock_file_path(path)
@@ -105,7 +105,7 @@ def test_get_lock_file_path_unicode():
     assert lock_path.endswith(".lock")
 
 
-def test_get_lock_file_path_long_paths():
+def test_get_lock_file_path_long_paths() -> None:
     """Test handling of very long file paths."""
     long_name = "a" * 200
     path = f"/tmp/{long_name}.txt"
@@ -114,7 +114,7 @@ def test_get_lock_file_path_long_paths():
     assert lock_path.endswith(".lock")
 
 
-def test_cleanup_old_lock_files():
+def test_cleanup_old_lock_files() -> None:
     """Test cleanup of old lock files."""
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create some old lock files
@@ -144,7 +144,7 @@ def test_cleanup_old_lock_files():
             assert os.path.exists(new_lock)
 
 
-def test_cleanup_respects_max_remove_limit():
+def test_cleanup_respects_max_remove_limit() -> None:
     """Test that cleanup respects the max_remove limit."""
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create multiple old lock files
@@ -172,7 +172,7 @@ def test_cleanup_respects_max_remove_limit():
             assert remaining == 2
 
 
-def test_cleanup_skips_files_in_use():
+def test_cleanup_skips_files_in_use() -> None:
     """Test that cleanup skips files that are currently in use."""
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -205,7 +205,7 @@ def test_cleanup_skips_files_in_use():
             lock.release()
 
 
-def test_cleanup_empty_dirs():
+def test_cleanup_empty_dirs() -> None:
     """Test cleanup of empty directories."""
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create nested empty directories
@@ -219,7 +219,7 @@ def test_cleanup_empty_dirs():
         assert os.path.exists(temp_dir)  # Base dir should remain
 
 
-def test_cleanup_dirs_with_files():
+def test_cleanup_dirs_with_files() -> None:
     """Test that directories with files are not removed."""
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create directory with file
@@ -237,7 +237,7 @@ def test_cleanup_dirs_with_files():
         assert os.path.exists(file_path)
 
 
-def test_cleanup_error_handling():
+def test_cleanup_error_handling() -> None:
     """Test cleanup error handling."""
     # Test with non-existent directory by mocking _get_lock_base_dir to fail
     with patch(
@@ -248,14 +248,14 @@ def test_cleanup_error_handling():
         assert removed == 0  # Should not crash
 
 
-def test_concurrent_access():
+def test_concurrent_access() -> None:
     """Test that concurrent access to same file produces same lock path."""
     import threading
 
     path = "/tmp/concurrent_test.txt"
     results = []
 
-    def get_lock():
+    def get_lock() -> None:
         results.append(get_lock_file_path(path))
 
     threads = [threading.Thread(target=get_lock) for _ in range(10)]
@@ -268,7 +268,7 @@ def test_concurrent_access():
     assert len(set(results)) == 1
 
 
-def test_settings_integration():
+def test_settings_integration() -> None:
     """Test integration with settings."""
 
     # Test with custom lock directory using environment variable
@@ -287,7 +287,7 @@ def test_settings_integration():
                 assert lock_path.endswith(".lock")
 
 
-def test_automatic_cleanup_probability():
+def test_automatic_cleanup_probability() -> None:
     """Test that automatic cleanup is called with low probability."""
     from kiarina.utils.file._core.utils.get_lock_file_path import (
         _maybe_cleanup_old_locks,
@@ -329,7 +329,7 @@ def test_automatic_cleanup_probability():
                         mock_cleanup.assert_called_once()
 
 
-def test_cleanup_disabled_by_settings():
+def test_cleanup_disabled_by_settings() -> None:
     """Test that cleanup can be disabled by settings."""
     from kiarina.utils.file._core.utils.get_lock_file_path import (
         _maybe_cleanup_old_locks,
@@ -354,7 +354,7 @@ def test_cleanup_disabled_by_settings():
                     mock_cleanup.assert_not_called()
 
 
-def test_lock_file_path_with_symlinks():
+def test_lock_file_path_with_symlinks() -> None:
     """Test lock file path generation with symbolic links."""
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create a real file
@@ -379,7 +379,7 @@ def test_lock_file_path_with_symlinks():
             pytest.skip("Symlinks not supported on this system")
 
 
-def test_lock_file_path_case_sensitivity():
+def test_lock_file_path_case_sensitivity() -> None:
     """Test lock file path generation with different case on case-insensitive systems."""
     if os.name == "nt":  # Windows
         # On Windows, these should produce the same lock file
@@ -401,7 +401,7 @@ def test_lock_file_path_case_sensitivity():
         assert lock1 != lock2
 
 
-def test_default_lock_directory():
+def test_default_lock_directory() -> None:
     """Test that lock files use system temp directory by default."""
     from kiarina.utils.file._core.utils.get_lock_file_path import _get_lock_base_dir
 
@@ -412,7 +412,7 @@ def test_default_lock_directory():
     assert base_dir.endswith("kiarina-utils-file-locks")
 
 
-def test_cleanup_frequency_control():
+def test_cleanup_frequency_control() -> None:
     """Test that cleanup frequency is controlled by token file."""
     from kiarina.utils.file._core.utils.get_lock_file_path import (
         _maybe_cleanup_old_locks,
@@ -448,7 +448,7 @@ def test_cleanup_frequency_control():
                         mock_cleanup.assert_not_called()
 
 
-def test_unicode_normalization():
+def test_unicode_normalization() -> None:
     """Test that Unicode paths are properly normalized."""
     # Test with different Unicode normalizations (NFC vs NFD)
     # This is especially important on macOS
@@ -463,7 +463,7 @@ def test_unicode_normalization():
     assert lock1 == lock2
 
 
-def test_cleanup_concurrent_protection():
+def test_cleanup_concurrent_protection() -> None:
     """Test that concurrent cleanup operations are protected."""
 
     from kiarina.utils.file._core.utils.get_lock_file_path import (

@@ -3,12 +3,12 @@ import google.oauth2.credentials
 import google.oauth2.service_account
 from google.auth import impersonated_credentials
 
+from .._settings import GoogleSettings, settings_manager
 from .._types.credentials import Credentials
 from .._types.credentials_cache import CredentialsCache
 from .._utils.get_default_credentials import get_default_credentials
 from .._utils.get_service_account_credentials import get_service_account_credentials
 from .._utils.get_user_account_credentials import get_user_account_credentials
-from .._settings import GoogleSettings, settings_manager
 
 
 def get_credentials(

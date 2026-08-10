@@ -13,12 +13,6 @@ def get_falkordb(
     url: str | None = None,
     **kwargs: Any,
 ) -> FalkorDB:
-    """
-    Get a FalkorDB client (async version - currently uses sync implementation).
-
-    Note: FalkorDB doesn't have native async support yet, so this currently
-    returns the same sync client. This is prepared for future async support.
-    """
     return _get_falkordb(
         "async",
         settings_key,

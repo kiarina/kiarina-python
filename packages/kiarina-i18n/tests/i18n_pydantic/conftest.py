@@ -1,10 +1,12 @@
+from collections.abc import Iterator
+
 import pytest
 
 from kiarina.i18n import catalog, settings_manager
 
 
 @pytest.fixture(autouse=True)
-def clear_i18n_caches():
+def clear_i18n_caches() -> Iterator[None]:
     """Clear i18n caches and settings before and after each test."""
     catalog.clear()
 

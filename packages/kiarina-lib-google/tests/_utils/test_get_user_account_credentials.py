@@ -1,16 +1,16 @@
 from datetime import UTC, datetime, timedelta
 
-from google.oauth2.credentials import Credentials
 import pytest
+from google.oauth2.credentials import Credentials
 
 from kiarina.lib.google import (
     CredentialsCache,
-    settings_manager,
     get_user_account_credentials,
+    settings_manager,
 )
 
 
-def test_file(load_settings):
+def test_file(load_settings: None) -> None:
     settings = settings_manager.get_settings("user_account_file")
     credentials = get_user_account_credentials(
         authorized_user_file=settings.authorized_user_file,
@@ -19,7 +19,7 @@ def test_file(load_settings):
     assert isinstance(credentials, Credentials)
 
 
-def test_nonexistent_file():
+def test_nonexistent_file() -> None:
     with pytest.raises(ValueError, match="Authorized user file does not exist"):
         get_user_account_credentials(
             authorized_user_file="/path/to/nonexistent/file.json",
@@ -27,7 +27,7 @@ def test_nonexistent_file():
         )
 
 
-def test_data_uses_stored_scopes_when_scopes_are_not_specified():
+def test_data_uses_stored_scopes_when_scopes_are_not_specified() -> None:
     stored_scopes = ["https://www.googleapis.com/auth/drive"]
     credentials = get_user_account_credentials(
         authorized_user_data={
@@ -45,7 +45,7 @@ def test_data_uses_stored_scopes_when_scopes_are_not_specified():
     assert credentials.scopes == stored_scopes
 
 
-def test_data(load_settings):
+def test_data(load_settings: None) -> None:
     settings = settings_manager.get_settings("user_account_data")
     credentials = get_user_account_credentials(
         authorized_user_data=settings.get_authorized_user_data(),
@@ -54,11 +54,11 @@ def test_data(load_settings):
     assert isinstance(credentials, Credentials)
 
 
-def test_cache(load_settings):
+def test_cache(load_settings: None) -> None:
     set_counter = 0
 
     class InMemoryCache(CredentialsCache):
-        def __init__(self):
+        def __init__(self) -> None:
             self._cache: str | None = None
 
         def get(self) -> str | None:
@@ -93,4 +93,4 @@ def test_cache(load_settings):
     assert isinstance(credentials2, Credentials)
     assert credentials2.valid is True
     assert credentials2.token == credentials.token
-    assert set_counter == 1  # Cache should be used, so set() not called
+    assert set_counter == 1

@@ -1,9 +1,11 @@
+from redis.asyncio import Redis
+
 from kiarina.lib.redisearch.asyncio import RedisearchClient, RedisearchSettings
 from kiarina.lib.redisearch_schema import RedisearchSchema
 
 
-async def test_migrate(key_prefix, index_name, redis):
-    fields: list[dict] = []
+async def test_migrate(key_prefix: str, index_name: str, redis: Redis) -> None:
+    fields: list[dict[str, object]] = []
 
     def _create_client() -> RedisearchClient:
         return RedisearchClient(

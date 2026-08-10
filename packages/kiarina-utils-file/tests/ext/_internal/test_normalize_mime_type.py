@@ -3,7 +3,6 @@ import pytest
 from kiarina.utils.ext._utils.normalize_mime_type import normalize_mime_type
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "mime_type,expected",
     [
@@ -23,6 +22,5 @@ from kiarina.utils.ext._utils.normalize_mime_type import normalize_mime_type
         ("", ""),
     ],
 )
-# fmt: on
 def test_normalize_mime_type(mime_type: str, expected: str) -> None:
     assert normalize_mime_type(mime_type) == expected

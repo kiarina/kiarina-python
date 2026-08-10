@@ -6,13 +6,6 @@ from .._schemas.token_data import TokenData
 
 
 async def exchange_custom_token(custom_token: str, api_key: str) -> TokenData:
-    """
-    Exchange a Firebase custom token for an ID token.
-
-    Raises:
-        InvalidCustomTokenError: If the custom token is invalid
-        FirebaseAPIError: If Firebase API returns an error
-    """
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key={api_key}"
 
     payload = {
@@ -30,7 +23,6 @@ async def exchange_custom_token(custom_token: str, api_key: str) -> TokenData:
             error_message = error_data.get("error", {}).get("message", str(e))
             error_code = error_data.get("error", {}).get("code")
 
-            # Check for invalid custom token error
             if "INVALID_CUSTOM_TOKEN" in error_message:
                 raise InvalidCustomTokenError(
                     f"Invalid custom token: {error_message}"

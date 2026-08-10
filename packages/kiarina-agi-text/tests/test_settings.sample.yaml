@@ -1,0 +1,4 @@
+kiarina.lib.anthropic:
+  configs:
+    default:
+      api_key: xxxx

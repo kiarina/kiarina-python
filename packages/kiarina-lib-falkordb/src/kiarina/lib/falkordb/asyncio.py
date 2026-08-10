@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from ._settings import FalkorDBSettings, settings_manager
 
 __all__ = [
-    # ._async._helpers
+    # ._async.helpers
     "get_falkordb",
     # ._settings
     "FalkorDBSettings",

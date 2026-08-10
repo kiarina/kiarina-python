@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-07-02
+
+### Changed
+- Improved the English and Japanese documentation, comments, and docstrings
+
+### Fixed
+- Fixed lazy imports for settings from the asynchronous API
+
 ## [2.1.0] - 2026-06-22
 
 ### Changed

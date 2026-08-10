@@ -1,4 +1,4 @@
-from typing import Dict, List, Set, Tuple, Union
+from typing import ClassVar
 
 from .._decorators.check_operator_misuse import check_operator_misuse
 from .._enums.redisearch_filter_operator import RedisearchFilterOperator
@@ -8,30 +8,23 @@ from .redisearch_filter import RedisearchFilter
 
 
 class Tag(BaseFieldFilter):
-    """
-    Filter for tag fields.
-    """
-
     # --------------------------------------------------
     # Class Variables
     # --------------------------------------------------
 
-    OPERATORS: Dict[RedisearchFilterOperator, str] = {
+    OPERATORS: ClassVar[dict[RedisearchFilterOperator, str]] = {
         RedisearchFilterOperator.EQ: "==",
         RedisearchFilterOperator.NE: "!=",
         RedisearchFilterOperator.IN: "==",
     }
-    """Supported operators"""
 
-    OPERATOR_MAP: Dict[RedisearchFilterOperator, str] = {
+    OPERATOR_MAP: ClassVar[dict[RedisearchFilterOperator, str]] = {
         RedisearchFilterOperator.EQ: "@%s:{%s}",
         RedisearchFilterOperator.NE: "(-@%s:{%s})",
         RedisearchFilterOperator.IN: "@%s:{%s}",
     }
-    """Operator and query mapping"""
 
     SUPPORTED_VALUE_TYPES = (list, set, tuple, str, type(None))
-    """Supported value types"""
 
     # --------------------------------------------------
     # Properties
@@ -39,9 +32,6 @@ class Tag(BaseFieldFilter):
 
     @property
     def _formatted_tag_value(self) -> str:
-        """
-        Format the tag value for query representation.
-        """
         return "|".join([escape_token(tag) for tag in self._value])
 
     # --------------------------------------------------
@@ -49,11 +39,6 @@ class Tag(BaseFieldFilter):
     # --------------------------------------------------
 
     def __str__(self) -> str:
-        """
-        Stringification
-
-        Converting filter expressions into query strings
-        """
         if not self._value:
             return "*"
 
@@ -64,19 +49,8 @@ class Tag(BaseFieldFilter):
 
     @check_operator_misuse
     def __eq__(
-        self, other: Union[List[str], Set[str], Tuple[str], str]
+        self, other: list[str] | set[str] | tuple[str] | str
     ) -> RedisearchFilter:
-        """
-        Create an equality filter expression for tags.
-
-        Args:
-            other (Union[List[str], Set[str], Tuple[str], str]):
-                The tags to filter by.
-
-        Example:
-            >>> import kiarina.lib.redisearch as rf
-            >>> filter = rf.Tag("color") == "blue"
-        """
         self._set(
             operator=RedisearchFilterOperator.EQ,
             value=self._normalize_tag_value(other),
@@ -87,19 +61,8 @@ class Tag(BaseFieldFilter):
 
     @check_operator_misuse
     def __ne__(
-        self, other: Union[List[str], Set[str], Tuple[str], str]
+        self, other: list[str] | set[str] | tuple[str] | str
     ) -> RedisearchFilter:
-        """
-        Create a not-equal filter expression for tags.
-
-        Args:
-            other (Union[List[str], Set[str], Tuple[str], str]):
-                The tags to filter by.
-
-        Example:
-            >>> import kiarina.lib.redisearch as rf
-            >>> filter = rf.Tag("color") != "blue"
-        """
         self._set(
             operator=RedisearchFilterOperator.NE,
             value=self._normalize_tag_value(other),
@@ -113,25 +76,13 @@ class Tag(BaseFieldFilter):
     # --------------------------------------------------
 
     def _normalize_tag_value(
-        self, other: Union[List[str], Set[str], Tuple[str], str]
-    ) -> List[str]:
-        """
-        Normalize the tag value to a list of strings.
-
-        Args:
-            other: The tag value to normalize.
-
-        Returns:
-            List[str]: Normalized tag values.
-
-        Raises:
-            ValueError: If tags within collection cannot be converted to strings.
-        """
+        self, other: list[str] | set[str] | tuple[str] | str
+    ) -> list[str]:
         if isinstance(other, (list, set, tuple)):
             try:
                 return [str(val) for val in other if val]
-            except ValueError:
-                raise ValueError("All tags within collection must be strings")
+            except ValueError as e:
+                raise ValueError("All tags within collection must be strings") from e
 
         elif not other:
             return []

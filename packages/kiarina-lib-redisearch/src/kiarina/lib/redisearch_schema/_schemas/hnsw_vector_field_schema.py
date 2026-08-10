@@ -7,28 +7,39 @@ from .base_vector_field_schema import BaseVectorFieldSchema
 
 
 class HNSWVectorFieldSchema(BaseVectorFieldSchema):
-    """
-    Schema for HNSW vector fields
-    """
+    """Schema for an HNSW vector field."""
 
-    algorithm: Literal["HNSW"] = "HNSW"
-
-    m: int = Field(default=16)
-
-    ef_construction: int = Field(default=200)
-
-    ef_runtime: int = Field(default=10)
-
-    epsilon: float = Field(default=0.01)
+    algorithm: Literal["HNSW"] = Field(
+        default="HNSW",
+        title="Algorithm",
+        description="Vector indexing algorithm.",
+    )
+    m: int = Field(
+        default=16,
+        title="Maximum Connections",
+        description="Maximum outgoing connections for each graph node.",
+    )
+    ef_construction: int = Field(
+        default=200,
+        title="Construction Candidate Count",
+        description="Maximum candidate count used while building the index.",
+    )
+    ef_runtime: int = Field(
+        default=10,
+        title="Runtime Candidate Count",
+        description="Maximum candidate count used while searching.",
+    )
+    epsilon: float = Field(
+        default=0.01,
+        title="Range Search Epsilon",
+        description="Relative factor used to expand vector range searches.",
+    )
 
     # --------------------------------------------------
     # Public Methods
     # --------------------------------------------------
 
     def to_field(self) -> VectorField:
-        """
-        Convert field schema to Redisearch field
-        """
         return VectorField(self.name, self.algorithm, self._get_attributes())
 
     # --------------------------------------------------
@@ -36,9 +47,6 @@ class HNSWVectorFieldSchema(BaseVectorFieldSchema):
     # --------------------------------------------------
 
     def _get_attributes(self) -> dict[str, Any]:
-        """
-        Get attributes for the vector field
-        """
         attributes = super()._get_attributes()
 
         attributes.update(

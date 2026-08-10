@@ -13,10 +13,7 @@ class D1Context:
 
     @property
     def query_api_url(self) -> str:
-        return "https://api.cloudflare.com/client/v4/accounts/{account_id}/d1/database/{database_id}/query".format(
-            account_id=self.auth_settings.account_id,
-            database_id=self.settings.database_id,
-        )
+        return f"https://api.cloudflare.com/client/v4/accounts/{self.auth_settings.account_id}/d1/database/{self.settings.database_id}/query"
 
     @property
     def headers(self) -> dict[str, str]:

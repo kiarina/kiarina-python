@@ -1,0 +1,554 @@
+from typing import TypedDict
+
+import pytest
+
+from kiarina.agi.chat_provider import ChatCapabilities
+from kiarina.agi.content import Content
+from kiarina.agi.file_info import (
+    AudioFileInfo,
+    FileInfo,
+    FileType,
+    ImageFileInfo,
+    OtherFileInfo,
+    PDFFileInfo,
+    TextFileInfo,
+    VideoFileInfo,
+)
+from kiarina.agi.langchain_chat_provider import LangChainMediaConverter
+from kiarina.agi.langchain_chat_provider._operations.from_content import (
+    from_content,
+)
+from kiarina.agi.langchain_chat_provider._operations.from_file_info import (
+    from_file_info,
+)
+from kiarina.agi.run_context import RunContext
+from kiarina.utils.file import FileBlob
+
+
+class ConversionArgs(TypedDict):
+    tag: str
+    capabilities: ChatCapabilities
+    media_converter: LangChainMediaConverter
+    run_context: RunContext
+
+
+@pytest.fixture
+def args(
+    capabilities: ChatCapabilities,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+) -> ConversionArgs:
+    return {
+        "tag": "test_tag",
+        "capabilities": capabilities,
+        "media_converter": media_converter,
+        "run_context": run_context,
+    }
+
+
+@pytest.fixture
+def all_enabled_args(
+    all_enabled_capabilities: ChatCapabilities,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+) -> ConversionArgs:
+    return {
+        "tag": "test_tag",
+        "capabilities": all_enabled_capabilities,
+        "media_converter": media_converter,
+        "run_context": run_context,
+    }
+
+
+@pytest.fixture
+def bundle_blob() -> FileBlob:
+    from kiarina.agi.file_bundle import (
+        FileBundle,
+        FileBundleMediaContent,
+        FileBundleTextContent,
+    )
+
+    bundle = FileBundle.create(
+        [
+            FileBundleTextContent(
+                text="transcript for audio fallback",
+                visibility="unsupported",
+            ),
+            "plain string fallback",
+            FileBundleMediaContent(
+                type="audio",
+                file_path="audio.mp3",
+                mime_type="audio/mpeg",
+                visibility="supported",
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="frames/0001.jpg",
+                mime_type="image/jpeg",
+            ),
+        ],
+        files={
+            "audio.mp3": b"audio-data",
+            "frames/0001.jpg": b"image-data",
+        },
+    )
+
+    return FileBlob(
+        "bundle.zip",
+        mime_type=FileBundle.MIME_TYPE,
+        raw_data=bundle.to_bytes(),
+    )
+
+
+@pytest.fixture
+def video_bundle_blob() -> FileBlob:
+    from kiarina.agi.file_bundle import (
+        FileBundle,
+        FileBundleMediaContent,
+        FileBundleTextContent,
+    )
+
+    bundle = FileBundle.create(
+        [
+            FileBundleMediaContent(
+                type="video",
+                file_path="video.mp4",
+                mime_type="video/mp4",
+                visibility="supported",
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="frames/000000.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                prefix_text='<image timestamp="0.000" />',
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="frames/000001.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                prefix_text='<image timestamp="1.000" />',
+            ),
+            FileBundleTextContent(
+                text="<transcript>speech</transcript>",
+                visibility="unsupported",
+            ),
+            FileBundleTextContent(
+                text="<ambient>music</ambient>",
+                visibility="unsupported",
+            ),
+        ],
+        files={
+            "video.mp4": b"video-data",
+            "frames/000000.jpg": b"frame-0",
+            "frames/000001.jpg": b"frame-1",
+        },
+    )
+    return FileBlob(
+        "video_bundle.zip",
+        mime_type=FileBundle.MIME_TYPE,
+        raw_data=bundle.to_bytes(),
+    )
+
+
+@pytest.fixture
+def pdf_bundle_blob() -> FileBlob:
+    from kiarina.agi.file_bundle import (
+        FileBundle,
+        FileBundleMediaContent,
+        FileBundleTextContent,
+    )
+
+    bundle = FileBundle.create(
+        [
+            FileBundleMediaContent(
+                type="pdf",
+                file_path="document.pdf",
+                mime_type="application/pdf",
+                visibility="supported",
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="pages/page_0005.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                prefix_text='<image page_number="5" />',
+            ),
+            FileBundleMediaContent(
+                type="image",
+                file_path="pages/page_0006.jpg",
+                mime_type="image/jpeg",
+                visibility="unsupported",
+                prefix_text='<image page_number="6" />',
+            ),
+            FileBundleTextContent(
+                text="extracted PDF text",
+                visibility="unsupported",
+            ),
+        ],
+        files={
+            "document.pdf": b"pdf-data",
+            "pages/page_0005.jpg": b"page-5",
+            "pages/page_0006.jpg": b"page-6",
+        },
+    )
+    return FileBlob(
+        "pdf_bundle.zip",
+        mime_type=FileBundle.MIME_TYPE,
+        raw_data=bundle.to_bytes(),
+    )
+
+
+async def test_metadata_only(
+    text_file_info: TextFileInfo, args: ConversionArgs
+) -> None:
+    text_file_info.metadata_only = True
+    result = await from_file_info(text_file_info, **args)
+    assert result.text is not None
+    assert result.media_dicts is None
+    print(result)
+
+
+async def test_other(other_file_info: OtherFileInfo, args: ConversionArgs) -> None:
+    result = await from_file_info(other_file_info, **args)
+    assert result.text is not None
+    assert result.media_dicts is None
+    print(result)
+
+
+async def test_text(text_file_info: TextFileInfo, args: ConversionArgs) -> None:
+    text_file_info.content_only = True
+    result = await from_file_info(text_file_info, **args)
+    assert result.text is not None
+    assert result.media_dicts is None
+    print("content_only:", result)
+
+    text_file_info.content_only = False
+    result = await from_file_info(text_file_info, **args)
+    assert result.text is not None
+    assert result.media_dicts is None
+    print("not content_only:", result)
+
+
+async def test_asset_uri_not_found(
+    image_file_info: FileInfo, args: ConversionArgs
+) -> None:
+    image_file_info.asset_uri = "non_existent_asset_uri"
+    result = await from_file_info(image_file_info, **args)
+    assert result.text is None
+    assert result.media_dicts is None
+    print(result)
+
+
+async def test_zip_bundle_when_parent_type_is_unsupported(
+    audio_file_info: FileInfo,
+    bundle_blob: FileBlob,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    audio_file_info.asset_uri = "asset://bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        assert uri_or_file_path == "asset://bundle.zip"
+        return bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+
+    result = await from_file_info(
+        audio_file_info,
+        tag="test_tag",
+        capabilities=ChatCapabilities(input_enabled={"image": True, "audio": False}),
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.text == audio_file_info.to_xml("test_tag")
+    assert result.media_dicts == [
+        {"type": "text", "text": "transcript for audio fallback"},
+        {"type": "text", "text": "plain string fallback"},
+        {"type": "image", "mime_type": "image/jpeg"},
+    ]
+
+
+async def test_zip_bundle_extends_multiple_media_items(
+    audio_file_info: FileInfo,
+    bundle_blob: FileBlob,
+    all_enabled_capabilities: ChatCapabilities,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    audio_file_info.asset_uri = "asset://bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        return bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+
+    result = await from_content(
+        "human",
+        Content(files=[audio_file_info], file_tags={"audio": "test_tag"}),
+        capabilities=all_enabled_capabilities,
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.lc_contents == [
+        {
+            "type": "text",
+            "text": f"<files>\n{audio_file_info.to_xml('test_tag')}\n</files>",
+        },
+        {
+            "type": "text",
+            "text": "plain string fallback",
+        },
+        {
+            "type": "audio",
+            "mime_type": "audio/mpeg",
+        },
+        {
+            "type": "image",
+            "mime_type": "image/jpeg",
+        },
+    ]
+
+
+@pytest.mark.parametrize(
+    "input_enabled,expected_media_dicts",
+    [
+        pytest.param(
+            {},
+            [
+                {"type": "text", "text": "<transcript>speech</transcript>"},
+                {"type": "text", "text": "<ambient>music</ambient>"},
+            ],
+            id="llm",
+        ),
+        pytest.param(
+            {"image": True},
+            [
+                {"type": "text", "text": '<image timestamp="0.000" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": '<image timestamp="1.000" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": "<transcript>speech</transcript>"},
+                {"type": "text", "text": "<ambient>music</ambient>"},
+            ],
+            id="vlm",
+        ),
+        pytest.param(
+            {"image": True, "audio": True, "video": True},
+            [{"type": "video", "mime_type": "video/mp4"}],
+            id="omni",
+        ),
+    ],
+)
+async def test_video_bundle_capability_fallback(
+    input_enabled: dict[FileType, bool],
+    expected_media_dicts: list[dict[str, str]],
+    video_file_info: VideoFileInfo,
+    video_bundle_blob: FileBlob,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    video_file_info.asset_uri = "asset://video_bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        return video_bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+
+    result = await from_file_info(
+        video_file_info,
+        capabilities=ChatCapabilities(input_enabled=input_enabled),
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.media_dicts == expected_media_dicts
+
+
+@pytest.mark.parametrize(
+    "input_enabled,expected_media_dicts",
+    [
+        pytest.param(
+            {},
+            [{"type": "text", "text": "extracted PDF text"}],
+            id="llm",
+        ),
+        pytest.param(
+            {"image": True},
+            [
+                {"type": "text", "text": '<image page_number="5" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": '<image page_number="6" />'},
+                {"type": "image", "mime_type": "image/jpeg"},
+                {"type": "text", "text": "extracted PDF text"},
+            ],
+            id="vlm",
+        ),
+        pytest.param(
+            {"image": True, "pdf": True},
+            [
+                {
+                    "type": "pdf",
+                    "mime_type": "application/pdf",
+                    "display_name": "document.pdf",
+                }
+            ],
+            id="pdf",
+        ),
+    ],
+)
+async def test_pdf_bundle_capability_fallback(
+    input_enabled: dict[FileType, bool],
+    expected_media_dicts: list[dict[str, str]],
+    pdf_file_info: PDFFileInfo,
+    pdf_bundle_blob: FileBlob,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pdf_file_info.asset_uri = "asset://pdf_bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        return pdf_bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+
+    result = await from_file_info(
+        pdf_file_info,
+        capabilities=ChatCapabilities(input_enabled=input_enabled),
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.media_dicts == expected_media_dicts
+
+
+async def test_page_marker_is_omitted_when_image_conversion_fails(
+    pdf_file_info: PDFFileInfo,
+    pdf_bundle_blob: FileBlob,
+    media_converter: LangChainMediaConverter,
+    run_context: RunContext,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pdf_file_info.asset_uri = "asset://pdf_bundle.zip"
+
+    async def fake_get_file_blob(
+        uri_or_file_path: str, *, run_context: RunContext
+    ) -> FileBlob:
+        return pdf_bundle_blob
+
+    monkeypatch.setattr(
+        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        fake_get_file_blob,
+    )
+    monkeypatch.setattr(media_converter, "to_image_content", lambda mime_blob: None)
+
+    result = await from_file_info(
+        pdf_file_info,
+        capabilities=ChatCapabilities(input_enabled={"image": True}),
+        media_converter=media_converter,
+        run_context=run_context,
+    )
+
+    assert result.media_dicts == [{"type": "text", "text": "extracted PDF text"}]
+
+
+async def test_unsupported(
+    audio_file_info: AudioFileInfo, args: ConversionArgs
+) -> None:
+    result = await from_file_info(audio_file_info, **args)
+    assert result.text is not None
+    assert result.media_dicts is None
+    print(result)
+
+
+async def test_media_asset_uri(
+    image_file_info: ImageFileInfo, all_enabled_args: ConversionArgs
+) -> None:
+    image_file_info.asset_uri = image_file_info.uri_or_file_path
+    result = await from_file_info(image_file_info, **all_enabled_args)
+    assert result.text is not None
+    assert result.media_dicts is not None
+    print(result)
+
+
+async def test_media_not_found(
+    image_file_info: ImageFileInfo, all_enabled_args: ConversionArgs
+) -> None:
+    image_file_info.asset_uri = "non_existent_asset_uri"
+    result = await from_file_info(image_file_info, **all_enabled_args)
+    assert result.text is None
+    assert result.media_dicts is None
+    print(result)
+
+
+async def test_media_content_only(
+    image_file_info: ImageFileInfo, all_enabled_args: ConversionArgs
+) -> None:
+    image_file_info.content_only = True
+    result = await from_file_info(image_file_info, **all_enabled_args)
+    assert result.text is None
+    assert result.media_dicts is not None
+    print("content_only:", result)
+
+
+async def test_image(
+    image_file_info: ImageFileInfo, all_enabled_args: ConversionArgs
+) -> None:
+    result = await from_file_info(image_file_info, **all_enabled_args)
+    assert result.text is not None
+    assert result.media_dicts is not None
+    print(result)
+
+
+async def test_audio(
+    audio_file_info: AudioFileInfo, all_enabled_args: ConversionArgs
+) -> None:
+    result = await from_file_info(audio_file_info, **all_enabled_args)
+    assert result.text is not None
+    assert result.media_dicts is not None
+    print(result)
+
+
+async def test_video(
+    video_file_info: VideoFileInfo, all_enabled_args: ConversionArgs
+) -> None:
+    result = await from_file_info(video_file_info, **all_enabled_args)
+    assert result.text is not None
+    assert result.media_dicts is not None
+    print(result)
+
+
+async def test_pdf(
+    pdf_file_info: PDFFileInfo, all_enabled_args: ConversionArgs
+) -> None:
+    result = await from_file_info(pdf_file_info, **all_enabled_args)
+    assert result.text is not None
+    assert result.media_dicts is not None
+    print(result)

@@ -1,6 +1,7 @@
 import json
 import os
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from .read_text import read_text
 
@@ -28,18 +29,7 @@ def read_json_dict(
     file_path: str | os.PathLike[str],
     *,
     default: dict[str, Any] | None = None,
-) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]:
-    """
-    Read JSON dictionary file
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to read
-        default (dict[str, Any] | None): Default value to return if file doesn't exist
-
-    Returns:
-        dict[str, Any] | None: File content. Returns default if file doesn't exist
-    """
+) -> dict[str, Any] | Awaitable[dict[str, Any] | None] | None:
 
     def _after(raw_text: str | None) -> dict[str, Any] | None:
         if raw_text is None:

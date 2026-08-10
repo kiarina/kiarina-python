@@ -10,7 +10,7 @@ from kiarina.lib.firebase import (
 
 
 class InMemoryTokenCache(TokenDataCache):
-    def __init__(self, token_data: TokenData):
+    def __init__(self, token_data: TokenData) -> None:
         self._token_data: TokenData = token_data
 
     async def get(self) -> TokenData:
@@ -20,7 +20,7 @@ class InMemoryTokenCache(TokenDataCache):
         self._token_data = token_data
 
 
-async def test_missing_parameters():
+async def test_missing_parameters() -> None:
     with pytest.raises(
         ValueError,
         match="At least one of 'refresh_token', 'token_data', or 'token_data_cache'",
@@ -28,20 +28,20 @@ async def test_missing_parameters():
         TokenManager(api_key="test")
 
 
-async def test_before_get_id_token(api_key, token_data):
+async def test_before_get_id_token(api_key: str, token_data: TokenData) -> None:
     manager = TokenManager(
         api_key=api_key,
         token_data_cache=InMemoryTokenCache(token_data),
     )
 
-    with pytest.raises(AssertionError, match="Refresh token is not set."):
-        manager.refresh_token
+    with pytest.raises(AssertionError, match="Refresh token is not set\\."):
+        _ = manager.refresh_token
 
-    with pytest.raises(AssertionError, match="Token data is not set."):
-        manager.token_data
+    with pytest.raises(AssertionError, match="Token data is not set\\."):
+        _ = manager.token_data
 
 
-async def test_happy_path(api_key, token_data):
+async def test_happy_path(api_key: str, token_data: TokenData) -> None:
     manager = TokenManager(
         api_key=api_key,
         token_data_cache=InMemoryTokenCache(token_data),
@@ -62,7 +62,7 @@ async def test_happy_path(api_key, token_data):
     assert new_token_data.expires_at == manager.expires_at
 
 
-async def test_need_refresh(api_key, token_data):
+async def test_need_refresh(api_key: str, token_data: TokenData) -> None:
     manager = TokenManager(
         api_key=api_key,
         refresh_token=token_data.refresh_token,
@@ -71,7 +71,7 @@ async def test_need_refresh(api_key, token_data):
     await manager.get_id_token()
 
 
-async def test_init_with_token_data(api_key, token_data):
+async def test_init_with_token_data(api_key: str, token_data: TokenData) -> None:
     TokenManager(
         api_key=api_key,
         token_data=token_data,

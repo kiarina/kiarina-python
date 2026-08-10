@@ -1,7 +1,11 @@
+from typing import TypeAlias
+
 from kiarina.i18n import Translator, catalog
 
+CatalogData: TypeAlias = dict[str, dict[str, dict[str, str]]]
 
-def test_translator_basic(sample_catalog):
+
+def test_translator_basic(sample_catalog: CatalogData) -> None:
     """Test basic translation."""
     catalog.add_from_dict(sample_catalog)
     t = Translator(catalog=catalog, language="en", scope="app.greeting")
@@ -9,7 +13,7 @@ def test_translator_basic(sample_catalog):
     assert t("goodbye") == "Goodbye!"
 
 
-def test_translator_japanese(sample_catalog):
+def test_translator_japanese(sample_catalog: CatalogData) -> None:
     """Test Japanese translation."""
     catalog.add_from_dict(sample_catalog)
     t = Translator(catalog=catalog, language="ja", scope="app.greeting")
@@ -17,7 +21,7 @@ def test_translator_japanese(sample_catalog):
     assert t("goodbye") == "さようなら!"
 
 
-def test_translator_fallback(sample_catalog):
+def test_translator_fallback(sample_catalog: CatalogData) -> None:
     """Test fallback to English when translation is not found."""
     # Remove Japanese translation for "goodbye"
     del sample_catalog["ja"]["app.greeting"]["goodbye"]
@@ -105,14 +109,14 @@ def test_translator_uses_default_language_fallback_chain() -> None:
     assert t("hello") == "Hello"
 
 
-def test_translator_default(sample_catalog):
+def test_translator_default(sample_catalog: CatalogData) -> None:
     """Test default value when translation is not found."""
     catalog.add_from_dict(sample_catalog)
     t = Translator(catalog=catalog, language="en", scope="app.greeting")
     assert t("unknown", default="Default text") == "Default text"
 
 
-def test_translator_missing_key(sample_catalog):
+def test_translator_missing_key(sample_catalog: CatalogData) -> None:
     """Test behavior when key is missing and no default is provided."""
     catalog.add_from_dict(sample_catalog)
     t = Translator(catalog=catalog, language="en", scope="app.greeting")
@@ -120,7 +124,7 @@ def test_translator_missing_key(sample_catalog):
     assert result == "app.greeting#unknown"
 
 
-def test_translator_template_substitution(sample_catalog):
+def test_translator_template_substitution(sample_catalog: CatalogData) -> None:
     """Test template variable substitution."""
     catalog.add_from_dict(sample_catalog)
     t = Translator(catalog=catalog, language="en", scope="app.greeting")
@@ -128,7 +132,7 @@ def test_translator_template_substitution(sample_catalog):
     assert t("hello", name="Bob") == "Hello, Bob!"
 
 
-def test_translator_different_scope(sample_catalog):
+def test_translator_different_scope(sample_catalog: CatalogData) -> None:
     """Test translation with different scope."""
     catalog.add_from_dict(sample_catalog)
     t = Translator(catalog=catalog, language="en", scope="app.error")

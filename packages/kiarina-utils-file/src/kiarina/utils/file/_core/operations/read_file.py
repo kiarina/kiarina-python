@@ -1,5 +1,6 @@
 import os
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from kiarina.utils.mime import detect_mime_type
 
@@ -33,19 +34,7 @@ def read_file(
     *,
     fallback_mime_type: str = "application/octet-stream",
     default: FileBlob | None = None,
-) -> FileBlob | None | Awaitable[FileBlob | None]:
-    """
-    Read a file and return a FileBlob
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to read
-        fallback_mime_type (str): Fallback MIME type if detection fails
-        default (FileBlob | None): Default value to return if file doesn't exist. Default is None
-
-    Returns:
-        FileBlob | None: FileBlob instance or None if the file does not exist
-    """
+) -> FileBlob | Awaitable[FileBlob | None] | None:
 
     def _after(raw_data: bytes | None) -> FileBlob | None:
         if raw_data is None:

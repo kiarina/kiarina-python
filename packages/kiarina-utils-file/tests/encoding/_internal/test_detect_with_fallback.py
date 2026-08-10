@@ -1,26 +1,25 @@
+from pathlib import Path
+
 import pytest
 
 from kiarina.utils.encoding._operations.detect_with_fallback import detect_with_fallback
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "raw_data, expected_encoding",
     [
-        ("こんにちは世界".encode('utf-8'), "utf-8"),
-        ("こんにちは世界".encode('shift_jis'), "shift_jis"),
-        ("こんにちは世界".encode('euc-jp'), "euc-jp"),
-        ("Hello ASCII".encode('ascii'), "utf-8"),
+        ("こんにちは世界".encode(), "utf-8"),
+        ("こんにちは世界".encode("shift_jis"), "shift_jis"),
+        ("こんにちは世界".encode("euc-jp"), "euc-jp"),
+        ("Hello ASCII".encode("ascii"), "utf-8"),
         (b"", None),
-        ("こんにちは世界🌍️".encode('utf-8'), "utf-8"),
-    ]
+        ("こんにちは世界🌍️".encode(), "utf-8"),
+    ],
 )
-# fmt: on
-def test_main(raw_data, expected_encoding):
+def test_main(raw_data: bytes, expected_encoding: str | None) -> None:
     assert detect_with_fallback(raw_data) == expected_encoding
 
 
-# fmt: off
 @pytest.mark.parametrize(
     "file_path, expected_encoding",
     [
@@ -30,8 +29,9 @@ def test_main(raw_data, expected_encoding):
         ("txt/ascii_code_docs_1600kb.txt", "utf-8"),
     ],
 )
-# fmt: on
-def test_with_file(file_path, expected_encoding, assets_dir):
+def test_with_file(
+    file_path: str, expected_encoding: str | None, assets_dir: Path
+) -> None:
     with open(assets_dir / file_path, "rb") as f:
         raw_data = f.read()
 

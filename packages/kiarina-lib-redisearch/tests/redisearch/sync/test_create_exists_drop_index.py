@@ -1,7 +1,7 @@
 from kiarina.lib.redisearch import RedisearchClient
 
 
-def test_create_exists_drop_index(client: RedisearchClient):
+def test_create_exists_drop_index(client: RedisearchClient) -> None:
     # Clean up before test
     client.drop_index()
     assert not client.exists_index()

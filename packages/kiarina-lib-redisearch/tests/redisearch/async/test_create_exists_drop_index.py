@@ -1,7 +1,7 @@
 from kiarina.lib.redisearch.asyncio import RedisearchClient
 
 
-async def test_create_exists_drop_index(client: RedisearchClient):
+async def test_create_exists_drop_index(client: RedisearchClient) -> None:
     # Clean up before test
     await client.drop_index()
     assert not await client.exists_index()

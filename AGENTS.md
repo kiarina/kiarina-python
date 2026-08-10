@@ -10,6 +10,7 @@
 - `mise.toml`
 - `.mise/tasks/`
 - `Makefile`
+- 直近の 5 つの commit の commit message
 
 また、`docs/` 以下のファイルも、最低限ファイルパスのリストを把握しておいてください。
 そして、タスクに関連しそうなファイルの内容は、適宜把握してください。
@@ -20,11 +21,40 @@
 pydantic-settings に関連したタスクを行う場合は、先に下記を把握してください。
 - https://github.com/kiarina/pydantic-settings-manager
 
+依存パッケージを追加・変更する場合、または `{mod}_impl.{name}` 以下を追加・変更する場合は、先に下記を把握してください。
+- docs/concepts/implementation_optional_dependencies/README.md
+
 新しいパッケージを追加する際は、作業前に下記を把握してください。
 - docs/runbooks/add_new_package/README.md
 
+Makefile を追加・変更する場合は、作業前に下記を把握してください。
+- docs/playbooks/development_flow/README.md
+
+コストがかかる pytest、またはモデルなどの重いファイルの download を伴う pytest を書く場合は、作業前に下記を把握してください。
+- docs/playbooks/pytest_markers/README.md
+
+外部サービス（ローカルサーバーや外部 API）に依存する pytest を書く場合は、作業前に下記を把握してください。
+- docs/playbooks/external_service_tests/README.md
+
 リリースする際は、作業前に下記を把握してください。
 - docs/runbooks/release/README.md
+
+## テキストの方針
+
+すべてのテキストは、シンプルで、明確で、簡潔にしてください。
+
+- ドキュメントは、この方針に沿って簡潔に書いてください。
+- コメントは、コードから読み取れない事情がある場合にのみ書いてください。
+- `__init__.py` の `__all__` と遅延 import のマッピングでは、import 元ごとにグループコメントを残してください。
+- コードをグループ化する区切りコメント（`# ---...` とグループ名）は残してください。
+- docstring は、原則として下記にのみ書いてください。
+  - 公開する設定クラスやスキーマクラスの説明
+  - 公開するグローバル変数や型の説明
+- 名前から役割を推測できる場合は、docstring を書かないでください。
+- フィールドには docstring を書かないでください。Pydantic の公開クラスでは、フィールドに `title` と `description` を設定してください。
+- 各パッケージの README は、下記の資料にしたがって書いてください
+  - docs/playbooks/package_readme_structure/README.md
+  - パッケージの README は、他と異なり、公開 API のシグネチャを全て記載するなど、README のみでパッケージの使い方が理解できるようにする必要があります
 
 ## README の運用
 
@@ -64,7 +94,14 @@ make test
 
 ## CHANGELOG の運用
 
-コードの変更を commit する場合は、commit 直前に `CHANGELOG.md` の `Unreleased` セクションへ変更内容を追記し、コードの変更と同じ commit に含めてください。commit するまでは `CHANGELOG.md` を更新しないでください。
+PyPI にリリースする必要がある変更を commit する場合は、commit 直前に `CHANGELOG.md` の `Unreleased` セクションへ変更内容を追記し、対象の変更と同じ commit に含めてください。commit するまでは `CHANGELOG.md` を更新しないでください。
+
+次の変更だけの場合は、`CHANGELOG.md` を更新しないでください。
+- ドキュメント
+- テスト
+- CI/CD
+
+PyPI にリリースする必要がある変更と、ドキュメント、テスト、CI/CD の変更が同じ commit に含まれる場合は、PyPI にリリースする必要がある変更だけを `Unreleased` に記録してください。
 
 ## テスト用のアセットの管理
 

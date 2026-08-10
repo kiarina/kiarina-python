@@ -1,19 +1,23 @@
 from datetime import datetime, timedelta, timezone
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TokenData(BaseModel):
     """Firebase authentication token data."""
 
-    refresh_token: str
-    """Refresh token for getting new ID tokens."""
-
-    id_token: str
-    """Firebase ID token (JWT)."""
-
-    expires_at: datetime
-    """ID token expiration time (UTC)."""
+    refresh_token: str = Field(
+        title="Refresh token",
+        description="Token used to obtain a new ID token.",
+    )
+    id_token: str = Field(
+        title="ID token",
+        description="Firebase ID token.",
+    )
+    expires_at: datetime = Field(
+        title="Expiration time",
+        description="ID token expiration time in UTC.",
+    )
 
     @classmethod
     def from_api_response(
@@ -24,15 +28,6 @@ class TokenData(BaseModel):
         *,
         issued_at: datetime | None = None,
     ) -> "TokenData":
-        """
-        Create TokenData from Firebase API response.
-
-        Args:
-            id_token: Firebase ID token
-            refresh_token: Refresh token
-            expires_in: Token lifetime in seconds
-            issued_at: Token issue time (defaults to now)
-        """
         if issued_at is None:
             issued_at = datetime.now(timezone.utc)
 

@@ -31,8 +31,12 @@ if [ -d "packages/$target/tests" ]; then
     paths+=("packages/$target/tests/")
 fi
 
+if [ -d "packages/$target/scripts" ]; then
+    paths+=("packages/$target/scripts/")
+fi
+
 if [ ${#paths[@]} -eq 0 ]; then
-    echo "⚠️  No src or tests directories found for $target"
+    echo "⚠️  No src, tests, or scripts directories found for $target"
     exit 0
 fi
 
@@ -47,10 +51,8 @@ echo "🔧 Running ruff format check..."
 uv run --group dev ruff format --check "${paths[@]}" || status=1
 
 # Run mypy
-if [ -d "packages/$target/src" ]; then
-    echo "🔍 Running mypy..."
-    uv run --group dev mypy "packages/$target/src/" || status=1
-fi
+echo "🔍 Running mypy..."
+uv run --group dev mypy "${paths[@]}" || status=1
 
 if [ $status -ne 0 ]; then
     echo "❌ Linting failed for $target"

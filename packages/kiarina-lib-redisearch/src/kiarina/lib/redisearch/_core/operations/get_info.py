@@ -1,4 +1,5 @@
-from typing import Any, Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Any, Literal, overload
 
 from kiarina.lib.redisearch_schema import RedisearchSchema
 
@@ -24,9 +25,6 @@ def get_info(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
 ) -> InfoResult | Awaitable[InfoResult]:
-    """
-    Get index information using FT.INFO command.
-    """
 
     def _after(result: dict[str, Any]) -> InfoResult:
         return InfoResult(
@@ -54,9 +52,6 @@ def get_info(
 
 
 def _parse_schema(schema: RedisearchSchema, result: dict[str, Any]) -> RedisearchSchema:
-    """
-    Parse the schema information from the FT.INFO results
-    """
     fields: list[dict[str, Any]] = []
 
     if "attributes" not in result:

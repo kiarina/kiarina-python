@@ -1,10 +1,10 @@
 # kiarina-utils-common
 
-English | [日本語](README.ja.md)
-
 [![PyPI version](https://badge.fury.io/py/kiarina-utils-common.svg)](https://badge.fury.io/py/kiarina-utils-common)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-utils-common.svg)](https://pypi.org/project/kiarina-utils-common/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+English | [日本語](README.ja.md)
 
 > [!NOTE] What is this?
 > A package providing lightweight configuration resolution, dynamic imports, and registry foundations.
@@ -233,10 +233,27 @@ assert console1 is console_registry.get()  # Return the same object
 from kiarina.utils.common import (
     ConfigString,
     ImportPath,
+    download_file,
     import_object,
     parse_config_string,
 )
 ```
+
+#### `download_file`
+
+```python
+def download_file(
+    url: str,
+    sha256: str,
+    cache_path: os.PathLike[str] | str,
+) -> Path: ...
+```
+
+Download a file to `cache_path` if it does not already exist.
+
+The file is first written to a temporary file in the same directory, verified with SHA-256, and then atomically placed at `cache_path`. Existing files are reused without hash verification.
+
+- `RuntimeError`: Downloading fails or the SHA-256 digest does not match
 
 #### `import_object`
 
@@ -394,7 +411,7 @@ class ComponentRegistry(Generic[T]):
     def __init__(
         self,
         *,
-        expected_type: type[T],
+        expected_type: object,
         component_label: str = "Component",
         get_default: Callable[[], ComponentSpecifier | None] | None = None,
         get_aliases: Callable[

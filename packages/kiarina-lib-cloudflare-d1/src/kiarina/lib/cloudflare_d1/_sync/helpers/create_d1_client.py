@@ -9,9 +9,6 @@ def create_d1_client(
     *,
     auth_settings_key: str | None = None,
 ) -> D1Client:
-    """
-    Create a D1 client.
-    """
     settings = settings_manager.get_settings(settings_key)
     auth_settings = auth_settings_manager.get_settings(auth_settings_key)
     return D1Client(settings, auth_settings=auth_settings)

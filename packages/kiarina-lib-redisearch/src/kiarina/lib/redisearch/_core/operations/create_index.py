@@ -1,4 +1,5 @@
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from redis.commands.search.index_definition import IndexDefinition, IndexType
 
@@ -22,10 +23,7 @@ def create_index(
 def create_index(
     mode: Literal["sync", "async"],
     ctx: RedisearchContext,
-) -> None | Awaitable[None]:
-    """
-    Create the index.
-    """
+) -> Awaitable[None] | None:
     fields = ctx.schema.to_fields()
 
     definition = IndexDefinition(  # type: ignore[no-untyped-call]

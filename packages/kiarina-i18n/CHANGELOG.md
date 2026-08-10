@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-07-02
+
+### Changed
+- Expand the package guide and API reference, align the English and Japanese documentation, and simplify comments and docstrings.
+
 ## [2.1.0] - 2026-06-22
 
 ### Added
@@ -25,7 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change `get_system_language()` return type annotation to `Language`.
 - Allow `get_i18n()` to omit `language` and automatically use `get_system_language()`.
 - Allow `get_i18n()` to accept regular Pydantic `BaseModel` classes and derive their scope from the public module path.
-- Moved the module-level `catalog` singleton into the `_instances` layer.
 
 ## [2.0.0] - 2026-06-10
 

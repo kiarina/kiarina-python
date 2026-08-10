@@ -1,5 +1,6 @@
 import os
-from typing import Awaitable, Literal, overload
+from collections.abc import Awaitable
+from typing import Literal, overload
 
 from filelock import AsyncFileLock, FileLock
 
@@ -23,21 +24,11 @@ def remove_file(
 def remove_file(
     mode: Literal["sync", "async"],
     file_path: str | os.PathLike[str],
-) -> None | Awaitable[None]:
-    """
-    Remove a file with locking mechanism.
-
-    Args:
-        mode (Literal["sync", "async"]): Execution mode, either "sync" or "async"
-        file_path (str | os.PathLike[str]): Path to the file to remove
-    """
-    # Normalize the file path
+) -> Awaitable[None] | None:
     file_path = os.path.expanduser(os.path.expandvars(os.fspath(file_path)))
 
-    # Define the lock file path
     lock_file_path = get_lock_file_path(file_path)
 
-    # Synchronous version of the function
     def _sync() -> None:
         lock = FileLock(lock_file_path)
 
@@ -45,7 +36,6 @@ def remove_file(
             if os.path.exists(file_path):
                 os.remove(file_path)
 
-    # Asynchronous version of the function
     async def _async() -> None:
         lock = AsyncFileLock(lock_file_path)
 
@@ -53,7 +43,6 @@ def remove_file(
             if os.path.exists(file_path):
                 os.remove(file_path)
 
-    # Return the appropriate function based on the mode
     if mode == "sync":
         _sync()
         return None
