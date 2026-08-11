@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.21.2] - 2026-08-11
+
 ### Added
 - **kiarina-agi-file**: Add repository containment policies with explicitly scoped shared URI directories.
 
