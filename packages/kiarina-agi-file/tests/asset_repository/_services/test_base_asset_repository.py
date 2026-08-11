@@ -130,3 +130,34 @@ def test_repositories_reject_another_run_context_uri(
 
     with pytest.raises(PermissionError):
         first.validate_uri(second.generate_data_uri("test.txt"))
+
+
+def test_containment_allows_scoped_additional_directory(
+    run_context: RunContext,
+) -> None:
+    policy = URIPolicy(
+        restrict_to_repository_uris=True,
+        additional_allowed_uri_directory_templates=[
+            "gs://example-bucket/users/{user_id}/uploads"
+        ],
+        allowed_uri_patterns=["gs://example-bucket/.*"],
+        data_dir_uri_template=(
+            "gs://example-bucket/users/{user_id}/spirits/{agent_id}/data"
+        ),
+        cache_dir_uri_template=(
+            "gs://example-bucket/users/{user_id}/spirits/{agent_id}/cache"
+        ),
+    )
+    repository = LocalAssetRepository()
+    repository.uri_policy = policy
+    repository.run_context = run_context.model_copy(
+        update={"user_id": "user-1", "agent_id": "agent-1"}
+    )
+
+    repository.validate_uri("gs://example-bucket/users/user-1/uploads/file.txt")
+    with pytest.raises(PermissionError):
+        repository.validate_uri("gs://example-bucket/users/user-2/uploads/file.txt")
+    with pytest.raises(PermissionError):
+        repository.validate_uri(
+            "gs://example-bucket/users/user-1/spirits/agent-2/data/file.txt"
+        )

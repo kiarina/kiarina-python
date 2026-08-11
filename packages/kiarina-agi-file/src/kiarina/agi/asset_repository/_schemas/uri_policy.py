@@ -9,6 +9,11 @@ class URIPolicy(BaseModel):
         title="Restrict to Repository URIs",
         description="Restrict access to the resolved data and cache URI prefixes.",
     )
+    additional_allowed_uri_directory_templates: list[str] = Field(
+        default_factory=list,
+        title="Additional Allowed URI Directory Templates",
+        description="Additional URI directory prefixes allowed by containment checks.",
+    )
     allowed_uri_patterns: list[str] = Field(
         default_factory=list,
         title="Allowed URI Patterns",

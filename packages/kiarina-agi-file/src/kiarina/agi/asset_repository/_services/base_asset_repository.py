@@ -108,7 +108,15 @@ class BaseAssetRepository(AssetRepository):
             raise ValueError("No allowed URI patterns are configured")
 
         if self.uri_policy.restrict_to_repository_uris:
-            if not is_uri_within_directories(uri, [self.data_uri, self.cache_uri]):
+            allowed_directories = [
+                self.data_uri,
+                self.cache_uri,
+                *(
+                    template.format(**self.template_variables)
+                    for template in self.uri_policy.additional_allowed_uri_directory_templates
+                ),
+            ]
+            if not is_uri_within_directories(uri, allowed_directories):
                 return False
 
         for pattern in self.uri_policy.allowed_uri_patterns:
