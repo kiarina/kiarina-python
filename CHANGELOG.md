@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.21.3] - 2026-08-12
+
 ### Changed
 - **kiarina-agi-file**: Use URI patterns as the single asset access policy and always validate generated URIs.
 

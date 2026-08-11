@@ -1,6 +1,6 @@
 [project]
 name = "kiarina"
-version = "2.21.2"
+version = "2.21.3"
 description = "A comprehensive namespace package collection providing essential utilities for modern Python development"
 readme = "README.md"
 license = "MIT"
@@ -39,7 +39,7 @@ dependencies = [
     "kiarina-agi-base>=2.7.0",
     "kiarina-agi-data>=2.19.0",
     "kiarina-agi-data-builder>=2.21.1",
-    "kiarina-agi-file>=2.21.2",
+    "kiarina-agi-file>=2.21.3",
     "kiarina-agi-flow>=2.11.0",
     "kiarina-agi-image>=2.21.1",
     "kiarina-agi-runner>=2.21.0",
