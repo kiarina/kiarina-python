@@ -3,6 +3,7 @@ import os
 import posixpath
 import re
 from datetime import datetime
+from urllib.parse import urlsplit
 
 from kiarina.agi.asset_cache import AssetCache, create_asset_cache
 from kiarina.agi.run_context import RunContext
@@ -12,7 +13,6 @@ from .._schemas.uri_policy import URIPolicy
 from .._types.asset_area import AssetArea
 from .._types.asset_repository import AssetRepository
 from .._types.cached_file_blob import CachedFileBlob
-from .._utils.is_uri_within_directories import is_uri_within_directories
 
 logger = logging.getLogger(__name__)
 
@@ -70,11 +70,13 @@ class BaseAssetRepository(AssetRepository):
 
     def generate_data_uri(self, relative_path: str) -> str:
         uri = posixpath.join(self.data_uri, relative_path)
-        return self._validate_generated_uri(uri)
+        self.validate_uri(uri)
+        return uri
 
     def generate_cache_uri(self, relative_path: str) -> str:
         uri = posixpath.join(self.cache_uri, relative_path)
-        return self._validate_generated_uri(uri)
+        self.validate_uri(uri)
+        return uri
 
     def generate_time_based_uri(
         self,
@@ -107,17 +109,11 @@ class BaseAssetRepository(AssetRepository):
         if not self.uri_policy.allowed_uri_patterns:
             raise ValueError("No allowed URI patterns are configured")
 
-        if self.uri_policy.restrict_to_repository_uris:
-            allowed_directories = [
-                self.data_uri,
-                self.cache_uri,
-                *(
-                    template.format(**self.template_variables)
-                    for template in self.uri_policy.additional_allowed_uri_directory_templates
-                ),
-            ]
-            if not is_uri_within_directories(uri, allowed_directories):
-                return False
+        parsed_uri = urlsplit(uri)
+        if parsed_uri.query or parsed_uri.fragment:
+            return False
+        if any(part in {".", ".."} for part in parsed_uri.path.split("/")):
+            return False
 
         for pattern in self.uri_policy.allowed_uri_patterns:
             uri_pattern = pattern.format(**self.template_variables)
@@ -218,10 +214,3 @@ class BaseAssetRepository(AssetRepository):
 
     async def _generate_download_url(self, uri: str, *, expire_seconds: int) -> str:
         raise NotImplementedError("override me")
-
-    def _validate_generated_uri(self, uri: str) -> str:
-        if not self.uri_policy.restrict_to_repository_uris:
-            return uri
-
-        self.validate_uri(uri)
-        return uri

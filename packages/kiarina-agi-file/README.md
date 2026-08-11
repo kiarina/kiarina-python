@@ -105,8 +105,6 @@ For example, to use Google Cloud Storage, select the `gcs` preset and configure 
 ```bash
 export KIARINA_AGI_ASSET_REPOSITORY_DEFAULT=gcs
 export KIARINA_AGI_ASSET_REPOSITORY_URI_POLICY='{
-  "restrict_to_repository_uris": true,
-  "additional_allowed_uri_directory_templates": ["gs://example-bucket/{user_id}/uploads"],
   "allowed_uri_patterns": [
     "gs://example-bucket/{agent_id}/.*",
     "gs://example-bucket/{user_id}/uploads/.*"
@@ -116,7 +114,7 @@ export KIARINA_AGI_ASSET_REPOSITORY_URI_POLICY='{
 }'
 ```
 
-`additional_allowed_uri_directory_templates` extends containment with explicit shared directories while keeping generated data and cache URIs under their repository directories. Regular-expression patterns still apply to every allowed URI.
+Generated URIs and all repository operations must match `allowed_uri_patterns`. URIs with query strings, fragments, or `.` / `..` path segments are rejected.
 
 Credentials are resolved from `kiarina-lib-google` settings. To use a specific settings key:
 
@@ -387,8 +385,6 @@ class BaseAssetRepository(AssetRepository):
     # Implements every AssetRepository method.
 
 class URIPolicy(BaseModel):
-    restrict_to_repository_uris: bool = False
-    additional_allowed_uri_directory_templates: list[str] = []
     allowed_uri_patterns: list[str] = []
     data_dir_uri_template: str = "{invalid}"
     cache_dir_uri_template: str = "{invalid}"

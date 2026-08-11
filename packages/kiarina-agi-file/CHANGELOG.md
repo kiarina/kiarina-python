@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Use `allowed_uri_patterns` as the single asset access policy and always validate generated URIs.
+- Reject URIs with queries, fragments, or `.` / `..` path segments.
+
+### Removed
+- Remove redundant repository URI containment settings.
+
 ## [2.21.2] - 2026-08-11
 
 ### Added

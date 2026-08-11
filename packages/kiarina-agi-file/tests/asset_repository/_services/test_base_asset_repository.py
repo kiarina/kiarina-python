@@ -16,7 +16,6 @@ from kiarina.agi.run_context import RunContext
 def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "uri_policy": {
-            "restrict_to_repository_uris": True,
             "allowed_uri_patterns": [
                 "{user_data_dir}/{agent_id}/asset/.*",
                 "{user_cache_dir}/{agent_id}/asset/.*",
@@ -65,12 +64,16 @@ def test_validate_uri_rejects_sibling_prefix(
         asset_repository.validate_uri(sibling_uri)
 
 
-def test_validate_uri_rejects_query(
+@pytest.mark.parametrize(
+    "suffix", ["?generation=1", "#section", "/../secret.txt", "/./file.txt"]
+)
+def test_validate_uri_rejects_invalid_uri_structure(
     asset_repository: AssetRepository,
+    suffix: str,
 ) -> None:
     with pytest.raises(PermissionError):
         asset_repository.validate_uri(
-            f"{asset_repository.generate_data_uri('test.txt')}?generation=1"
+            f"{asset_repository.generate_data_uri('test.txt')}{suffix}"
         )
 
 
@@ -114,8 +117,10 @@ def test_repositories_reject_another_run_context_uri(
     run_context: RunContext,
 ) -> None:
     policy = URIPolicy(
-        restrict_to_repository_uris=True,
-        allowed_uri_patterns=["gs://example-bucket/.*"],
+        allowed_uri_patterns=[
+            "gs://example-bucket/data/{user_id}/{agent_id}/.*",
+            "gs://example-bucket/cache/{user_id}/{agent_id}/.*",
+        ],
         data_dir_uri_template="gs://example-bucket/data/{user_id}/{agent_id}",
         cache_dir_uri_template="gs://example-bucket/cache/{user_id}/{agent_id}",
     )
@@ -132,15 +137,15 @@ def test_repositories_reject_another_run_context_uri(
         first.validate_uri(second.generate_data_uri("test.txt"))
 
 
-def test_containment_allows_scoped_additional_directory(
+def test_patterns_allow_scoped_shared_directory(
     run_context: RunContext,
 ) -> None:
     policy = URIPolicy(
-        restrict_to_repository_uris=True,
-        additional_allowed_uri_directory_templates=[
-            "gs://example-bucket/users/{user_id}/uploads"
+        allowed_uri_patterns=[
+            "gs://example-bucket/users/{user_id}/spirits/{agent_id}/data/.*",
+            "gs://example-bucket/users/{user_id}/spirits/{agent_id}/cache/.*",
+            "gs://example-bucket/users/{user_id}/uploads/.*",
         ],
-        allowed_uri_patterns=["gs://example-bucket/.*"],
         data_dir_uri_template=(
             "gs://example-bucket/users/{user_id}/spirits/{agent_id}/data"
         ),

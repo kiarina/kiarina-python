@@ -105,8 +105,6 @@ Asset store は preset または custom implementation として選択します�
 ```bash
 export KIARINA_AGI_ASSET_REPOSITORY_DEFAULT=gcs
 export KIARINA_AGI_ASSET_REPOSITORY_URI_POLICY='{
-  "restrict_to_repository_uris": true,
-  "additional_allowed_uri_directory_templates": ["gs://example-bucket/{user_id}/uploads"],
   "allowed_uri_patterns": [
     "gs://example-bucket/{agent_id}/.*",
     "gs://example-bucket/{user_id}/uploads/.*"
@@ -116,7 +114,7 @@ export KIARINA_AGI_ASSET_REPOSITORY_URI_POLICY='{
 }'
 ```
 
-`additional_allowed_uri_directory_templates` は、生成する data / cache URI を repository directory 配下に保ったまま、明示した共有 directory を containment に追加します。すべての許可 URI には引き続き正規表現 pattern も適用されます。
+生成する URI とすべての repository 操作には `allowed_uri_patterns` が適用されます。query、fragment、`.` / `..` path segment を含む URI は拒否されます。
 
 認証は `kiarina-lib-google` の設定から解決されます。特定の設定 key を使用する場合:
 
@@ -387,8 +385,6 @@ class BaseAssetRepository(AssetRepository):
     # AssetRepository のすべての method を実装します。
 
 class URIPolicy(BaseModel):
-    restrict_to_repository_uris: bool = False
-    additional_allowed_uri_directory_templates: list[str] = []
     allowed_uri_patterns: list[str] = []
     data_dir_uri_template: str = "{invalid}"
     cache_dir_uri_template: str = "{invalid}"
