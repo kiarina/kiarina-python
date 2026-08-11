@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add opt-in path and URI containment policies for repository-scoped access.
+
 ## [2.16.0] - 2026-07-19
 
 ### Added

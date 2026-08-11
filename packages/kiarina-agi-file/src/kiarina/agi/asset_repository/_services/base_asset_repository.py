@@ -1,5 +1,6 @@
 import logging
 import os
+import posixpath
 import re
 from datetime import datetime
 
@@ -11,6 +12,7 @@ from .._schemas.uri_policy import URIPolicy
 from .._types.asset_area import AssetArea
 from .._types.asset_repository import AssetRepository
 from .._types.cached_file_blob import CachedFileBlob
+from .._utils.is_uri_within_directories import is_uri_within_directories
 
 logger = logging.getLogger(__name__)
 
@@ -67,10 +69,12 @@ class BaseAssetRepository(AssetRepository):
     # --------------------------------------------------
 
     def generate_data_uri(self, relative_path: str) -> str:
-        return os.path.join(self.data_uri, relative_path)
+        uri = posixpath.join(self.data_uri, relative_path)
+        return self._validate_generated_uri(uri)
 
     def generate_cache_uri(self, relative_path: str) -> str:
-        return os.path.join(self.cache_uri, relative_path)
+        uri = posixpath.join(self.cache_uri, relative_path)
+        return self._validate_generated_uri(uri)
 
     def generate_time_based_uri(
         self,
@@ -102,6 +106,10 @@ class BaseAssetRepository(AssetRepository):
     def is_valid_uri(self, uri: str) -> bool:
         if not self.uri_policy.allowed_uri_patterns:
             raise ValueError("No allowed URI patterns are configured")
+
+        if self.uri_policy.restrict_to_repository_uris:
+            if not is_uri_within_directories(uri, [self.data_uri, self.cache_uri]):
+                return False
 
         for pattern in self.uri_policy.allowed_uri_patterns:
             uri_pattern = pattern.format(**self.template_variables)
@@ -202,3 +210,10 @@ class BaseAssetRepository(AssetRepository):
 
     async def _generate_download_url(self, uri: str, *, expire_seconds: int) -> str:
         raise NotImplementedError("override me")
+
+    def _validate_generated_uri(self, uri: str) -> str:
+        if not self.uri_policy.restrict_to_repository_uris:
+            return uri
+
+        self.validate_uri(uri)
+        return uri

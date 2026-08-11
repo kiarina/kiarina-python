@@ -75,7 +75,7 @@ file_blob = await repository.set(file_path, "text/plain", b"hello")
 loaded = await repository.get(file_path)
 ```
 
-`FilePathPolicy.allowed_file_path_patterns` uses full regular-expression matches. Its default allows every path, so applications that handle untrusted paths should restrict it explicitly.
+`FilePathPolicy.allowed_file_path_patterns` uses full regular-expression matches. Its default allows every path. Set `restrict_to_repository_dirs=True` to additionally require every resolved path to stay under the repository data or cache directory. Applications that handle untrusted paths should enable this boundary and configure explicit patterns.
 
 ### Store Assets
 
@@ -105,6 +105,7 @@ For example, to use Google Cloud Storage, select the `gcs` preset and configure 
 ```bash
 export KIARINA_AGI_ASSET_REPOSITORY_DEFAULT=gcs
 export KIARINA_AGI_ASSET_REPOSITORY_URI_POLICY='{
+  "restrict_to_repository_uris": true,
   "allowed_uri_patterns": ["gs://example-bucket/{agent_id}/.*"],
   "data_dir_uri_template": "gs://example-bucket/{agent_id}/data",
   "cache_dir_uri_template": "gs://example-bucket/{agent_id}/cache"
@@ -227,6 +228,7 @@ class LocalRepository:
     async def delete(self, file_path: str | os.PathLike[str]) -> None: ...
 
 class FilePathPolicy(BaseModel):
+    restrict_to_repository_dirs: bool = False
     allowed_file_path_patterns: list[str] = [".*"]
     data_dir_path_template: str = "{user_data_dir}/agents/{agent_id}"
     cache_dir_path_template: str = "{user_cache_dir}/agents/{agent_id}"
@@ -379,6 +381,7 @@ class BaseAssetRepository(AssetRepository):
     # Implements every AssetRepository method.
 
 class URIPolicy(BaseModel):
+    restrict_to_repository_uris: bool = False
     allowed_uri_patterns: list[str] = []
     data_dir_uri_template: str = "{invalid}"
     cache_dir_uri_template: str = "{invalid}"

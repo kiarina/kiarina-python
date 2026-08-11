@@ -11,6 +11,7 @@ from kiarina.utils.file import FileBlob
 from .._schemas.file_path_policy import FilePathPolicy
 from .._settings import LocalRepositorySettings
 from .._types.local_area import LocalArea
+from .._utils.is_path_within_directories import is_path_within_directories
 from .._utils.resolve_file_path import resolve_file_path
 
 logger = logging.getLogger(__name__)
@@ -52,10 +53,12 @@ class LocalRepository:
     # ----------------------------------------
 
     def generate_data_path(self, relative_path: str | os.PathLike[str]) -> str:
-        return os.path.join(self.data_dir, os.fspath(relative_path))
+        file_path = os.path.join(self.data_dir, os.fspath(relative_path))
+        return self._validate_generated_path(file_path)
 
     def generate_cache_path(self, relative_path: str | os.PathLike[str]) -> str:
-        return os.path.join(self.cache_dir, os.fspath(relative_path))
+        file_path = os.path.join(self.cache_dir, os.fspath(relative_path))
+        return self._validate_generated_path(file_path)
 
     def generate_time_based_dir_path(
         self,
@@ -95,6 +98,13 @@ class LocalRepository:
 
     def is_valid_file_path(self, file_path: str | os.PathLike[str]) -> bool:
         file_path = resolve_file_path(file_path)
+
+        if self.file_path_policy.restrict_to_repository_dirs:
+            if not is_path_within_directories(
+                file_path,
+                [self.data_dir, self.cache_dir],
+            ):
+                return False
 
         for pattern in self.settings.file_path_policy.allowed_file_path_patterns:
             file_path_pattern = pattern.format(**self.template_variables)
@@ -164,3 +174,11 @@ class LocalRepository:
         file_path = resolve_file_path(file_path)
         self.validate_file_path(file_path)
         await kfa.remove_file(file_path)
+
+    def _validate_generated_path(self, file_path: str) -> str:
+        if not self.file_path_policy.restrict_to_repository_dirs:
+            return file_path
+
+        file_path = resolve_file_path(file_path)
+        self.validate_file_path(file_path)
+        return file_path

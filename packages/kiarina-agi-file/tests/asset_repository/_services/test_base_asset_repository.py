@@ -4,9 +4,11 @@ import pytest
 
 from kiarina.agi.asset_repository import (
     AssetRepository,
+    URIPolicy,
     create_asset_repository,
     settings_manager,
 )
+from kiarina.agi.asset_repository_impl.local import LocalAssetRepository
 from kiarina.agi.run_context import RunContext
 
 
@@ -14,6 +16,7 @@ from kiarina.agi.run_context import RunContext
 def setup() -> Iterator[None]:
     settings_manager.cli_args = {
         "uri_policy": {
+            "restrict_to_repository_uris": True,
             "allowed_uri_patterns": [
                 "{user_data_dir}/{agent_id}/asset/.*",
                 "{user_cache_dir}/{agent_id}/asset/.*",
@@ -43,6 +46,32 @@ def test_validate_uri(asset_repository: AssetRepository) -> None:
 
     with pytest.raises(PermissionError):
         asset_repository.validate_uri("~/test.txt")
+
+
+def test_generate_uri_rejects_parent_traversal(
+    asset_repository: AssetRepository,
+) -> None:
+    with pytest.raises(PermissionError):
+        asset_repository.generate_data_uri("../../test.txt")
+
+
+def test_validate_uri_rejects_sibling_prefix(
+    asset_repository: AssetRepository,
+) -> None:
+    data_uri = asset_repository.generate_data_uri("test.txt").rsplit("/", 1)[0]
+    sibling_uri = f"{data_uri}-other/test.txt"
+
+    with pytest.raises(PermissionError):
+        asset_repository.validate_uri(sibling_uri)
+
+
+def test_validate_uri_rejects_query(
+    asset_repository: AssetRepository,
+) -> None:
+    with pytest.raises(PermissionError):
+        asset_repository.validate_uri(
+            f"{asset_repository.generate_data_uri('test.txt')}?generation=1"
+        )
 
 
 async def test_crud(asset_repository: AssetRepository) -> None:
@@ -79,3 +108,25 @@ async def test_crud(asset_repository: AssetRepository) -> None:
     # generate_download_url
     download_url = await asset_repository.generate_download_url(uri)
     print("Generated Download URL:", download_url)
+
+
+def test_repositories_reject_another_run_context_uri(
+    run_context: RunContext,
+) -> None:
+    policy = URIPolicy(
+        restrict_to_repository_uris=True,
+        allowed_uri_patterns=["gs://example-bucket/.*"],
+        data_dir_uri_template="gs://example-bucket/data/{user_id}/{agent_id}",
+        cache_dir_uri_template="gs://example-bucket/cache/{user_id}/{agent_id}",
+    )
+    first = LocalAssetRepository()
+    first.uri_policy = policy
+    first.run_context = run_context
+    second = LocalAssetRepository()
+    second.uri_policy = policy
+    second.run_context = run_context.model_copy(
+        update={"user_id": "another-user", "agent_id": "another-agent"}
+    )
+
+    with pytest.raises(PermissionError):
+        first.validate_uri(second.generate_data_uri("test.txt"))

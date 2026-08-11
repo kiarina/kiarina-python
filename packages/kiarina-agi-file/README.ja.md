@@ -75,7 +75,7 @@ file_blob = await repository.set(file_path, "text/plain", b"hello")
 loaded = await repository.get(file_path)
 ```
 
-`FilePathPolicy.allowed_file_path_patterns` は正規表現の完全一致です。既定値はすべての path を許可するため、untrusted な path を扱う application では明示的に制限してください。
+`FilePathPolicy.allowed_file_path_patterns` は正規表現の完全一致です。既定値はすべての path を許可します。`restrict_to_repository_dirs=True` を設定すると、正規化後の path が repository の data または cache directory 配下にあることも必須になります。untrusted な path を扱う application では、この境界を有効にして明示的な pattern を設定してください。
 
 ### Store Assets
 
@@ -105,6 +105,7 @@ Asset store は preset または custom implementation として選択します�
 ```bash
 export KIARINA_AGI_ASSET_REPOSITORY_DEFAULT=gcs
 export KIARINA_AGI_ASSET_REPOSITORY_URI_POLICY='{
+  "restrict_to_repository_uris": true,
   "allowed_uri_patterns": ["gs://example-bucket/{agent_id}/.*"],
   "data_dir_uri_template": "gs://example-bucket/{agent_id}/data",
   "cache_dir_uri_template": "gs://example-bucket/{agent_id}/cache"
@@ -227,6 +228,7 @@ class LocalRepository:
     async def delete(self, file_path: str | os.PathLike[str]) -> None: ...
 
 class FilePathPolicy(BaseModel):
+    restrict_to_repository_dirs: bool = False
     allowed_file_path_patterns: list[str] = [".*"]
     data_dir_path_template: str = "{user_data_dir}/agents/{agent_id}"
     cache_dir_path_template: str = "{user_cache_dir}/agents/{agent_id}"
@@ -379,6 +381,7 @@ class BaseAssetRepository(AssetRepository):
     # AssetRepository のすべての method を実装します。
 
 class URIPolicy(BaseModel):
+    restrict_to_repository_uris: bool = False
     allowed_uri_patterns: list[str] = []
     data_dir_uri_template: str = "{invalid}"
     cache_dir_uri_template: str = "{invalid}"

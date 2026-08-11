@@ -4,6 +4,11 @@ from pydantic import BaseModel, Field
 class URIPolicy(BaseModel):
     """URI access rules and directory templates for an asset repository."""
 
+    restrict_to_repository_uris: bool = Field(
+        default=False,
+        title="Restrict to Repository URIs",
+        description="Restrict access to the resolved data and cache URI prefixes.",
+    )
     allowed_uri_patterns: list[str] = Field(
         default_factory=list,
         title="Allowed URI Patterns",

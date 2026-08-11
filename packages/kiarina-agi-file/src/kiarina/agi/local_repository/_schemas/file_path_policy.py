@@ -4,6 +4,11 @@ from pydantic import BaseModel, Field
 class FilePathPolicy(BaseModel):
     """Local file access rules and directory templates."""
 
+    restrict_to_repository_dirs: bool = Field(
+        default=False,
+        title="Restrict to Repository Directories",
+        description="Restrict access to the resolved data and cache directories.",
+    )
     allowed_file_path_patterns: list[str] = Field(
         default_factory=lambda: [".*"],
         title="Allowed File Path Patterns",
