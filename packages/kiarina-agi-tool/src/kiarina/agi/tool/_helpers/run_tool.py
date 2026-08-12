@@ -114,6 +114,9 @@ async def run_tool(
         tool_logger.log_tool_end(event.message, run_context)
         yield event
 
+    except ImportError:
+        raise
+
     except Exception as e:
         logger.error(f"Tool {tool_call} was failed: {e}", exc_info=True)
 

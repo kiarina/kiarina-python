@@ -49,6 +49,11 @@ def ErrorTool(name: str) -> str:
     raise ToolError(f"Error: invalid name `{name}`")
 
 
+@tool(tool_schema=HelloSchema)
+def ImportErrorTool(name: str) -> str:
+    raise ImportError(f"Could not import tool dependency for {name}")
+
+
 # --------------------------------------------------
 # Fixtures
 # --------------------------------------------------
@@ -101,6 +106,9 @@ def kwargs(run_context: RunContext) -> RunToolKwargs:
     error = ErrorTool()
     error.name = "error"
 
+    import_error = ImportErrorTool()
+    import_error.name = "import_error"
+
     hello_pre_hook = HelloPreHook()
     hello_pre_hook.name = "hello_pre"
 
@@ -109,7 +117,7 @@ def kwargs(run_context: RunContext) -> RunToolKwargs:
 
     return {
         "tool_options": {
-            "tools": ["hello", cancelled, error],
+            "tools": ["hello", cancelled, error, import_error],
             "pre_hooks": [
                 hello_pre_hook,
                 {"hook": "hello_pre", "apply_to": ["hello"]},
@@ -169,3 +177,10 @@ async def test_tool_error(kwargs: RunToolKwargs) -> None:
     assert "Tool execution failed." in events[0].to_text()
     assert "Error: invalid name `Dave`" in events[0].to_text()
     print(events[0].to_text())
+
+
+async def test_import_error(kwargs: RunToolKwargs) -> None:
+    tool_call = ToolCall(name="import_error", args={"name": "Dave"})
+
+    with pytest.raises(ImportError, match="Could not import tool dependency for Dave"):
+        [event async for event in run_tool(tool_call, **kwargs)]
