@@ -1265,7 +1265,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.21.3"
+version = "2.22.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1931,7 +1931,7 @@ provides-extras = ["all", "chat-provider-lc-anthropic", "chat-provider-lc-anthro
 
 [[package]]
 name = "kiarina-agi-tool"
-version = "2.17.0"
+version = "2.22.0"
 source = { editable = "packages/kiarina-agi-tool" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -2205,7 +2205,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-firebase-rtdb"
-version = "2.3.1"
+version = "2.22.0"
 source = { editable = "packages/kiarina-lib-firebase-rtdb" }
 dependencies = [
     { name = "httpx" },

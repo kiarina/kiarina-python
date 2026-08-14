@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.22.0] - 2026-08-14
+
+### Fixed
+
+- Propagate import errors raised during tool execution instead of turning them into tool error messages.
+
 ## [2.17.0] - 2026-07-26
 
 ### Changed

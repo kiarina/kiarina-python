@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.22.0] - 2026-08-14
+
 ### Added
 - `RTDBQuery` builds and JSON-encodes the REST query parameters, and `get_data` accepts it through the new `query` keyword argument
 - `update_data` applies a multi-path update, deleting the keys whose value is `None`

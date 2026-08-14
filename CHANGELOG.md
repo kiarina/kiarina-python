@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.22.0] - 2026-08-14
+
 ### Added
 - **kiarina-lib-firebase-rtdb**: Add `RTDBQuery` for REST query parameters and `update_data` for multi-path updates.
 
