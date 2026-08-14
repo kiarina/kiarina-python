@@ -5,8 +5,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:  # pragma: no cover
     from ._exceptions.rtdb_stream_cancelled_error import RTDBStreamCancelledError
     from ._helpers.get_data import get_data
+    from ._helpers.update_data import update_data
     from ._helpers.watch_data import watch_data
     from ._schemas.data_change_event import DataChangeEvent
+    from ._schemas.rtdb_query import RTDBQuery
     from ._settings import RTDBSettings, settings_manager
 
 __all__ = [
@@ -14,9 +16,11 @@ __all__ = [
     "RTDBStreamCancelledError",
     # ._helpers
     "get_data",
+    "update_data",
     "watch_data",
     # ._schemas
     "DataChangeEvent",
+    "RTDBQuery",
     # ._settings
     "RTDBSettings",
     "settings_manager",
@@ -34,9 +38,11 @@ def __getattr__(name: str) -> object:
         "RTDBStreamCancelledError": "._exceptions.rtdb_stream_cancelled_error",
         # ._helpers
         "get_data": "._helpers.get_data",
+        "update_data": "._helpers.update_data",
         "watch_data": "._helpers.watch_data",
         # ._schemas
         "DataChangeEvent": "._schemas.data_change_event",
+        "RTDBQuery": "._schemas.rtdb_query",
         # ._settings
         "RTDBSettings": "._settings",
         "settings_manager": "._settings",

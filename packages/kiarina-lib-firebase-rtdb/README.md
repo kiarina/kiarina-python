@@ -7,7 +7,7 @@
 English | [日本語](README.ja.md)
 
 > [!NOTE] What is this?
-> An asynchronous package for retrieving data from Firebase Realtime Database and watching real-time changes.
+> An asynchronous package for reading, querying and updating Firebase Realtime Database, and watching real-time changes.
 
 ## Dependencies
 
@@ -29,6 +29,10 @@ pip install kiarina-lib-firebase-rtdb
 
 - **Retrieving Data**
   Retrieves data at a path through the Firebase Realtime Database REST API.
+- **Querying Data**
+  Orders, limits and ranges the result with `RTDBQuery`, which encodes the REST query parameters.
+- **Updating Data**
+  Writes a multi-path update, and deletes keys by sending `None`.
 - **Watching Data Changes**
   Receives `put` and `patch` events through Server-Sent Events.
 - **Recovering the Stream**
@@ -55,6 +59,53 @@ data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
     await token_manager.get_id_token(),
+)
+```
+
+### Querying Data
+
+`RTDBQuery` builds the REST query parameters and JSON-encodes their values, which the REST API requires. Ordering by `$key` needs no index and is chronological when keys are ULIDs.
+
+```python
+from kiarina.lib.firebase_rtdb import RTDBQuery, get_data
+
+data = await get_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/messages",
+    await token_manager.get_id_token(),
+    query=RTDBQuery(order_by="$key", limit_to_last=5),
+)
+```
+
+Pass `start_after` to fetch only the entries added after the last key already seen.
+
+```python
+query = RTDBQuery(order_by="$key", start_after="01ABCDEF...")
+```
+
+`shallow` truncates every value to `true` and returns the keys alone. The REST API rejects it together with any other parameter, so `RTDBQuery` raises a validation error for that combination.
+
+```python
+keys = await get_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/messages",
+    await token_manager.get_id_token(),
+    query=RTDBQuery(shallow=True),
+)
+```
+
+### Updating Data
+
+`update_data` sends a multi-path update. Keys are paths relative to the given path, and a `None` value deletes the key.
+
+```python
+from kiarina.lib.firebase_rtdb import update_data
+
+await update_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/messages",
+    await token_manager.get_id_token(),
+    {"01ABCDEF.../read": True, "01OLDEST...": None},
 )
 ```
 
@@ -151,10 +202,12 @@ export KIARINA_LIB_FIREBASE_RTDB_RETRY_DELAY_MULTIPLIER=2.0
 ```python
 from kiarina.lib.firebase_rtdb import (
     DataChangeEvent,
+    RTDBQuery,
     RTDBSettings,
     RTDBStreamCancelledError,
     get_data,
     settings_manager,
+    update_data,
     watch_data,
 )
 ```
@@ -166,6 +219,8 @@ async def get_data(
     database_url: str,
     path: str,
     id_token: str,
+    *,
+    query: RTDBQuery | None = None,
 ) -> Any: ...
 ```
 
@@ -176,6 +231,36 @@ Retrieves JSON data at the specified path.
 - `database_url` (`str`): Firebase Realtime Database URL
 - `path` (`str`): Path of the data to retrieve
 - `id_token` (`str`): Firebase ID token
+- `query` (`RTDBQuery | None`): Query parameters appended to the request
+
+**Returns**
+
+- `Any`: JSON value from the response
+
+**Raises**
+
+- `httpx.HTTPStatusError`: The HTTP response indicates an error
+- `httpx.HTTPError`: The request fails
+
+#### `update_data`
+
+```python
+async def update_data(
+    database_url: str,
+    path: str,
+    id_token: str,
+    values: Mapping[str, Any],
+) -> Any: ...
+```
+
+Applies a multi-path update at the specified path.
+
+**Parameters**
+
+- `database_url` (`str`): Firebase Realtime Database URL
+- `path` (`str`): Path the update is applied to
+- `id_token` (`str`): Firebase ID token
+- `values` (`Mapping[str, Any]`): Keys relative to `path` and their new values. `None` deletes the key
 
 **Returns**
 
@@ -236,6 +321,43 @@ A data change received from Firebase Realtime Database.
 - `event_type` (`Literal["put", "patch"]`): Event type
 - `path` (`str`): Relative path that changed
 - `data` (`Any`): Updated data
+
+#### `RTDBQuery`
+
+```python
+class RTDBQuery(BaseModel):
+    order_by: str | None = None
+    limit_to_first: int | None = None
+    limit_to_last: int | None = None
+    start_at: QueryValue | None = None
+    start_after: QueryValue | None = None
+    end_at: QueryValue | None = None
+    end_before: QueryValue | None = None
+    equal_to: QueryValue | None = None
+    shallow: bool = False
+```
+
+Query parameters for the Firebase Realtime Database REST API. `QueryValue` is `str | bool | int | float`.
+
+**Fields**
+
+- `order_by` (`str | None`): Child key to order by, or `"$key"`, `"$value"` or `"$priority"`
+- `limit_to_first` (`int | None`): Number of items to take from the beginning of the ordered result
+- `limit_to_last` (`int | None`): Number of items to take from the end of the ordered result
+- `start_at` (`QueryValue | None`): Inclusive lower bound of the ordered result
+- `start_after` (`QueryValue | None`): Exclusive lower bound of the ordered result
+- `end_at` (`QueryValue | None`): Inclusive upper bound of the ordered result
+- `end_before` (`QueryValue | None`): Exclusive upper bound of the ordered result
+- `equal_to` (`QueryValue | None`): Exact value the ordered child must match
+- `shallow` (`bool`): Truncate each value to `true`
+
+**Methods**
+
+- `to_params() -> dict[str, str]`: Returns the REST query parameters with JSON-encoded values
+
+**Raises**
+
+- `ValidationError`: `shallow` is combined with another parameter, a filter is used without `order_by`, or mutually exclusive parameters are set together
 
 #### `RTDBSettings`
 

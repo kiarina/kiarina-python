@@ -1,24 +1,19 @@
+from collections.abc import Mapping
 from typing import Any
 
 import httpx
 
-from .._schemas.rtdb_query import RTDBQuery
 
-
-async def get_data(
+async def update_data(
     database_url: str,
     path: str,
     id_token: str,
-    *,
-    query: RTDBQuery | None = None,
+    values: Mapping[str, Any],
 ) -> Any:
     url = f"{database_url.rstrip('/')}{path}.json"
     params = {"auth": id_token}
 
-    if query is not None:
-        params.update(query.to_params())
-
     async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-        response = await client.get(url, params=params)
+        response = await client.patch(url, params=params, json=dict(values))
         response.raise_for_status()
         return response.json()

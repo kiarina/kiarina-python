@@ -7,7 +7,7 @@
 [English](README.md) | 日本語
 
 > [!NOTE] What is this?
-> Firebase Realtime Database からデータを取得し、リアルタイムの変更を監視する非同期パッケージです。
+> Firebase Realtime Database のデータを取得・検索・更新し、リアルタイムの変更を監視する非同期パッケージです。
 
 ## Dependencies
 
@@ -29,6 +29,10 @@ pip install kiarina-lib-firebase-rtdb
 
 - **Retrieving Data**
   Firebase Realtime Database REST API から指定したパスのデータを取得します。
+- **Querying Data**
+  REST のクエリパラメータをエンコードする `RTDBQuery` で、並べ替え・件数制限・範囲指定を行います。
+- **Updating Data**
+  multi-path update を書き込み、`None` を送ってキーを削除します。
 - **Watching Data Changes**
   Server-Sent Events で `put` と `patch` イベントを受信します。
 - **Recovering the Stream**
@@ -55,6 +59,53 @@ data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
     await token_manager.get_id_token(),
+)
+```
+
+### Querying Data
+
+`RTDBQuery` は REST のクエリパラメータを組み立て、REST API が要求する JSON エンコードを行います。`$key` による並べ替えはインデックス定義が不要で、キーが ULID であれば時系列順になります。
+
+```python
+from kiarina.lib.firebase_rtdb import RTDBQuery, get_data
+
+data = await get_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/messages",
+    await token_manager.get_id_token(),
+    query=RTDBQuery(order_by="$key", limit_to_last=5),
+)
+```
+
+`start_after` を指定すると、すでに取得済みの最後のキーより後に追加されたエントリだけを取得します。
+
+```python
+query = RTDBQuery(order_by="$key", start_after="01ABCDEF...")
+```
+
+`shallow` はすべての値を `true` に切り詰め、キーだけを返します。REST API は他のパラメータとの併用を拒否するため、`RTDBQuery` はその組み合わせを検証エラーにします。
+
+```python
+keys = await get_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/messages",
+    await token_manager.get_id_token(),
+    query=RTDBQuery(shallow=True),
+)
+```
+
+### Updating Data
+
+`update_data` は multi-path update を送信します。キーは指定したパスからの相対パスで、値が `None` のキーは削除されます。
+
+```python
+from kiarina.lib.firebase_rtdb import update_data
+
+await update_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/messages",
+    await token_manager.get_id_token(),
+    {"01ABCDEF.../read": True, "01OLDEST...": None},
 )
 ```
 
@@ -151,10 +202,12 @@ export KIARINA_LIB_FIREBASE_RTDB_RETRY_DELAY_MULTIPLIER=2.0
 ```python
 from kiarina.lib.firebase_rtdb import (
     DataChangeEvent,
+    RTDBQuery,
     RTDBSettings,
     RTDBStreamCancelledError,
     get_data,
     settings_manager,
+    update_data,
     watch_data,
 )
 ```
@@ -166,6 +219,8 @@ async def get_data(
     database_url: str,
     path: str,
     id_token: str,
+    *,
+    query: RTDBQuery | None = None,
 ) -> Any: ...
 ```
 
@@ -176,6 +231,36 @@ async def get_data(
 - `database_url` (`str`): Firebase Realtime Database の URL
 - `path` (`str`): 取得するデータのパス
 - `id_token` (`str`): Firebase ID トークン
+- `query` (`RTDBQuery | None`): リクエストへ付与するクエリパラメータ
+
+**Returns**
+
+- `Any`: レスポンスの JSON 値
+
+**Raises**
+
+- `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
+- `httpx.HTTPError`: 通信に失敗した場合
+
+#### `update_data`
+
+```python
+async def update_data(
+    database_url: str,
+    path: str,
+    id_token: str,
+    values: Mapping[str, Any],
+) -> Any: ...
+```
+
+指定したパスへ multi-path update を適用します。
+
+**Parameters**
+
+- `database_url` (`str`): Firebase Realtime Database の URL
+- `path` (`str`): 更新を適用するパス
+- `id_token` (`str`): Firebase ID トークン
+- `values` (`Mapping[str, Any]`): `path` からの相対キーと新しい値。`None` はそのキーを削除する
 
 **Returns**
 
@@ -236,6 +321,43 @@ Firebase Realtime Database から受信したデータ変更です。
 - `event_type` (`Literal["put", "patch"]`): イベントの種類
 - `path` (`str`): 変更された相対パス
 - `data` (`Any`): 変更後のデータ
+
+#### `RTDBQuery`
+
+```python
+class RTDBQuery(BaseModel):
+    order_by: str | None = None
+    limit_to_first: int | None = None
+    limit_to_last: int | None = None
+    start_at: QueryValue | None = None
+    start_after: QueryValue | None = None
+    end_at: QueryValue | None = None
+    end_before: QueryValue | None = None
+    equal_to: QueryValue | None = None
+    shallow: bool = False
+```
+
+Firebase Realtime Database REST API のクエリパラメータです。`QueryValue` は `str | bool | int | float` です。
+
+**Fields**
+
+- `order_by` (`str | None`): 並べ替えに使う子キー、または `"$key"`, `"$value"`, `"$priority"`
+- `limit_to_first` (`int | None`): 並べ替えた結果の先頭から取得する件数
+- `limit_to_last` (`int | None`): 並べ替えた結果の末尾から取得する件数
+- `start_at` (`QueryValue | None`): 並べ替えた結果の下限（含む）
+- `start_after` (`QueryValue | None`): 並べ替えた結果の下限（含まない）
+- `end_at` (`QueryValue | None`): 並べ替えた結果の上限（含む）
+- `end_before` (`QueryValue | None`): 並べ替えた結果の上限（含まない）
+- `equal_to` (`QueryValue | None`): 並べ替え対象の子が一致すべき値
+- `shallow` (`bool`): すべての値を `true` に切り詰める
+
+**Methods**
+
+- `to_params() -> dict[str, str]`: 値を JSON エンコードした REST クエリパラメータを返す
+
+**Raises**
+
+- `ValidationError`: `shallow` を他のパラメータと併用した場合、`order_by` なしで絞り込みを指定した場合、または排他のパラメータを同時に指定した場合
 
 #### `RTDBSettings`
 

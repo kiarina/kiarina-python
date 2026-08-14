@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-lib-firebase-rtdb**: Add `RTDBQuery` for REST query parameters and `update_data` for multi-path updates.
+
 ### Fixed
 - **kiarina-agi-tool**: Propagate import errors raised during tool execution.
 - **kiarina-lib-firebase-rtdb**: Keep watching after a failed token refresh and back off before reconnecting.
