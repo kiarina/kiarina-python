@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- `watch_data` no longer exits when the token refresh triggered by `auth_revoked` fails; transient failures now go through the exponential backoff, and only unrecoverable errors such as `InvalidRefreshTokenError` are propagated
+- `watch_data` now backs off when `auth_revoked` arrives before any event, instead of reconnecting in a tight loop
+
 ## [2.3.1] - 2026-07-02
 
 ### Changed

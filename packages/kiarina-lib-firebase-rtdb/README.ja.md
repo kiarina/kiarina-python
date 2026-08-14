@@ -32,7 +32,7 @@ pip install kiarina-lib-firebase-rtdb
 - **Watching Data Changes**
   Server-Sent Events で `put` と `patch` イベントを受信します。
 - **Recovering the Stream**
-  認証失効時に ID トークンを更新し、通信エラー時に指数バックオフで再接続します。
+  認証失効時に ID トークンを更新し、通信エラーやトークン更新の失敗時に指数バックオフで再接続します。
 - **Stopping the Stream**
   `asyncio.Event` を使って監視を終了します。
 - **Configuring Retries**
@@ -73,7 +73,9 @@ async for event in watch_data(
     print(event.event_type, event.path, event.data)
 ```
 
-認証が失効すると、`TokenManager.refresh()` を呼び出して直ちに再接続します。通信エラーには設定された指数バックオフを適用します。
+認証が失効すると、`TokenManager.refresh()` を呼び出して再接続します。ID トークンの寿命は 1 時間なので、監視を継続する限りこの再接続は定期的に発生します。再接続の直後に Firebase が対象パス全体を `put` として送るため、切断中の変更はそのスナップショットに反映されます。
+
+通信エラーと、トークン更新の一時的な失敗には、設定された指数バックオフを適用します。リフレッシュトークンが無効になった場合など、再試行しても回復しないエラーは呼び出し元へ送出します。
 
 ### Stopping the Stream
 
@@ -212,8 +214,10 @@ async def watch_data(
 **Raises**
 
 - `RTDBStreamCancelledError`: Firebase がストリームをキャンセルした場合
+- `InvalidRefreshTokenError`: リフレッシュトークンが使用できなくなった場合
+- `FirebaseAPIError`: 再試行しても回復しないエラーでトークン更新が失敗した場合
 
-通信エラーは内部で再試行されます。その他の予期しない例外は呼び出し元へ送出されます。
+通信エラーとトークン更新の一時的な失敗は内部で再試行されます。その他の予期しない例外は呼び出し元へ送出されます。
 
 #### `DataChangeEvent`
 

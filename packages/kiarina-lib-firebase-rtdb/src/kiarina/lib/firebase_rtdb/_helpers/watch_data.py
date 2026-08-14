@@ -6,7 +6,11 @@ from typing import Any, Literal, cast
 
 import httpx
 
-from kiarina.lib.firebase import TokenManager
+from kiarina.lib.firebase import (
+    FirebaseAPIError,
+    InvalidRefreshTokenError,
+    TokenManager,
+)
 
 from .._exceptions.rtdb_stream_cancelled_error import RTDBStreamCancelledError
 from .._schemas.data_change_event import DataChangeEvent
@@ -25,42 +29,73 @@ async def watch_data(
     logger.debug(f"Starting watch on {path} in {database_url}")
     settings = settings_manager.get_settings()
     retry_delay = settings.initial_retry_delay
+    refresh_pending = False
 
     while True:
         if stop_event and stop_event.is_set():
             logger.debug("Stop event set, exiting watch loop")
             break
 
+        received_event = False
+
         try:
+            if refresh_pending:
+                await token_manager.refresh()
+                refresh_pending = False
+
             async for event in _watch_stream(
                 database_url, path, token_manager, stop_event
             ):
-                yield event
+                received_event = True
                 retry_delay = settings.initial_retry_delay
+                yield event
 
             # Firebase normally keeps the stream open until the caller stops it.
             logger.info("Stream ended normally, exiting watch loop")
             break
 
         except _AuthRevokedError:
-            logger.info("Auth revoked, refreshing token and reconnecting")
-            await token_manager.refresh()
-            retry_delay = settings.initial_retry_delay
-            continue
+            refresh_pending = True
+
+            # A revocation after a healthy stream is the expected token rotation.
+            if received_event:
+                logger.info("Auth revoked, refreshing token and reconnecting")
+                continue
+
+            logger.warning(f"Auth revoked before any event, retrying in {retry_delay}s")
+
+        except InvalidRefreshTokenError as e:
+            logger.error(f"Refresh token is no longer usable: {e}")
+            raise
+
+        except FirebaseAPIError as e:
+            if not _is_retryable_api_error(e):
+                logger.error(f"Token refresh failed: {e}")
+                raise
+
+            logger.warning(f"Token refresh failed: {e}, retrying in {retry_delay}s")
 
         except (httpx.HTTPError, httpx.StreamError) as e:
             logger.warning(
                 f"Network error during watch: {e}, retrying in {retry_delay}s"
             )
-            await asyncio.sleep(retry_delay)
-            retry_delay = min(
-                retry_delay * settings.retry_delay_multiplier, settings.max_retry_delay
-            )
-            continue
 
         except Exception as e:
             logger.error(f"Unexpected error during watch: {e}")
             raise
+
+        await asyncio.sleep(retry_delay)
+        retry_delay = min(
+            retry_delay * settings.retry_delay_multiplier, settings.max_retry_delay
+        )
+
+
+def _is_retryable_api_error(error: FirebaseAPIError) -> bool:
+    if error.status_code is None:
+        # Raised from a transport failure rather than an API response.
+        return True
+
+    return error.status_code == 429 or error.status_code >= 500
 
 
 async def _watch_stream(

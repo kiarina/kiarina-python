@@ -32,7 +32,7 @@ pip install kiarina-lib-firebase-rtdb
 - **Watching Data Changes**
   Receives `put` and `patch` events through Server-Sent Events.
 - **Recovering the Stream**
-  Refreshes the ID token after authentication revocation and reconnects with exponential backoff after network errors.
+  Refreshes the ID token after authentication revocation and reconnects with exponential backoff after network errors and token refresh failures.
 - **Stopping the Stream**
   Stops a watch with an `asyncio.Event`.
 - **Configuring Retries**
@@ -73,7 +73,9 @@ async for event in watch_data(
     print(event.event_type, event.path, event.data)
 ```
 
-When authentication is revoked, it calls `TokenManager.refresh()` and reconnects immediately. Network errors use the configured exponential backoff.
+When authentication is revoked, it calls `TokenManager.refresh()` and reconnects. An ID token lives for one hour, so this reconnect happens periodically for as long as the watch runs. Right after a reconnect Firebase sends the whole path as a `put`, so changes made while disconnected are reflected in that snapshot.
+
+Network errors and transient token refresh failures use the configured exponential backoff. Errors that retrying cannot recover from, such as an invalidated refresh token, are propagated to the caller.
 
 ### Stopping the Stream
 
@@ -212,8 +214,10 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 **Raises**
 
 - `RTDBStreamCancelledError`: Firebase cancels the stream
+- `InvalidRefreshTokenError`: The refresh token is no longer usable
+- `FirebaseAPIError`: Token refresh fails with an error that retrying cannot recover from
 
-Network errors are retried internally. Other unexpected exceptions are propagated to the caller.
+Network errors and transient token refresh failures are retried internally. Other unexpected exceptions are propagated to the caller.
 
 #### `DataChangeEvent`
 

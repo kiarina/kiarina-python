@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-lib-firebase-rtdb**: Keep watching after a failed token refresh and back off before reconnecting.
+
 ## [2.21.3] - 2026-08-12
 
 ### Changed
