@@ -1,6 +1,6 @@
 import asyncio
 import time
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager
 
 from kiarina.agi.video_source import (
@@ -45,7 +45,7 @@ class CameraVideoSource(BaseVideoSource):
         return self._unix_offset
 
     @asynccontextmanager
-    async def _open(self, target: object | None) -> AsyncIterator[None]:
+    async def _open(self, target: object | None) -> AsyncGenerator[None, None]:
         if target is not None and not isinstance(target, int | str):
             raise TypeError("CameraVideoSource target must be a device id/name or None")
 

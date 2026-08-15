@@ -1,7 +1,7 @@
 import json
 import shutil
 import zipfile
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager
 from io import BytesIO
 from pathlib import Path
@@ -450,7 +450,7 @@ async def test_audio_file_builder_analysis_reads_audio_source_once(
             self.read_calls = 0
 
         @asynccontextmanager
-        async def open(self, target: object | None) -> AsyncIterator[None]:
+        async def open(self, target: object | None) -> AsyncGenerator[None, None]:
             self.open_calls += 1
             yield
 

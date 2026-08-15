@@ -1,5 +1,5 @@
 import asyncio
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager, suppress
 from typing import cast
 
@@ -23,7 +23,7 @@ class QueueVideoSource(BaseVideoSource):
         return self._queue
 
     @asynccontextmanager
-    async def _open(self, target: object | None) -> AsyncIterator[None]:
+    async def _open(self, target: object | None) -> AsyncGenerator[None, None]:
         if not isinstance(target, asyncio.Queue):
             raise TypeError("QueueVideoSource target must be an asyncio.Queue")
 

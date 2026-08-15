@@ -1,6 +1,6 @@
 import asyncio
 import time
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager
 
 import numpy as np
@@ -37,7 +37,7 @@ class NumpyVideoSource(BaseVideoSource):
         return self._start_timestamp
 
     @asynccontextmanager
-    async def _open(self, target: object | None) -> AsyncIterator[None]:
+    async def _open(self, target: object | None) -> AsyncGenerator[None, None]:
         if target is None:  # pragma: no cover
             raise TypeError("NumpyVideoSource target must be a numpy-compatible array")
 

@@ -1,6 +1,6 @@
 import asyncio
 import time
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager, closing
 from pathlib import Path
 
@@ -38,7 +38,7 @@ class FileVideoSource(BaseVideoSource):
         return self._start_timestamp
 
     @asynccontextmanager
-    async def _open(self, target: object | None) -> AsyncIterator[None]:
+    async def _open(self, target: object | None) -> AsyncGenerator[None, None]:
         if not isinstance(target, str | Path):
             raise TypeError("FileVideoSource target must be a str or Path")
 

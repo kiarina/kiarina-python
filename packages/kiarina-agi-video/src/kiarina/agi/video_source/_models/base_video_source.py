@@ -1,6 +1,6 @@
 import asyncio
 from abc import ABC, abstractmethod
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager
 
 from .._schemas.video_frame import VideoFrame
@@ -24,12 +24,12 @@ class BaseVideoSource(VideoSource, ABC):
         self._name = value
 
     @asynccontextmanager
-    async def open(self, target: object | None) -> AsyncIterator[None]:
+    async def open(self, target: object | None) -> AsyncGenerator[None, None]:
         async with self._open(target):
             yield
 
     @asynccontextmanager
-    async def _open(self, target: object | None) -> AsyncIterator[None]:
+    async def _open(self, target: object | None) -> AsyncGenerator[None, None]:
         yield
 
     @abstractmethod
