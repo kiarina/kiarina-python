@@ -51,6 +51,8 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # local
             # --------------------------------------------------
+            # Local models incur no API charge. Costs are set explicitly
+            # because the lc_openai provider defaults are not zero.
             "qwen3.6": ChatModelConfig(
                 provider_name="lc_openai",
                 provider_config={
@@ -58,6 +60,9 @@ class ChatModelSettings(BaseSettings):
                     "model_name": "qwen3.6-27b",
                     "context_window": 262_144,
                     "max_output_tokens": 62_144,
+                    "input_cost_microdollars_per_1k_tokens": 0,
+                    "cached_input_cost_microdollars_per_1k_tokens": 0,
+                    "output_cost_microdollars_per_1k_tokens": 0,
                     "extra_body": {"chat_template_kwargs": {"enable_thinking": True}},
                     "token_count_limit": 200_000,
                     "image_file_count_limit": 100,
@@ -72,6 +77,9 @@ class ChatModelSettings(BaseSettings):
                     "model_name": "qwen3.6-27b",
                     "context_window": 262_144,
                     "max_output_tokens": 62_144,
+                    "input_cost_microdollars_per_1k_tokens": 0,
+                    "cached_input_cost_microdollars_per_1k_tokens": 0,
+                    "output_cost_microdollars_per_1k_tokens": 0,
                     "extra_body": {"chat_template_kwargs": {"enable_thinking": False}},
                     "token_count_limit": 200_000,
                     "image_file_count_limit": 100,
@@ -86,6 +94,9 @@ class ChatModelSettings(BaseSettings):
                     "model_name": "qwen3-omni",
                     "context_window": 32_000,
                     "max_output_tokens": 8_000,
+                    "input_cost_microdollars_per_1k_tokens": 0,
+                    "cached_input_cost_microdollars_per_1k_tokens": 0,
+                    "output_cost_microdollars_per_1k_tokens": 0,
                     "token_count_limit": 24_000,
                     "image_file_count_limit": 100,
                     "input_enabled": {

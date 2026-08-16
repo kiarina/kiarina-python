@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Set the `qwen3.6`, `qwen3.6-fast`, and `qwen3-omni` costs to zero. Local models incur no API charge, and the `lc_openai` provider defaults are not zero.
+
 ## [2.19.0] - 2026-07-27
 
 ### Added
