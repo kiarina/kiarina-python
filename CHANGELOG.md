@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.22.1] - 2026-08-16
+
 ### Changed
 - **kiarina-agi-text**: Set local model costs to zero instead of inheriting the non-zero provider defaults.
 
