@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.23.0] - 2026-08-20
+
+### Added
+- **kiarina-lib-firebase**: Add `token_manager_registry` for registering `TokenManager` instances by name and getting them where an ID token is needed.
+- **kiarina-lib-firebase-rtdb**: Add the `firebase_token_manager_name` setting, used to get a `TokenManager` from `token_manager_registry` when no token is passed.
+- **kiarina-lib-firebase-firestore**: Add the `firebase_token_manager_name` setting, used to get a `TokenManager` from `token_manager_registry` when no token is passed.
+
+### Changed (BREAKING)
+- **kiarina-lib-firebase**: Rename the `TokenDataCache` protocol to `TokenStore`, and make it the authoritative source of the token set. `TokenManager` takes a single `token_store` argument and exposes only `get_id_token()` and `refresh()`.
+- **kiarina-lib-firebase**: Derive the token expiration from the `exp` claim in `id_token`, removing the `expires_in` and `issued_at` arguments from `TokenData.from_api_response()`.
+- **kiarina-lib-firebase-rtdb**: Take the token as an optional keyword argument on `get_data`, `update_data`, and `watch_data`, and move `values` to the third positional argument of `update_data`.
+- **kiarina-lib-firebase-firestore**: Take `id_token` as an optional keyword argument on `get_document` and `list_documents`.
+
 ## [2.22.1] - 2026-08-16
 
 ### Changed

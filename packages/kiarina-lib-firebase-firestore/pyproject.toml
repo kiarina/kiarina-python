@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-lib-firebase-firestore"
-version = "2.20.0"
+version = "2.23.0"
 description = "Read-only Cloud Firestore REST client library for kiarina namespace"
 readme = "README.md"
 license = "MIT"
@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28.1",
-    "kiarina-lib-firebase>=2.3.1",
+    "kiarina-lib-firebase>=2.23.0",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.10.1",
     "pydantic-settings-manager>=3.2.0",
