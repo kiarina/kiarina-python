@@ -35,7 +35,7 @@ pip install kiarina-lib-firebase-firestore
 - **Read Only by Design**
   書き込み API は提供しません。書き込みはサーバーサイド（API サーバーなど）で行う前提です。
 - **Resolving the Token**
-  トークンを明示的に渡すか、設定した名前で登録済みのトークンマネージャーを取得します。
+  トークンを明示的に渡すか、指定した `kiarina.lib.firebase` 設定のトークンマネージャーを使用します。
 - **Configuring the Client**
   環境変数または pydantic-settings-manager で接続先とタイムアウトを設定します。
 
@@ -98,27 +98,27 @@ if result.next_page_token is not None:
 
 ### Resolving the Token
 
-`id_token` を省略すると、設定した名前で `token_manager_registry` から `TokenManager` を取得します。
+`id_token` を省略すると、`firebase_settings_key` が指す `kiarina.lib.firebase` 設定の `TokenManager` を使用します。
 
 ```yaml
+kiarina.lib.firebase:
+  configs:
+    production:
+      project_id: production-project
+      api_key: production-api-key
+      token_data_file_path: ~/.config/your-app/token.json
+
 kiarina.lib.firebase_firestore:
-  firebase_token_manager_name: production
+  firebase_settings_key: production
 ```
 
-アプリケーションの起動時に、その名前でトークンマネージャーを登録します。
-
 ```python
-from kiarina.lib.firebase import TokenManager, token_manager_registry
-
-token_manager_registry.register(
-    "production",
-    TokenManager(api_key="firebase-web-api-key", token_store=token_store),
-)
-
 snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
 ```
 
-`firebase_token_manager_name` も省略した場合は `token_manager_registry` のデフォルトを使用します。これは `kiarina.lib.firebase` の設定に従います。
+`token_manager_registry` がその設定からトークンマネージャーを構築します。別の `TokenStore` を使う場合は、同じキーでインスタンスを登録してください。
+
+`firebase_settings_key` を省略した場合は `token_manager_registry` のデフォルト、つまり `kiarina.lib.firebase` の `settings_manager` が解決する設定を使用します。
 
 ### Configuring the Client
 
@@ -312,7 +312,7 @@ class DocumentList:
 
 ```python
 class FirestoreSettings(BaseSettings):
-    firebase_token_manager_name: str | None = None
+    firebase_settings_key: str | None = None
     base_url: str = "https://firestore.googleapis.com"
     timeout: float = 30.0
 ```
@@ -321,7 +321,7 @@ Firestore REST クライアントの設定です。
 
 **Fields**
 
-- `firebase_token_manager_name` (`str | None`): トークンを渡さない場合に `token_manager_registry` から取得する `TokenManager` の名前。未設定の場合はレジストリのデフォルトを使用する
+- `firebase_settings_key` (`str | None`): トークンを渡さない場合に使用する `TokenManager` に対応する `kiarina.lib.firebase` の設定キー。`kiarina.lib.firebase` のエイリアスも指定できる。未設定の場合は `token_manager_registry` のデフォルトを使用する
 - `base_url` (`str`): Firestore REST API のベース URL。Firestore エミュレーターに向けることでローカルテストに使用できます
 - `timeout` (`float`): HTTP リクエストのタイムアウト（秒）
 

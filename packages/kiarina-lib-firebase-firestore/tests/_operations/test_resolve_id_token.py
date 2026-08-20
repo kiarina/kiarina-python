@@ -27,7 +27,7 @@ def registered_token_manager() -> Iterator[None]:
         "firestore",
         TokenManager(api_key="api-key", token_store=token_data),
     )
-    settings_manager.user_config = {"firebase_token_manager_name": "firestore"}
+    settings_manager.user_config = {"firebase_settings_key": "firestore"}
 
     yield
 

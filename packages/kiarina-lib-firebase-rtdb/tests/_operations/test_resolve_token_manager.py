@@ -26,7 +26,7 @@ def token_manager() -> Iterator[TokenManager]:
     manager = TokenManager(api_key="api-key", token_store=token_data)
 
     token_manager_registry.register("rtdb", manager)
-    settings_manager.user_config = {"firebase_token_manager_name": "rtdb"}
+    settings_manager.user_config = {"firebase_settings_key": "rtdb"}
 
     yield manager
 

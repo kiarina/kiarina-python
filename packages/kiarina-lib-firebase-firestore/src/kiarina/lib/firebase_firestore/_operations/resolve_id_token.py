@@ -8,7 +8,7 @@ async def resolve_id_token(id_token: str | None = None) -> str:
         return id_token
 
     token_manager = token_manager_registry.get(
-        settings_manager.get_settings().firebase_token_manager_name
+        settings_manager.get_settings().firebase_settings_key
     )
 
     return await token_manager.get_id_token()

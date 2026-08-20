@@ -35,7 +35,7 @@ pip install kiarina-lib-firebase-firestore
 - **Read Only by Design**
   Provides no write APIs. Writes are expected to go through the server side (such as an API server).
 - **Resolving the Token**
-  Passes a token explicitly, or gets a registered token manager by the configured name.
+  Passes a token explicitly, or uses the token manager of the named `kiarina.lib.firebase` settings.
 - **Configuring the Client**
   Configures the endpoint and timeout through environment variables or pydantic-settings-manager.
 
@@ -98,27 +98,27 @@ if result.next_page_token is not None:
 
 ### Resolving the Token
 
-Omitting `id_token` gets a `TokenManager` from `token_manager_registry` by the configured name.
+Omitting `id_token` uses the `TokenManager` of the `kiarina.lib.firebase` settings named by `firebase_settings_key`.
 
 ```yaml
+kiarina.lib.firebase:
+  configs:
+    production:
+      project_id: production-project
+      api_key: production-api-key
+      token_data_file_path: ~/.config/your-app/token.json
+
 kiarina.lib.firebase_firestore:
-  firebase_token_manager_name: production
+  firebase_settings_key: production
 ```
 
-Register the token manager under that name when the application starts.
-
 ```python
-from kiarina.lib.firebase import TokenManager, token_manager_registry
-
-token_manager_registry.register(
-    "production",
-    TokenManager(api_key="firebase-web-api-key", token_store=token_store),
-)
-
 snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
 ```
 
-Omitting `firebase_token_manager_name` too uses the default of `token_manager_registry`, which follows the `kiarina.lib.firebase` settings.
+`token_manager_registry` builds the token manager from those settings. Register an instance under the same key to use a different `TokenStore`.
+
+Omitting `firebase_settings_key` uses the default of `token_manager_registry`, which is the `kiarina.lib.firebase` settings that its `settings_manager` resolves.
 
 ### Configuring the Client
 
@@ -312,7 +312,7 @@ A page of documents listed from a collection.
 
 ```python
 class FirestoreSettings(BaseSettings):
-    firebase_token_manager_name: str | None = None
+    firebase_settings_key: str | None = None
     base_url: str = "https://firestore.googleapis.com"
     timeout: float = 30.0
 ```
@@ -321,7 +321,7 @@ Settings for the Firestore REST client.
 
 **Fields**
 
-- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed. The registry default is used when this is not set
+- `firebase_settings_key` (`str | None`): Key of the `kiarina.lib.firebase` settings whose `TokenManager` is used when no token is passed. An alias of `kiarina.lib.firebase` is also accepted. The default of `token_manager_registry` is used when this is not set
 - `base_url` (`str`): Base URL of the Firestore REST API. Point this at a Firestore emulator for local testing
 - `timeout` (`float`): HTTP request timeout in seconds
 

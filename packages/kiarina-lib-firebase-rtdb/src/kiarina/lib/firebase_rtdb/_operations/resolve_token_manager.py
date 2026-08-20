@@ -8,5 +8,5 @@ def resolve_token_manager(token_manager: TokenManager | None = None) -> TokenMan
         return token_manager
 
     return token_manager_registry.get(
-        settings_manager.get_settings().firebase_token_manager_name
+        settings_manager.get_settings().firebase_settings_key
     )

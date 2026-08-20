@@ -11,10 +11,10 @@ class FirestoreSettings(BaseSettings):
         extra="ignore",
     )
 
-    firebase_token_manager_name: str | None = Field(
+    firebase_settings_key: str | None = Field(
         default=None,
-        title="Firebase token manager name",
-        description="Name of the TokenManager to get from token_manager_registry when no token is passed. The registry default is used when this is not set.",
+        title="Firebase settings key",
+        description="Key of the kiarina.lib.firebase settings whose TokenManager is used when no token is passed. The default of token_manager_registry is used when this is not set.",
     )
     base_url: str = Field(
         default="https://firestore.googleapis.com",

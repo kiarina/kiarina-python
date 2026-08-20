@@ -22,10 +22,10 @@ def _get_presets() -> dict[str, FirebaseSettings]:
     return settings_manager.all_settings
 
 
-def _factory(object_name: str, settings: FirebaseSettings) -> TokenManager:
+def _factory(settings_key: str, settings: FirebaseSettings) -> TokenManager:
     if settings.token_data_file_path is None:
         raise ValueError(
-            f"'token_data_file_path' is not configured in the '{object_name}' settings."
+            f"'token_data_file_path' is not configured in the '{settings_key}' settings."
         )
 
     return TokenManager(

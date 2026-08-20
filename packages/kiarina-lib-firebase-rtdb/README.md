@@ -40,7 +40,7 @@ pip install kiarina-lib-firebase-rtdb
 - **Stopping the Stream**
   Stops a watch with an `asyncio.Event`.
 - **Resolving the Token**
-  Passes a token explicitly, or gets a registered token manager by the configured name.
+  Passes a token explicitly, or uses the token manager of the named `kiarina.lib.firebase` settings.
 - **Configuring Retries**
   Configures retry intervals through environment variables or pydantic-settings-manager.
 
@@ -159,30 +159,30 @@ async for event in watch_data(
 
 ### Resolving the Token
 
-Omitting `id_token` and `token_manager` gets a `TokenManager` from `token_manager_registry` by the configured name.
+Omitting `id_token` and `token_manager` uses the `TokenManager` of the `kiarina.lib.firebase` settings named by `firebase_settings_key`.
 
 ```yaml
+kiarina.lib.firebase:
+  configs:
+    production:
+      project_id: production-project
+      api_key: production-api-key
+      token_data_file_path: ~/.config/your-app/token.json
+
 kiarina.lib.firebase_rtdb:
-  firebase_token_manager_name: production
+  firebase_settings_key: production
 ```
 
-Register the token manager under that name when the application starts.
-
 ```python
-from kiarina.lib.firebase import TokenManager, token_manager_registry
-
-token_manager_registry.register(
-    "production",
-    TokenManager(api_key="firebase-web-api-key", token_store=token_store),
-)
-
 data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
 )
 ```
 
-Omitting `firebase_token_manager_name` too uses the default of `token_manager_registry`, which follows the `kiarina.lib.firebase` settings.
+`token_manager_registry` builds the token manager from those settings. Register an instance under the same key to use a different `TokenStore`.
+
+Omitting `firebase_settings_key` uses the default of `token_manager_registry`, which is the `kiarina.lib.firebase` settings that its `settings_manager` resolves.
 
 ### Configuring Retries
 
@@ -401,7 +401,7 @@ Query parameters for the Firebase Realtime Database REST API. `QueryValue` is `s
 
 ```python
 class RTDBSettings(BaseSettings):
-    firebase_token_manager_name: str | None = None
+    firebase_settings_key: str | None = None
     max_retry_delay: float = 60.0
     initial_retry_delay: float = 1.0
     retry_delay_multiplier: float = 2.0
@@ -411,7 +411,7 @@ Settings used when resolving the token and reconnecting a stream.
 
 **Fields**
 
-- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed. The registry default is used when this is not set
+- `firebase_settings_key` (`str | None`): Key of the `kiarina.lib.firebase` settings whose `TokenManager` is used when no token is passed. An alias of `kiarina.lib.firebase` is also accepted. The default of `token_manager_registry` is used when this is not set
 - `max_retry_delay` (`float`): Maximum retry interval in seconds
 - `initial_retry_delay` (`float`): Initial retry interval in seconds
 - `retry_delay_multiplier` (`float`): Value multiplied by the retry interval after a network error
