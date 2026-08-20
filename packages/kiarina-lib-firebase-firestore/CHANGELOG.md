@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.25.0] - 2026-08-21
+
 ### Changed
 - **BREAKING**: Renamed the `firebase_token_manager_name` setting to `firebase_settings_key`
 

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.25.0] - 2026-08-21
+
+### Changed (BREAKING)
+- **kiarina-lib-firebase-rtdb**: Rename the `firebase_token_manager_name` setting to `firebase_settings_key`.
+- **kiarina-lib-firebase-firestore**: Rename the `firebase_token_manager_name` setting to `firebase_settings_key`.
+
 ## [2.24.0] - 2026-08-21
 
 ### Added
