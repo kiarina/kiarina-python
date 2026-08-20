@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.24.0] - 2026-08-21
+
 ### Changed
 - `get_data`, `update_data`, and `watch_data` use the default of `token_manager_registry` when `firebase_token_manager_name` is not configured
 

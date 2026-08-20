@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.24.0] - 2026-08-21
+
+### Added
+- **kiarina-lib-firebase**: Add `FileTokenStore`, which keeps the token set in a JSON file, and export `InMemoryTokenStore`.
+- **kiarina-lib-firebase**: Add the `token_data_file_path` setting, and build a `TokenManager` from the `FirebaseSettings` of the same name in `token_manager_registry` when no instance is registered.
+
+### Changed
+- **kiarina-lib-firebase-rtdb**: Use the default of `token_manager_registry` when `firebase_token_manager_name` is not configured.
+- **kiarina-lib-firebase-firestore**: Use the default of `token_manager_registry` when `firebase_token_manager_name` is not configured.
+
 ## [2.23.0] - 2026-08-20
 
 ### Added
