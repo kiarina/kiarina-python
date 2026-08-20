@@ -35,7 +35,7 @@ pip install kiarina-lib-firebase
 - **Persisting Token Data**
   Restore tokens from an application-specific store and save refreshed values.
 - **Sharing a Token Manager**
-  Register a token manager by name and get it anywhere in the application.
+  Build a token manager from settings, or register one by name, and get it anywhere in the application.
 - **Managing Multiple Configurations**
   Manage multiple Firebase configurations with pydantic-settings-manager.
 
@@ -84,37 +84,48 @@ manager = TokenManager(
 id_token = await manager.get_id_token()
 ```
 
-`token_store` accepts a `TokenStore` or a `TokenData`. A `TokenData` is wrapped in an in-memory store, so tokens are always managed through a store.
+`token_store` accepts a `TokenStore` or a `TokenData`. A `TokenData` is wrapped in an `InMemoryTokenStore`, so tokens are always managed through a store.
 
 ### Persisting Token Data
 
-Implement `TokenStore` to keep tokens outside the process. `TokenManager` loads the token set on the first `get_id_token()` call and saves every refreshed value.
+`FileTokenStore` keeps the token set in a JSON file, so a restart resumes from the stored refresh token. `TokenManager` loads the token set on the first `get_id_token()` call and saves every refreshed value.
 
 ```python
-from kiarina.lib.firebase import TokenData, TokenManager, TokenStore
-
-
-class InMemoryTokenStore(TokenStore):
-    def __init__(self, token_data: TokenData) -> None:
-        self._token_data = token_data
-
-    async def get(self) -> TokenData:
-        return self._token_data
-
-    async def set(self, token_data: TokenData) -> None:
-        self._token_data = token_data
-
+from kiarina.lib.firebase import FileTokenStore, TokenManager
 
 manager = TokenManager(
     api_key="firebase-web-api-key",
-    token_store=InMemoryTokenStore(token_data),
+    token_store=FileTokenStore("~/.config/your-app/token.json"),
 )
 id_token = await manager.get_id_token()
 ```
 
+`InMemoryTokenStore` keeps the token set in the process only. Implement `TokenStore` for any other backend.
+
 ### Sharing a Token Manager
 
-Register a `TokenManager` in `token_manager_registry` where the application is configured, and get it by name where an ID token is needed.
+`token_manager_registry` builds a `TokenManager` from the settings of the same name. Setting `token_data_file_path` is enough, and the token set is then kept in that file through `FileTokenStore`.
+
+```yaml
+kiarina.lib.firebase:
+  default: production
+  configs:
+    production:
+      project_id: production-project
+      api_key: production-api-key
+      token_data_file_path: ~/.config/your-app/token.json
+```
+
+```python
+from kiarina.lib.firebase import token_manager_registry
+
+# Anywhere in the application
+id_token = await token_manager_registry.get().get_id_token()
+```
+
+`get()` without a name uses the same settings as `settings_manager`, so it follows `default` and `settings_manager.active_key`. Each name is built once and reused.
+
+Register an instance to use a different `TokenStore`. A registered instance takes priority over the settings.
 
 ```python
 from kiarina.lib.firebase import TokenManager, token_manager_registry
@@ -126,9 +137,6 @@ token_manager_registry.register(
         token_store=InMemoryTokenStore(token_data),
     ),
 )
-
-# Elsewhere in the application
-id_token = await token_manager_registry.get("production").get_id_token()
 ```
 
 ### Managing Multiple Configurations
@@ -196,9 +204,11 @@ export KIARINA_LIB_FIREBASE_API_KEY="your-api-key"
 
 ```python
 from kiarina.lib.firebase import (
+    FileTokenStore,
     FirebaseAPIError,
     FirebaseAuthError,
     FirebaseSettings,
+    InMemoryTokenStore,
     InvalidCustomTokenError,
     InvalidRefreshTokenError,
     TokenData,
@@ -274,6 +284,30 @@ class TokenData(BaseModel):
 
 A Firebase Authentication token set. `from_api_response` reads the `exp` claim from `id_token` and uses it as the UTC expiration time. It raises `ValueError` if that claim cannot be read.
 
+#### `FileTokenStore`
+
+```python
+class FileTokenStore(TokenStore):
+    file_path: str
+
+    def __init__(self, file_path: str) -> None: ...
+```
+
+A `TokenStore` that keeps the token set in a JSON file. Writes are atomic and locked between processes, and a new file is created with owner-only permissions. `token_manager_registry` uses it for the managers it builds from settings.
+
+**Raises**
+
+- `FileNotFoundError`: `get()` is called before the file exists
+
+#### `InMemoryTokenStore`
+
+```python
+class InMemoryTokenStore(TokenStore):
+    def __init__(self, token_data: TokenData) -> None: ...
+```
+
+A `TokenStore` that keeps the token set in the process only. `TokenManager` wraps a `TokenData` in it.
+
 #### `TokenStore`
 
 ```python
@@ -291,9 +325,16 @@ An interface for reading and writing a persistent token set. `TokenManager` trea
 class FirebaseSettings(BaseSettings):
     project_id: str
     api_key: SecretStr
+    token_data_file_path: str | None = None
 ```
 
 Firebase Authentication settings that support environment variables with the `KIARINA_LIB_FIREBASE_` prefix.
+
+**Fields**
+
+- `project_id` (`str`): Firebase project ID
+- `api_key` (`SecretStr`): Firebase Web API key
+- `token_data_file_path` (`str | None`): Path of the file that `token_manager_registry` stores the token set in
 
 #### `token_manager_registry`
 
@@ -301,9 +342,15 @@ Firebase Authentication settings that support environment variables with the `KI
 token_manager_registry: ObjectRegistry[TokenManager, None]
 ```
 
-A registry of `TokenManager` instances registered by the application. Use `register()`, `get()`, `unregister()`, `is_registered()`, `list_names()`, and `clear()`.
+A registry of `TokenManager` instances. Use `register()`, `get()`, `unregister()`, `is_registered()`, `list_names()`, and `clear()`.
 
-A `TokenManager` needs a `TokenStore`, which cannot be expressed in settings, so the registry has no configuration, factory, or default. Always pass a name to `get()`; it raises `ValueError` for a name that has not been registered. `resolve()` is unusable because it does not read registered instances.
+`get(name)` returns the registered instance, or builds one from the `FirebaseSettings` of the same name and keeps it. Names and aliases are those of `settings_manager`, and `get()` without a name resolves in the same order: `settings_manager.active_key`, then the `default` in the settings, then `"default"`.
+
+`resolve()` is unusable because it does not read registered instances.
+
+**Raises**
+
+- `ValueError`: No settings exist under the name, or `token_data_file_path` is not configured in them
 
 #### `settings_manager`
 

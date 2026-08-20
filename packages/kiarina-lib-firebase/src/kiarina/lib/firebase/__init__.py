@@ -9,6 +9,8 @@ if TYPE_CHECKING:  # pragma: no cover
     from ._exceptions.invalid_refresh_token_error import InvalidRefreshTokenError
     from ._instances.token_manager_registry import token_manager_registry
     from ._schemas.token_data import TokenData
+    from ._services.file_token_store import FileTokenStore
+    from ._services.in_memory_token_store import InMemoryTokenStore
     from ._services.token_manager import TokenManager
     from ._settings import FirebaseSettings, settings_manager
     from ._types.token_store import TokenStore
@@ -26,6 +28,8 @@ __all__ = [
     # ._schemas
     "TokenData",
     # ._services
+    "FileTokenStore",
+    "InMemoryTokenStore",
     "TokenManager",
     # ._settings
     "FirebaseSettings",
@@ -55,6 +59,8 @@ def __getattr__(name: str) -> object:
         # ._schemas
         "TokenData": "._schemas.token_data",
         # ._services
+        "FileTokenStore": "._services.file_token_store",
+        "InMemoryTokenStore": "._services.in_memory_token_store",
         "TokenManager": "._services.token_manager",
         # ._settings
         "FirebaseSettings": "._settings",

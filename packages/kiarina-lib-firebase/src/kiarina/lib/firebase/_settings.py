@@ -19,6 +19,11 @@ class FirebaseSettings(BaseSettings):
         title="API key",
         description="Firebase Web API key.",
     )
+    token_data_file_path: str | None = Field(
+        default=None,
+        title="Token data file path",
+        description="Path of the file that token_manager_registry stores the token set in.",
+    )
 
 
 settings_manager = SettingsManager(FirebaseSettings, multi=True)

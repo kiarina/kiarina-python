@@ -2146,6 +2146,7 @@ source = { editable = "packages/kiarina-lib-firebase" }
 dependencies = [
     { name = "httpx" },
     { name = "kiarina-utils-common" },
+    { name = "kiarina-utils-file" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -2161,6 +2162,7 @@ dev = [
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
+    { name = "kiarina-utils-file", editable = "packages/kiarina-utils-file" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },

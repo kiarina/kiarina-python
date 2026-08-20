@@ -4,17 +4,7 @@ from datetime import datetime, timedelta, timezone
 from .._schemas.token_data import TokenData
 from .._types.token_store import TokenStore
 from .._utils.refresh_id_token import refresh_id_token
-
-
-class _InMemoryTokenStore(TokenStore):
-    def __init__(self, token_data: TokenData) -> None:
-        self._token_data: TokenData = token_data
-
-    async def get(self) -> TokenData:
-        return self._token_data
-
-    async def set(self, token_data: TokenData) -> None:
-        self._token_data = token_data
+from .in_memory_token_store import InMemoryTokenStore
 
 
 class TokenManager:
@@ -28,7 +18,7 @@ class TokenManager:
         self._api_key = api_key
 
         self._token_store: TokenStore = (
-            _InMemoryTokenStore(token_store)
+            InMemoryTokenStore(token_store)
             if isinstance(token_store, TokenData)
             else token_store
         )

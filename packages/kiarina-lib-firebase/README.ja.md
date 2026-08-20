@@ -35,7 +35,7 @@ pip install kiarina-lib-firebase
 - **Persisting Token Data**
   アプリケーション固有のストアへトークンを保存し、次回の利用時に復元します。
 - **Sharing a Token Manager**
-  トークンマネージャーを名前で登録し、アプリケーションのどこからでも取得します。
+  設定からトークンマネージャーを構築するか名前で登録し、アプリケーションのどこからでも取得します。
 - **Managing Multiple Configurations**
   pydantic-settings-manager で複数の Firebase 設定を管理します。
 
@@ -84,37 +84,48 @@ manager = TokenManager(
 id_token = await manager.get_id_token()
 ```
 
-`token_store` には `TokenStore` または `TokenData` を指定します。`TokenData` はメモリ上のストアに包まれるため、トークンは常にストア経由で管理されます。
+`token_store` には `TokenStore` または `TokenData` を指定します。`TokenData` は `InMemoryTokenStore` に包まれるため、トークンは常にストア経由で管理されます。
 
 ### Persisting Token Data
 
-`TokenStore` を実装すると、プロセス外にトークンを保持できます。`TokenManager` は最初の `get_id_token()` でトークン一式を読み込み、更新のたびに保存します。
+`FileTokenStore` はトークン一式を JSON ファイルに保持するため、再起動しても保存済みのリフレッシュトークンから再開できます。`TokenManager` は最初の `get_id_token()` でトークン一式を読み込み、更新のたびに保存します。
 
 ```python
-from kiarina.lib.firebase import TokenData, TokenManager, TokenStore
-
-
-class InMemoryTokenStore(TokenStore):
-    def __init__(self, token_data: TokenData) -> None:
-        self._token_data = token_data
-
-    async def get(self) -> TokenData:
-        return self._token_data
-
-    async def set(self, token_data: TokenData) -> None:
-        self._token_data = token_data
-
+from kiarina.lib.firebase import FileTokenStore, TokenManager
 
 manager = TokenManager(
     api_key="firebase-web-api-key",
-    token_store=InMemoryTokenStore(token_data),
+    token_store=FileTokenStore("~/.config/your-app/token.json"),
 )
 id_token = await manager.get_id_token()
 ```
 
+`InMemoryTokenStore` はプロセス内にのみトークン一式を保持します。それ以外のバックエンドは `TokenStore` を実装してください。
+
 ### Sharing a Token Manager
 
-アプリケーションの設定を行う場所で `TokenManager` を `token_manager_registry` に登録し、ID トークンが必要な場所では名前で取得します。
+`token_manager_registry` は、同じ名前の設定から `TokenManager` を構築します。`token_data_file_path` を設定するだけでよく、トークン一式は `FileTokenStore` によってそのファイルに保持されます。
+
+```yaml
+kiarina.lib.firebase:
+  default: production
+  configs:
+    production:
+      project_id: production-project
+      api_key: production-api-key
+      token_data_file_path: ~/.config/your-app/token.json
+```
+
+```python
+from kiarina.lib.firebase import token_manager_registry
+
+# アプリケーションのどこからでも
+id_token = await token_manager_registry.get().get_id_token()
+```
+
+名前を省略した `get()` は `settings_manager` と同じ設定を使うため、`default` と `settings_manager.active_key` に追従します。名前ごとに一度だけ構築され、以降は再利用されます。
+
+別の `TokenStore` を使う場合はインスタンスを登録します。登録済みのインスタンスは設定より優先されます。
 
 ```python
 from kiarina.lib.firebase import TokenManager, token_manager_registry
@@ -126,9 +137,6 @@ token_manager_registry.register(
         token_store=InMemoryTokenStore(token_data),
     ),
 )
-
-# アプリケーションの別の場所で
-id_token = await token_manager_registry.get("production").get_id_token()
 ```
 
 ### Managing Multiple Configurations
@@ -196,9 +204,11 @@ export KIARINA_LIB_FIREBASE_API_KEY="your-api-key"
 
 ```python
 from kiarina.lib.firebase import (
+    FileTokenStore,
     FirebaseAPIError,
     FirebaseAuthError,
     FirebaseSettings,
+    InMemoryTokenStore,
     InvalidCustomTokenError,
     InvalidRefreshTokenError,
     TokenData,
@@ -274,6 +284,30 @@ class TokenData(BaseModel):
 
 Firebase Authentication のトークン一式です。`from_api_response` は `id_token` の `exp` クレームを UTC の有効期限として使用します。読み取れない場合は `ValueError` を送出します。
 
+#### `FileTokenStore`
+
+```python
+class FileTokenStore(TokenStore):
+    file_path: str
+
+    def __init__(self, file_path: str) -> None: ...
+```
+
+トークン一式を JSON ファイルに保持する `TokenStore` です。書き込みはアトミックかつプロセス間で排他され、新規ファイルは所有者のみのパーミッションで作成されます。`token_manager_registry` が設定から構築するマネージャーはこれを使用します。
+
+**Raises**
+
+- `FileNotFoundError`: ファイルが存在しない状態で `get()` を呼び出した場合
+
+#### `InMemoryTokenStore`
+
+```python
+class InMemoryTokenStore(TokenStore):
+    def __init__(self, token_data: TokenData) -> None: ...
+```
+
+プロセス内にのみトークン一式を保持する `TokenStore` です。`TokenManager` は `TokenData` をこれに包みます。
+
 #### `TokenStore`
 
 ```python
@@ -291,9 +325,16 @@ class TokenStore(Protocol):
 class FirebaseSettings(BaseSettings):
     project_id: str
     api_key: SecretStr
+    token_data_file_path: str | None = None
 ```
 
 `KIARINA_LIB_FIREBASE_` 接頭辞の環境変数に対応する Firebase Authentication 設定です。
+
+**Fields**
+
+- `project_id` (`str`): Firebase プロジェクト ID
+- `api_key` (`SecretStr`): Firebase Web API キー
+- `token_data_file_path` (`str | None`): `token_manager_registry` がトークン一式を保存するファイルのパス
 
 #### `token_manager_registry`
 
@@ -301,9 +342,15 @@ class FirebaseSettings(BaseSettings):
 token_manager_registry: ObjectRegistry[TokenManager, None]
 ```
 
-アプリケーションが登録した `TokenManager` のレジストリです。`register()`、`get()`、`unregister()`、`is_registered()`、`list_names()`、`clear()` を使用します。
+`TokenManager` のレジストリです。`register()`、`get()`、`unregister()`、`is_registered()`、`list_names()`、`clear()` を使用します。
 
-`TokenManager` には設定で表現できない `TokenStore` が必要なため、このレジストリは設定もファクトリもデフォルトも持ちません。`get()` には常に名前を渡してください。未登録の名前を渡すと `ValueError` が送出されます。`resolve()` は登録済みインスタンスを参照しないため使用できません。
+`get(name)` は登録済みのインスタンスを返すか、同じ名前の `FirebaseSettings` から構築して保持します。名前とエイリアスは `settings_manager` のものです。名前を省略した `get()` は同じ順序で解決します（`settings_manager.active_key`、設定の `default`、`"default"`）。
+
+`resolve()` は登録済みインスタンスを参照しないため使用できません。
+
+**Raises**
+
+- `ValueError`: その名前の設定が存在しない、またはその設定に `token_data_file_path` がない
 
 #### `settings_manager`
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `FileTokenStore`, a `TokenStore` that keeps the token set in a JSON file
+- `InMemoryTokenStore`, the `TokenStore` that `TokenManager` wraps a `TokenData` in
+- `token_data_file_path` setting, used by `token_manager_registry` to build a `TokenManager` from settings
+- `token_manager_registry` builds a `TokenManager` from the `FirebaseSettings` of the same name when no instance is registered, and resolves names, aliases, and the default through `settings_manager`
+
 ## [2.23.0] - 2026-08-20
 
 ### Added
