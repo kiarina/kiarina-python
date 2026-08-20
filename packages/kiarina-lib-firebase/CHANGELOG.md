@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **BREAKING**: Removed the `expires_in` and `issued_at` arguments from `TokenData.from_api_response()`; the expiration time is now always read from the `exp` claim in `id_token`
+- **BREAKING**: Renamed the `TokenDataCache` protocol to `TokenStore` and the `TokenManager` `token_data_cache` argument to `token_store`
+- **BREAKING**: `TokenManager` now takes a single `token_store` argument (`TokenStore | TokenData`) instead of `refresh_token`, `token_data`, and `token_data_cache`; a `TokenData` is wrapped in an in-memory store, and the store is the authoritative source of the token set
+- **BREAKING**: Removed the `TokenManager` `token_data`, `refresh_token`, `id_token`, and `expires_at` properties, and made `api_key` private; the token set is cached in memory and re-read from `token_store` whenever it needs a refresh
 
 ## [2.3.1] - 2026-07-02
 

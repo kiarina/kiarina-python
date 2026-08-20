@@ -47,12 +47,17 @@ pip install kiarina-lib-firebase-rtdb
 Get an ID token from `TokenManager` and specify a database path.
 
 ```python
-from kiarina.lib.firebase import TokenManager
+from kiarina.lib.firebase import TokenManager, refresh_id_token
 from kiarina.lib.firebase_rtdb import get_data
+
+token_data = await refresh_id_token(
+    refresh_token="firebase-refresh-token",
+    api_key="firebase-web-api-key",
+)
 
 token_manager = TokenManager(
     api_key="firebase-web-api-key",
-    refresh_token="firebase-refresh-token",
+    token_store=token_data,
 )
 
 data = await get_data(

@@ -33,7 +33,7 @@ pip install kiarina-lib-firebase
 - **Managing the Token Lifecycle**
   有効期限の前に ID トークンを自動更新し、並行する更新を直列化します。
 - **Persisting Token Data**
-  アプリケーション固有のキャッシュへトークンを保存し、次回の利用時に復元します。
+  アプリケーション固有のストアへトークンを保存し、次回の利用時に復元します。
 - **Managing Multiple Configurations**
   pydantic-settings-manager で複数の Firebase 設定を管理します。
 
@@ -76,23 +76,23 @@ from kiarina.lib.firebase import TokenManager
 
 manager = TokenManager(
     api_key="firebase-web-api-key",
-    token_data=token_data,
+    token_store=token_data,
 )
 
 id_token = await manager.get_id_token()
 ```
 
-`refresh_token`、`token_data`、`token_data_cache` のいずれかを指定してください。
+`token_store` には `TokenStore` または `TokenData` を指定します。`TokenData` はメモリ上のストアに包まれるため、トークンは常にストア経由で管理されます。
 
 ### Persisting Token Data
 
-`TokenDataCache` を実装すると、`TokenManager` がトークンを復元し、更新後の値を保存します。
+`TokenStore` を実装すると、プロセス外にトークンを保持できます。`TokenManager` は最初の `get_id_token()` でトークン一式を読み込み、更新のたびに保存します。
 
 ```python
-from kiarina.lib.firebase import TokenData, TokenDataCache, TokenManager
+from kiarina.lib.firebase import TokenData, TokenManager, TokenStore
 
 
-class InMemoryTokenCache(TokenDataCache):
+class InMemoryTokenStore(TokenStore):
     def __init__(self, token_data: TokenData) -> None:
         self._token_data = token_data
 
@@ -105,7 +105,7 @@ class InMemoryTokenCache(TokenDataCache):
 
 manager = TokenManager(
     api_key="firebase-web-api-key",
-    token_data_cache=InMemoryTokenCache(token_data),
+    token_store=InMemoryTokenStore(token_data),
 )
 id_token = await manager.get_id_token()
 ```
@@ -181,8 +181,8 @@ from kiarina.lib.firebase import (
     InvalidCustomTokenError,
     InvalidRefreshTokenError,
     TokenData,
-    TokenDataCache,
     TokenManager,
+    TokenStore,
     exchange_custom_token,
     refresh_id_token,
     settings_manager,
@@ -221,39 +221,22 @@ async def refresh_id_token(
 
 ```python
 class TokenManager:
-    api_key: str
-
     def __init__(
         self,
         *,
         api_key: str,
-        refresh_token: str | None = None,
-        token_data: TokenData | None = None,
-        token_data_cache: TokenDataCache | None = None,
+        token_store: TokenStore | TokenData,
         refresh_buffer_seconds: int = 300,
     ) -> None: ...
-
-    @property
-    def refresh_token(self) -> str: ...
-
-    @property
-    def token_data(self) -> TokenData: ...
-
-    @property
-    def id_token(self) -> str: ...
-
-    @property
-    def expires_at(self) -> datetime: ...
 
     async def get_id_token(self) -> str: ...
 
     async def refresh(self) -> TokenData: ...
 ```
 
-ID トークンを保持し、有効期限まで `refresh_buffer_seconds` 以下になると更新します。複数のコルーチンが同時に利用しても、トークンの読み込みと更新はロックで直列化されます。
+`token_store` からトークン一式を読み取り、有効期限まで `refresh_buffer_seconds` 以下になると更新します。読み取ったトークン一式はメモリに保持し、有効なあいだはそれを使います。更新が必要になると、まず `token_store` を読み直すため、他で更新された値があればそれを先に拾います。複数のコルーチンが同時に利用しても、ストアの読み取りと更新はロックで直列化されます。
 
-- `ValueError`: コンストラクターにトークンの取得元が指定されていない
-- `AssertionError`: トークンを取得する前に、未設定の `refresh_token` または `token_data` と、それらに依存するプロパティへアクセスする
+`get_id_token()` と `refresh()` は `refresh_id_token` が送出する例外をそのまま伝播します。
 
 #### `TokenData`
 
@@ -269,16 +252,16 @@ class TokenData(BaseModel):
 
 Firebase Authentication のトークン一式です。`from_api_response` は `id_token` の `exp` クレームを UTC の有効期限として使用します。読み取れない場合は `ValueError` を送出します。
 
-#### `TokenDataCache`
+#### `TokenStore`
 
 ```python
-class TokenDataCache(Protocol):
+class TokenStore(Protocol):
     async def get(self) -> TokenData: ...
 
     async def set(self, token_data: TokenData) -> None: ...
 ```
 
-トークン一式を読み書きする永続化インターフェースです。
+トークン一式を読み書きする永続化インターフェースです。`TokenManager` はこれをトークン一式の正本として扱います。
 
 #### `FirebaseSettings`
 

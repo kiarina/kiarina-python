@@ -2,8 +2,19 @@ import asyncio
 from datetime import datetime, timedelta, timezone
 
 from .._schemas.token_data import TokenData
-from .._types.token_data_cache import TokenDataCache
+from .._types.token_store import TokenStore
 from .._utils.refresh_id_token import refresh_id_token
+
+
+class _InMemoryTokenStore(TokenStore):
+    def __init__(self, token_data: TokenData) -> None:
+        self._token_data: TokenData = token_data
+
+    async def get(self) -> TokenData:
+        return self._token_data
+
+    async def set(self, token_data: TokenData) -> None:
+        self._token_data = token_data
 
 
 class TokenManager:
@@ -11,84 +22,52 @@ class TokenManager:
         self,
         *,
         api_key: str,
-        refresh_token: str | None = None,
-        token_data: TokenData | None = None,
-        token_data_cache: TokenDataCache | None = None,
+        token_store: TokenStore | TokenData,
         refresh_buffer_seconds: int = 300,
     ) -> None:
-        if not refresh_token and not token_data and not token_data_cache:
-            raise ValueError(
-                "At least one of 'refresh_token', 'token_data', or 'token_data_cache' must be provided."
-            )
+        self._api_key = api_key
 
-        self.api_key: str = api_key
-        self._refresh_token: str | None = refresh_token
-        self._token_data: TokenData | None = token_data
-        self._token_data_cache: TokenDataCache | None = token_data_cache
+        self._token_store: TokenStore = (
+            _InMemoryTokenStore(token_store)
+            if isinstance(token_store, TokenData)
+            else token_store
+        )
         self._refresh_buffer_seconds = refresh_buffer_seconds
+        self._token_data: TokenData | None = None
         self._refresh_lock = asyncio.Lock()
 
-        if not self._refresh_token and token_data:
-            self._refresh_token = token_data.refresh_token
-
-    @property
-    def refresh_token(self) -> str:
-        if not self._refresh_token:
-            raise AssertionError("Refresh token is not set. Call get_id_token() first.")
-
-        return self._refresh_token
-
-    @property
-    def token_data(self) -> TokenData:
-        if not self._token_data:
-            raise AssertionError("Token data is not set. Call get_id_token() first.")
-
-        return self._token_data
-
-    @property
-    def id_token(self) -> str:
-        return self.token_data.id_token
-
-    @property
-    def expires_at(self) -> datetime:
-        return self.token_data.expires_at
-
     async def get_id_token(self) -> str:
-        if not self._token_data and self._token_data_cache:
-            async with self._refresh_lock:
-                if self._token_data is None:
-                    self._token_data = await self._token_data_cache.get()
-                    self._refresh_token = self._token_data.refresh_token
+        token_data = self._token_data
 
-        if self._needs_refresh():
+        if token_data is None or self._needs_refresh(token_data):
             async with self._refresh_lock:
-                if self._needs_refresh():
-                    await self._do_refresh()
+                token_data = self._token_data
 
-        return self.id_token
+                if token_data is None or self._needs_refresh(token_data):
+                    token_data = await self._token_store.get()
+
+                    if self._needs_refresh(token_data):
+                        token_data = await self._do_refresh(token_data)
+
+                    self._token_data = token_data
+
+        return token_data.id_token
 
     async def refresh(self) -> TokenData:
         async with self._refresh_lock:
-            return await self._do_refresh()
+            token_data = await self._do_refresh(await self._token_store.get())
+            self._token_data = token_data
+            return token_data
 
-    def _needs_refresh(self) -> bool:
-        if not self._token_data:
-            return True
-
+    def _needs_refresh(self, token_data: TokenData) -> bool:
         now = datetime.now(timezone.utc)
-        refresh_threshold = self.expires_at - timedelta(
+        refresh_threshold = token_data.expires_at - timedelta(
             seconds=self._refresh_buffer_seconds
         )
 
         return now >= refresh_threshold
 
-    async def _do_refresh(self) -> TokenData:
-        token_data = await refresh_id_token(self.refresh_token, self.api_key)
-
-        self._refresh_token = token_data.refresh_token
-        self._token_data = token_data
-
-        if self._token_data_cache:
-            await self._token_data_cache.set(token_data)
-
-        return token_data
+    async def _do_refresh(self, token_data: TokenData) -> TokenData:
+        new_token_data = await refresh_id_token(token_data.refresh_token, self._api_key)
+        await self._token_store.set(new_token_data)
+        return new_token_data

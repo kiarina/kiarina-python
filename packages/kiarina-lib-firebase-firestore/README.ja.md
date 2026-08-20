@@ -42,12 +42,17 @@ pip install kiarina-lib-firebase-firestore
 `TokenManager`（[kiarina-lib-firebase](../kiarina-lib-firebase/)）などで取得した Firebase ID トークンと、ドキュメントのパスを指定します。
 
 ```python
-from kiarina.lib.firebase import TokenManager
+from kiarina.lib.firebase import TokenManager, refresh_id_token
 from kiarina.lib.firebase_firestore import get_document
+
+token_data = await refresh_id_token(
+    refresh_token="firebase-refresh-token",
+    api_key="firebase-web-api-key",
+)
 
 token_manager = TokenManager(
     api_key="firebase-web-api-key",
-    refresh_token="firebase-refresh-token",
+    token_store=token_data,
 )
 
 snapshot = await get_document(

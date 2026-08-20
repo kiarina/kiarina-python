@@ -125,5 +125,5 @@ def token_manager(token_data: TokenData) -> TokenManager:
     settings = settings_manager.get_settings()
     return TokenManager(
         api_key=settings.api_key.get_secret_value(),
-        token_data=token_data,
+        token_store=token_data,
     )

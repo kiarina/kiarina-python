@@ -33,7 +33,7 @@ pip install kiarina-lib-firebase
 - **Managing the Token Lifecycle**
   Refresh an ID token before expiration and serialize concurrent refreshes.
 - **Persisting Token Data**
-  Restore tokens from an application-specific cache and save refreshed values.
+  Restore tokens from an application-specific store and save refreshed values.
 - **Managing Multiple Configurations**
   Manage multiple Firebase configurations with pydantic-settings-manager.
 
@@ -76,23 +76,23 @@ from kiarina.lib.firebase import TokenManager
 
 manager = TokenManager(
     api_key="firebase-web-api-key",
-    token_data=token_data,
+    token_store=token_data,
 )
 
 id_token = await manager.get_id_token()
 ```
 
-Provide at least one of `refresh_token`, `token_data`, or `token_data_cache`.
+`token_store` accepts a `TokenStore` or a `TokenData`. A `TokenData` is wrapped in an in-memory store, so tokens are always managed through a store.
 
 ### Persisting Token Data
 
-Implement `TokenDataCache` to let `TokenManager` restore tokens and save refreshed values.
+Implement `TokenStore` to keep tokens outside the process. `TokenManager` loads the token set on the first `get_id_token()` call and saves every refreshed value.
 
 ```python
-from kiarina.lib.firebase import TokenData, TokenDataCache, TokenManager
+from kiarina.lib.firebase import TokenData, TokenManager, TokenStore
 
 
-class InMemoryTokenCache(TokenDataCache):
+class InMemoryTokenStore(TokenStore):
     def __init__(self, token_data: TokenData) -> None:
         self._token_data = token_data
 
@@ -105,7 +105,7 @@ class InMemoryTokenCache(TokenDataCache):
 
 manager = TokenManager(
     api_key="firebase-web-api-key",
-    token_data_cache=InMemoryTokenCache(token_data),
+    token_store=InMemoryTokenStore(token_data),
 )
 id_token = await manager.get_id_token()
 ```
@@ -181,8 +181,8 @@ from kiarina.lib.firebase import (
     InvalidCustomTokenError,
     InvalidRefreshTokenError,
     TokenData,
-    TokenDataCache,
     TokenManager,
+    TokenStore,
     exchange_custom_token,
     refresh_id_token,
     settings_manager,
@@ -221,39 +221,22 @@ Retrieve a new ID token with a refresh token.
 
 ```python
 class TokenManager:
-    api_key: str
-
     def __init__(
         self,
         *,
         api_key: str,
-        refresh_token: str | None = None,
-        token_data: TokenData | None = None,
-        token_data_cache: TokenDataCache | None = None,
+        token_store: TokenStore | TokenData,
         refresh_buffer_seconds: int = 300,
     ) -> None: ...
-
-    @property
-    def refresh_token(self) -> str: ...
-
-    @property
-    def token_data(self) -> TokenData: ...
-
-    @property
-    def id_token(self) -> str: ...
-
-    @property
-    def expires_at(self) -> datetime: ...
 
     async def get_id_token(self) -> str: ...
 
     async def refresh(self) -> TokenData: ...
 ```
 
-Hold an ID token and refresh it when no more than `refresh_buffer_seconds` remain. Token loading and refreshes are serialized with a lock when multiple coroutines use the manager concurrently.
+Read the token set from `token_store` and refresh it when no more than `refresh_buffer_seconds` remain. The manager caches the token set in memory and uses it while it stays valid. Once it needs a refresh, the manager reads `token_store` again first, so a value refreshed elsewhere is picked up before a new refresh is requested. Store reads and refreshes are serialized with a lock when multiple coroutines use the manager concurrently.
 
-- `ValueError`: No token source is provided to the constructor
-- `AssertionError`: An unset `refresh_token` or `token_data`, or a dependent property, is accessed before token retrieval
+`get_id_token()` and `refresh()` propagate the exceptions raised by `refresh_id_token`.
 
 #### `TokenData`
 
@@ -269,16 +252,16 @@ class TokenData(BaseModel):
 
 A Firebase Authentication token set. `from_api_response` reads the `exp` claim from `id_token` and uses it as the UTC expiration time. It raises `ValueError` if that claim cannot be read.
 
-#### `TokenDataCache`
+#### `TokenStore`
 
 ```python
-class TokenDataCache(Protocol):
+class TokenStore(Protocol):
     async def get(self) -> TokenData: ...
 
     async def set(self, token_data: TokenData) -> None: ...
 ```
 
-An interface for reading and writing a persistent token set.
+An interface for reading and writing a persistent token set. `TokenManager` treats it as the authoritative source of the token set.
 
 #### `FirebaseSettings`
 
