@@ -45,5 +45,4 @@ async def refresh_id_token(refresh_token: str, api_key: str) -> TokenData:
     return TokenData.from_api_response(
         id_token=data["id_token"],
         refresh_token=data["refresh_token"],
-        expires_in=int(data["expires_in"]),
     )

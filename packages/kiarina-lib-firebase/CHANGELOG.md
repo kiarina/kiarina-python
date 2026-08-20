@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: Removed the `expires_in` and `issued_at` arguments from `TokenData.from_api_response()`; the expiration time is now always read from the `exp` claim in `id_token`
+
 ## [2.3.1] - 2026-07-02
 
 ### Changed

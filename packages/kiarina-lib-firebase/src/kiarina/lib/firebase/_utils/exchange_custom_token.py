@@ -42,5 +42,4 @@ async def exchange_custom_token(custom_token: str, api_key: str) -> TokenData:
     return TokenData.from_api_response(
         id_token=data["idToken"],
         refresh_token=data["refreshToken"],
-        expires_in=int(data["expiresIn"]),
     )

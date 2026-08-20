@@ -55,7 +55,8 @@ async def test_happy_path(api_key: str, token_data: TokenData) -> None:
     assert id_token_2 == id_token
     assert manager.expires_at == expires_at
 
-    await asyncio.sleep(0.1)
+    # The 'exp' claim has one-second resolution
+    await asyncio.sleep(1.1)
 
     new_token_data = await manager.refresh()
     assert manager.expires_at > expires_at

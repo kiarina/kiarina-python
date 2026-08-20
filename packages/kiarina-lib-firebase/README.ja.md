@@ -264,17 +264,10 @@ class TokenData(BaseModel):
     expires_at: datetime
 
     @classmethod
-    def from_api_response(
-        cls,
-        id_token: str,
-        refresh_token: str,
-        expires_in: int,
-        *,
-        issued_at: datetime | None = None,
-    ) -> TokenData: ...
+    def from_api_response(cls, id_token: str, refresh_token: str) -> Self: ...
 ```
 
-Firebase Authentication のトークン一式です。`from_api_response` は `issued_at` と有効期間の秒数から UTC の有効期限を計算します。`issued_at` を省略すると現在時刻を使用します。
+Firebase Authentication のトークン一式です。`from_api_response` は `id_token` の `exp` クレームを UTC の有効期限として使用します。読み取れない場合は `ValueError` を送出します。
 
 #### `TokenDataCache`
 

@@ -264,17 +264,10 @@ class TokenData(BaseModel):
     expires_at: datetime
 
     @classmethod
-    def from_api_response(
-        cls,
-        id_token: str,
-        refresh_token: str,
-        expires_in: int,
-        *,
-        issued_at: datetime | None = None,
-    ) -> TokenData: ...
+    def from_api_response(cls, id_token: str, refresh_token: str) -> Self: ...
 ```
 
-A Firebase Authentication token set. `from_api_response` calculates the UTC expiration time from `issued_at` and the lifetime in seconds. It uses the current time when `issued_at` is omitted.
+A Firebase Authentication token set. `from_api_response` reads the `exp` claim from `id_token` and uses it as the UTC expiration time. It raises `ValueError` if that claim cannot be read.
 
 #### `TokenDataCache`
 
