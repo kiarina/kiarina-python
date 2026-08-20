@@ -34,6 +34,8 @@ pip install kiarina-lib-firebase
   Refresh an ID token before expiration and serialize concurrent refreshes.
 - **Persisting Token Data**
   Restore tokens from an application-specific store and save refreshed values.
+- **Sharing a Token Manager**
+  Register a token manager by name and get it anywhere in the application.
 - **Managing Multiple Configurations**
   Manage multiple Firebase configurations with pydantic-settings-manager.
 
@@ -108,6 +110,25 @@ manager = TokenManager(
     token_store=InMemoryTokenStore(token_data),
 )
 id_token = await manager.get_id_token()
+```
+
+### Sharing a Token Manager
+
+Register a `TokenManager` in `token_manager_registry` where the application is configured, and get it by name where an ID token is needed.
+
+```python
+from kiarina.lib.firebase import TokenManager, token_manager_registry
+
+token_manager_registry.register(
+    "production",
+    TokenManager(
+        api_key="firebase-web-api-key",
+        token_store=InMemoryTokenStore(token_data),
+    ),
+)
+
+# Elsewhere in the application
+id_token = await token_manager_registry.get("production").get_id_token()
 ```
 
 ### Managing Multiple Configurations
@@ -186,6 +207,7 @@ from kiarina.lib.firebase import (
     exchange_custom_token,
     refresh_id_token,
     settings_manager,
+    token_manager_registry,
 )
 ```
 
@@ -272,6 +294,16 @@ class FirebaseSettings(BaseSettings):
 ```
 
 Firebase Authentication settings that support environment variables with the `KIARINA_LIB_FIREBASE_` prefix.
+
+#### `token_manager_registry`
+
+```python
+token_manager_registry: ObjectRegistry[TokenManager, None]
+```
+
+A registry of `TokenManager` instances registered by the application. Use `register()`, `get()`, `unregister()`, `is_registered()`, `list_names()`, and `clear()`.
+
+A `TokenManager` needs a `TokenStore`, which cannot be expressed in settings, so the registry has no configuration, factory, or default. Always pass a name to `get()`; it raises `ValueError` for a name that has not been registered. `resolve()` is unusable because it does not read registered instances.
 
 #### `settings_manager`
 

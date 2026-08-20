@@ -95,7 +95,9 @@ def _event(data: str) -> DataChangeEvent:
 async def _collect(token_manager: TokenManager) -> list[DataChangeEvent]:
     return [
         event
-        async for event in watch_data("https://db.example.com", "/p", token_manager)
+        async for event in watch_data(
+            "https://db.example.com", "/p", token_manager=token_manager
+        )
     ]
 
 

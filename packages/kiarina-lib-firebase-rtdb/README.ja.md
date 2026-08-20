@@ -39,6 +39,8 @@ pip install kiarina-lib-firebase-rtdb
   認証失効時に ID トークンを更新し、通信エラーやトークン更新の失敗時に指数バックオフで再接続します。
 - **Stopping the Stream**
   `asyncio.Event` を使って監視を終了します。
+- **Resolving the Token**
+  トークンを明示的に渡すか、設定した名前で登録済みのトークンマネージャーを取得します。
 - **Configuring Retries**
   環境変数または pydantic-settings-manager で再試行間隔を設定します。
 
@@ -63,7 +65,7 @@ token_manager = TokenManager(
 data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    await token_manager.get_id_token(),
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -77,8 +79,8 @@ from kiarina.lib.firebase_rtdb import RTDBQuery, get_data
 data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
-    await token_manager.get_id_token(),
     query=RTDBQuery(order_by="$key", limit_to_last=5),
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -94,8 +96,8 @@ query = RTDBQuery(order_by="$key", start_after="01ABCDEF...")
 keys = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
-    await token_manager.get_id_token(),
     query=RTDBQuery(shallow=True),
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -109,8 +111,8 @@ from kiarina.lib.firebase_rtdb import update_data
 await update_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
-    await token_manager.get_id_token(),
     {"01ABCDEF.../read": True, "01OLDEST...": None},
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -124,7 +126,7 @@ from kiarina.lib.firebase_rtdb import watch_data
 async for event in watch_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    token_manager,
+    token_manager=token_manager,
 ):
     print(event.event_type, event.path, event.data)
 ```
@@ -147,13 +149,40 @@ stop_event = asyncio.Event()
 async for event in watch_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    token_manager,
     stop_event=stop_event,
+    token_manager=token_manager,
 ):
     print(event.data)
     if event.data == "stop":
         stop_event.set()
 ```
+
+### Resolving the Token
+
+`id_token` と `token_manager` を省略すると、設定した名前で `token_manager_registry` から `TokenManager` を取得します。
+
+```yaml
+kiarina.lib.firebase_rtdb:
+  firebase_token_manager_name: production
+```
+
+アプリケーションの起動時に、その名前でトークンマネージャーを登録します。
+
+```python
+from kiarina.lib.firebase import TokenManager, token_manager_registry
+
+token_manager_registry.register(
+    "production",
+    TokenManager(api_key="firebase-web-api-key", token_store=token_store),
+)
+
+data = await get_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/state",
+)
+```
+
+`firebase_token_manager_name` が未設定のままトークンを省略すると `ValueError` が送出されます。
 
 ### Configuring Retries
 
@@ -223,9 +252,9 @@ from kiarina.lib.firebase_rtdb import (
 async def get_data(
     database_url: str,
     path: str,
-    id_token: str,
     *,
     query: RTDBQuery | None = None,
+    id_token: str | None = None,
 ) -> Any: ...
 ```
 
@@ -235,8 +264,8 @@ async def get_data(
 
 - `database_url` (`str`): Firebase Realtime Database の URL
 - `path` (`str`): 取得するデータのパス
-- `id_token` (`str`): Firebase ID トークン
 - `query` (`RTDBQuery | None`): リクエストへ付与するクエリパラメータ
+- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -244,6 +273,7 @@ async def get_data(
 
 **Raises**
 
+- `ValueError`: トークンを省略し、`firebase_token_manager_name` が未設定の場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -253,8 +283,9 @@ async def get_data(
 async def update_data(
     database_url: str,
     path: str,
-    id_token: str,
     values: Mapping[str, Any],
+    *,
+    id_token: str | None = None,
 ) -> Any: ...
 ```
 
@@ -264,8 +295,8 @@ async def update_data(
 
 - `database_url` (`str`): Firebase Realtime Database の URL
 - `path` (`str`): 更新を適用するパス
-- `id_token` (`str`): Firebase ID トークン
 - `values` (`Mapping[str, Any]`): `path` からの相対キーと新しい値。`None` はそのキーを削除する
+- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -273,6 +304,7 @@ async def update_data(
 
 **Raises**
 
+- `ValueError`: トークンを省略し、`firebase_token_manager_name` が未設定の場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -282,9 +314,9 @@ async def update_data(
 async def watch_data(
     database_url: str,
     path: str,
-    token_manager: TokenManager,
     *,
     stop_event: asyncio.Event | None = None,
+    token_manager: TokenManager | None = None,
 ) -> AsyncIterator[DataChangeEvent]: ...
 ```
 
@@ -294,8 +326,8 @@ async def watch_data(
 
 - `database_url` (`str`): Firebase Realtime Database の URL
 - `path` (`str`): 監視するデータのパス
-- `token_manager` (`TokenManager`): ID トークンを管理するインスタンス
 - `stop_event` (`asyncio.Event | None`): 監視の終了を通知するイベント
+- `token_manager` (`TokenManager | None`): ID トークンを管理するインスタンス。省略時は `token_manager_registry` から解決する
 
 **Yields**
 
@@ -303,6 +335,7 @@ async def watch_data(
 
 **Raises**
 
+- `ValueError`: トークンを省略し、`firebase_token_manager_name` が未設定の場合
 - `RTDBStreamCancelledError`: Firebase がストリームをキャンセルした場合
 - `InvalidRefreshTokenError`: リフレッシュトークンが使用できなくなった場合
 - `FirebaseAPIError`: 再試行しても回復しないエラーでトークン更新が失敗した場合
@@ -368,15 +401,17 @@ Firebase Realtime Database REST API のクエリパラメータです。`QueryVa
 
 ```python
 class RTDBSettings(BaseSettings):
+    firebase_token_manager_name: str | None = None
     max_retry_delay: float = 60.0
     initial_retry_delay: float = 1.0
     retry_delay_multiplier: float = 2.0
 ```
 
-ストリームの再接続に使用する設定です。
+トークンの解決とストリームの再接続に使用する設定です。
 
 **Fields**
 
+- `firebase_token_manager_name` (`str | None`): トークンを渡さない場合に `token_manager_registry` から取得する `TokenManager` の名前
 - `max_retry_delay` (`float`): 再試行間隔の最大値（秒）
 - `initial_retry_delay` (`float`): 最初の再試行までの間隔（秒）
 - `retry_delay_multiplier` (`float`): 通信エラー後に再試行間隔へ乗じる値

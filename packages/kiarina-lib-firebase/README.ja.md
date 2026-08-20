@@ -34,6 +34,8 @@ pip install kiarina-lib-firebase
   有効期限の前に ID トークンを自動更新し、並行する更新を直列化します。
 - **Persisting Token Data**
   アプリケーション固有のストアへトークンを保存し、次回の利用時に復元します。
+- **Sharing a Token Manager**
+  トークンマネージャーを名前で登録し、アプリケーションのどこからでも取得します。
 - **Managing Multiple Configurations**
   pydantic-settings-manager で複数の Firebase 設定を管理します。
 
@@ -108,6 +110,25 @@ manager = TokenManager(
     token_store=InMemoryTokenStore(token_data),
 )
 id_token = await manager.get_id_token()
+```
+
+### Sharing a Token Manager
+
+アプリケーションの設定を行う場所で `TokenManager` を `token_manager_registry` に登録し、ID トークンが必要な場所では名前で取得します。
+
+```python
+from kiarina.lib.firebase import TokenManager, token_manager_registry
+
+token_manager_registry.register(
+    "production",
+    TokenManager(
+        api_key="firebase-web-api-key",
+        token_store=InMemoryTokenStore(token_data),
+    ),
+)
+
+# アプリケーションの別の場所で
+id_token = await token_manager_registry.get("production").get_id_token()
 ```
 
 ### Managing Multiple Configurations
@@ -186,6 +207,7 @@ from kiarina.lib.firebase import (
     exchange_custom_token,
     refresh_id_token,
     settings_manager,
+    token_manager_registry,
 )
 ```
 
@@ -272,6 +294,16 @@ class FirebaseSettings(BaseSettings):
 ```
 
 `KIARINA_LIB_FIREBASE_` 接頭辞の環境変数に対応する Firebase Authentication 設定です。
+
+#### `token_manager_registry`
+
+```python
+token_manager_registry: ObjectRegistry[TokenManager, None]
+```
+
+アプリケーションが登録した `TokenManager` のレジストリです。`register()`、`get()`、`unregister()`、`is_registered()`、`list_names()`、`clear()` を使用します。
+
+`TokenManager` には設定で表現できない `TokenStore` が必要なため、このレジストリは設定もファクトリもデフォルトも持ちません。`get()` には常に名前を渡してください。未登録の名前を渡すと `ValueError` が送出されます。`resolve()` は登録済みインスタンスを参照しないため使用できません。
 
 #### `settings_manager`
 

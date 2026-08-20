@@ -8,11 +8,11 @@ from kiarina.lib.firebase_rtdb import RTDBQuery, get_data
 
 async def test_unauthorized(database_url: str, id_token: str) -> None:
     with pytest.raises(Exception, match="401"):
-        await get_data(database_url, "/posts/other_user", id_token)
+        await get_data(database_url, "/posts/other_user", id_token=id_token)
 
 
 async def test_happy_path(database_url: str, user_id: str, id_token: str) -> None:
-    data = await get_data(database_url, f"/posts/{user_id}", id_token)
+    data = await get_data(database_url, f"/posts/{user_id}", id_token=id_token)
     assert isinstance(data, dict)
     assert data.get("content") == "hello"
 
@@ -53,8 +53,8 @@ async def test_query_is_merged_into_params(sent_params: list[dict[str, str]]) ->
     await get_data(
         "https://example-rtdb.firebaseio.com",
         "/users/u1/chats/c1/entries",
-        "id-token",
         query=RTDBQuery(order_by="$key", start_after="01ABC", limit_to_last=5),
+        id_token="id-token",
     )
 
     assert sent_params == [
@@ -68,5 +68,5 @@ async def test_query_is_merged_into_params(sent_params: list[dict[str, str]]) ->
 
 
 async def test_without_query_only_sends_auth(sent_params: list[dict[str, str]]) -> None:
-    await get_data("https://example-rtdb.firebaseio.com", "/posts", "id-token")
+    await get_data("https://example-rtdb.firebaseio.com", "/posts", id_token="id-token")
     assert sent_params == [{"auth": "id-token"}]

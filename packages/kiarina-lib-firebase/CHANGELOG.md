@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `token_manager_registry` for registering and getting `TokenManager` instances by name
+
 ### Changed
 - **BREAKING**: Removed the `expires_in` and `issued_at` arguments from `TokenData.from_api_response()`; the expiration time is now always read from the `exp` claim in `id_token`
 - **BREAKING**: Renamed the `TokenDataCache` protocol to `TokenStore` and the `TokenManager` `token_data_cache` argument to `token_store`

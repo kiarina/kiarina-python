@@ -13,6 +13,7 @@ from kiarina.lib.firebase import (
 )
 
 from .._exceptions.rtdb_stream_cancelled_error import RTDBStreamCancelledError
+from .._operations.resolve_token_manager import resolve_token_manager
 from .._schemas.data_change_event import DataChangeEvent
 from .._settings import settings_manager
 
@@ -22,11 +23,13 @@ logger = logging.getLogger(__name__)
 async def watch_data(
     database_url: str,
     path: str,
-    token_manager: TokenManager,
     *,
     stop_event: asyncio.Event | None = None,
+    token_manager: TokenManager | None = None,
 ) -> AsyncIterator[DataChangeEvent]:
     logger.debug(f"Starting watch on {path} in {database_url}")
+    token_manager = resolve_token_manager(token_manager)
+
     settings = settings_manager.get_settings()
     retry_delay = settings.initial_retry_delay
     refresh_pending = False

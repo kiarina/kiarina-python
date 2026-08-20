@@ -11,6 +11,11 @@ class RTDBSettings(BaseSettings):
         extra="ignore",
     )
 
+    firebase_token_manager_name: str | None = Field(
+        default=None,
+        title="Firebase token manager name",
+        description="Name of the TokenManager to get from token_manager_registry when no token is passed.",
+    )
     max_retry_delay: float = Field(
         default=60.0,
         title="Maximum retry delay",

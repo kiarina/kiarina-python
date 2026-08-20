@@ -54,8 +54,8 @@ async def test_sends_patch_with_auth(calls: list[dict[str, Any]]) -> None:
     result = await update_data(
         "https://example-rtdb.firebaseio.com/",
         "/users/u1/chats/c1/entries",
-        "id-token",
         {"01A/read": True, "01B/read": True},
+        id_token="id-token",
     )
 
     assert result == {"read": True}
@@ -72,8 +72,8 @@ async def test_none_values_are_kept_for_deletion(calls: list[dict[str, Any]]) ->
     await update_data(
         "https://example-rtdb.firebaseio.com",
         "/users/u1/chats/c1/entries",
-        "id-token",
         {"01A": None},
+        id_token="id-token",
     )
 
     assert calls[0]["json"] == {"01A": None}

@@ -39,6 +39,8 @@ pip install kiarina-lib-firebase-rtdb
   Refreshes the ID token after authentication revocation and reconnects with exponential backoff after network errors and token refresh failures.
 - **Stopping the Stream**
   Stops a watch with an `asyncio.Event`.
+- **Resolving the Token**
+  Passes a token explicitly, or gets a registered token manager by the configured name.
 - **Configuring Retries**
   Configures retry intervals through environment variables or pydantic-settings-manager.
 
@@ -63,7 +65,7 @@ token_manager = TokenManager(
 data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    await token_manager.get_id_token(),
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -77,8 +79,8 @@ from kiarina.lib.firebase_rtdb import RTDBQuery, get_data
 data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
-    await token_manager.get_id_token(),
     query=RTDBQuery(order_by="$key", limit_to_last=5),
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -94,8 +96,8 @@ query = RTDBQuery(order_by="$key", start_after="01ABCDEF...")
 keys = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
-    await token_manager.get_id_token(),
     query=RTDBQuery(shallow=True),
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -109,8 +111,8 @@ from kiarina.lib.firebase_rtdb import update_data
 await update_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
-    await token_manager.get_id_token(),
     {"01ABCDEF.../read": True, "01OLDEST...": None},
+    id_token=await token_manager.get_id_token(),
 )
 ```
 
@@ -124,7 +126,7 @@ from kiarina.lib.firebase_rtdb import watch_data
 async for event in watch_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    token_manager,
+    token_manager=token_manager,
 ):
     print(event.event_type, event.path, event.data)
 ```
@@ -147,13 +149,40 @@ stop_event = asyncio.Event()
 async for event in watch_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    token_manager,
     stop_event=stop_event,
+    token_manager=token_manager,
 ):
     print(event.data)
     if event.data == "stop":
         stop_event.set()
 ```
+
+### Resolving the Token
+
+Omitting `id_token` and `token_manager` gets a `TokenManager` from `token_manager_registry` by the configured name.
+
+```yaml
+kiarina.lib.firebase_rtdb:
+  firebase_token_manager_name: production
+```
+
+Register the token manager under that name when the application starts.
+
+```python
+from kiarina.lib.firebase import TokenManager, token_manager_registry
+
+token_manager_registry.register(
+    "production",
+    TokenManager(api_key="firebase-web-api-key", token_store=token_store),
+)
+
+data = await get_data(
+    "https://your-project-default-rtdb.firebaseio.com",
+    "/agents/state",
+)
+```
+
+Omitting the token while `firebase_token_manager_name` is not configured raises `ValueError`.
 
 ### Configuring Retries
 
@@ -223,9 +252,9 @@ from kiarina.lib.firebase_rtdb import (
 async def get_data(
     database_url: str,
     path: str,
-    id_token: str,
     *,
     query: RTDBQuery | None = None,
+    id_token: str | None = None,
 ) -> Any: ...
 ```
 
@@ -235,8 +264,8 @@ Retrieves JSON data at the specified path.
 
 - `database_url` (`str`): Firebase Realtime Database URL
 - `path` (`str`): Path of the data to retrieve
-- `id_token` (`str`): Firebase ID token
 - `query` (`RTDBQuery | None`): Query parameters appended to the request
+- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -244,6 +273,7 @@ Retrieves JSON data at the specified path.
 
 **Raises**
 
+- `ValueError`: The token is omitted and `firebase_token_manager_name` is not configured
 - `httpx.HTTPStatusError`: The HTTP response indicates an error
 - `httpx.HTTPError`: The request fails
 
@@ -253,8 +283,9 @@ Retrieves JSON data at the specified path.
 async def update_data(
     database_url: str,
     path: str,
-    id_token: str,
     values: Mapping[str, Any],
+    *,
+    id_token: str | None = None,
 ) -> Any: ...
 ```
 
@@ -264,8 +295,8 @@ Applies a multi-path update at the specified path.
 
 - `database_url` (`str`): Firebase Realtime Database URL
 - `path` (`str`): Path the update is applied to
-- `id_token` (`str`): Firebase ID token
 - `values` (`Mapping[str, Any]`): Keys relative to `path` and their new values. `None` deletes the key
+- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -273,6 +304,7 @@ Applies a multi-path update at the specified path.
 
 **Raises**
 
+- `ValueError`: The token is omitted and `firebase_token_manager_name` is not configured
 - `httpx.HTTPStatusError`: The HTTP response indicates an error
 - `httpx.HTTPError`: The request fails
 
@@ -282,9 +314,9 @@ Applies a multi-path update at the specified path.
 async def watch_data(
     database_url: str,
     path: str,
-    token_manager: TokenManager,
     *,
     stop_event: asyncio.Event | None = None,
+    token_manager: TokenManager | None = None,
 ) -> AsyncIterator[DataChangeEvent]: ...
 ```
 
@@ -294,8 +326,8 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 
 - `database_url` (`str`): Firebase Realtime Database URL
 - `path` (`str`): Path of the data to watch
-- `token_manager` (`TokenManager`): Instance that manages the ID token
 - `stop_event` (`asyncio.Event | None`): Event that requests the watch to stop
+- `token_manager` (`TokenManager | None`): Instance that manages the ID token. Resolved from `token_manager_registry` when omitted
 
 **Yields**
 
@@ -303,6 +335,7 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 
 **Raises**
 
+- `ValueError`: The token is omitted and `firebase_token_manager_name` is not configured
 - `RTDBStreamCancelledError`: Firebase cancels the stream
 - `InvalidRefreshTokenError`: The refresh token is no longer usable
 - `FirebaseAPIError`: Token refresh fails with an error that retrying cannot recover from
@@ -368,15 +401,17 @@ Query parameters for the Firebase Realtime Database REST API. `QueryValue` is `s
 
 ```python
 class RTDBSettings(BaseSettings):
+    firebase_token_manager_name: str | None = None
     max_retry_delay: float = 60.0
     initial_retry_delay: float = 1.0
     retry_delay_multiplier: float = 2.0
 ```
 
-Settings used when reconnecting a stream.
+Settings used when resolving the token and reconnecting a stream.
 
 **Fields**
 
+- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed
 - `max_retry_delay` (`float`): Maximum retry interval in seconds
 - `initial_retry_delay` (`float`): Initial retry interval in seconds
 - `retry_delay_multiplier` (`float`): Value multiplied by the retry interval after a network error
