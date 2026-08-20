@@ -6,41 +6,41 @@ Usage:
 """
 
 import asyncio
-from typing import Any
 
-from kiarina.lib.firebase_rtdb._helpers.watch_data import watch_data
-
-
-def on_event(event_type: str, path: str, data: Any) -> None:
-    """Callback function for SSE events."""
-    print(f"\n{'='*60}")
-    print(f"Event Type: {event_type}")
-    print(f"Path: {path}")
-    print(f"Data: {data}")
-    print(f"{'='*60}")
+from kiarina.lib.firebase import TokenManager, refresh_id_token
+from kiarina.lib.firebase_rtdb import watch_data
 
 
-async def main():
+async def main() -> None:
     # TODO: Replace with your actual values
+    api_key = "your_web_api_key_here"
+    refresh_token = "your_refresh_token_here"
     database_url = "https://your-project.firebaseio.com"
-    id_token = "your_id_token_here"
     watch_path = "/test"
+
+    token_data = await refresh_id_token(
+        refresh_token=refresh_token,
+        api_key=api_key,
+    )
+    token_manager = TokenManager(api_key=api_key, token_store=token_data)
 
     print(f"Starting to watch: {database_url}{watch_path}")
     print("Press Ctrl+C to stop\n")
 
-    try:
-        await watch_data(
-            path=watch_path,
-            id_token=id_token,
-            database_url=database_url,
-            callback=on_event,
-        )
-    except KeyboardInterrupt:
-        print("\nStopped watching")
-    except Exception as e:
-        print(f"\nError: {e}")
+    async for event in watch_data(
+        database_url,
+        watch_path,
+        token_manager=token_manager,
+    ):
+        print("=" * 60)
+        print(f"Event Type: {event.event_type}")
+        print(f"Path: {event.path}")
+        print(f"Data: {event.data}")
+        print("=" * 60)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nStopped watching")
