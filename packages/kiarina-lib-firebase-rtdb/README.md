@@ -182,7 +182,7 @@ data = await get_data(
 )
 ```
 
-Omitting the token while `firebase_token_manager_name` is not configured raises `ValueError`.
+Omitting `firebase_token_manager_name` too uses the default of `token_manager_registry`, which follows the `kiarina.lib.firebase` settings.
 
 ### Configuring Retries
 
@@ -273,7 +273,7 @@ Retrieves JSON data at the specified path.
 
 **Raises**
 
-- `ValueError`: The token is omitted and `firebase_token_manager_name` is not configured
+- `ValueError`: The token is omitted and `token_manager_registry` cannot resolve a `TokenManager`
 - `httpx.HTTPStatusError`: The HTTP response indicates an error
 - `httpx.HTTPError`: The request fails
 
@@ -304,7 +304,7 @@ Applies a multi-path update at the specified path.
 
 **Raises**
 
-- `ValueError`: The token is omitted and `firebase_token_manager_name` is not configured
+- `ValueError`: The token is omitted and `token_manager_registry` cannot resolve a `TokenManager`
 - `httpx.HTTPStatusError`: The HTTP response indicates an error
 - `httpx.HTTPError`: The request fails
 
@@ -335,7 +335,7 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 
 **Raises**
 
-- `ValueError`: The token is omitted and `firebase_token_manager_name` is not configured
+- `ValueError`: The token is omitted and `token_manager_registry` cannot resolve a `TokenManager`
 - `RTDBStreamCancelledError`: Firebase cancels the stream
 - `InvalidRefreshTokenError`: The refresh token is no longer usable
 - `FirebaseAPIError`: Token refresh fails with an error that retrying cannot recover from
@@ -411,7 +411,7 @@ Settings used when resolving the token and reconnecting a stream.
 
 **Fields**
 
-- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed
+- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed. The registry default is used when this is not set
 - `max_retry_delay` (`float`): Maximum retry interval in seconds
 - `initial_retry_delay` (`float`): Initial retry interval in seconds
 - `retry_delay_multiplier` (`float`): Value multiplied by the retry interval after a network error

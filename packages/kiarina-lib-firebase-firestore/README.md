@@ -118,7 +118,7 @@ token_manager_registry.register(
 snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
 ```
 
-Omitting `id_token` while `firebase_token_manager_name` is not configured raises `ValueError`.
+Omitting `firebase_token_manager_name` too uses the default of `token_manager_registry`, which follows the `kiarina.lib.firebase` settings.
 
 ### Configuring the Client
 
@@ -204,7 +204,7 @@ Retrieves the document at the specified path.
 
 **Raises**
 
-- `ValueError`: When `id_token` is omitted and `firebase_token_manager_name` is not configured
+- `ValueError`: When `id_token` is omitted and `token_manager_registry` cannot resolve a `TokenManager`
 - `httpx.HTTPStatusError`: When the HTTP response indicates an error (except 404)
 - `httpx.HTTPError`: When communication fails
 
@@ -241,7 +241,7 @@ Lists documents in a collection.
 
 **Raises**
 
-- `ValueError`: When `id_token` is omitted and `firebase_token_manager_name` is not configured
+- `ValueError`: When `id_token` is omitted and `token_manager_registry` cannot resolve a `TokenManager`
 - `httpx.HTTPStatusError`: When the HTTP response indicates an error
 - `httpx.HTTPError`: When communication fails
 
@@ -321,7 +321,7 @@ Settings for the Firestore REST client.
 
 **Fields**
 
-- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed
+- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed. The registry default is used when this is not set
 - `base_url` (`str`): Base URL of the Firestore REST API. Point this at a Firestore emulator for local testing
 - `timeout` (`float`): HTTP request timeout in seconds
 

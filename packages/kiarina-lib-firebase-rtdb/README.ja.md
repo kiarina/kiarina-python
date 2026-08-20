@@ -182,7 +182,7 @@ data = await get_data(
 )
 ```
 
-`firebase_token_manager_name` が未設定のままトークンを省略すると `ValueError` が送出されます。
+`firebase_token_manager_name` も省略した場合は `token_manager_registry` のデフォルトを使用します。これは `kiarina.lib.firebase` の設定に従います。
 
 ### Configuring Retries
 
@@ -273,7 +273,7 @@ async def get_data(
 
 **Raises**
 
-- `ValueError`: トークンを省略し、`firebase_token_manager_name` が未設定の場合
+- `ValueError`: トークンを省略し、`token_manager_registry` が `TokenManager` を解決できない場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -304,7 +304,7 @@ async def update_data(
 
 **Raises**
 
-- `ValueError`: トークンを省略し、`firebase_token_manager_name` が未設定の場合
+- `ValueError`: トークンを省略し、`token_manager_registry` が `TokenManager` を解決できない場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -335,7 +335,7 @@ async def watch_data(
 
 **Raises**
 
-- `ValueError`: トークンを省略し、`firebase_token_manager_name` が未設定の場合
+- `ValueError`: トークンを省略し、`token_manager_registry` が `TokenManager` を解決できない場合
 - `RTDBStreamCancelledError`: Firebase がストリームをキャンセルした場合
 - `InvalidRefreshTokenError`: リフレッシュトークンが使用できなくなった場合
 - `FirebaseAPIError`: 再試行しても回復しないエラーでトークン更新が失敗した場合
@@ -411,7 +411,7 @@ class RTDBSettings(BaseSettings):
 
 **Fields**
 
-- `firebase_token_manager_name` (`str | None`): トークンを渡さない場合に `token_manager_registry` から取得する `TokenManager` の名前
+- `firebase_token_manager_name` (`str | None`): トークンを渡さない場合に `token_manager_registry` から取得する `TokenManager` の名前。未設定の場合はレジストリのデフォルトを使用する
 - `max_retry_delay` (`float`): 再試行間隔の最大値（秒）
 - `initial_retry_delay` (`float`): 最初の再試行までの間隔（秒）
 - `retry_delay_multiplier` (`float`): 通信エラー後に再試行間隔へ乗じる値

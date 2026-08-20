@@ -118,7 +118,7 @@ token_manager_registry.register(
 snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
 ```
 
-`firebase_token_manager_name` が未設定のまま `id_token` を省略すると `ValueError` が送出されます。
+`firebase_token_manager_name` も省略した場合は `token_manager_registry` のデフォルトを使用します。これは `kiarina.lib.firebase` の設定に従います。
 
 ### Configuring the Client
 
@@ -204,7 +204,7 @@ async def get_document(
 
 **Raises**
 
-- `ValueError`: `id_token` を省略し、`firebase_token_manager_name` が未設定の場合
+- `ValueError`: `id_token` を省略し、`token_manager_registry` が `TokenManager` を解決できない場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合（404 を除く）
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -241,7 +241,7 @@ async def list_documents(
 
 **Raises**
 
-- `ValueError`: `id_token` を省略し、`firebase_token_manager_name` が未設定の場合
+- `ValueError`: `id_token` を省略し、`token_manager_registry` が `TokenManager` を解決できない場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -321,7 +321,7 @@ Firestore REST クライアントの設定です。
 
 **Fields**
 
-- `firebase_token_manager_name` (`str | None`): トークンを渡さない場合に `token_manager_registry` から取得する `TokenManager` の名前
+- `firebase_token_manager_name` (`str | None`): トークンを渡さない場合に `token_manager_registry` から取得する `TokenManager` の名前。未設定の場合はレジストリのデフォルトを使用する
 - `base_url` (`str`): Firestore REST API のベース URL。Firestore エミュレーターに向けることでローカルテストに使用できます
 - `timeout` (`float`): HTTP リクエストのタイムアウト（秒）
 
