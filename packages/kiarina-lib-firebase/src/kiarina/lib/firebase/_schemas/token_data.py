@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Self
 
 from pydantic import BaseModel, Field
 
@@ -27,7 +28,7 @@ class TokenData(BaseModel):
         expires_in: int,
         *,
         issued_at: datetime | None = None,
-    ) -> "TokenData":
+    ) -> Self:
         if issued_at is None:
             issued_at = datetime.now(timezone.utc)
 
