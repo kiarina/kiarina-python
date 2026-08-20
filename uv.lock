@@ -2178,6 +2178,7 @@ version = "2.20.0"
 source = { editable = "packages/kiarina-lib-firebase-firestore" }
 dependencies = [
     { name = "httpx" },
+    { name = "kiarina-lib-firebase" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pydantic-settings-manager" },
@@ -2186,13 +2187,13 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "firebase-admin" },
-    { name = "kiarina-lib-firebase" },
     { name = "kiarina-lib-google" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
@@ -2201,7 +2202,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "firebase-admin", specifier = ">=6.6.0" },
-    { name = "kiarina-lib-firebase", editable = "packages/kiarina-lib-firebase" },
     { name = "kiarina-lib-google", editable = "packages/kiarina-lib-google" },
 ]
 

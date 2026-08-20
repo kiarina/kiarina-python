@@ -9,13 +9,17 @@ async def test_unauthorized(
     seed_documents: None, project_id: str, id_token: str
 ) -> None:
     with pytest.raises(Exception, match="403"):
-        await get_document(project_id, "users/other_user/posts/hello", id_token)
+        await get_document(
+            project_id, "users/other_user/posts/hello", id_token=id_token
+        )
 
 
 async def test_happy_path(
     seed_documents: None, project_id: str, user_id: str, id_token: str
 ) -> None:
-    snapshot = await get_document(project_id, f"users/{user_id}/posts/hello", id_token)
+    snapshot = await get_document(
+        project_id, f"users/{user_id}/posts/hello", id_token=id_token
+    )
 
     assert snapshot is not None
     assert snapshot.fields.get("content") == "hello"
@@ -29,6 +33,6 @@ async def test_not_found(
     seed_documents: None, project_id: str, user_id: str, id_token: str
 ) -> None:
     snapshot = await get_document(
-        project_id, f"users/{user_id}/posts/missing", id_token
+        project_id, f"users/{user_id}/posts/missing", id_token=id_token
     )
     assert snapshot is None

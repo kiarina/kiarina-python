@@ -11,6 +11,11 @@ class FirestoreSettings(BaseSettings):
         extra="ignore",
     )
 
+    firebase_token_manager_name: str | None = Field(
+        default=None,
+        title="Firebase token manager name",
+        description="Name of the TokenManager to get from token_manager_registry when no token is passed.",
+    )
     base_url: str = Field(
         default="https://firestore.googleapis.com",
         title="Base URL",

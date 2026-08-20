@@ -34,6 +34,8 @@ pip install kiarina-lib-firebase-firestore
   Converts Firestore typed values (such as `integerValue`) into Python values.
 - **Read Only by Design**
   Provides no write APIs. Writes are expected to go through the server side (such as an API server).
+- **Resolving the Token**
+  Passes a token explicitly, or gets a registered token manager by the configured name.
 - **Configuring the Client**
   Configures the endpoint and timeout through environment variables or pydantic-settings-manager.
 
@@ -58,7 +60,7 @@ token_manager = TokenManager(
 snapshot = await get_document(
     "your-project-id",
     "users/user_1/posts/post_1",
-    await token_manager.get_id_token(),
+    id_token=await token_manager.get_id_token(),
 )
 
 if snapshot is not None:
@@ -77,8 +79,8 @@ from kiarina.lib.firebase_firestore import list_documents
 result = await list_documents(
     "your-project-id",
     "users/user_1/posts",
-    id_token,
     page_size=100,
+    id_token=id_token,
 )
 
 for snapshot in result.documents:
@@ -88,11 +90,35 @@ if result.next_page_token is not None:
     next_page = await list_documents(
         "your-project-id",
         "users/user_1/posts",
-        id_token,
         page_size=100,
         page_token=result.next_page_token,
+        id_token=id_token,
     )
 ```
+
+### Resolving the Token
+
+Omitting `id_token` gets a `TokenManager` from `token_manager_registry` by the configured name.
+
+```yaml
+kiarina.lib.firebase_firestore:
+  firebase_token_manager_name: production
+```
+
+Register the token manager under that name when the application starts.
+
+```python
+from kiarina.lib.firebase import TokenManager, token_manager_registry
+
+token_manager_registry.register(
+    "production",
+    TokenManager(api_key="firebase-web-api-key", token_store=token_store),
+)
+
+snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
+```
+
+Omitting `id_token` while `firebase_token_manager_name` is not configured raises `ValueError`.
 
 ### Configuring the Client
 
@@ -157,9 +183,9 @@ from kiarina.lib.firebase_firestore import (
 async def get_document(
     project_id: str,
     path: str,
-    id_token: str,
     *,
     database_id: str = "(default)",
+    id_token: str | None = None,
 ) -> DocumentSnapshot | None: ...
 ```
 
@@ -169,8 +195,8 @@ Retrieves the document at the specified path.
 
 - `project_id` (`str`): Google Cloud project ID
 - `path` (`str`): Document path (e.g. `"users/user_1/posts/post_1"`)
-- `id_token` (`str`): Firebase ID token
 - `database_id` (`str`): Database ID. Defaults to `"(default)"`
+- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -178,6 +204,7 @@ Retrieves the document at the specified path.
 
 **Raises**
 
+- `ValueError`: When `id_token` is omitted and `firebase_token_manager_name` is not configured
 - `httpx.HTTPStatusError`: When the HTTP response indicates an error (except 404)
 - `httpx.HTTPError`: When communication fails
 
@@ -187,12 +214,12 @@ Retrieves the document at the specified path.
 async def list_documents(
     project_id: str,
     collection_path: str,
-    id_token: str,
     *,
     database_id: str = "(default)",
     page_size: int | None = None,
     page_token: str | None = None,
     order_by: str | None = None,
+    id_token: str | None = None,
 ) -> DocumentList: ...
 ```
 
@@ -202,11 +229,11 @@ Lists documents in a collection.
 
 - `project_id` (`str`): Google Cloud project ID
 - `collection_path` (`str`): Collection path (e.g. `"users/user_1/posts"`)
-- `id_token` (`str`): Firebase ID token
 - `database_id` (`str`): Database ID. Defaults to `"(default)"`
 - `page_size` (`int | None`): Maximum number of documents per page
 - `page_token` (`str | None`): The `next_page_token` from the previous page
 - `order_by` (`str | None`): Sort order (e.g. `"createTime desc"`)
+- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -214,6 +241,7 @@ Lists documents in a collection.
 
 **Raises**
 
+- `ValueError`: When `id_token` is omitted and `firebase_token_manager_name` is not configured
 - `httpx.HTTPStatusError`: When the HTTP response indicates an error
 - `httpx.HTTPError`: When communication fails
 
@@ -284,6 +312,7 @@ A page of documents listed from a collection.
 
 ```python
 class FirestoreSettings(BaseSettings):
+    firebase_token_manager_name: str | None = None
     base_url: str = "https://firestore.googleapis.com"
     timeout: float = 30.0
 ```
@@ -292,6 +321,7 @@ Settings for the Firestore REST client.
 
 **Fields**
 
+- `firebase_token_manager_name` (`str | None`): Name of the `TokenManager` to get from `token_manager_registry` when no token is passed
 - `base_url` (`str`): Base URL of the Firestore REST API. Point this at a Firestore emulator for local testing
 - `timeout` (`float`): HTTP request timeout in seconds
 

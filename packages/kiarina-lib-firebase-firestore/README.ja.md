@@ -34,6 +34,8 @@ pip install kiarina-lib-firebase-firestore
   Firestore の型付き値（`integerValue` など）を Python の値に変換して返します。
 - **Read Only by Design**
   書き込み API は提供しません。書き込みはサーバーサイド（API サーバーなど）で行う前提です。
+- **Resolving the Token**
+  トークンを明示的に渡すか、設定した名前で登録済みのトークンマネージャーを取得します。
 - **Configuring the Client**
   環境変数または pydantic-settings-manager で接続先とタイムアウトを設定します。
 
@@ -58,7 +60,7 @@ token_manager = TokenManager(
 snapshot = await get_document(
     "your-project-id",
     "users/user_1/posts/post_1",
-    await token_manager.get_id_token(),
+    id_token=await token_manager.get_id_token(),
 )
 
 if snapshot is not None:
@@ -77,8 +79,8 @@ from kiarina.lib.firebase_firestore import list_documents
 result = await list_documents(
     "your-project-id",
     "users/user_1/posts",
-    id_token,
     page_size=100,
+    id_token=id_token,
 )
 
 for snapshot in result.documents:
@@ -88,11 +90,35 @@ if result.next_page_token is not None:
     next_page = await list_documents(
         "your-project-id",
         "users/user_1/posts",
-        id_token,
         page_size=100,
         page_token=result.next_page_token,
+        id_token=id_token,
     )
 ```
+
+### Resolving the Token
+
+`id_token` を省略すると、設定した名前で `token_manager_registry` から `TokenManager` を取得します。
+
+```yaml
+kiarina.lib.firebase_firestore:
+  firebase_token_manager_name: production
+```
+
+アプリケーションの起動時に、その名前でトークンマネージャーを登録します。
+
+```python
+from kiarina.lib.firebase import TokenManager, token_manager_registry
+
+token_manager_registry.register(
+    "production",
+    TokenManager(api_key="firebase-web-api-key", token_store=token_store),
+)
+
+snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
+```
+
+`firebase_token_manager_name` が未設定のまま `id_token` を省略すると `ValueError` が送出されます。
 
 ### Configuring the Client
 
@@ -157,9 +183,9 @@ from kiarina.lib.firebase_firestore import (
 async def get_document(
     project_id: str,
     path: str,
-    id_token: str,
     *,
     database_id: str = "(default)",
+    id_token: str | None = None,
 ) -> DocumentSnapshot | None: ...
 ```
 
@@ -169,8 +195,8 @@ async def get_document(
 
 - `project_id` (`str`): Google Cloud プロジェクト ID
 - `path` (`str`): ドキュメントのパス（例: `"users/user_1/posts/post_1"`）
-- `id_token` (`str`): Firebase ID トークン
 - `database_id` (`str`): データベース ID。デフォルトは `"(default)"`
+- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -178,6 +204,7 @@ async def get_document(
 
 **Raises**
 
+- `ValueError`: `id_token` を省略し、`firebase_token_manager_name` が未設定の場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合（404 を除く）
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -187,12 +214,12 @@ async def get_document(
 async def list_documents(
     project_id: str,
     collection_path: str,
-    id_token: str,
     *,
     database_id: str = "(default)",
     page_size: int | None = None,
     page_token: str | None = None,
     order_by: str | None = None,
+    id_token: str | None = None,
 ) -> DocumentList: ...
 ```
 
@@ -202,11 +229,11 @@ async def list_documents(
 
 - `project_id` (`str`): Google Cloud プロジェクト ID
 - `collection_path` (`str`): コレクションのパス（例: `"users/user_1/posts"`）
-- `id_token` (`str`): Firebase ID トークン
 - `database_id` (`str`): データベース ID。デフォルトは `"(default)"`
 - `page_size` (`int | None`): 1 ページあたりの最大件数
 - `page_token` (`str | None`): 前のページの `next_page_token`
 - `order_by` (`str | None`): 並び順（例: `"createTime desc"`）
+- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -214,6 +241,7 @@ async def list_documents(
 
 **Raises**
 
+- `ValueError`: `id_token` を省略し、`firebase_token_manager_name` が未設定の場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -284,6 +312,7 @@ class DocumentList:
 
 ```python
 class FirestoreSettings(BaseSettings):
+    firebase_token_manager_name: str | None = None
     base_url: str = "https://firestore.googleapis.com"
     timeout: float = 30.0
 ```
@@ -292,6 +321,7 @@ Firestore REST クライアントの設定です。
 
 **Fields**
 
+- `firebase_token_manager_name` (`str | None`): トークンを渡さない場合に `token_manager_registry` から取得する `TokenManager` の名前
 - `base_url` (`str`): Firestore REST API のベース URL。Firestore エミュレーターに向けることでローカルテストに使用できます
 - `timeout` (`float`): HTTP リクエストのタイムアウト（秒）
 

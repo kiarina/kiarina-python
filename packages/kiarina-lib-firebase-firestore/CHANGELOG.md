@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `firebase_token_manager_name` setting, used to get a `TokenManager` from `token_manager_registry` when no token is passed
+
+### Changed
+- **BREAKING**: `get_document` and `list_documents` take `id_token` as an optional keyword argument
+
 ## [2.20.0] - 2026-07-28
 
 ### Added

@@ -1,5 +1,6 @@
 import httpx
 
+from .._operations.resolve_id_token import resolve_id_token
 from .._schemas.document_list import DocumentList
 from .._settings import settings_manager
 from .._utils.parse_document import parse_document
@@ -8,12 +9,12 @@ from .._utils.parse_document import parse_document
 async def list_documents(
     project_id: str,
     collection_path: str,
-    id_token: str,
     *,
     database_id: str = "(default)",
     page_size: int | None = None,
     page_token: str | None = None,
     order_by: str | None = None,
+    id_token: str | None = None,
 ) -> DocumentList:
     settings = settings_manager.get_settings()
 
@@ -21,7 +22,7 @@ async def list_documents(
         f"{settings.base_url.rstrip('/')}/v1/projects/{project_id}"
         f"/databases/{database_id}/documents/{collection_path.strip('/')}"
     )
-    headers = {"Authorization": f"Bearer {id_token}"}
+    headers = {"Authorization": f"Bearer {await resolve_id_token(id_token)}"}
 
     params: dict[str, int | str] = {}
 
