@@ -19,11 +19,6 @@ class FirebaseSettings(BaseSettings):
         title="API key",
         description="Firebase Web API key.",
     )
-    uid: str | None = Field(
-        default=None,
-        title="User ID",
-        description="Firebase user ID that the token set must belong to.",
-    )
     token_data_file_path: str | None = Field(
         default=None,
         title="Token data file path",

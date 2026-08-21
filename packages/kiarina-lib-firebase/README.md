@@ -258,7 +258,6 @@ class TokenManager:
         *,
         api_key: str,
         token_store: TokenStore | TokenData,
-        uid: str | None = None,
         refresh_buffer_seconds: int = 300,
     ) -> None: ...
 
@@ -269,13 +268,7 @@ class TokenManager:
 
 Read the token set from `token_store` and refresh it when no more than `refresh_buffer_seconds` remain. The manager caches the token set in memory and uses it while it stays valid. Once it needs a refresh, the manager reads `token_store` again first, so a value refreshed elsewhere is picked up before a new refresh is requested. Store reads and refreshes are serialized with a lock when multiple coroutines use the manager concurrently.
 
-Setting `uid` requires every token set the manager reads or refreshes to belong to that user, which catches a stored token set left behind by another user.
-
 `get_id_token()` and `refresh()` propagate the exceptions raised by `refresh_id_token`.
-
-**Raises**
-
-- `ValueError`: The token set does not belong to `uid`
 
 #### `TokenData`
 
@@ -285,18 +278,11 @@ class TokenData(BaseModel):
     id_token: str
     expires_at: datetime
 
-    @property
-    def uid(self) -> str: ...
-
     @classmethod
     def from_api_response(cls, id_token: str, refresh_token: str) -> Self: ...
 ```
 
-A Firebase Authentication token set. `from_api_response` reads the `exp` claim from `id_token` and uses it as the UTC expiration time. `uid` reads the `sub` claim from `id_token` on each access.
-
-**Raises**
-
-- `ValueError`: The claim cannot be read from `id_token`, or it has an unexpected type
+A Firebase Authentication token set. `from_api_response` reads the `exp` claim from `id_token` and uses it as the UTC expiration time. It raises `ValueError` if that claim cannot be read.
 
 #### `FileTokenStore`
 
@@ -339,7 +325,6 @@ An interface for reading and writing a persistent token set. `TokenManager` trea
 class FirebaseSettings(BaseSettings):
     project_id: str
     api_key: SecretStr
-    uid: str | None = None
     token_data_file_path: str | None = None
 ```
 
@@ -349,7 +334,6 @@ Firebase Authentication settings that support environment variables with the `KI
 
 - `project_id` (`str`): Firebase project ID
 - `api_key` (`SecretStr`): Firebase Web API key
-- `uid` (`str | None`): Firebase user ID that the token set must belong to. Any user is accepted when this is not set
 - `token_data_file_path` (`str | None`): Path of the file that `token_manager_registry` stores the token set in
 
 #### `token_manager_registry`

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **BREAKING**: `TokenData.uid`, the `uid` argument on `TokenManager`, and the `uid` setting added in 2.26.0
+
 ## [2.26.0] - 2026-08-21
 
 ### Added

@@ -23,10 +23,6 @@ class TokenData(BaseModel):
         description="ID token expiration time in UTC.",
     )
 
-    @property
-    def uid(self) -> str:
-        return _get_uid(self.id_token)
-
     @classmethod
     def from_api_response(cls, id_token: str, refresh_token: str) -> Self:
         return cls(
@@ -37,31 +33,13 @@ class TokenData(BaseModel):
 
 
 def _get_expires_at(id_token: str) -> datetime:
-    exp = _get_claim(id_token, "exp")
-
-    if not isinstance(exp, (int, float)) or isinstance(exp, bool):
-        raise ValueError("The 'exp' claim in id_token is not a number")
-
-    return datetime.fromtimestamp(exp, tz=timezone.utc)
-
-
-def _get_uid(id_token: str) -> str:
-    sub = _get_claim(id_token, "sub")
-
-    if not isinstance(sub, str):
-        raise ValueError("The 'sub' claim in id_token is not a string")
-
-    return sub
-
-
-def _get_claim(id_token: str, name: str) -> Any:
     try:
         payload_segment = id_token.split(".")[1]
         padding = "=" * (-len(payload_segment) % 4)
         payload: Any = json.loads(
             base64.urlsafe_b64decode(payload_segment + padding).decode("utf-8")
         )
-        return payload[name]
+        exp = payload["exp"]
     except (
         IndexError,
         KeyError,
@@ -70,4 +48,9 @@ def _get_claim(id_token: str, name: str) -> Any:
         binascii.Error,
         UnicodeDecodeError,
     ) as e:
-        raise ValueError(f"Failed to read the '{name}' claim from id_token") from e
+        raise ValueError("Failed to read the 'exp' claim from id_token") from e
+
+    if not isinstance(exp, (int, float)) or isinstance(exp, bool):
+        raise ValueError("The 'exp' claim in id_token is not a number")
+
+    return datetime.fromtimestamp(exp, tz=timezone.utc)

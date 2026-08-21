@@ -1,5 +1,3 @@
-import base64
-import json
 from collections.abc import Iterator
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -7,7 +5,6 @@ from pathlib import Path
 import pytest
 
 from kiarina.lib.firebase import (
-    FileTokenStore,
     TokenData,
     TokenManager,
     settings_manager,
@@ -71,31 +68,6 @@ def test_active_key_selects_the_settings(tmp_path: Path) -> None:
     settings_manager.active_key = "development"
 
     assert token_manager_registry.get() is token_manager_registry.get("development")
-
-
-async def test_uid_is_passed_to_the_manager(tmp_path: Path) -> None:
-    token_file = tmp_path / "token.json"
-    payload = {
-        "sub": "user_1",
-        "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp()),
-    }
-    segment = (
-        base64.urlsafe_b64encode(json.dumps(payload).encode("utf-8"))
-        .decode("ascii")
-        .rstrip("=")
-    )
-    await FileTokenStore(str(token_file)).set(
-        TokenData(
-            refresh_token="refresh-token",
-            id_token=f"header.{segment}.signature",
-            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
-        )
-    )
-
-    configure(token_data_file_path=str(token_file), uid="other_user")
-
-    with pytest.raises(ValueError, match="not to 'other_user'"):
-        await token_manager_registry.get().get_id_token()
 
 
 def test_token_data_file_path_is_not_configured() -> None:
