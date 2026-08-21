@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.27.0] - 2026-08-21
+
+### Added
+- **kiarina-lib-firebase**: Add `create_token_manager()`, `Token.project_id`, `Token.uid`, and `TokenManager.get_token()`.
+
+### Changed (BREAKING)
+- **kiarina-lib-firebase**: Rename `TokenData` to `Token`, freeze it, and derive `project_id`, `uid`, and `expires_at` from the claims in `id_token`, so only the two tokens are stored.
+- **kiarina-lib-firebase**: Narrow `TokenManager` to a `TokenStore`, replace `get_id_token()` with `get_token()`, and take a `Token` in `refresh_id_token()`.
+- **kiarina-lib-firebase**: Remove the `project_id` setting, which nothing read, and rename `token_data_file_path` to `token_file_path`.
+- **kiarina-lib-firebase-rtdb**: Take a `Token` instead of an ID token string in `get_data`, `update_data`, and `watch_data`.
+- **kiarina-lib-firebase-firestore**: Take a `Token` instead of an ID token string in `get_document` and `list_documents`, and read the project ID from it instead of taking it as an argument.
+
+### Removed
+- **kiarina-lib-firebase**: Remove `TokenData.uid`, the `uid` argument on `TokenManager`, and the `uid` setting added in 2.26.0.
+
 ## [2.26.0] - 2026-08-21
 
 ### Added

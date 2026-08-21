@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.27.0] - 2026-08-21
+
 ### Changed
 - **BREAKING**: `get_document` and `list_documents` take a `Token` instead of an ID token string, and `project_id` becomes an optional keyword argument read from `Token.project_id` when omitted
 - **BREAKING**: Renamed the `firebase_token_manager_name` setting to `firebase_settings_key`

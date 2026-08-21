@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.27.0] - 2026-08-21
+
 ### Added
 - `create_token_manager()`, which builds a `TokenManager` from the settings
 - `Token.project_id` and `Token.uid`, read from the `aud` and `sub` claims in `id_token`
