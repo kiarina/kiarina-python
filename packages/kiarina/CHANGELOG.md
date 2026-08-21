@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.26.0] - 2026-08-21
+
+### Added
+- **kiarina-lib-firebase**: Add `TokenData.uid`, a `uid` argument on `TokenManager` that requires every token set it reads or refreshes to belong to that user, and a `uid` setting passed to the managers `token_manager_registry` builds.
+
 ## [2.25.0] - 2026-08-21
 
 ### Changed (BREAKING)

@@ -1265,7 +1265,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.25.0"
+version = "2.26.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -2141,7 +2141,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-firebase"
-version = "2.24.0"
+version = "2.26.0"
 source = { editable = "packages/kiarina-lib-firebase" }
 dependencies = [
     { name = "httpx" },
