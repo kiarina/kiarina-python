@@ -1,5 +1,7 @@
 import asyncio
 
+import pytest
+
 from kiarina.lib.firebase import (
     TokenData,
     TokenManager,
@@ -72,6 +74,27 @@ async def test_refresh_before_expiration(api_key: str, token_data: TokenData) ->
     stored = await token_store.get()
     assert stored.id_token == id_token
     assert stored.expires_at > token_data.expires_at
+
+
+async def test_uid_matches(api_key: str, token_data: TokenData, user_id: str) -> None:
+    manager = TokenManager(
+        api_key=api_key,
+        token_store=token_data,
+        uid=user_id,
+    )
+
+    assert await manager.get_id_token() == token_data.id_token
+
+
+async def test_uid_does_not_match(api_key: str, token_data: TokenData) -> None:
+    manager = TokenManager(
+        api_key=api_key,
+        token_store=token_data,
+        uid="other_user",
+    )
+
+    with pytest.raises(ValueError, match="not to 'other_user'"):
+        await manager.get_id_token()
 
 
 async def test_init_with_token_data(api_key: str, token_data: TokenData) -> None:

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `TokenData.uid`, read from the `sub` claim in `id_token`
+- `uid` argument on `TokenManager`, which requires every token set it reads or refreshes to belong to that user
+- `uid` setting, passed to the `TokenManager` that `token_manager_registry` builds from settings
+
 ## [2.24.0] - 2026-08-21
 
 ### Added

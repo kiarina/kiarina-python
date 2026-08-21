@@ -258,6 +258,7 @@ class TokenManager:
         *,
         api_key: str,
         token_store: TokenStore | TokenData,
+        uid: str | None = None,
         refresh_buffer_seconds: int = 300,
     ) -> None: ...
 
@@ -268,7 +269,13 @@ class TokenManager:
 
 `token_store` からトークン一式を読み取り、有効期限まで `refresh_buffer_seconds` 以下になると更新します。読み取ったトークン一式はメモリに保持し、有効なあいだはそれを使います。更新が必要になると、まず `token_store` を読み直すため、他で更新された値があればそれを先に拾います。複数のコルーチンが同時に利用しても、ストアの読み取りと更新はロックで直列化されます。
 
+`uid` を指定すると、マネージャーが読み込む／更新するトークン一式がそのユーザーのものであることを要求します。別のユーザーが残したトークン一式を検出できます。
+
 `get_id_token()` と `refresh()` は `refresh_id_token` が送出する例外をそのまま伝播します。
+
+**Raises**
+
+- `ValueError`: トークン一式が `uid` のものではない場合
 
 #### `TokenData`
 
@@ -278,11 +285,18 @@ class TokenData(BaseModel):
     id_token: str
     expires_at: datetime
 
+    @property
+    def uid(self) -> str: ...
+
     @classmethod
     def from_api_response(cls, id_token: str, refresh_token: str) -> Self: ...
 ```
 
-Firebase Authentication のトークン一式です。`from_api_response` は `id_token` の `exp` クレームを UTC の有効期限として使用します。読み取れない場合は `ValueError` を送出します。
+Firebase Authentication のトークン一式です。`from_api_response` は `id_token` の `exp` クレームを UTC の有効期限として使用します。`uid` はアクセスのたびに `id_token` の `sub` クレームを読み取ります。
+
+**Raises**
+
+- `ValueError`: `id_token` からクレームを読み取れない、または型が想定と異なる場合
 
 #### `FileTokenStore`
 
@@ -325,6 +339,7 @@ class TokenStore(Protocol):
 class FirebaseSettings(BaseSettings):
     project_id: str
     api_key: SecretStr
+    uid: str | None = None
     token_data_file_path: str | None = None
 ```
 
@@ -334,6 +349,7 @@ class FirebaseSettings(BaseSettings):
 
 - `project_id` (`str`): Firebase プロジェクト ID
 - `api_key` (`SecretStr`): Firebase Web API キー
+- `uid` (`str | None`): トークン一式が属するべき Firebase ユーザー ID。未設定の場合は任意のユーザーを受け入れる
 - `token_data_file_path` (`str | None`): `token_manager_registry` がトークン一式を保存するファイルのパス
 
 #### `token_manager_registry`

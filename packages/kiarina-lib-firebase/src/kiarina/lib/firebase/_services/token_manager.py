@@ -13,9 +13,11 @@ class TokenManager:
         *,
         api_key: str,
         token_store: TokenStore | TokenData,
+        uid: str | None = None,
         refresh_buffer_seconds: int = 300,
     ) -> None:
         self._api_key = api_key
+        self._uid = uid
 
         self._token_store: TokenStore = (
             InMemoryTokenStore(token_store)
@@ -34,7 +36,7 @@ class TokenManager:
                 token_data = self._token_data
 
                 if token_data is None or self._needs_refresh(token_data):
-                    token_data = await self._token_store.get()
+                    token_data = self._verify_uid(await self._token_store.get())
 
                     if self._needs_refresh(token_data):
                         token_data = await self._do_refresh(token_data)
@@ -45,9 +47,18 @@ class TokenManager:
 
     async def refresh(self) -> TokenData:
         async with self._refresh_lock:
-            token_data = await self._do_refresh(await self._token_store.get())
+            token_data = self._verify_uid(await self._token_store.get())
+            token_data = await self._do_refresh(token_data)
             self._token_data = token_data
             return token_data
+
+    def _verify_uid(self, token_data: TokenData) -> TokenData:
+        if self._uid is not None and token_data.uid != self._uid:
+            raise ValueError(
+                f"The token set belongs to '{token_data.uid}', not to '{self._uid}'."
+            )
+
+        return token_data
 
     def _needs_refresh(self, token_data: TokenData) -> bool:
         now = datetime.now(timezone.utc)
@@ -58,6 +69,8 @@ class TokenManager:
         return now >= refresh_threshold
 
     async def _do_refresh(self, token_data: TokenData) -> TokenData:
-        new_token_data = await refresh_id_token(token_data.refresh_token, self._api_key)
+        new_token_data = self._verify_uid(
+            await refresh_id_token(token_data.refresh_token, self._api_key)
+        )
         await self._token_store.set(new_token_data)
         return new_token_data

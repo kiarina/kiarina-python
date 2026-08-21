@@ -31,6 +31,7 @@ def _factory(settings_key: str, settings: FirebaseSettings) -> TokenManager:
     return TokenManager(
         api_key=settings.api_key.get_secret_value(),
         token_store=FileTokenStore(settings.token_data_file_path),
+        uid=settings.uid,
     )
 
 
