@@ -107,7 +107,7 @@ async def _watch_stream(
     token_manager: TokenManager,
     stop_event: asyncio.Event | None = None,
 ) -> AsyncIterator[DataChangeEvent]:
-    id_token = await token_manager.get_id_token()
+    id_token = (await token_manager.get_token()).id_token
 
     url = f"{database_url.rstrip('/')}{path}.json"
     params = {"auth": id_token}

@@ -8,10 +8,16 @@ import pytest
 from kiarina.lib.firebase import (
     FirebaseAPIError,
     InvalidRefreshTokenError,
+    Token,
     TokenManager,
 )
 from kiarina.lib.firebase_rtdb import DataChangeEvent, settings_manager
 from kiarina.lib.firebase_rtdb._helpers import watch_data as watch_data_module
+
+_TOKEN = Token(
+    refresh_token="refresh-token",
+    id_token="header.eyJleHAiOiA0MTAyNDQ0ODAwfQ.signature",
+)
 
 watch_data = watch_data_module.watch_data
 
@@ -36,8 +42,8 @@ class _FakeTokenManager:
         self.refresh_errors = refresh_errors or []
         self.refresh_count = 0
 
-    async def get_id_token(self) -> str:
-        return "id-token"
+    async def get_token(self) -> Any:
+        return _TOKEN
 
     async def refresh(self) -> Any:
         self.refresh_count += 1

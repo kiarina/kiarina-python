@@ -2,15 +2,15 @@ import httpx
 
 from .._exceptions.firebase_api_error import FirebaseAPIError
 from .._exceptions.invalid_refresh_token_error import InvalidRefreshTokenError
-from .._schemas.token_data import TokenData
+from .._schemas.token import Token
 
 
-async def refresh_id_token(refresh_token: str, api_key: str) -> TokenData:
+async def refresh_id_token(token: Token, api_key: str) -> Token:
     url = f"https://securetoken.googleapis.com/v1/token?key={api_key}"
 
     payload = {
         "grant_type": "refresh_token",
-        "refresh_token": refresh_token,
+        "refresh_token": token.refresh_token,
     }
 
     async with httpx.AsyncClient() as client:
@@ -42,7 +42,7 @@ async def refresh_id_token(refresh_token: str, api_key: str) -> TokenData:
 
     data = response.json()
 
-    return TokenData.from_api_response(
+    return Token(
         id_token=data["id_token"],
         refresh_token=data["refresh_token"],
     )

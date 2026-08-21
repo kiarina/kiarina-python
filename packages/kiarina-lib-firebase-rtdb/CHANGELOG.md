@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: `get_data`, `update_data`, and `watch_data` take a `Token` instead of an ID token string
+- **BREAKING**: Renamed the `firebase_token_manager_name` setting to `firebase_settings_key`
+
 ## [2.25.0] - 2026-08-21
 
 ### Changed

@@ -46,26 +46,18 @@ pip install kiarina-lib-firebase-rtdb
 
 ### Retrieving Data
 
-`TokenManager` から ID トークンを取得し、データベースのパスを指定します。
+`TokenManager` からトークンを取得し、データベースのパスを指定します。`create_token_manager` は API キーとトークンファイルを `kiarina.lib.firebase` の設定から読み取ります。
 
 ```python
-from kiarina.lib.firebase import TokenManager, refresh_id_token
+from kiarina.lib.firebase import create_token_manager
 from kiarina.lib.firebase_rtdb import get_data
 
-token_data = await refresh_id_token(
-    refresh_token="firebase-refresh-token",
-    api_key="firebase-web-api-key",
-)
-
-token_manager = TokenManager(
-    api_key="firebase-web-api-key",
-    token_store=token_data,
-)
+token_manager = create_token_manager()
 
 data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -80,7 +72,7 @@ data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
     query=RTDBQuery(order_by="$key", limit_to_last=5),
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -97,7 +89,7 @@ keys = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
     query=RTDBQuery(shallow=True),
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -112,7 +104,7 @@ await update_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
     {"01ABCDEF.../read": True, "01OLDEST...": None},
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -159,7 +151,7 @@ async for event in watch_data(
 
 ### Resolving the Token
 
-`id_token` と `token_manager` を省略すると、`firebase_settings_key` が指す `kiarina.lib.firebase` 設定の `TokenManager` を使用します。
+`token` と `token_manager` を省略すると、`firebase_settings_key` が指す `kiarina.lib.firebase` 設定の `TokenManager` を使用します。
 
 ```yaml
 kiarina.lib.firebase:
@@ -254,7 +246,7 @@ async def get_data(
     path: str,
     *,
     query: RTDBQuery | None = None,
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> Any: ...
 ```
 
@@ -265,7 +257,7 @@ async def get_data(
 - `database_url` (`str`): Firebase Realtime Database の URL
 - `path` (`str`): 取得するデータのパス
 - `query` (`RTDBQuery | None`): リクエストへ付与するクエリパラメータ
-- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
+- `token` (`Token | None`): Firebase のトークン一式。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -285,7 +277,7 @@ async def update_data(
     path: str,
     values: Mapping[str, Any],
     *,
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> Any: ...
 ```
 
@@ -296,7 +288,7 @@ async def update_data(
 - `database_url` (`str`): Firebase Realtime Database の URL
 - `path` (`str`): 更新を適用するパス
 - `values` (`Mapping[str, Any]`): `path` からの相対キーと新しい値。`None` はそのキーを削除する
-- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
+- `token` (`Token | None`): Firebase のトークン一式。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -327,7 +319,7 @@ async def watch_data(
 - `database_url` (`str`): Firebase Realtime Database の URL
 - `path` (`str`): 監視するデータのパス
 - `stop_event` (`asyncio.Event | None`): 監視の終了を通知するイベント
-- `token_manager` (`TokenManager | None`): ID トークンを管理するインスタンス。省略時は `token_manager_registry` から解決する
+- `token_manager` (`TokenManager | None`): トークン一式を管理するインスタンス。省略時は `token_manager_registry` から解決する
 
 **Yields**
 

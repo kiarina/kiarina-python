@@ -41,26 +41,17 @@ pip install kiarina-lib-firebase-firestore
 
 ### Retrieving a Document
 
-`TokenManager`（[kiarina-lib-firebase](../kiarina-lib-firebase/)）などで取得した Firebase ID トークンと、ドキュメントのパスを指定します。
+ドキュメントのパスと、`TokenManager`（[kiarina-lib-firebase](../kiarina-lib-firebase/)）で取得した `Token` を指定します。プロジェクトはトークンから読み取るため、別途指定する必要はありません。`create_token_manager` は API キーとトークンファイルを `kiarina.lib.firebase` の設定から読み取ります。
 
 ```python
-from kiarina.lib.firebase import TokenManager, refresh_id_token
+from kiarina.lib.firebase import create_token_manager
 from kiarina.lib.firebase_firestore import get_document
 
-token_data = await refresh_id_token(
-    refresh_token="firebase-refresh-token",
-    api_key="firebase-web-api-key",
-)
-
-token_manager = TokenManager(
-    api_key="firebase-web-api-key",
-    token_store=token_data,
-)
+token_manager = create_token_manager()
 
 snapshot = await get_document(
-    "your-project-id",
     "users/user_1/posts/post_1",
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 
 if snapshot is not None:
@@ -77,10 +68,9 @@ if snapshot is not None:
 from kiarina.lib.firebase_firestore import list_documents
 
 result = await list_documents(
-    "your-project-id",
     "users/user_1/posts",
     page_size=100,
-    id_token=id_token,
+    token=token,
 )
 
 for snapshot in result.documents:
@@ -88,23 +78,21 @@ for snapshot in result.documents:
 
 if result.next_page_token is not None:
     next_page = await list_documents(
-        "your-project-id",
         "users/user_1/posts",
         page_size=100,
         page_token=result.next_page_token,
-        id_token=id_token,
+        token=token,
     )
 ```
 
 ### Resolving the Token
 
-`id_token` を省略すると、`firebase_settings_key` が指す `kiarina.lib.firebase` 設定の `TokenManager` を使用します。
+`token` を省略すると、`firebase_settings_key` が指す `kiarina.lib.firebase` 設定の `TokenManager` を使用します。
 
 ```yaml
 kiarina.lib.firebase:
   configs:
     production:
-      project_id: production-project
       api_key: production-api-key
       token_data_file_path: ~/.config/your-app/token.json
 
@@ -113,7 +101,7 @@ kiarina.lib.firebase_firestore:
 ```
 
 ```python
-snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
+snapshot = await get_document("users/user_1/posts/post_1")
 ```
 
 `token_manager_registry` がその設定からトークンマネージャーを構築します。別の `TokenStore` を使う場合は、同じキーでインスタンスを登録してください。
@@ -181,11 +169,11 @@ from kiarina.lib.firebase_firestore import (
 
 ```python
 async def get_document(
-    project_id: str,
     path: str,
     *,
+    project_id: str | None = None,
     database_id: str = "(default)",
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> DocumentSnapshot | None: ...
 ```
 
@@ -193,10 +181,10 @@ async def get_document(
 
 **Parameters**
 
-- `project_id` (`str`): Google Cloud プロジェクト ID
+- `project_id` (`str | None`): Google Cloud プロジェクト ID。省略時は `token.project_id` を使用する
 - `path` (`str`): ドキュメントのパス（例: `"users/user_1/posts/post_1"`）
 - `database_id` (`str`): データベース ID。デフォルトは `"(default)"`
-- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
+- `token` (`Token | None`): Firebase のトークン一式。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -204,7 +192,7 @@ async def get_document(
 
 **Raises**
 
-- `ValueError`: `id_token` を省略し、`token_manager_registry` が `TokenManager` を解決できない場合
+- `ValueError`: `token` を省略し、`token_manager_registry` が `TokenManager` を解決できない場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合（404 を除く）
 - `httpx.HTTPError`: 通信に失敗した場合
 
@@ -212,14 +200,14 @@ async def get_document(
 
 ```python
 async def list_documents(
-    project_id: str,
     collection_path: str,
     *,
+    project_id: str | None = None,
     database_id: str = "(default)",
     page_size: int | None = None,
     page_token: str | None = None,
     order_by: str | None = None,
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> DocumentList: ...
 ```
 
@@ -227,13 +215,13 @@ async def list_documents(
 
 **Parameters**
 
-- `project_id` (`str`): Google Cloud プロジェクト ID
+- `project_id` (`str | None`): Google Cloud プロジェクト ID。省略時は `token.project_id` を使用する
 - `collection_path` (`str`): コレクションのパス（例: `"users/user_1/posts"`）
 - `database_id` (`str`): データベース ID。デフォルトは `"(default)"`
 - `page_size` (`int | None`): 1 ページあたりの最大件数
 - `page_token` (`str | None`): 前のページの `next_page_token`
 - `order_by` (`str | None`): 並び順（例: `"createTime desc"`）
-- `id_token` (`str | None`): Firebase ID トークン。省略時は `token_manager_registry` から解決する
+- `token` (`Token | None`): Firebase のトークン一式。省略時は `token_manager_registry` から解決する
 
 **Returns**
 
@@ -241,7 +229,7 @@ async def list_documents(
 
 **Raises**
 
-- `ValueError`: `id_token` を省略し、`token_manager_registry` が `TokenManager` を解決できない場合
+- `ValueError`: `token` を省略し、`token_manager_registry` が `TokenManager` を解決できない場合
 - `httpx.HTTPStatusError`: HTTP レスポンスがエラーを示す場合
 - `httpx.HTTPError`: 通信に失敗した場合
 

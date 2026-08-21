@@ -7,15 +7,16 @@ if TYPE_CHECKING:  # pragma: no cover
     from ._exceptions.firebase_auth_error import FirebaseAuthError
     from ._exceptions.invalid_custom_token_error import InvalidCustomTokenError
     from ._exceptions.invalid_refresh_token_error import InvalidRefreshTokenError
+    from ._helpers.create_token_manager import create_token_manager
+    from ._helpers.exchange_custom_token import exchange_custom_token
+    from ._helpers.refresh_id_token import refresh_id_token
     from ._instances.token_manager_registry import token_manager_registry
-    from ._schemas.token_data import TokenData
+    from ._schemas.token import Token
     from ._services.file_token_store import FileTokenStore
     from ._services.in_memory_token_store import InMemoryTokenStore
     from ._services.token_manager import TokenManager
     from ._settings import FirebaseSettings, settings_manager
     from ._types.token_store import TokenStore
-    from ._utils.exchange_custom_token import exchange_custom_token
-    from ._utils.refresh_id_token import refresh_id_token
 
 __all__ = [
     # ._exceptions
@@ -23,10 +24,14 @@ __all__ = [
     "FirebaseAuthError",
     "InvalidCustomTokenError",
     "InvalidRefreshTokenError",
+    # ._helpers
+    "create_token_manager",
+    "exchange_custom_token",
+    "refresh_id_token",
     # ._instances
     "token_manager_registry",
     # ._schemas
-    "TokenData",
+    "Token",
     # ._services
     "FileTokenStore",
     "InMemoryTokenStore",
@@ -36,9 +41,6 @@ __all__ = [
     "settings_manager",
     # ._types
     "TokenStore",
-    # ._utils
-    "exchange_custom_token",
-    "refresh_id_token",
 ]
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -54,10 +56,14 @@ def __getattr__(name: str) -> object:
         "FirebaseAuthError": "._exceptions.firebase_auth_error",
         "InvalidCustomTokenError": "._exceptions.invalid_custom_token_error",
         "InvalidRefreshTokenError": "._exceptions.invalid_refresh_token_error",
+        # ._helpers
+        "create_token_manager": "._helpers.create_token_manager",
+        "exchange_custom_token": "._helpers.exchange_custom_token",
+        "refresh_id_token": "._helpers.refresh_id_token",
         # ._instances
         "token_manager_registry": "._instances.token_manager_registry",
         # ._schemas
-        "TokenData": "._schemas.token_data",
+        "Token": "._schemas.token",
         # ._services
         "FileTokenStore": "._services.file_token_store",
         "InMemoryTokenStore": "._services.in_memory_token_store",
@@ -67,9 +73,6 @@ def __getattr__(name: str) -> object:
         "settings_manager": "._settings",
         # ._types
         "TokenStore": "._types.token_store",
-        # ._utils
-        "exchange_custom_token": "._utils.exchange_custom_token",
-        "refresh_id_token": "._utils.refresh_id_token",
     }
 
     globals()[name] = getattr(import_module(module_map[name], __name__), name)

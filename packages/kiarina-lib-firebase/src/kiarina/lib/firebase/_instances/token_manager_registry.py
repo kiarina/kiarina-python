@@ -2,7 +2,7 @@ from typing import cast
 
 from kiarina.utils.object_registry import ObjectRegistry
 
-from .._services.file_token_store import FileTokenStore
+from .._operations.resolve_token_store import resolve_token_store
 from .._services.token_manager import TokenManager
 from .._settings import FirebaseSettings, settings_manager
 
@@ -23,14 +23,9 @@ def _get_presets() -> dict[str, FirebaseSettings]:
 
 
 def _factory(settings_key: str, settings: FirebaseSettings) -> TokenManager:
-    if settings.token_data_file_path is None:
-        raise ValueError(
-            f"'token_data_file_path' is not configured in the '{settings_key}' settings."
-        )
-
     return TokenManager(
         api_key=settings.api_key.get_secret_value(),
-        token_store=FileTokenStore(settings.token_data_file_path),
+        token_store=resolve_token_store(None, settings),
     )
 
 

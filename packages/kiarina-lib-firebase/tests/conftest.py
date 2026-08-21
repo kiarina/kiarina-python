@@ -6,7 +6,7 @@ import pytest
 from pydantic_settings_manager import load_user_configs
 
 import kiarina.utils.file as kf
-from kiarina.lib.firebase import TokenData
+from kiarina.lib.firebase import Token
 
 
 @pytest.fixture(scope="session")
@@ -72,12 +72,12 @@ def custom_token(firebase_app: object, user_id: str) -> str:
 
 
 @pytest.fixture
-async def token_data(api_key: str, custom_token: str) -> TokenData:
+async def token(api_key: str, custom_token: str) -> Token:
     from kiarina.lib.firebase import exchange_custom_token
 
-    token_data = await exchange_custom_token(
+    token = await exchange_custom_token(
         custom_token=custom_token,
         api_key=api_key,
     )
 
-    return token_data
+    return token

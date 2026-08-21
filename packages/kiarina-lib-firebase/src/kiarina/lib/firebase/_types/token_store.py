@@ -1,11 +1,11 @@
 from typing import Protocol
 
-from .._schemas.token_data import TokenData
+from .._schemas.token import Token
 
 
 class TokenStore(Protocol):
     """Persistent storage interface for Firebase authentication tokens."""
 
-    async def get(self) -> TokenData: ...
+    async def get(self) -> Token: ...
 
-    async def set(self, token_data: TokenData) -> None: ...
+    async def set(self, token: Token) -> None: ...

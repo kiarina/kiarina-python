@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `create_token_manager()`, which builds a `TokenManager` from the settings
+- `Token.project_id` and `Token.uid`, read from the `aud` and `sub` claims in `id_token`
+- `TokenManager.get_token()`
+
+### Changed
+- **BREAKING**: Renamed `TokenData` to `Token`, froze it, and made `expires_at` a `cached_property` read from the `exp` claim in `id_token`, so only `refresh_token` and `id_token` are stored
+- **BREAKING**: `TokenManager` takes `token_store: TokenStore` only; use `create_token_manager()` to build one from a `Token` or from the settings
+- **BREAKING**: Renamed the `token_data_file_path` setting to `token_file_path`
+- **BREAKING**: `refresh_id_token()` takes a `Token` instead of a refresh token string
+- Moved `exchange_custom_token()` and `refresh_id_token()` out of `_utils`; the public import path is unchanged
+
 ### Removed
+- **BREAKING**: `TokenManager.get_id_token()`; use `get_token()` and read `id_token` from the result
+- **BREAKING**: `TokenData.from_api_response()`; `Token(refresh_token=..., id_token=...)` is equivalent
+- **BREAKING**: The `project_id` setting, which nothing read. Use `Token.project_id` instead
 - **BREAKING**: `TokenData.uid`, the `uid` argument on `TokenManager`, and the `uid` setting added in 2.26.0
 
 ## [2.26.0] - 2026-08-21

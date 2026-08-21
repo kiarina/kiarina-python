@@ -2,10 +2,10 @@ import httpx
 
 from .._exceptions.firebase_api_error import FirebaseAPIError
 from .._exceptions.invalid_custom_token_error import InvalidCustomTokenError
-from .._schemas.token_data import TokenData
+from .._schemas.token import Token
 
 
-async def exchange_custom_token(custom_token: str, api_key: str) -> TokenData:
+async def exchange_custom_token(custom_token: str, api_key: str) -> Token:
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key={api_key}"
 
     payload = {
@@ -39,7 +39,7 @@ async def exchange_custom_token(custom_token: str, api_key: str) -> TokenData:
 
     data = response.json()
 
-    return TokenData.from_api_response(
+    return Token(
         id_token=data["idToken"],
         refresh_token=data["refreshToken"],
     )

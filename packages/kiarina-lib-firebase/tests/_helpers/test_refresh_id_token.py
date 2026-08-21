@@ -6,10 +6,13 @@ import pytest
 from kiarina.lib.firebase import (
     FirebaseAPIError,
     InvalidRefreshTokenError,
+    Token,
     exchange_custom_token,
     refresh_id_token,
     settings_manager,
 )
+
+_INVALID_TOKEN = Token(refresh_token="invalid_refresh_token", id_token="id-token")
 
 
 async def test_invalid_refresh_token(load_settings: None) -> None:
@@ -17,17 +20,14 @@ async def test_invalid_refresh_token(load_settings: None) -> None:
 
     with pytest.raises(InvalidRefreshTokenError):
         await refresh_id_token(
-            refresh_token="invalid_refresh_token",
-            api_key=settings.api_key.get_secret_value(),
+            _INVALID_TOKEN,
+            settings.api_key.get_secret_value(),
         )
 
 
 async def test_firebase_api_error() -> None:
     with pytest.raises(FirebaseAPIError):
-        await refresh_id_token(
-            refresh_token="invalid_refresh_token",
-            api_key="invalid_api_key",
-        )
+        await refresh_id_token(_INVALID_TOKEN, "invalid_api_key")
 
 
 async def test_httpx_reqest_error(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -37,10 +37,7 @@ async def test_httpx_reqest_error(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("httpx.AsyncClient.post", mock_post)
 
     with pytest.raises(FirebaseAPIError) as exc_info:
-        await refresh_id_token(
-            refresh_token="some_refresh_token",
-            api_key="invalid_api_key",
-        )
+        await refresh_id_token(_INVALID_TOKEN, "invalid_api_key")
 
     assert "Request failed" in str(exc_info.value)
 
@@ -51,16 +48,16 @@ async def test_happy_path(firebase_app: object) -> None:
     custom_token = auth.create_custom_token("test").decode("utf-8")
 
     settings = settings_manager.get_settings()
-    exchange_token_data = await exchange_custom_token(
+    exchange_token = await exchange_custom_token(
         custom_token=custom_token,
         api_key=settings.api_key.get_secret_value(),
     )
 
-    token_data = await refresh_id_token(
-        refresh_token=exchange_token_data.refresh_token,
-        api_key=settings.api_key.get_secret_value(),
+    token = await refresh_id_token(
+        exchange_token,
+        settings.api_key.get_secret_value(),
     )
 
-    assert token_data.id_token
-    assert token_data.refresh_token
-    assert token_data.expires_at
+    assert token.id_token
+    assert token.refresh_token
+    assert token.expires_at

@@ -7,7 +7,7 @@ import pytest
 from pydantic_settings_manager import load_user_configs
 
 import kiarina.utils.file as kf
-from kiarina.lib.firebase import TokenData
+from kiarina.lib.firebase import Token
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -42,13 +42,6 @@ def load_settings() -> None:
         raise ValueError(f"Settings file is empty or invalid: {test_settings_file}")
 
     load_user_configs(user_configs)
-
-
-@pytest.fixture(scope="session")
-def project_id(load_settings: None) -> str:
-    from kiarina.lib.firebase import settings_manager
-
-    return settings_manager.get_settings().project_id
 
 
 @pytest.fixture(scope="session")
@@ -95,7 +88,7 @@ def custom_token(firebase_app: object, user_id: str) -> str:
 
 
 @pytest.fixture
-async def token_data(custom_token: str) -> TokenData:
+async def token(custom_token: str) -> Token:
     from kiarina.lib.firebase import exchange_custom_token, settings_manager
 
     settings = settings_manager.get_settings()
@@ -104,8 +97,3 @@ async def token_data(custom_token: str) -> TokenData:
         custom_token=custom_token,
         api_key=settings.api_key.get_secret_value(),
     )
-
-
-@pytest.fixture
-def id_token(token_data: TokenData) -> str:
-    return token_data.id_token

@@ -11,18 +11,14 @@ class FirebaseSettings(BaseSettings):
         extra="ignore",
     )
 
-    project_id: str = Field(
-        title="Project ID",
-        description="Firebase project ID.",
-    )
     api_key: SecretStr = Field(
         title="API key",
         description="Firebase Web API key.",
     )
-    token_data_file_path: str | None = Field(
+    token_file_path: str | None = Field(
         default=None,
-        title="Token data file path",
-        description="Path of the file that token_manager_registry stores the token set in.",
+        title="Token file path",
+        description="Path of the file that the token set is stored in.",
     )
 
 

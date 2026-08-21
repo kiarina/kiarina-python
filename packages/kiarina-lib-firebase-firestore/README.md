@@ -41,26 +41,17 @@ pip install kiarina-lib-firebase-firestore
 
 ### Retrieving a Document
 
-Pass a Firebase ID token obtained through `TokenManager` ([kiarina-lib-firebase](../kiarina-lib-firebase/)) or similar, and the document path.
+Pass the document path and a `Token` obtained through a `TokenManager` ([kiarina-lib-firebase](../kiarina-lib-firebase/)). The project is read from the token, so it does not have to be given separately.
 
 ```python
-from kiarina.lib.firebase import TokenManager, refresh_id_token
+from kiarina.lib.firebase import create_token_manager
 from kiarina.lib.firebase_firestore import get_document
 
-token_data = await refresh_id_token(
-    refresh_token="firebase-refresh-token",
-    api_key="firebase-web-api-key",
-)
-
-token_manager = TokenManager(
-    api_key="firebase-web-api-key",
-    token_store=token_data,
-)
+token_manager = create_token_manager()
 
 snapshot = await get_document(
-    "your-project-id",
     "users/user_1/posts/post_1",
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 
 if snapshot is not None:
@@ -77,10 +68,9 @@ Returns `None` when the document does not exist. Raises `httpx.HTTPStatusError` 
 from kiarina.lib.firebase_firestore import list_documents
 
 result = await list_documents(
-    "your-project-id",
     "users/user_1/posts",
     page_size=100,
-    id_token=id_token,
+    token=token,
 )
 
 for snapshot in result.documents:
@@ -88,23 +78,21 @@ for snapshot in result.documents:
 
 if result.next_page_token is not None:
     next_page = await list_documents(
-        "your-project-id",
         "users/user_1/posts",
         page_size=100,
         page_token=result.next_page_token,
-        id_token=id_token,
+        token=token,
     )
 ```
 
 ### Resolving the Token
 
-Omitting `id_token` uses the `TokenManager` of the `kiarina.lib.firebase` settings named by `firebase_settings_key`.
+Omitting `token` uses the `TokenManager` of the `kiarina.lib.firebase` settings named by `firebase_settings_key`.
 
 ```yaml
 kiarina.lib.firebase:
   configs:
     production:
-      project_id: production-project
       api_key: production-api-key
       token_data_file_path: ~/.config/your-app/token.json
 
@@ -113,7 +101,7 @@ kiarina.lib.firebase_firestore:
 ```
 
 ```python
-snapshot = await get_document("your-project-id", "users/user_1/posts/post_1")
+snapshot = await get_document("users/user_1/posts/post_1")
 ```
 
 `token_manager_registry` builds the token manager from those settings. Register an instance under the same key to use a different `TokenStore`.
@@ -181,11 +169,11 @@ from kiarina.lib.firebase_firestore import (
 
 ```python
 async def get_document(
-    project_id: str,
     path: str,
     *,
+    project_id: str | None = None,
     database_id: str = "(default)",
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> DocumentSnapshot | None: ...
 ```
 
@@ -193,10 +181,10 @@ Retrieves the document at the specified path.
 
 **Parameters**
 
-- `project_id` (`str`): Google Cloud project ID
+- `project_id` (`str | None`): Google Cloud project ID. Read from `token.project_id` when omitted
 - `path` (`str`): Document path (e.g. `"users/user_1/posts/post_1"`)
 - `database_id` (`str`): Database ID. Defaults to `"(default)"`
-- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
+- `token` (`Token | None`): Firebase token set. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -204,7 +192,7 @@ Retrieves the document at the specified path.
 
 **Raises**
 
-- `ValueError`: When `id_token` is omitted and `token_manager_registry` cannot resolve a `TokenManager`
+- `ValueError`: When `token` is omitted and `token_manager_registry` cannot resolve a `TokenManager`
 - `httpx.HTTPStatusError`: When the HTTP response indicates an error (except 404)
 - `httpx.HTTPError`: When communication fails
 
@@ -212,14 +200,14 @@ Retrieves the document at the specified path.
 
 ```python
 async def list_documents(
-    project_id: str,
     collection_path: str,
     *,
+    project_id: str | None = None,
     database_id: str = "(default)",
     page_size: int | None = None,
     page_token: str | None = None,
     order_by: str | None = None,
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> DocumentList: ...
 ```
 
@@ -227,13 +215,13 @@ Lists documents in a collection.
 
 **Parameters**
 
-- `project_id` (`str`): Google Cloud project ID
+- `project_id` (`str | None`): Google Cloud project ID. Read from `token.project_id` when omitted
 - `collection_path` (`str`): Collection path (e.g. `"users/user_1/posts"`)
 - `database_id` (`str`): Database ID. Defaults to `"(default)"`
 - `page_size` (`int | None`): Maximum number of documents per page
 - `page_token` (`str | None`): The `next_page_token` from the previous page
 - `order_by` (`str | None`): Sort order (e.g. `"createTime desc"`)
-- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
+- `token` (`Token | None`): Firebase token set. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -241,7 +229,7 @@ Lists documents in a collection.
 
 **Raises**
 
-- `ValueError`: When `id_token` is omitted and `token_manager_registry` cannot resolve a `TokenManager`
+- `ValueError`: When `token` is omitted and `token_manager_registry` cannot resolve a `TokenManager`
 - `httpx.HTTPStatusError`: When the HTTP response indicates an error
 - `httpx.HTTPError`: When communication fails
 

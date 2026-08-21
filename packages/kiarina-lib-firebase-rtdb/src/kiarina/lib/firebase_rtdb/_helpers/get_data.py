@@ -2,7 +2,9 @@ from typing import Any
 
 import httpx
 
-from .._operations.resolve_id_token import resolve_id_token
+from kiarina.lib.firebase import Token
+
+from .._operations.resolve_token import resolve_token
 from .._schemas.rtdb_query import RTDBQuery
 
 
@@ -11,10 +13,10 @@ async def get_data(
     path: str,
     *,
     query: RTDBQuery | None = None,
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> Any:
     url = f"{database_url.rstrip('/')}{path}.json"
-    params = {"auth": await resolve_id_token(id_token)}
+    params = {"auth": (await resolve_token(token)).id_token}
 
     if query is not None:
         params.update(query.to_params())

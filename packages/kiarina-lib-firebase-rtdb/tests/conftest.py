@@ -7,7 +7,7 @@ import pytest
 from pydantic_settings_manager import load_user_configs
 
 import kiarina.utils.file as kf
-from kiarina.lib.firebase import TokenData, TokenManager
+from kiarina.lib.firebase import Token, TokenManager
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -97,7 +97,7 @@ def custom_token(firebase_app: object, user_id: str) -> str:
 
 
 @pytest.fixture
-async def token_data(custom_token: str) -> TokenData:
+async def token(custom_token: str) -> Token:
     from kiarina.lib.firebase import exchange_custom_token, settings_manager
 
     settings = settings_manager.get_settings()
@@ -109,21 +109,7 @@ async def token_data(custom_token: str) -> TokenData:
 
 
 @pytest.fixture
-def refresh_token(token_data: TokenData) -> str:
-    return token_data.refresh_token
+def token_manager(token: Token) -> TokenManager:
+    from kiarina.lib.firebase import create_token_manager
 
-
-@pytest.fixture
-def id_token(token_data: TokenData) -> str:
-    return token_data.id_token
-
-
-@pytest.fixture
-def token_manager(token_data: TokenData) -> TokenManager:
-    from kiarina.lib.firebase import settings_manager
-
-    settings = settings_manager.get_settings()
-    return TokenManager(
-        api_key=settings.api_key.get_secret_value(),
-        token_store=token_data,
-    )
+    return create_token_manager(token_store=token)

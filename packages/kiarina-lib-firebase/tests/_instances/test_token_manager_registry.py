@@ -1,11 +1,14 @@
+import base64
+import json
 from collections.abc import Iterator
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
 
 from kiarina.lib.firebase import (
-    TokenData,
+    FileTokenStore,
+    InMemoryTokenStore,
+    Token,
     TokenManager,
     settings_manager,
     token_manager_registry,
@@ -24,28 +27,30 @@ def isolated_registry() -> Iterator[None]:
 
 
 @pytest.fixture
-def token_data() -> TokenData:
-    return TokenData(
-        refresh_token="refresh-token",
-        id_token="id-token",
-        expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+def token() -> Token:
+    payload = {"exp": 4102444800, "sub": "user_1", "aud": "project_1"}
+    segment = (
+        base64.urlsafe_b64encode(json.dumps(payload).encode("utf-8"))
+        .decode("ascii")
+        .rstrip("=")
     )
+    return Token(refresh_token="refresh-token", id_token=f"header.{segment}.signature")
 
 
 def configure(**overrides: object) -> None:
     settings_manager.user_config = {
         "configs": {
-            "development": {"project_id": "d", "api_key": "dk", **overrides},
-            "production": {"project_id": "p", "api_key": "pk", **overrides},
+            "development": {"api_key": "dk", **overrides},
+            "production": {"api_key": "pk", **overrides},
         },
         "default": "production",
         "aliases": {"prod": "production"},
     }
 
 
-def test_registered_instance_wins(token_data: TokenData) -> None:
+def test_registered_instance_wins(token: Token) -> None:
     configure()
-    manager = TokenManager(api_key="api-key", token_store=token_data)
+    manager = TokenManager(api_key="api-key", token_store=InMemoryTokenStore(token))
     token_manager_registry.register("production", manager)
 
     assert token_manager_registry.get("production") is manager
@@ -53,7 +58,7 @@ def test_registered_instance_wins(token_data: TokenData) -> None:
 
 
 def test_created_from_settings(tmp_path: Path) -> None:
-    configure(token_data_file_path=str(tmp_path / "token.json"))
+    configure(token_file_path=str(tmp_path / "token.json"))
 
     manager = token_manager_registry.get()
 
@@ -64,18 +69,27 @@ def test_created_from_settings(tmp_path: Path) -> None:
 
 
 def test_active_key_selects_the_settings(tmp_path: Path) -> None:
-    configure(token_data_file_path=str(tmp_path / "token.json"))
+    configure(token_file_path=str(tmp_path / "token.json"))
     settings_manager.active_key = "development"
 
     assert token_manager_registry.get() is token_manager_registry.get("development")
 
 
-def test_token_data_file_path_is_not_configured() -> None:
+async def test_token_is_read_from_the_configured_file(
+    tmp_path: Path, token: Token
+) -> None:
+    token_file = tmp_path / "token.json"
+    await FileTokenStore(str(token_file)).set(token)
+
+    configure(token_file_path=str(token_file))
+
+    assert await token_manager_registry.get().get_token() == token
+
+
+def test_token_file_path_is_not_configured() -> None:
     configure()
 
-    with pytest.raises(
-        ValueError, match="'token_data_file_path' is not configured in the 'production'"
-    ):
+    with pytest.raises(ValueError, match="'token_store' is required"):
         token_manager_registry.get()
 
 

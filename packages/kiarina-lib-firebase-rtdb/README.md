@@ -46,26 +46,18 @@ pip install kiarina-lib-firebase-rtdb
 
 ### Retrieving Data
 
-Get an ID token from `TokenManager` and specify a database path.
+Get a token from a `TokenManager` and specify a database path. `create_token_manager` reads the API key and the token file from the `kiarina.lib.firebase` settings.
 
 ```python
-from kiarina.lib.firebase import TokenManager, refresh_id_token
+from kiarina.lib.firebase import create_token_manager
 from kiarina.lib.firebase_rtdb import get_data
 
-token_data = await refresh_id_token(
-    refresh_token="firebase-refresh-token",
-    api_key="firebase-web-api-key",
-)
-
-token_manager = TokenManager(
-    api_key="firebase-web-api-key",
-    token_store=token_data,
-)
+token_manager = create_token_manager()
 
 data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -80,7 +72,7 @@ data = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
     query=RTDBQuery(order_by="$key", limit_to_last=5),
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -97,7 +89,7 @@ keys = await get_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
     query=RTDBQuery(shallow=True),
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -112,7 +104,7 @@ await update_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/messages",
     {"01ABCDEF.../read": True, "01OLDEST...": None},
-    id_token=await token_manager.get_id_token(),
+    token=await token_manager.get_token(),
 )
 ```
 
@@ -159,7 +151,7 @@ async for event in watch_data(
 
 ### Resolving the Token
 
-Omitting `id_token` and `token_manager` uses the `TokenManager` of the `kiarina.lib.firebase` settings named by `firebase_settings_key`.
+Omitting `token` and `token_manager` uses the `TokenManager` of the `kiarina.lib.firebase` settings named by `firebase_settings_key`.
 
 ```yaml
 kiarina.lib.firebase:
@@ -254,7 +246,7 @@ async def get_data(
     path: str,
     *,
     query: RTDBQuery | None = None,
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> Any: ...
 ```
 
@@ -265,7 +257,7 @@ Retrieves JSON data at the specified path.
 - `database_url` (`str`): Firebase Realtime Database URL
 - `path` (`str`): Path of the data to retrieve
 - `query` (`RTDBQuery | None`): Query parameters appended to the request
-- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
+- `token` (`Token | None`): Firebase token set. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -285,7 +277,7 @@ async def update_data(
     path: str,
     values: Mapping[str, Any],
     *,
-    id_token: str | None = None,
+    token: Token | None = None,
 ) -> Any: ...
 ```
 
@@ -296,7 +288,7 @@ Applies a multi-path update at the specified path.
 - `database_url` (`str`): Firebase Realtime Database URL
 - `path` (`str`): Path the update is applied to
 - `values` (`Mapping[str, Any]`): Keys relative to `path` and their new values. `None` deletes the key
-- `id_token` (`str | None`): Firebase ID token. Resolved from `token_manager_registry` when omitted
+- `token` (`Token | None`): Firebase token set. Resolved from `token_manager_registry` when omitted
 
 **Returns**
 
@@ -327,7 +319,7 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 - `database_url` (`str`): Firebase Realtime Database URL
 - `path` (`str`): Path of the data to watch
 - `stop_event` (`asyncio.Event | None`): Event that requests the watch to stop
-- `token_manager` (`TokenManager | None`): Instance that manages the ID token. Resolved from `token_manager_registry` when omitted
+- `token_manager` (`TokenManager | None`): Instance that manages the token set. Resolved from `token_manager_registry` when omitted
 
 **Yields**
 

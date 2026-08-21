@@ -7,22 +7,21 @@ Usage:
 
 import asyncio
 
-from kiarina.lib.firebase import TokenManager, refresh_id_token
+from kiarina.lib.firebase import FileTokenStore, TokenManager
 from kiarina.lib.firebase_rtdb import watch_data
 
 
 async def main() -> None:
     # TODO: Replace with your actual values
     api_key = "your_web_api_key_here"
-    refresh_token = "your_refresh_token_here"
+    token_file_path = "~/.config/your-app/token.json"
     database_url = "https://your-project.firebaseio.com"
     watch_path = "/test"
 
-    token_data = await refresh_id_token(
-        refresh_token=refresh_token,
+    token_manager = TokenManager(
         api_key=api_key,
+        token_store=FileTokenStore(token_file_path),
     )
-    token_manager = TokenManager(api_key=api_key, token_store=token_data)
 
     print(f"Starting to watch: {database_url}{watch_path}")
     print("Press Ctrl+C to stop\n")
