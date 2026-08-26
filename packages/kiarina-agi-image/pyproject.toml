@@ -26,7 +26,7 @@ dependencies = [
     "kiarina-utils-common>=2.3.0",
     "kiarina-utils-file>=2.3.1",
     "numpy>=2.0,<3",
-    "opencv-python>=4.12.0,<5",
+    "opencv-python>=4.12.0,<6",
     "pillow>=12.3.0,<13",
     "pydantic>=2.11.7,<3",
     "pydantic-settings>=2.10.1,<3",
@@ -40,7 +40,7 @@ all = [
     "kiarina-lib-google>=2.4.0",
     "kiarina-lib-openai>=2.3.1",
     "onnxruntime>=1.25.1",
-    "openai>=2.0.1,<3",
+    "openai>=2.0.1,<4",
     "rapidocr>=3.9,<4",
 ]
 image-detection-provider-dfine = ["onnxruntime>=1.25.1"]
@@ -50,7 +50,7 @@ image-embedding-provider-qwen3-vl = ["httpx>=0.28.1,<1"]
 image-embedding-provider-sface = []
 image-embedding-provider-siglip2 = ["onnxruntime>=1.25.1"]
 image-generation-provider-google = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.4.0"]
-image-generation-provider-openai = ["httpx>=0.28.1,<1", "kiarina-lib-openai>=2.3.1", "openai>=2.0.1,<3"]
+image-generation-provider-openai = ["httpx>=0.28.1,<1", "kiarina-lib-openai>=2.3.1", "openai>=2.0.1,<4"]
 image-generation-provider-kiapi = ["httpx>=0.28.1,<1"]
 image-segmentation-provider-birefnet = ["onnxruntime>=1.25.1"]
 ocr-provider-rapidocr = ["onnxruntime>=1.27", "rapidocr>=3.9,<4"]

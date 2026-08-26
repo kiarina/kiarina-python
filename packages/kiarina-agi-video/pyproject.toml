@@ -36,7 +36,7 @@ all = [
     "httpx>=0.28.1,<1",
     "imageio-ffmpeg>=0.6.0,<1",
     "kiarina-lib-google>=2.8.0",
-    "opencv-python>=4.12.0,<5",
+    "opencv-python>=4.12.0,<6",
 ]
 video-generation-provider-google = [
     "google-genai>=1.65.0,<3",
@@ -44,7 +44,7 @@ video-generation-provider-google = [
 ]
 video-generation-provider-kiapi = ["httpx>=0.28.1,<1"]
 video-generation-provider-mock = []
-video-source-camera = ["opencv-python>=4.12.0,<5"]
+video-source-camera = ["opencv-python>=4.12.0,<6"]
 video-source-file = ["imageio-ffmpeg>=0.6.0,<1"]
 video-source-numpy = []
 video-source-queue = []

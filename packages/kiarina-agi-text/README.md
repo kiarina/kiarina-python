@@ -40,7 +40,7 @@ English | [日本語](README.ja.md)
 | [langchain-google-vertexai](https://github.com/langchain-ai/langchain-google) | `>=3.0.0,<4` | [MIT](https://github.com/langchain-ai/langchain-google/blob/main/LICENSE) | `chat-provider-lc-anthropic-vertex` |
 | [langchain-openai](https://github.com/langchain-ai/langchain-openai) | `>=1.0.0,<2` | [MIT](https://github.com/langchain-ai/langchain-openai/blob/main/LICENSE) | `chat-provider-lc-openai` |
 | [NumPy](https://github.com/numpy/numpy) | `>=2.0` | [BSD-3-Clause](https://github.com/numpy/numpy/blob/main/LICENSE.txt) | `text-embedding-provider-google`<br>`text-embedding-provider-mock`<br>`text-embedding-provider-openai` |
-| [openai](https://github.com/openai/openai-python) | `>=2.0.1,<3` | [Apache-2.0](https://github.com/openai/openai-python/blob/main/LICENSE) | `chat-provider-lc-openai`<br>`text-embedding-provider-openai` |
+| [openai](https://github.com/openai/openai-python) | `>=2.0.1,<4` | [Apache-2.0](https://github.com/openai/openai-python/blob/main/LICENSE) | `chat-provider-lc-openai`<br>`text-embedding-provider-openai` |
 | [tiktoken](https://github.com/openai/tiktoken) | `>=0.13.0` | [MIT](https://github.com/openai/tiktoken/blob/main/LICENSE) | `text-embedding-provider-openai` |
 | [ulid-py](https://github.com/ahawker/ulid) | `>=1.1.0` | [Apache-2.0](https://github.com/ahawker/ulid/blob/master/LICENSE) | `chat-provider-mock` |
 
