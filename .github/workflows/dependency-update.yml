@@ -36,14 +36,14 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Install mise
       uses: jdx/mise-action@v4
       with:
-        version: 2026.5.0
+        version: 2026.8.13
         cache: true
         install: false
       env:
@@ -70,33 +70,16 @@ jobs:
           echo "Dependencies updated"
         fi
 
-    - name: Check for existing PR
-      if: steps.update.outputs.has_changes == 'true'
-      id: check_pr
-      run: |
-        # Check if there's already an open PR for dependency updates
-        EXISTING_PR=$(gh pr list --state open --label "dependencies" --label "automated" --json number,title --jq '.[0].number // ""')
-        
-        if [ -n "$EXISTING_PR" ]; then
-          echo "existing_pr=$EXISTING_PR" >> $GITHUB_OUTPUT
-          echo "Found existing PR #$EXISTING_PR"
-        else
-          echo "existing_pr=" >> $GITHUB_OUTPUT
-          echo "No existing PR found"
-        fi
-      env:
-        GH_TOKEN: ${{ github.token }}
-
     - name: Run comprehensive CI checks
-      if: steps.update.outputs.has_changes == 'true' && steps.check_pr.outputs.existing_pr == ''
+      if: steps.update.outputs.has_changes == 'true'
       run: mise run ci --no-setup --no-docker
       env:
         GH_TOKEN: ${{ github.token }}
         MISE_GITHUB_ATTESTATIONS: "false"
 
     - name: Create Pull Request
-      if: steps.update.outputs.has_changes == 'true' && steps.check_pr.outputs.existing_pr == ''
-      uses: peter-evans/create-pull-request@v7
+      if: steps.update.outputs.has_changes == 'true'
+      uses: peter-evans/create-pull-request@v8
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "chore: update dependencies"
@@ -125,11 +108,3 @@ jobs:
         labels: |
           dependencies
           automated
-
-    - name: Skip PR creation (existing PR found)
-      if: steps.update.outputs.has_changes == 'true' && steps.check_pr.outputs.existing_pr != ''
-      run: |
-        echo "⏭️ Skipping PR creation - existing PR #${{ steps.check_pr.outputs.existing_pr }} is still open"
-        echo "Please review and merge the existing PR before creating a new one."
-        echo ""
-        echo "View existing PR: ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.check_pr.outputs.existing_pr }}"
