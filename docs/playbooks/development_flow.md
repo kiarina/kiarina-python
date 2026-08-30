@@ -1,7 +1,5 @@
 # Development Flow
 
-English | [日本語](README.ja.md)
-
 Process from receiving development or fix requests through development, testing, and Pull Request creation.
 
 ### Receiving Tasks
@@ -40,7 +38,7 @@ Keep `.PHONY` entries on one line by default.
 
 If the line needs to be split, do not group the entries. Write each `.PHONY` immediately before its target.
 
-For pytest marker usage, see [Pytest Markers](../pytest_markers/README.md).
+For pytest marker usage, see [Pytest Markers](pytest_markers.md).
 
 ```make
 .PHONY: image_generation_provider_openai_test

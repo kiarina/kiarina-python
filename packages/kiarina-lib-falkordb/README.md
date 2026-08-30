@@ -4,8 +4,6 @@
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-falkordb.svg)](https://pypi.org/project/kiarina-lib-falkordb/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-English | [日本語](README.ja.md)
-
 > [!NOTE] What is this?
 > A package for creating synchronous and asynchronous FalkorDB clients with settings, retries, and connection caching.
 

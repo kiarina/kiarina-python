@@ -1,7 +1,5 @@
 # Implementation Optional Dependencies
 
-English | [日本語](README.ja.md)
-
 Dependencies used only under `{mod}_impl.{name}` must be optional dependencies.
 
 Name the extra `{mod}-{name}` and replace `_` with `-`.

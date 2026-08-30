@@ -5,8 +5,6 @@
 [![codecov](https://codecov.io/gh/kiarina/kiarina-python/graph/badge.svg?token=NS6QHOXDC0)](https://codecov.io/gh/kiarina/kiarina-python)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-English | [日本語](README.ja.md)
-
 > [!NOTE] What is this?
 > `kiarina-python` is a monorepo for packages used to build Python applications and LLM agents.
 >
@@ -166,13 +164,13 @@ Git-ignored `.env` and `test_settings.yaml` files can be encrypted with age and 
 
 ## Documentation
 
-- [Development Flow](docs/playbooks/development_flow/README.md)
-- [Implementation Optional Dependencies](docs/concepts/implementation_optional_dependencies/README.md)
-- [uv Workspace Operations](docs/concepts/uv_workspace_operations/README.md)
-- [Sensitive Data Security](docs/concepts/sensitive_data_security/README.md)
-- [Adding a Package](docs/runbooks/add_new_package/README.md)
-- [Update Chat Model Presets](docs/runbooks/update_chat_model_presets/README.md)
-- [Release](docs/runbooks/release/README.md)
+- [Development Flow](docs/playbooks/development_flow.md)
+- [Implementation Optional Dependencies](docs/concepts/implementation_optional_dependencies.md)
+- [uv Workspace Operations](docs/concepts/uv_workspace_operations.md)
+- [Sensitive Data Security](docs/concepts/sensitive_data_security.md)
+- [Adding a Package](docs/runbooks/add_new_package.md)
+- [Update Chat Model Presets](docs/runbooks/update_chat_model_presets.md)
+- [Release](docs/runbooks/release.md)
 
 ## Contributing
 

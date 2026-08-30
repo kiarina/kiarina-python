@@ -26,9 +26,8 @@ Dependabot alerts.
    `pillow>=12.3.0,<13`:
    - `packages/kiarina-agi-data-builder/pyproject.toml`
    - `packages/kiarina-agi-image/pyproject.toml`
-2. Update the Pillow version shown in both image package READMEs:
+2. Update the Pillow version shown in the image package README:
    - `packages/kiarina-agi-image/README.md`
-   - `packages/kiarina-agi-image/README.ja.md`
 3. Refresh `uv.lock` and confirm that the resolved Pillow version is at least
    12.3.0 on every supported platform.
 4. Review the Pillow 12 incompatible changes. Update implementation code only
@@ -63,7 +62,7 @@ This dependency change requires a PyPI release. Before committing, add concise
 - `packages/kiarina-agi-data-builder/CHANGELOG.md`
 - `packages/kiarina-agi-image/CHANGELOG.md`
 
-Follow `docs/runbooks/release/README.md` to release the changed packages and the
+Follow `docs/runbooks/release.md` to release the changed packages and the
 `kiarina` meta-package. Do not choose or publish a release version without the
 release owner's instruction.
 

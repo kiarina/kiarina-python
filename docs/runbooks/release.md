@@ -1,7 +1,5 @@
 # Release
 
-English | [日本語](README.ja.md)
-
 Procedure for releasing kiarina-python to PyPI.
 
 This guide explains the release procedure using version 2.2.0 as an example.

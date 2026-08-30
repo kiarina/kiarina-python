@@ -1,7 +1,5 @@
 # Sensitive Data Security
 
-English | [日本語](README.ja.md)
-
 Guidelines for handling sensitive data in kiarina-python packages.
 
 ## Overview

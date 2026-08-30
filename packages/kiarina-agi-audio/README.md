@@ -1,7 +1,5 @@
 # kiarina-agi-audio
 
-English | [日本語](README.ja.md)
-
 [![PyPI](https://img.shields.io/pypi/v/kiarina-agi-audio.svg)](https://pypi.org/project/kiarina-agi-audio/)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)

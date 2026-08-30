@@ -4,8 +4,6 @@
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-firebase-firestore.svg)](https://pypi.org/project/kiarina-lib-firebase-firestore/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-English | [日本語](README.ja.md)
-
 > [!NOTE] What is this?
 > An asynchronous read-only package for retrieving documents from Cloud Firestore with a Firebase ID token.
 

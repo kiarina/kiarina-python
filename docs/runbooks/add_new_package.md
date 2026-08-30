@@ -1,7 +1,5 @@
 # Add New Package
 
-English | [日本語](README.ja.md)
-
 Procedure for adding a namespace package to the uv workspace.
 
 ## Key points
@@ -9,7 +7,7 @@ Procedure for adding a namespace package to the uv workspace.
 - `uv pip install -e` is not required. The workspace performs editable installation.
 - In the root `pyproject.toml`, update `[tool.uv.workspace]`, `[tool.uv.sources]`, `[tool.mypy]`, and `[tool.coverage.run]`.
 - The root `pyproject.toml` has no `[project].dependencies`. Add new distribution packages to the meta package in `packages/kiarina/pyproject.toml` when applicable.
-- Create `README.ja.md` first, then create `README.md` as a complete mirror after the content is stable.
+- Write the package `README.md` in English.
 - Dependencies used only under `{mod}_impl.{name}` must be optional dependencies.
 
 ## Procedure
@@ -52,7 +50,6 @@ Create at least these files.
 packages/new-package-name/
   CHANGELOG.md
   Makefile
-  README.ja.md
   README.md
   pyproject.toml
   .mise/tasks/package/current
@@ -299,15 +296,15 @@ except ImportError as exc:
     ) from exc
 ```
 
-See [Implementation Optional Dependencies](../../concepts/implementation_optional_dependencies/README.md) for details.
+See [Implementation Optional Dependencies](../concepts/implementation_optional_dependencies.md) for details.
 
 ### 9. Update repository surfaces
 
-Add the package to the `Packages` table in the root `README.ja.md` and `README.md`. Keep both README files as complete mirrors in different languages.
+Add the package to the `Packages` table in the root `README.md`.
 
 Add regular distribution packages to the meta package dependencies in `packages/kiarina/pyproject.toml`. If the package should not be included in the meta package, make that reason explicit.
 
-Follow [Package README Structure](../../playbooks/package_readme_structure/README.md) for package README files.
+Follow [Package README Structure](../playbooks/package_readme_structure.md) for package README files.
 
 ### 10. Sync and verify
 

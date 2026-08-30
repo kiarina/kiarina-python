@@ -1,7 +1,5 @@
 # kiarina-agi-runner
 
-English | [日本語](README.ja.md)
-
 ## What is this?
 
 `kiarina-agi-runner` provides agent execution, task runners, and structured output helpers for AI agents.

@@ -1,7 +1,5 @@
 # kiarina-agi-tool
 
-English | [日本語](README.ja.md)
-
 ## What is this?
 
 `kiarina-agi-tool` provides tool execution, pre hooks, post hooks, and tool logging for AI agents.

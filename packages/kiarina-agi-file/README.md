@@ -1,7 +1,5 @@
 # kiarina-agi-file
 
-English | [日本語](README.ja.md)
-
 [![PyPI version](https://badge.fury.io/py/kiarina-agi-file.svg)](https://badge.fury.io/py/kiarina-agi-file)
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-agi-file.svg)](https://pypi.org/project/kiarina-agi-file/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

@@ -4,8 +4,6 @@
 [![PyPI version](https://badge.fury.io/py/kiarina.svg)](https://badge.fury.io/py/kiarina)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kiarina/kiarina-python/blob/main/LICENSE)
 
-English | [日本語](README.ja.md)
-
 > [!NOTE] What is this?
 > A meta-package for installing the packages in the `kiarina` namespace together.
 

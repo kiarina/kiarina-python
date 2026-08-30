@@ -1,7 +1,5 @@
 # Pytest Markers
 
-English | [日本語](README.ja.md)
-
 This guide explains how to use `pytest.mark.costly` and `pytest.mark.downloads_model`.
 
 ### costly

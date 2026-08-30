@@ -33,22 +33,22 @@ pydantic-settings に関連したタスクを行う場合は、先に下記を�
 - https://github.com/kiarina/pydantic-settings-manager
 
 依存パッケージを追加・変更する場合、または `{mod}_impl.{name}` 以下を追加・変更する場合は、先に下記を把握してください。
-- docs/concepts/implementation_optional_dependencies/README.md
+- docs/concepts/implementation_optional_dependencies.md
 
 新しいパッケージを追加する際は、作業前に下記を把握してください。
-- docs/runbooks/add_new_package/README.md
+- docs/runbooks/add_new_package.md
 
 Makefile を追加・変更する場合は、作業前に下記を把握してください。
-- docs/playbooks/development_flow/README.md
+- docs/playbooks/development_flow.md
 
 コストがかかる pytest、またはモデルなどの重いファイルの download を伴う pytest を書く場合は、作業前に下記を把握してください。
-- docs/playbooks/pytest_markers/README.md
+- docs/playbooks/pytest_markers.md
 
 外部サービス（ローカルサーバーや外部 API）に依存する pytest を書く場合は、作業前に下記を把握してください。
-- docs/playbooks/external_service_tests/README.md
+- docs/playbooks/external_service_tests.md
 
 リリースする際は、作業前に下記を把握してください。
-- docs/runbooks/release/README.md
+- docs/runbooks/release.md
 
 ## テキストの方針
 
@@ -64,16 +64,15 @@ Makefile を追加・変更する場合は、作業前に下記を把握して�
 - 名前から役割を推測できる場合は、docstring を書かないでください。
 - フィールドには docstring を書かないでください。Pydantic の公開クラスでは、フィールドに `title` と `description` を設定してください。
 - 各パッケージの README は、下記の資料にしたがって書いてください
-  - docs/playbooks/package_readme_structure/README.md
+  - docs/playbooks/package_readme_structure.md
   - パッケージの README は、他と異なり、公開 API のシグネチャを全て記載するなど、README のみでパッケージの使い方が理解できるようにする必要があります
 
-## README の運用
+## ドキュメントの運用
 
-- 常に `README.md` と `README.ja.md` の両方を作成します。
-- `README.md` と `README.ja.md` は、言語違いの完全なミラーとして維持してください。
-- README の各ファイルには、言語切り替えのためのリンクを必ず設置してください。
-- 対応箇所を見出しで追いやすくするため、`README.ja.md` の `#`, `##`, `###`, `####` などの見出しは `README.md` と同じ英語に必ず一致させてください。
-- README の内容の精査段階では、先行して `README.ja.md` を作成して、内容が確定したら `README.md` を作成するのが望ましいです。
+- ルートと各パッケージの README は `README.md` だけを作成し、英語で記述してください。
+- `README.ja.md` など、言語別の README は作成しません。
+- `docs/` 以下のドキュメントも英語だけで記述してください。
+- ユーザーとの相談や内容の検討は日本語で行って構いませんが、リポジトリへ残すドキュメントは英語を正典とします。
 
 ## 変更後の確認
 

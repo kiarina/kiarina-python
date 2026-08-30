@@ -1,7 +1,5 @@
 # External Service Tests
 
-English | [日本語](README.ja.md)
-
 This guide explains how to write tests that depend on external services (local servers or external APIs).
 
 Tests must be skipped, not errored, when the external service is unavailable.
@@ -65,7 +63,7 @@ Reference implementations:
 
 Mark costly tests that perform actual generation with `pytest.mark.costly`.
 
-See [Pytest Markers](../pytest_markers/README.md) for details.
+See [Pytest Markers](pytest_markers.md) for details.
 
 ## Sharing Settings
 

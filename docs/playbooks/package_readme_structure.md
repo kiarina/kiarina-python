@@ -1,13 +1,10 @@
 # Package README Structure
 
-English | [日本語](README.ja.md)
-
-This document defines the standard heading structure for each package's `README.md` and `README.ja.md`.
+This document defines the standard heading structure for each package's `README.md`.
 
 ## Principles
 
-- Maintain `README.md` and `README.ja.md` as complete mirrors in different languages.
-- Use the same English headings, hierarchy, and order in both files.
+- Write the README in English.
 - Organize headings so readers can understand the package's dependencies, installation, primary use cases, and public APIs in that order.
 - Document public APIs by the public import paths used by consumers, not by the internal file structure.
 - Document every public API signature, including parameters, parameter types, defaults, and return types.
@@ -19,8 +16,6 @@ Use the following order as the standard for regular library packages.
 
 ```markdown
 # <package-name>
-
-English | [日本語](README.ja.md)
 
 <badges>
 
@@ -46,12 +41,6 @@ English | [日本語](README.ja.md)
 #### `<Public API>`
 ```
 
-Use the following language switcher in the Japanese version.
-
-```markdown
-[English](README.md) | 日本語
-```
-
 ## Required Sections
 
 ### Package Title
@@ -62,7 +51,7 @@ Use the PyPI package name as the H1.
 # kiarina-utils-common
 ```
 
-Place the language switcher, badges such as PyPI, Python, and License, and a NOTE describing the package's role immediately after the title.
+Place badges such as PyPI, Python, and License and a NOTE describing the package's role immediately after the title.
 
 The NOTE should explain what the package provides in one sentence rather than list its detailed features.
 
@@ -223,4 +212,4 @@ Omit such modules from the API Reference.
 This cannot be determined from the package code alone.
 Follow any instruction that explicitly allows a module to be omitted from the API Reference.
 
-Keep signatures and the executable content of code examples identical between `README.md` and `README.ja.md`; translate only explanatory prose and comments.
+Keep signatures and the executable content of code examples current with the implementation.

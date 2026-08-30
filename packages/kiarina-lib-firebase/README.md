@@ -4,8 +4,6 @@
 [![Python](https://img.shields.io/pypi/pyversions/kiarina-lib-firebase.svg)](https://pypi.org/project/kiarina-lib-firebase/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-English | [日本語](README.ja.md)
-
 > [!NOTE] What is this?
 > An asynchronous Firebase Authentication client for exchanging custom tokens and keeping ID tokens fresh.
 

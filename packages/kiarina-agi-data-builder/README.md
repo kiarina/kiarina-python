@@ -1,7 +1,5 @@
 # kiarina-agi-data-builder
 
-English | [日本語](README.ja.md)
-
 ## What is this?
 
 `kiarina-agi-data-builder` provides builders for AI agent messages, events, histories, tool info, file info, and file segments.

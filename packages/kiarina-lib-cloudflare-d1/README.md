@@ -4,8 +4,6 @@
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
-English | [日本語](README.ja.md)
-
 > [!NOTE]
 > Provides synchronous and asynchronous clients for sending SQL queries to the Cloudflare D1 REST API.
 

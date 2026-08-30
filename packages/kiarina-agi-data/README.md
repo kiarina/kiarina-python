@@ -1,7 +1,5 @@
 # kiarina-agi-data
 
-English | [日本語](README.ja.md)
-
 [![PyPI](https://img.shields.io/pypi/v/kiarina-agi-data.svg)](https://pypi.org/project/kiarina-agi-data/)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
@@ -52,12 +50,12 @@ from kiarina.agi.history import History
 from kiarina.agi.message import AIMessage, HumanMessage
 
 history = History()
-history.add_message(HumanMessage.create("東京の天気を教えてください。"))
-history.add_message(AIMessage.create("晴れの予報です。"))
+history.add_message(HumanMessage.create("What is the weather in Tokyo?"))
+history.add_message(AIMessage.create("The forecast is sunny."))
 
 messages = history.get_messages()
 assert len(messages) == 2
-assert messages[-1].to_text() == "晴れの予報です。"
+assert messages[-1].to_text() == "The forecast is sunny."
 ```
 
 ### Search Embeddings
