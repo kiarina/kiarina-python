@@ -1,6 +1,7 @@
 from collections.abc import Iterator
 
 import pytest
+from pydantic import ValidationError
 
 from kiarina.agi.run_context import RunContext, settings_manager
 
@@ -18,6 +19,7 @@ def test_run_context() -> None:
         "user_id": "user-456",
         "agent_id": "agent-789",
         "node_id": "node-001",
+        "timezone": "Asia/Tokyo",
     }
 
     run_context = RunContext()
@@ -26,8 +28,10 @@ def test_run_context() -> None:
     assert run_context.user_id == "user-456"
     assert run_context.agent_id == "agent-789"
     assert run_context.node_id == "node-001"
+    assert run_context.timezone == "Asia/Tokyo"
+    assert run_context.model_dump()["timezone"] == "Asia/Tokyo"
 
-    print(f"zone_info: {run_context.zone_info}")
+    assert str(run_context.zone_info) == "Asia/Tokyo"
 
     run_context = run_context.with_metadata(initial="value")
     assert run_context.metadata["initial"] == "value"
@@ -49,3 +53,8 @@ def test_disallow_default_ids() -> None:
 
     with pytest.raises(ValueError, match=r"^organization_id must not be default$"):
         RunContext()
+
+
+def test_rejects_old_time_zone_field() -> None:
+    with pytest.raises(ValidationError, match="time_zone"):
+        RunContext.model_validate({"time_zone": "Asia/Tokyo"})

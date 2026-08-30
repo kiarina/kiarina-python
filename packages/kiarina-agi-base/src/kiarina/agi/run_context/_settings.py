@@ -29,7 +29,7 @@ class RunContextSettings(BaseSettings):
         description="Reject default run context identifiers.",
     )
 
-    time_zone: TimeZone = "UTC"
+    timezone: TimeZone = "UTC"
 
     language: Language = "en"
 

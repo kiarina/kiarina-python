@@ -55,7 +55,7 @@ export KIARINA_AGI_RUN_CONTEXT_USER_ID=my-user
 export KIARINA_AGI_RUN_CONTEXT_AGENT_ID=my-agent
 export KIARINA_AGI_RUN_CONTEXT_NODE_ID=my-node
 export KIARINA_AGI_RUN_CONTEXT_DISALLOW_DEFAULT_IDS=true
-export KIARINA_AGI_RUN_CONTEXT_TIME_ZONE=Asia/Tokyo
+export KIARINA_AGI_RUN_CONTEXT_TIMEZONE=Asia/Tokyo
 export KIARINA_AGI_RUN_CONTEXT_LANGUAGE=ja
 export KIARINA_AGI_RUN_CONTEXT_CURRENCY=JPY
 ```
@@ -179,7 +179,7 @@ class RunContext(BaseModel):
     user_id: IDStr = <configured user ID>
     agent_id: IDStr = <configured agent ID>
     node_id: IDStr = <configured node ID>
-    time_zone: TimeZone = "UTC"
+    timezone: TimeZone = "UTC"
     language: Language = "en"
     currency: CurrencyCode = "USD"
     metadata: dict[str, Any] = {}
@@ -201,7 +201,7 @@ class RunContextSettings(BaseSettings):
     agent_id: IDStr | None = "default"
     node_id: IDStr | None = "default"
     disallow_default_ids: bool = False
-    time_zone: TimeZone = "UTC"
+    timezone: TimeZone = "UTC"
     language: Language = "en"
     currency: CurrencyCode = "USD"
 ```

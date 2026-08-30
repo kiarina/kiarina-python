@@ -7,7 +7,7 @@ def format_run_context(run_context: RunContext) -> str:
         f"user_id: {run_context.user_id}",
         f"agent_id: {run_context.agent_id}",
         f"node_id: {run_context.node_id}",
-        f"time_zone: {run_context.time_zone}",
+        f"timezone: {run_context.timezone}",
         f"language: {run_context.language}",
         f"currency: {run_context.currency}",
     ]

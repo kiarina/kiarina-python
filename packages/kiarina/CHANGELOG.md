@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- **kiarina-agi-base**: Rename the `RunContext` and `RunContextSettings` `time_zone` field to `timezone`, rename `KIARINA_AGI_RUN_CONTEXT_TIME_ZONE` to `KIARINA_AGI_RUN_CONTEXT_TIMEZONE`, and reject unknown `RunContext` fields.
+
 ## [2.27.0] - 2026-08-21
 
 ### Added

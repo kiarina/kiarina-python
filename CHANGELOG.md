@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- **kiarina-agi-base**: Rename the `RunContext` and `RunContextSettings` `time_zone` field to `timezone`, rename `KIARINA_AGI_RUN_CONTEXT_TIME_ZONE` to `KIARINA_AGI_RUN_CONTEXT_TIMEZONE`, and reject unknown `RunContext` fields.
+
 ### Changed
 - **kiarina-agi-audio**, **kiarina-agi-image**, and **kiarina-agi-text**: Support OpenAI Python 3.x.
 - **kiarina-agi-image** and **kiarina-agi-video**: Support OpenCV Python 5.x.

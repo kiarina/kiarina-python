@@ -3,6 +3,12 @@ import pytest
 from kiarina.agi.run_context import RunContextSettings
 
 
+def test_timezone_from_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("KIARINA_AGI_RUN_CONTEXT_TIMEZONE", "Asia/Tokyo")
+
+    assert RunContextSettings().timezone == "Asia/Tokyo"
+
+
 def test_disallow_default_ids_from_environment(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

@@ -1,7 +1,7 @@
 from typing import Any, Self
 from zoneinfo import ZoneInfo
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from kiarina.currency import CurrencyCode
 from kiarina.i18n import Language
@@ -14,6 +14,8 @@ from .._types.time_zone import TimeZone
 
 
 class RunContext(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     app_author: str = Field(default_factory=lambda: app.app_author)
 
     app_name: str = Field(default_factory=lambda: app.app_name)
@@ -26,8 +28,8 @@ class RunContext(BaseModel):
 
     node_id: IDStr = Field(default_factory=lambda: get_id("node_id"))
 
-    time_zone: TimeZone = Field(
-        default_factory=lambda: settings_manager.get_settings().time_zone
+    timezone: TimeZone = Field(
+        default_factory=lambda: settings_manager.get_settings().timezone
     )
 
     language: Language = Field(
@@ -42,7 +44,7 @@ class RunContext(BaseModel):
 
     @property
     def zone_info(self) -> ZoneInfo:
-        return ZoneInfo(self.time_zone)
+        return ZoneInfo(self.timezone)
 
     def with_metadata(self, **kwargs: Any) -> Self:
         updated_metadata = {**self.metadata, **kwargs}
