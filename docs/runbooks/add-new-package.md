@@ -296,7 +296,7 @@ except ImportError as exc:
     ) from exc
 ```
 
-See [Implementation Optional Dependencies](../concepts/implementation_optional_dependencies.md) for details.
+See [Implementation Optional Dependencies](../concepts/implementation-optional-dependencies.md) for details.
 
 ### 9. Update repository surfaces
 
@@ -304,7 +304,7 @@ Add the package to the `Packages` table in the root `README.md`.
 
 Add regular distribution packages to the meta package dependencies in `packages/kiarina/pyproject.toml`. If the package should not be included in the meta package, make that reason explicit.
 
-Follow [Package README Structure](../playbooks/package_readme_structure.md) for package README files.
+Follow [Package README Structure](../playbooks/package-readme-structure.md) for package README files.
 
 ### 10. Sync and verify
 

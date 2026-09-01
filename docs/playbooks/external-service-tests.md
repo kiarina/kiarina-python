@@ -63,7 +63,7 @@ Reference implementations:
 
 Mark costly tests that perform actual generation with `pytest.mark.costly`.
 
-See [Pytest Markers](pytest_markers.md) for details.
+See [Pytest Markers](pytest-markers.md) for details.
 
 ## Sharing Settings
 

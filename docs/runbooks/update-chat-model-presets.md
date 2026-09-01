@@ -100,7 +100,7 @@ This test covers the invoke, stream, tool calling, parallel tool calling, suppor
 
 If credentials are unavailable, resolve authentication separately before evaluating the model settings. Do not treat a pre-authentication failure as a model compatibility result. Never store secrets in the repository or test output.
 
-See [Pytest Markers](../playbooks/pytest_markers.md) for the costly marker and [External Service Tests](../playbooks/external_service_tests.md) for external API tests and authentication.
+See [Pytest Markers](../playbooks/pytest-markers.md) for the costly marker and [External Service Tests](../playbooks/external-service-tests.md) for external API tests and authentication.
 
 ### 6. Run package and repository checks
 

@@ -38,7 +38,7 @@ Keep `.PHONY` entries on one line by default.
 
 If the line needs to be split, do not group the entries. Write each `.PHONY` immediately before its target.
 
-For pytest marker usage, see [Pytest Markers](pytest_markers.md).
+For pytest marker usage, see [Pytest Markers](pytest-markers.md).
 
 ```make
 .PHONY: image_generation_provider_openai_test

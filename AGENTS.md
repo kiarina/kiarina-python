@@ -10,6 +10,7 @@
 - `mise.toml`
 - `.mise/tasks/`
 - `Makefile`
+- 下の「タスク一覧」と、着手するタスクの `tasks/` ファイル
 - 直近の 5 つの commit の commit message
 
 また、`docs/` 以下のファイルも、最低限ファイルパスのリストを把握しておいてください。
@@ -17,6 +18,25 @@
 
 コードの設計・追加・編集を行う場合、先に下記を把握してください。
 - https://github.com/kiarina/crystal-architecture
+
+### タスク管理の使い分け
+
+- `tasks/` — 未完了タスク。1 タスク 1 ファイルで、背景・やること・進捗・申し送りを
+  そのファイルに直接記載する
+- `docs/` — 設計知識、再利用する手順
+- `CHANGELOG.md` — PyPI にリリースする変更の記録
+- 完了した作業そのものの経緯は git 履歴を正典とし、専用のログファイルは作りません
+
+運用ルール:
+
+- タスクに着手したら、進捗・未検証の懸念・踏んだ落とし穴・次の一手を該当の
+  `tasks/` ファイルへ直接追記する
+- 新しいタスク（今すぐ着手しない将来候補も含む）は `tasks/` にファイルを作り、
+  下の「タスク一覧」へ 1 行追記する
+- **タスクが完了したら、再利用する知見を該当する `docs/` へ、リリースが必要な変更を
+  `CHANGELOG.md` へ移した上で、タスクファイルを削除し、「タスク一覧」から行を消す。**
+  削除したファイルの全文は git 履歴で辿れるため、転記は要点だけで良い
+- ファイル名は kebab-case とし、内容は `docs/` と同じく英語で記述する
 
 ## 実装前にユーザーの確認を得る
 
@@ -33,19 +53,19 @@ pydantic-settings に関連したタスクを行う場合は、先に下記を�
 - https://github.com/kiarina/pydantic-settings-manager
 
 依存パッケージを追加・変更する場合、または `{mod}_impl.{name}` 以下を追加・変更する場合は、先に下記を把握してください。
-- docs/concepts/implementation_optional_dependencies.md
+- docs/concepts/implementation-optional-dependencies.md
 
 新しいパッケージを追加する際は、作業前に下記を把握してください。
-- docs/runbooks/add_new_package.md
+- docs/runbooks/add-new-package.md
 
 Makefile を追加・変更する場合は、作業前に下記を把握してください。
-- docs/playbooks/development_flow.md
+- docs/playbooks/development-flow.md
 
 コストがかかる pytest、またはモデルなどの重いファイルの download を伴う pytest を書く場合は、作業前に下記を把握してください。
-- docs/playbooks/pytest_markers.md
+- docs/playbooks/pytest-markers.md
 
 外部サービス（ローカルサーバーや外部 API）に依存する pytest を書く場合は、作業前に下記を把握してください。
-- docs/playbooks/external_service_tests.md
+- docs/playbooks/external-service-tests.md
 
 リリースする際は、作業前に下記を把握してください。
 - docs/runbooks/release.md
@@ -64,15 +84,16 @@ Makefile を追加・変更する場合は、作業前に下記を把握して�
 - 名前から役割を推測できる場合は、docstring を書かないでください。
 - フィールドには docstring を書かないでください。Pydantic の公開クラスでは、フィールドに `title` と `description` を設定してください。
 - 各パッケージの README は、下記の資料にしたがって書いてください
-  - docs/playbooks/package_readme_structure.md
+  - docs/playbooks/package-readme-structure.md
   - パッケージの README は、他と異なり、公開 API のシグネチャを全て記載するなど、README のみでパッケージの使い方が理解できるようにする必要があります
 
 ## ドキュメントの運用
 
 - ルートと各パッケージの README は `README.md` だけを作成し、英語で記述してください。
 - `README.ja.md` など、言語別の README は作成しません。
-- `docs/` 以下のドキュメントも英語だけで記述してください。
+- `docs/` と `tasks/` 以下のドキュメントも英語だけで記述してください。
 - ユーザーとの相談や内容の検討は日本語で行って構いませんが、リポジトリへ残すドキュメントは英語を正典とします。
+- `docs/` と `tasks/` のファイル名は kebab-case で統一してください。
 
 ## 変更後の確認
 
@@ -93,6 +114,14 @@ mise run test <package_name>
 ```bash
 make test
 ```
+
+## コミットするとき
+
+**次の作業は別の担当者に引き継がれる**前提で作業してください。コミットの際、次に着手する人へ
+追加で伝えるべきことがあれば該当する `tasks/` ファイルに記載してください（未検証の懸念・
+踏んだ落とし穴・次の一手など）。今すぐ着手しない作業候補は新しい `tasks/` ファイル、
+仕組みとして残す価値のある知見は該当する `docs/` へ振り分け、各 `tasks/` ファイルは
+未完了の作業に保ちます。
 
 ## commit message と Pull Request タイトルの書き方
 
@@ -124,3 +153,21 @@ mise run test-assets:download
 ```
 
 `./tests/assets/` は、各パッケージのテストで共有します。
+
+## タスク一覧
+
+各タスクの内容は `tasks/` のファイルだけに書き、ここはポインタ（1 ファイル 1 行）に保ちます。
+ファイルの追加・削除のたびに、この一覧を更新してください。
+
+### 次に着手・進行中
+
+- [Upgrade Pillow to 12.3](tasks/pillow-12-upgrade.md)
+  — kiari が Pillow 12.3 以降を解決できるよう、data-builder と image の Pillow 要件を上げる
+
+### 相談待ち（合意してから着手する）
+
+（なし）
+
+### 待機中（着手すると決めたら「次に着手・進行中」へ移す）
+
+（なし）
