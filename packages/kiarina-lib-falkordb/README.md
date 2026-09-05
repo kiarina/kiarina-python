@@ -11,7 +11,7 @@
 
 | Package | Version | License |
 | --- | --- | --- |
-| [kiarina-falkordb](https://github.com/kiarina/falkordb-py) | `>=1.3.0` | [MIT](https://github.com/kiarina/falkordb-py/blob/main/LICENSE) |
+| [FalkorDB](https://github.com/FalkorDB/falkordb-py) | `>=1.7.1` | [MIT](https://github.com/FalkorDB/falkordb-py/blob/master/LICENSE) |
 | [Pydantic Settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
 | [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
 | [redis-py](https://github.com/redis/redis-py) | `>=6.4.0` | [MIT](https://github.com/redis/redis-py/blob/master/LICENSE) |

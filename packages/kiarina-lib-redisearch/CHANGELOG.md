@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Type-check cleanly against redis-py 8.x, whose `hset()` and `hgetall()` signatures are stricter.
+
 ## [2.17.0] - 2026-07-26
 
 ### Changed

@@ -1,5 +1,7 @@
-from collections.abc import Awaitable
-from typing import Any, Literal, overload
+from collections.abc import Awaitable, Mapping
+from typing import Any, Literal, cast, overload
+
+from redis.typing import EncodableT, FieldT
 
 from ..schemas.redisearch_context import RedisearchContext
 from ..utils.marshal_mappings import marshal_mappings
@@ -43,13 +45,16 @@ def set(
 
     key = get_key(ctx, id)
 
-    mapping = marshal_mappings(schema=ctx.schema, mapping=mapping)
+    marshaled = cast(
+        "Mapping[FieldT, EncodableT]",
+        marshal_mappings(schema=ctx.schema, mapping=mapping),
+    )
 
     def _sync() -> None:
-        ctx.redis.hset(key, mapping=mapping)
+        ctx.redis.hset(key, mapping=marshaled)
 
     async def _async() -> None:
-        coro = ctx.redis_async.hset(key, mapping=mapping)
+        coro = ctx.redis_async.hset(key, mapping=marshaled)
         assert not isinstance(coro, int)
         await coro
 

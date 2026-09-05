@@ -13,9 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-base**: Rename the `RunContext` and `RunContextSettings` `time_zone` field to `timezone`, rename `KIARINA_AGI_RUN_CONTEXT_TIME_ZONE` to `KIARINA_AGI_RUN_CONTEXT_TIMEZONE`, and reject unknown `RunContext` fields.
 
 ### Changed
+- **kiarina-lib-falkordb**: Depend on the upstream `falkordb` client (`>=1.7.1`) instead of the `kiarina-falkordb` fork, which was a temporary bridge until upstream supported newer redis-py releases. This raises the required redis-py to 8.x.
 - **kiarina-agi-audio**, **kiarina-agi-image**, and **kiarina-agi-text**: Support OpenAI Python 3.x.
 - **kiarina-agi-image** and **kiarina-agi-video**: Support OpenCV Python 5.x.
 - **kiarina-agi-text**: Support Anthropic Python 1.x.
+
+### Fixed
+- **kiarina-lib-redisearch**: Type-check cleanly against redis-py 8.x, whose `hset()` and `hgetall()` signatures are stricter.
 
 ## [2.27.0] - 2026-08-21
 

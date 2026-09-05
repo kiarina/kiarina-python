@@ -1,5 +1,5 @@
 from collections.abc import Awaitable
-from typing import Literal, overload
+from typing import Literal, cast, overload
 
 from ..schemas.document import Document
 from ..schemas.redisearch_context import RedisearchContext
@@ -45,13 +45,13 @@ def get(
     def _sync() -> Document | None:
         mapping = ctx.redis.hgetall(key)
         assert isinstance(mapping, dict)
-        return _after(mapping)
+        return _after(cast("dict[bytes, bytes]", mapping))
 
     async def _async() -> Document | None:
         coro = ctx.redis_async.hgetall(key)
         assert not isinstance(coro, dict)
         mapping = await coro
-        return _after(mapping)
+        return _after(cast("dict[bytes, bytes]", mapping))
 
     if mode == "sync":
         return _sync()
