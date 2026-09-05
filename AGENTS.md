@@ -161,8 +161,7 @@ mise run test-assets:download
 
 ### 次に着手・進行中
 
-- [Upgrade Pillow to 12.3](tasks/pillow-12-upgrade.md)
-  — kiari が Pillow 12.3 以降を解決できるよう、data-builder と image の Pillow 要件を上げる
+（なし）
 
 ### 相談待ち（合意してから着手する）
 
