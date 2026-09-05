@@ -1388,7 +1388,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.27.0"
+version = "2.28.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1472,7 +1472,7 @@ provides-extras = ["all"]
 
 [[package]]
 name = "kiarina-agi-audio"
-version = "2.15.0"
+version = "2.28.0"
 source = { editable = "packages/kiarina-agi-audio" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1594,7 +1594,7 @@ provides-extras = ["all", "asr-provider-google", "asr-provider-openai", "audio-e
 
 [[package]]
 name = "kiarina-agi-base"
-version = "2.7.0"
+version = "2.28.0"
 source = { editable = "packages/kiarina-agi-base" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1799,7 +1799,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-image"
-version = "2.21.1"
+version = "2.28.0"
 source = { editable = "packages/kiarina-agi-image" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1934,7 +1934,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-text"
-version = "2.22.1"
+version = "2.28.0"
 source = { editable = "packages/kiarina-agi-text" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -2081,7 +2081,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-video"
-version = "2.15.0"
+version = "2.28.0"
 source = { editable = "packages/kiarina-agi-video" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -2232,7 +2232,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-falkordb"
-version = "2.3.1"
+version = "2.28.0"
 source = { editable = "packages/kiarina-lib-falkordb" }
 dependencies = [
     { name = "falkordb" },
@@ -2401,7 +2401,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-lib-redisearch"
-version = "2.17.0"
+version = "2.28.0"
 source = { editable = "packages/kiarina-lib-redisearch" }
 dependencies = [
     { name = "numpy" },

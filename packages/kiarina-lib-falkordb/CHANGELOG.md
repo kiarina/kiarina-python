@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.28.0] - 2026-09-05
+
 ### Changed
 - Depend on the upstream `falkordb` client (`>=1.7.1`) instead of the `kiarina-falkordb` fork, which was a temporary bridge until upstream supported newer redis-py releases. This raises the required redis-py to 8.x.
 

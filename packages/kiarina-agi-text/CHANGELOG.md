@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.28.0] - 2026-09-05
+
 ### Changed
 - Support OpenAI Python 3.x.
 - Support Anthropic Python 1.x.

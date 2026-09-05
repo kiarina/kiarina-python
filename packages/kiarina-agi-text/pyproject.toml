@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-text"
-version = "2.22.1"
+version = "2.28.0"
 description = "Chat and text embedding abstractions for AI agents"
 readme = "README.md"
 license = "MIT"
