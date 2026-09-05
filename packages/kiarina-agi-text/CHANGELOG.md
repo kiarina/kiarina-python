@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Support OpenAI Python 3.x.
+- Support Anthropic Python 1.x.
 
 ## [2.22.1] - 2026-08-16
 

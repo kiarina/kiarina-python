@@ -29,7 +29,7 @@
 
 | Package | Version | License | Extras |
 | --- | --- | --- | --- |
-| [anthropic](https://github.com/anthropics/anthropic-sdk-python) | `>=0.84.0,<1` | [MIT](https://github.com/anthropics/anthropic-sdk-python/blob/main/LICENSE) | `chat-provider-lc-anthropic`<br>`chat-provider-lc-anthropic-vertex` |
+| [anthropic](https://github.com/anthropics/anthropic-sdk-python) | `>=0.84.0,<2` | [MIT](https://github.com/anthropics/anthropic-sdk-python/blob/main/LICENSE) | `chat-provider-lc-anthropic`<br>`chat-provider-lc-anthropic-vertex` |
 | [google-genai](https://github.com/googleapis/python-genai) | `>=1.65.0,<3` | [Apache-2.0](https://github.com/googleapis/python-genai/blob/main/LICENSE) | `chat-provider-lc-google-genai`<br>`text-embedding-provider-google` |
 | [kiarina-lib-google](https://pypi.org/project/kiarina-lib-google/) | `>=2.3.1` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) | `chat-provider-lc-anthropic-vertex`<br>`chat-provider-lc-google-genai`<br>`text-embedding-provider-google` |
 | [kiarina-lib-openai](https://pypi.org/project/kiarina-lib-openai/) | `>=2.3.1` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) | `chat-provider-lc-openai`<br>`text-embedding-provider-openai` |

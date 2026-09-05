@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **kiarina-agi-audio**, **kiarina-agi-image**, and **kiarina-agi-text**: Support OpenAI Python 3.x.
 - **kiarina-agi-image** and **kiarina-agi-video**: Support OpenCV Python 5.x.
+- **kiarina-agi-text**: Support Anthropic Python 1.x.
 
 ## [2.27.0] - 2026-08-21
 
