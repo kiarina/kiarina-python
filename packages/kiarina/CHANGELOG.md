@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- **kiarina-lib-firebase-rtdb**: `watch_data` yields the whole value at the path each time it changes, instead of the raw `put` and `patch` events, and `DataChangeEvent` is removed. Deletions are reflected in the next value, the value is `None` while the path does not exist, unchanged values (such as the snapshot resent on every reconnect) are skipped, and each value is an independent copy.
+
 ## [2.28.1] - 2026-09-14
 
 ### Fixed

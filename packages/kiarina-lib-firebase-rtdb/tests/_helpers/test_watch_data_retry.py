@@ -11,7 +11,7 @@ from kiarina.lib.firebase import (
     Token,
     TokenManager,
 )
-from kiarina.lib.firebase_rtdb import DataChangeEvent, settings_manager
+from kiarina.lib.firebase_rtdb import settings_manager
 from kiarina.lib.firebase_rtdb._helpers import watch_data as watch_data_module
 
 _TOKEN = Token(
@@ -22,9 +22,10 @@ _TOKEN = Token(
 watch_data = watch_data_module.watch_data
 
 _AuthRevokedError = watch_data_module._AuthRevokedError
+_StreamEvent = watch_data_module._StreamEvent
 
 # A scripted stream connection: events to emit, then an optional error to raise.
-_Connection = tuple[list[DataChangeEvent], Exception | None]
+_Connection = tuple[list[_StreamEvent], Exception | None]
 
 
 @pytest.fixture(autouse=True)
@@ -76,7 +77,7 @@ def _install_stream(
         path: str,
         token_manager: Any,
         stop_event: Any = None,
-    ) -> AsyncIterator[DataChangeEvent]:
+    ) -> AsyncIterator[_StreamEvent]:
         refresh_counts.append(token_manager.refresh_count)
 
         if not remaining:
@@ -94,14 +95,14 @@ def _install_stream(
     return refresh_counts
 
 
-def _event(data: str) -> DataChangeEvent:
-    return DataChangeEvent(event_type="put", path="/", data=data)
+def _event(data: str) -> _StreamEvent:
+    return _StreamEvent(event_type="put", path="/", data=data)
 
 
-async def _collect(token_manager: TokenManager) -> list[DataChangeEvent]:
+async def _collect(token_manager: TokenManager) -> list[Any]:
     return [
-        event
-        async for event in watch_data(
+        value
+        async for value in watch_data(
             "https://db.example.com", "/p", token_manager=token_manager
         )
     ]
@@ -121,7 +122,7 @@ async def test_auth_revoked_refreshes_and_reconnects(
 
     events = await _collect(token_manager)
 
-    assert [event.data for event in events] == ["first", "second"]
+    assert events == ["first", "second"]
     assert fake.refresh_count == 1
     # The reconnect happens only after the refresh.
     assert refresh_counts == [0, 1]
@@ -141,7 +142,7 @@ async def test_refresh_failure_is_retried(monkeypatch: pytest.MonkeyPatch) -> No
 
     events = await _collect(token_manager)
 
-    assert [event.data for event in events] == ["first", "second"]
+    assert events == ["first", "second"]
     assert fake.refresh_count == 2
 
 
@@ -179,7 +180,7 @@ async def test_network_error_is_retried(monkeypatch: pytest.MonkeyPatch) -> None
 
     events = await _collect(token_manager)
 
-    assert [event.data for event in events] == ["first"]
+    assert events == ["first"]
     assert fake.refresh_count == 0
 
 
@@ -198,7 +199,7 @@ async def test_auth_revoked_without_events_backs_off(
     with caplog.at_level(logging.WARNING, logger="kiarina.lib.firebase_rtdb"):
         events = await _collect(token_manager)
 
-    assert [event.data for event in events] == ["first"]
+    assert events == ["first"]
     assert any(
         "Auth revoked before any event" in record.message for record in caplog.records
     )

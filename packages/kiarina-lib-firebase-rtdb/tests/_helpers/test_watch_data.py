@@ -1,7 +1,8 @@
 import asyncio
+from typing import Any
 
 from kiarina.lib.firebase import TokenManager
-from kiarina.lib.firebase_rtdb import DataChangeEvent, watch_data
+from kiarina.lib.firebase_rtdb import watch_data
 
 
 async def test_unauthorized(database_url: str, token_manager: TokenManager) -> None:
@@ -28,23 +29,22 @@ async def test_unauthorized(database_url: str, token_manager: TokenManager) -> N
 async def test_happy_path(
     database_url: str, user_id: str, token_manager: TokenManager
 ) -> None:
-    events: list[DataChangeEvent] = []
+    values: list[Any] = []
     stop_event = asyncio.Event()
 
     async def _task() -> None:
-        nonlocal events
+        nonlocal values
 
-        async for event in watch_data(
+        async for value in watch_data(
             database_url,
             f"/posts/{user_id}",
             stop_event=stop_event,
             token_manager=token_manager,
         ):
-            assert event.event_type == "put"
-            assert isinstance(event.data, dict)
-            assert event.data.get("content") == "hello"
+            assert isinstance(value, dict)
+            assert value.get("content") == "hello"
 
-            events.append(event)
+            values.append(value)
 
     watch_task = asyncio.create_task(_task())
 
@@ -65,4 +65,4 @@ async def test_happy_path(
         except asyncio.CancelledError:
             pass
 
-    assert len(events) > 0
+    assert len(values) > 0

@@ -26,15 +26,13 @@ async def main() -> None:
     print(f"Starting to watch: {database_url}{watch_path}")
     print("Press Ctrl+C to stop\n")
 
-    async for event in watch_data(
+    async for value in watch_data(
         database_url,
         watch_path,
         token_manager=token_manager,
     ):
         print("=" * 60)
-        print(f"Event Type: {event.event_type}")
-        print(f"Path: {event.path}")
-        print(f"Data: {event.data}")
+        print(f"Value: {value}")
         print("=" * 60)
 
 

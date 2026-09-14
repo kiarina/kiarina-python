@@ -32,7 +32,7 @@ pip install kiarina-lib-firebase-rtdb
 - **Updating Data**
   Writes a multi-path update, and deletes keys by sending `None`.
 - **Watching Data Changes**
-  Receives `put` and `patch` events through Server-Sent Events.
+  Yields the current value of a path each time it changes, kept in sync from the Server-Sent Events stream.
 - **Recovering the Stream**
   Refreshes the ID token after authentication revocation and reconnects with exponential backoff after network errors and token refresh failures.
 - **Stopping the Stream**
@@ -108,20 +108,22 @@ await update_data(
 
 ### Watching Data Changes
 
-`watch_data` yields `put` events for complete replacements and `patch` events for partial updates.
+`watch_data` yields the whole value at the path, in the same shape `get_data` returns, each time it changes. It applies the stream's `put` and `patch` events to a local copy, so deletions are reflected too: a removed child disappears from the next value, and the value is `None` while the path does not exist.
 
 ```python
 from kiarina.lib.firebase_rtdb import watch_data
 
-async for event in watch_data(
+async for entries in watch_data(
     "https://your-project-default-rtdb.firebaseio.com",
-    "/agents/state",
+    "/agents/entries",
     token_manager=token_manager,
 ):
-    print(event.event_type, event.path, event.data)
+    unread = [key for key, entry in (entries or {}).items() if not entry.get("read")]
 ```
 
-When authentication is revoked, it calls `TokenManager.refresh()` and reconnects. An ID token lives for one hour, so this reconnect happens periodically for as long as the watch runs. Right after a reconnect Firebase sends the whole path as a `put`, so changes made while disconnected are reflected in that snapshot.
+The first value arrives once Firebase sends the initial snapshot. A value equal to the previous one is not yielded again. Each yielded value is an independent copy, so the caller may modify it.
+
+When authentication is revoked, it calls `TokenManager.refresh()` and reconnects. An ID token lives for one hour, so this reconnect happens periodically for as long as the watch runs. Right after a reconnect Firebase sends the whole path again, so changes made while disconnected are reflected in the next value.
 
 Network errors and transient token refresh failures use the configured exponential backoff. Errors that retrying cannot recover from, such as an invalidated refresh token, are propagated to the caller.
 
@@ -136,14 +138,14 @@ from kiarina.lib.firebase_rtdb import watch_data
 
 stop_event = asyncio.Event()
 
-async for event in watch_data(
+async for value in watch_data(
     "https://your-project-default-rtdb.firebaseio.com",
     "/agents/state",
     stop_event=stop_event,
     token_manager=token_manager,
 ):
-    print(event.data)
-    if event.data == "stop":
+    print(value)
+    if value == "stop":
         stop_event.set()
 ```
 
@@ -224,7 +226,6 @@ export KIARINA_LIB_FIREBASE_RTDB_RETRY_DELAY_MULTIPLIER=2.0
 
 ```python
 from kiarina.lib.firebase_rtdb import (
-    DataChangeEvent,
     RTDBQuery,
     RTDBSettings,
     RTDBStreamCancelledError,
@@ -306,10 +307,10 @@ async def watch_data(
     *,
     stop_event: asyncio.Event | None = None,
     token_manager: TokenManager | None = None,
-) -> AsyncIterator[DataChangeEvent]: ...
+) -> AsyncIterator[Any]: ...
 ```
 
-Watches the specified path and yields data changes from the Firebase SSE stream.
+Watches the specified path and yields its whole value each time it changes, kept in sync from the Firebase SSE stream.
 
 **Parameters**
 
@@ -320,7 +321,7 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 
 **Yields**
 
-- `DataChangeEvent`: A `put` or `patch` data change
+- `Any`: The value at the path, in the same shape `get_data` returns, or `None` when the path does not exist. The first value is yielded after the initial snapshot arrives, a value equal to the previous one is skipped, and each value is an independent copy
 
 **Raises**
 
@@ -330,24 +331,6 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 - `FirebaseAPIError`: Token refresh fails with an error that retrying cannot recover from
 
 Network errors, HTTP error responses, and transient token refresh failures are retried internally. HTTP error responses are logged without the ID token. Other unexpected exceptions are propagated to the caller.
-
-#### `DataChangeEvent`
-
-```python
-@dataclass
-class DataChangeEvent:
-    event_type: Literal["put", "patch"]
-    path: str
-    data: Any
-```
-
-A data change received from Firebase Realtime Database.
-
-**Fields**
-
-- `event_type` (`Literal["put", "patch"]`): Event type
-- `path` (`str`): Relative path that changed
-- `data` (`Any`): Updated data
 
 #### `RTDBQuery`
 

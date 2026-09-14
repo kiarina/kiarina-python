@@ -159,14 +159,14 @@ async def test_watch_data_retries_without_logging_token(
     token_manager = cast(TokenManager, _FakeTokenManager())
 
     with caplog.at_level(logging.DEBUG, logger="kiarina.lib.firebase_rtdb"):
-        events = [
-            event
-            async for event in watch_data(
+        values = [
+            value
+            async for value in watch_data(
                 _DATABASE_URL, _PATH, token_manager=token_manager
             )
         ]
 
-    assert [event.data for event in events] == ["ok"]
+    assert values == ["ok"]
     assert any(str(status_code) in record.message for record in caplog.records)
     assert all(_SIGNATURE not in record.message for record in caplog.records)
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: `watch_data` yields the whole value at the path each time it changes, instead of the raw `put` and `patch` events. It applies the events to a local copy, so deleted children disappear from the next value, and the value is `None` while the path does not exist. The first value is yielded after the initial snapshot arrives, a value equal to the previous one is skipped (for example the snapshot Firebase resends on every reconnect), and each value is an independent copy the caller may modify
+
+### Removed
+- **BREAKING**: `DataChangeEvent`. `watch_data` no longer exposes the raw stream events
+
 ## [2.28.1] - 2026-09-14
 
 ### Fixed
