@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.30.1] - 2026-09-15
+
 ### Fixed
 - `update_data` applies the update to the given `RTDBMirror` before sending instead of after the response, and rolls back the parts it changed if the update fails. The stream can echo the write back before the response arrives, and `watch_data` then yielded the caller's own write as a change
 
