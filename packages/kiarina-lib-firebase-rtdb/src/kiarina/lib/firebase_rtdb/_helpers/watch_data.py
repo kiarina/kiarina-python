@@ -16,6 +16,7 @@ from .._exceptions.rtdb_stream_cancelled_error import RTDBStreamCancelledError
 from .._operations.resolve_token_manager import resolve_token_manager
 from .._schemas.data_change_event import DataChangeEvent
 from .._settings import settings_manager
+from .._utils.raise_for_status import raise_for_status
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +118,7 @@ async def _watch_stream(
         async with client.stream(
             "GET", url, params=params, headers=headers
         ) as response:
-            response.raise_for_status()
+            await raise_for_status(response, operation="watch")
 
             async for event in _parse_sse_stream(response, stop_event):
                 yield event

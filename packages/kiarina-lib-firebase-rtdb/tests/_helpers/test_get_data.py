@@ -31,8 +31,7 @@ async def test_happy_path(database_url: str, user_id: str, token: Token) -> None
 
 
 class _FakeResponse:
-    def raise_for_status(self) -> None:
-        return None
+    is_success = True
 
     def json(self) -> Any:
         return {}

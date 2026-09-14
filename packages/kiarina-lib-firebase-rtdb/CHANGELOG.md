@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- `httpx.HTTPStatusError` raised by `get_data`, `update_data`, and `watch_data`, and the warning `watch_data` logs before retrying, no longer contain the ID token. The error's message, `request`, and `response` omit the `auth` query parameter, and it no longer chains the original httpx error. It is still an `httpx.HTTPStatusError` with the same status code
+
 ## [2.27.0] - 2026-08-21
 
 ### Changed

@@ -6,6 +6,7 @@ from kiarina.lib.firebase import Token
 
 from .._operations.resolve_token import resolve_token
 from .._schemas.rtdb_query import RTDBQuery
+from .._utils.raise_for_status import raise_for_status
 
 
 async def get_data(
@@ -23,5 +24,5 @@ async def get_data(
 
     async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
         response = await client.get(url, params=params)
-        response.raise_for_status()
+        await raise_for_status(response, operation="get")
         return response.json()

@@ -12,7 +12,7 @@
 | Package | Version | License |
 | --- | --- | --- |
 | [HTTPX](https://github.com/encode/httpx) | `>=0.28.1` | [BSD-3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) |
-| [kiarina-lib-firebase](../kiarina-lib-firebase/) | `>=2.1.0` | [MIT](../../LICENSE) |
+| [kiarina-lib-firebase](../kiarina-lib-firebase/) | `>=2.27.0` | [MIT](../../LICENSE) |
 | [Pydantic](https://github.com/pydantic/pydantic) | `>=2.10.6` | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE) |
 | [Pydantic Settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
 | [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
@@ -155,9 +155,8 @@ Omitting `token` and `token_manager` uses the `TokenManager` of the `kiarina.lib
 kiarina.lib.firebase:
   configs:
     production:
-      project_id: production-project
       api_key: production-api-key
-      token_data_file_path: ~/.config/your-app/token.json
+      token_file_path: ~/.config/your-app/token.json
 
 kiarina.lib.firebase_rtdb:
   firebase_settings_key: production
@@ -264,7 +263,7 @@ Retrieves JSON data at the specified path.
 **Raises**
 
 - `ValueError`: The token is omitted and `token_manager_registry` cannot resolve a `TokenManager`
-- `httpx.HTTPStatusError`: The HTTP response indicates an error
+- `httpx.HTTPStatusError`: The HTTP response indicates an error. Its message, `request`, and `response` omit the `auth` query parameter that carries the ID token
 - `httpx.HTTPError`: The request fails
 
 #### `update_data`
@@ -295,7 +294,7 @@ Applies a multi-path update at the specified path.
 **Raises**
 
 - `ValueError`: The token is omitted and `token_manager_registry` cannot resolve a `TokenManager`
-- `httpx.HTTPStatusError`: The HTTP response indicates an error
+- `httpx.HTTPStatusError`: The HTTP response indicates an error. Its message, `request`, and `response` omit the `auth` query parameter that carries the ID token
 - `httpx.HTTPError`: The request fails
 
 #### `watch_data`
@@ -330,7 +329,7 @@ Watches the specified path and yields data changes from the Firebase SSE stream.
 - `InvalidRefreshTokenError`: The refresh token is no longer usable
 - `FirebaseAPIError`: Token refresh fails with an error that retrying cannot recover from
 
-Network errors and transient token refresh failures are retried internally. Other unexpected exceptions are propagated to the caller.
+Network errors, HTTP error responses, and transient token refresh failures are retried internally. HTTP error responses are logged without the ID token. Other unexpected exceptions are propagated to the caller.
 
 #### `DataChangeEvent`
 

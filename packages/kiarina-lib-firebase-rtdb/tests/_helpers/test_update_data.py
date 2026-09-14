@@ -20,11 +20,10 @@ def make_token(id_token: str = "id-token") -> Token:
 
 
 class _FakeResponse:
+    is_success = True
+
     def __init__(self, payload: Any) -> None:
         self._payload = payload
-
-    def raise_for_status(self) -> None:
-        return None
 
     def json(self) -> Any:
         return self._payload

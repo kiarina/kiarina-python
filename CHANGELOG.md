@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-lib-firebase-rtdb**: Keep the ID token out of the `httpx.HTTPStatusError` raised by `get_data`, `update_data`, and `watch_data`, and out of the warning `watch_data` logs before retrying. The error's message, `request`, and `response` omit the `auth` query parameter, and it no longer chains the original httpx error. It is still an `httpx.HTTPStatusError` with the same status code.
+
 ## [2.28.0] - 2026-09-05
 
 ### Changed (BREAKING)
