@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-lib-firebase-rtdb**: `update_data` applies the update to the given `RTDBMirror` before sending and rolls it back on failure, so `watch_data` no longer yields the caller's own write when the stream echoes it back before the response arrives.
+
 ## [2.30.0] - 2026-09-15
 
 ### Added

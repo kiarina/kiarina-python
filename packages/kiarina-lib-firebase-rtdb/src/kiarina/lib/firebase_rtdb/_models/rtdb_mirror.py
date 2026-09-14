@@ -1,6 +1,6 @@
 import copy
 import logging
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any, Literal, cast
 
 logger = logging.getLogger(__name__)
@@ -11,8 +11,8 @@ class RTDBMirror:
     A local copy of one Firebase Realtime Database path.
 
     `watch_data` binds it to the watched path and keeps it in sync with the stream.
-    `update_data` applies a successful update to it right away, so the caller reads its
-    own write without waiting for the stream to echo it back.
+    `update_data` applies an update to it before sending, and rolls it back if the update
+    fails, so the caller reads its own write without waiting for the stream to echo it back.
     """
 
     def __init__(self) -> None:
@@ -56,10 +56,13 @@ class RTDBMirror:
 
         return self._patch(parts, data)
 
-    def _apply_update(self, path: str, values: Mapping[str, Any]) -> None:
+    def _apply_update(self, path: str, values: Mapping[str, Any]) -> Callable[[], None]:
+        """Apply an update and return a function that rolls it back."""
+        previous: list[tuple[list[str], Any]] = []
+
         # Before the first snapshot there is nothing to update; the snapshot replaces it.
         if self._path is None or not self._synced:
-            return
+            return lambda: None
 
         base = _split_path(path)
 
@@ -67,8 +70,18 @@ class RTDBMirror:
             parts = base + _split_path(key)
 
             # Only the part of the update under the mirrored path is applied.
-            if parts[: len(self._path)] == self._path:
-                self._value, _ = _set(self._value, parts[len(self._path) :], value)
+            if parts[: len(self._path)] != self._path:
+                continue
+
+            relative = parts[len(self._path) :]
+            previous.append((relative, _get(self._value, relative)))
+            self._value, _ = _set(self._value, relative, value)
+
+        def _rollback() -> None:
+            for relative, old in reversed(previous):
+                self._value, _ = _set(self._value, relative, old)
+
+        return _rollback
 
     def _patch(self, parts: list[str], data: Mapping[str, Any]) -> bool:
         changed = False
@@ -85,6 +98,16 @@ class RTDBMirror:
 
 def _split_path(path: str) -> list[str]:
     return [part for part in path.split("/") if part]
+
+
+def _get(node: Any, parts: list[str]) -> Any:
+    for part in parts:
+        if not isinstance(node, (dict, list)):
+            return None
+
+        node = _as_dict(node).get(part)
+
+    return copy.deepcopy(node)
 
 
 def _set(node: Any, parts: list[str], data: Any) -> tuple[Any, bool]:

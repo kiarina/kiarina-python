@@ -139,3 +139,30 @@ async def test_failed_update_leaves_the_mirror(monkeypatch: pytest.MonkeyPatch) 
         )
 
     assert mirror.value == {"a": 1}
+
+
+async def test_the_mirror_has_the_update_before_the_response(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The stream can echo the write back before the response arrives."""
+    mirror = RTDBMirror()
+    mirror._bind("/p")
+    mirror._apply("put", "/", {"a": 1})
+    seen: list[Any] = []
+
+    class _ObservingClient(_FakeClient):
+        async def patch(self, url: str, **kwargs: Any) -> _FakeResponse:
+            seen.append(mirror.value)
+            return _FakeResponse(None)
+
+    monkeypatch.setattr(httpx, "AsyncClient", lambda **_: _ObservingClient([], None))
+
+    await update_data(
+        "https://example-rtdb.firebaseio.com",
+        "/p",
+        {"a": 2},
+        token=make_token(),
+        mirror=mirror,
+    )
+
+    assert seen == [{"a": 2}]

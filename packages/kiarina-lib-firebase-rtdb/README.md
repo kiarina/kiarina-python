@@ -127,7 +127,7 @@ The first value arrives once Firebase sends the initial snapshot. A value equal 
 
 ### Reading Your Own Writes
 
-Pass the same `RTDBMirror` to `watch_data` and `update_data`. `watch_data` binds the mirror to the watched path and keeps it in sync. `update_data` applies a successful update to it immediately, so `mirror.value` reflects the write before the stream echoes it back. The echo then changes nothing, so `watch_data` does not yield it again.
+Pass the same `RTDBMirror` to `watch_data` and `update_data`. `watch_data` binds the mirror to the watched path and keeps it in sync. `update_data` applies the update to it before sending, so `mirror.value` reflects the write before the stream echoes it back, even when the echo arrives before the response. The echo then changes nothing, so `watch_data` does not yield it again. If the update fails, the parts it changed are rolled back.
 
 ```python
 from kiarina.lib.firebase_rtdb import RTDBMirror, update_data, watch_data
@@ -312,7 +312,7 @@ Applies a multi-path update at the specified path.
 - `path` (`str`): Path the update is applied to
 - `values` (`Mapping[str, Any]`): Keys relative to `path` and their new values. `None` deletes the key
 - `token` (`Token | None`): Firebase token set. Resolved from `token_manager_registry` when omitted
-- `mirror` (`RTDBMirror | None`): Mirror to apply the update to after it succeeds. Only the part under the mirrored path is applied
+- `mirror` (`RTDBMirror | None`): Mirror to apply the update to before sending. Only the part under the mirrored path is applied, and it is rolled back if the update fails
 
 **Returns**
 
@@ -370,7 +370,7 @@ class RTDBMirror:
     def value(self) -> Any: ...
 ```
 
-A local copy of one Firebase Realtime Database path. `watch_data` binds it to the watched path and keeps it in sync, and `update_data` applies successful updates to it.
+A local copy of one Firebase Realtime Database path. `watch_data` binds it to the watched path and keeps it in sync, and `update_data` applies updates to it before sending and rolls them back on failure.
 
 **Properties**
 

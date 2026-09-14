@@ -180,3 +180,33 @@ def test_update_on_an_unbound_mirror_is_ignored() -> None:
     mirror._apply_update("/p", {"a": 1})
 
     assert mirror.value is None
+
+
+def test_rollback_restores_what_the_update_changed() -> None:
+    mirror = _synced({"a": {"x": 1}, "b": 2})
+
+    rollback = mirror._apply_update("/p", {"a/x": 10, "a/y": 20, "b": None, "c": 3})
+    assert mirror.value == {"a": {"x": 10, "y": 20}, "c": 3}
+
+    rollback()
+    assert mirror.value == {"a": {"x": 1}, "b": 2}
+
+
+def test_rollback_restores_overlapping_keys_in_reverse() -> None:
+    mirror = _synced({"a": {"x": 1}})
+
+    rollback = mirror._apply_update("/p", {"a": {"y": 2}, "a/z": 3})
+    assert mirror.value == {"a": {"y": 2, "z": 3}}
+
+    rollback()
+    assert mirror.value == {"a": {"x": 1}}
+
+
+def test_rollback_keeps_stream_changes_to_other_paths() -> None:
+    mirror = _synced({"a": 1})
+
+    rollback = mirror._apply_update("/p", {"a": 2})
+    mirror._apply("put", "/b", 3)
+    rollback()
+
+    assert mirror.value == {"a": 1, "b": 3}

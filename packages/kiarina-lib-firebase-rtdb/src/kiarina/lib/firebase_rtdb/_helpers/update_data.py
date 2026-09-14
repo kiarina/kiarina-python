@@ -21,11 +21,18 @@ async def update_data(
     url = f"{database_url.rstrip('/')}{path}.json"
     params = {"auth": (await resolve_token(token)).id_token}
 
-    async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-        response = await client.patch(url, params=params, json=dict(values))
-        await raise_for_status(response, operation="update")
+    # Apply before sending: the stream can echo the write back before the response arrives.
+    rollback = mirror._apply_update(path, values) if mirror is not None else None
 
-    if mirror is not None:
-        mirror._apply_update(path, values)
+    try:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+            response = await client.patch(url, params=params, json=dict(values))
+            await raise_for_status(response, operation="update")
+
+    except BaseException:
+        if rollback is not None:
+            rollback()
+
+        raise
 
     return response.json()
