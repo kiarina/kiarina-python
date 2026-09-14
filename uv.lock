@@ -1388,7 +1388,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.29.0"
+version = "2.30.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -2319,7 +2319,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-firebase-rtdb"
-version = "2.29.0"
+version = "2.30.0"
 source = { editable = "packages/kiarina-lib-firebase-rtdb" }
 dependencies = [
     { name = "httpx" },
