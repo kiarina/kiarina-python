@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-lib-firebase-rtdb**: `RTDBMirror`, shared through a new optional `mirror` argument of `watch_data` and `update_data`, so a successful update is visible locally before the stream echoes it back, and the echo is not yielded again.
+
 ## [2.29.0] - 2026-09-15
 
 ### Changed (BREAKING)

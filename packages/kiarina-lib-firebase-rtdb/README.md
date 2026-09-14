@@ -33,6 +33,8 @@ pip install kiarina-lib-firebase-rtdb
   Writes a multi-path update, and deletes keys by sending `None`.
 - **Watching Data Changes**
   Yields the current value of a path each time it changes, kept in sync from the Server-Sent Events stream.
+- **Reading Your Own Writes**
+  Shares an `RTDBMirror` between `watch_data` and `update_data`, so a successful update is visible locally before the stream echoes it back.
 - **Recovering the Stream**
   Refreshes the ID token after authentication revocation and reconnects with exponential backoff after network errors and token refresh failures.
 - **Stopping the Stream**
@@ -122,6 +124,27 @@ async for entries in watch_data(
 ```
 
 The first value arrives once Firebase sends the initial snapshot. A value equal to the previous one is not yielded again. Each yielded value is an independent copy, so the caller may modify it.
+
+### Reading Your Own Writes
+
+Pass the same `RTDBMirror` to `watch_data` and `update_data`. `watch_data` binds the mirror to the watched path and keeps it in sync. `update_data` applies a successful update to it immediately, so `mirror.value` reflects the write before the stream echoes it back. The echo then changes nothing, so `watch_data` does not yield it again.
+
+```python
+from kiarina.lib.firebase_rtdb import RTDBMirror, update_data, watch_data
+
+mirror = RTDBMirror()
+
+async for entries in watch_data(DATABASE_URL, "/agents/entries", mirror=mirror):
+    ...
+
+# Elsewhere, while the watch runs
+await update_data(DATABASE_URL, "/agents/entries", {"01ABC/read": True}, mirror=mirror)
+entries = mirror.value  # already has read=True
+```
+
+Only the part of an update under the mirrored path is applied. An update before the first snapshot is not applied, because the snapshot replaces the value anyway.
+
+### Recovering the Stream
 
 When authentication is revoked, it calls `TokenManager.refresh()` and reconnects. An ID token lives for one hour, so this reconnect happens periodically for as long as the watch runs. Right after a reconnect Firebase sends the whole path again, so changes made while disconnected are reflected in the next value.
 
@@ -226,6 +249,7 @@ export KIARINA_LIB_FIREBASE_RTDB_RETRY_DELAY_MULTIPLIER=2.0
 
 ```python
 from kiarina.lib.firebase_rtdb import (
+    RTDBMirror,
     RTDBQuery,
     RTDBSettings,
     RTDBStreamCancelledError,
@@ -276,6 +300,7 @@ async def update_data(
     values: Mapping[str, Any],
     *,
     token: Token | None = None,
+    mirror: RTDBMirror | None = None,
 ) -> Any: ...
 ```
 
@@ -287,6 +312,7 @@ Applies a multi-path update at the specified path.
 - `path` (`str`): Path the update is applied to
 - `values` (`Mapping[str, Any]`): Keys relative to `path` and their new values. `None` deletes the key
 - `token` (`Token | None`): Firebase token set. Resolved from `token_manager_registry` when omitted
+- `mirror` (`RTDBMirror | None`): Mirror to apply the update to after it succeeds. Only the part under the mirrored path is applied
 
 **Returns**
 
@@ -307,6 +333,7 @@ async def watch_data(
     *,
     stop_event: asyncio.Event | None = None,
     token_manager: TokenManager | None = None,
+    mirror: RTDBMirror | None = None,
 ) -> AsyncIterator[Any]: ...
 ```
 
@@ -318,6 +345,7 @@ Watches the specified path and yields its whole value each time it changes, kept
 - `path` (`str`): Path of the data to watch
 - `stop_event` (`asyncio.Event | None`): Event that requests the watch to stop
 - `token_manager` (`TokenManager | None`): Instance that manages the token set. Resolved from `token_manager_registry` when omitted
+- `mirror` (`RTDBMirror | None`): Mirror to keep in sync with the stream. A new one is used when omitted
 
 **Yields**
 
@@ -325,12 +353,28 @@ Watches the specified path and yields its whole value each time it changes, kept
 
 **Raises**
 
-- `ValueError`: The token is omitted and `token_manager_registry` cannot resolve a `TokenManager`
+- `ValueError`: The token is omitted and `token_manager_registry` cannot resolve a `TokenManager`, or `mirror` is already bound to another path
 - `RTDBStreamCancelledError`: Firebase cancels the stream
 - `InvalidRefreshTokenError`: The refresh token is no longer usable
 - `FirebaseAPIError`: Token refresh fails with an error that retrying cannot recover from
 
 Network errors, HTTP error responses, and transient token refresh failures are retried internally. HTTP error responses are logged without the ID token. Other unexpected exceptions are propagated to the caller.
+
+#### `RTDBMirror`
+
+```python
+class RTDBMirror:
+    def __init__(self) -> None: ...
+
+    @property
+    def value(self) -> Any: ...
+```
+
+A local copy of one Firebase Realtime Database path. `watch_data` binds it to the watched path and keeps it in sync, and `update_data` applies successful updates to it.
+
+**Properties**
+
+- `value` (`Any`): The current value, or `None` before the first snapshot and while the path does not exist. Each access returns an independent copy
 
 #### `RTDBQuery`
 

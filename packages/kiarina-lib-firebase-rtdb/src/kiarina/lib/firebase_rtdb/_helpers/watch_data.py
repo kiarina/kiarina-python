@@ -1,5 +1,4 @@
 import asyncio
-import copy
 import json
 import logging
 from collections.abc import AsyncIterator
@@ -14,13 +13,12 @@ from kiarina.lib.firebase import (
 )
 
 from .._exceptions.rtdb_stream_cancelled_error import RTDBStreamCancelledError
+from .._models.rtdb_mirror import RTDBMirror
 from .._operations.resolve_token_manager import resolve_token_manager
 from .._settings import settings_manager
 from .._utils.raise_for_status import raise_for_status
 
 logger = logging.getLogger(__name__)
-
-_UNSET: Any = object()
 
 
 async def watch_data(
@@ -29,103 +27,32 @@ async def watch_data(
     *,
     stop_event: asyncio.Event | None = None,
     token_manager: TokenManager | None = None,
+    mirror: RTDBMirror | None = None,
 ) -> AsyncIterator[Any]:
     logger.debug(f"Starting watch on {path} in {database_url}")
     token_manager = resolve_token_manager(token_manager)
 
-    snapshot = _Snapshot()
-    last_yielded: Any = _UNSET
+    if mirror is None:
+        mirror = RTDBMirror()
+
+    mirror._bind(path)
+    yielded = False
 
     async for event in _watch_events(database_url, path, token_manager, stop_event):
-        snapshot.apply(event)
+        changed = mirror._apply(event.event_type, event.path, event.data)
 
-        if not snapshot.synced or snapshot.value == last_yielded:
+        # A write already applied by update_data comes back unchanged and is skipped.
+        if not mirror._synced or (yielded and not changed):
             continue
 
-        last_yielded = copy.deepcopy(snapshot.value)
-        yield copy.deepcopy(last_yielded)
-
-
-# --------------------------------------------------
-# Snapshot
-# --------------------------------------------------
+        yielded = True
+        yield mirror.value
 
 
 class _StreamEvent(NamedTuple):
     event_type: Literal["put", "patch"]
     path: str
     data: Any
-
-
-class _Snapshot:
-    def __init__(self) -> None:
-        # Firebase sends the whole path as a put at "/" on every connect.
-        self.synced = False
-        self.value: Any = None
-
-    def apply(self, event: _StreamEvent) -> None:
-        parts = _split_path(event.path)
-
-        if event.event_type == "put":
-            if not parts:
-                self.value = _normalize(copy.deepcopy(event.data))
-                self.synced = True
-            else:
-                self.value = _set(self.value, parts, event.data)
-            return
-
-        if not isinstance(event.data, dict):
-            logger.warning(f"Patch data is not a dict: {event.data!r}")
-            return
-
-        # Each patch key is a path relative to the event path.
-        for key, value in event.data.items():
-            self.value = _set(self.value, parts + _split_path(key), value)
-
-
-def _split_path(path: str) -> list[str]:
-    return [part for part in path.split("/") if part]
-
-
-def _set(node: Any, parts: list[str], data: Any) -> Any:
-    if not parts:
-        return _normalize(copy.deepcopy(data))
-
-    # Writing a child turns a leaf into an object, as in Firebase.
-    children = _as_dict(node)
-    key, rest = parts[0], parts[1:]
-    child = _set(children.get(key), rest, data)
-
-    if child is None:
-        children.pop(key, None)
-    else:
-        children[key] = child
-
-    # Firebase does not store empty objects, so an object without children is gone.
-    return children or None
-
-
-def _as_dict(node: Any) -> dict[str, Any]:
-    if isinstance(node, dict):
-        return cast(dict[str, Any], node)
-
-    # Firebase returns objects with sequential integer keys as arrays.
-    if isinstance(node, list):
-        return {str(i): v for i, v in enumerate(node) if v is not None}
-
-    return {}
-
-
-def _normalize(data: Any) -> Any:
-    if isinstance(data, dict):
-        children = {
-            k: v
-            for k, v in ((k, _normalize(v)) for k, v in data.items())
-            if v is not None
-        }
-        return children or None
-
-    return data
 
 
 # --------------------------------------------------

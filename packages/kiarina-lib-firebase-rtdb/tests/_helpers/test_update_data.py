@@ -6,7 +6,8 @@ import httpx
 import pytest
 
 from kiarina.lib.firebase import Token
-from kiarina.lib.firebase_rtdb import update_data
+from kiarina.lib.firebase_rtdb import RTDBMirror, update_data
+from kiarina.lib.firebase_rtdb._helpers import update_data as update_data_module
 
 
 def make_token(id_token: str = "id-token") -> Token:
@@ -93,3 +94,48 @@ async def test_none_values_are_kept_for_deletion(calls: list[dict[str, Any]]) ->
     )
 
     assert calls[0]["json"] == {"01A": None}
+
+
+async def test_applies_the_update_to_the_mirror(calls: list[dict[str, Any]]) -> None:
+    mirror = RTDBMirror()
+    mirror._bind("/users/u1/chats/c1/entries")
+    mirror._apply("put", "/", {"01A": {"read": False}, "01B": {"read": False}})
+
+    await update_data(
+        "https://example-rtdb.firebaseio.com",
+        "/users/u1/chats/c1/entries",
+        {"01A/read": True},
+        token=make_token(),
+        mirror=mirror,
+    )
+
+    assert mirror.value == {"01A": {"read": True}, "01B": {"read": False}}
+
+
+async def test_failed_update_leaves_the_mirror(monkeypatch: pytest.MonkeyPatch) -> None:
+    class _FailingResponse(_FakeResponse):
+        is_success = False
+
+    class _FailingClient(_FakeClient):
+        async def patch(self, url: str, **kwargs: Any) -> _FakeResponse:
+            return _FailingResponse(None)
+
+    async def _raise(response: Any, *, operation: str) -> None:
+        raise RuntimeError("update failed")
+
+    monkeypatch.setattr(httpx, "AsyncClient", lambda **_: _FailingClient([], None))
+    monkeypatch.setattr(update_data_module, "raise_for_status", _raise)
+    mirror = RTDBMirror()
+    mirror._bind("/p")
+    mirror._apply("put", "/", {"a": 1})
+
+    with pytest.raises(RuntimeError, match="update failed"):
+        await update_data(
+            "https://example-rtdb.firebaseio.com",
+            "/p",
+            {"a": 2},
+            token=make_token(),
+            mirror=mirror,
+        )
+
+    assert mirror.value == {"a": 1}

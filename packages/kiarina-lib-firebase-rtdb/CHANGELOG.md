@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `RTDBMirror`, a local copy of one path. Pass the same instance to `watch_data` and `update_data` (both take a new optional `mirror` argument): `watch_data` keeps it in sync with the stream, and `update_data` applies a successful update to it immediately, so the caller reads its own write before the stream echoes it back. The echo changes nothing and is not yielded again
+
 ## [2.29.0] - 2026-09-15
 
 ### Changed
