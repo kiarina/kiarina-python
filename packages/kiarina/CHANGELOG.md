@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.31.0] - 2026-09-16
+
+### Added
+- **kiarina-agi-data**: Add a general-purpose `Memory` model and an in-memory `MemoryGraph` with permanent and decaying edges for working memory.
+
+### Changed (BREAKING)
+- **kiarina-agi-data**: Replace `History.embeddings` and its embedding management methods with `History.memory_graph`.
+
 ## [2.30.1] - 2026-09-15
 
 ### Fixed

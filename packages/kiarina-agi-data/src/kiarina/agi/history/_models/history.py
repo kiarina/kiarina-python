@@ -2,12 +2,6 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from kiarina.agi.embedding import (
-    Embedding,
-    EmbeddingID,
-    EmbeddingKind,
-    EmbeddingSpaceID,
-)
 from kiarina.agi.event import (
     Event,
     EventType,
@@ -17,6 +11,7 @@ from kiarina.agi.event import (
 from kiarina.agi.file import URIOrFilePath
 from kiarina.agi.file_info import FileID, FileInfo, Group, UniqueKey
 from kiarina.agi.file_info_pool import FileInfoPool
+from kiarina.agi.memory_graph import MemoryGraph
 from kiarina.agi.message import Message, MessageType, ToolCall
 from kiarina.agi.tool_info import ToolInfo, ToolName, ToolState
 
@@ -25,14 +20,14 @@ class History(BaseModel):
     events: list[Event] = Field(default_factory=list)
     file_infos: FileInfoPool = Field(default_factory=list)
     tool_infos: list[ToolInfo] = Field(default_factory=list)
-    embeddings: dict[EmbeddingID, Embedding] = Field(default_factory=dict)
+    memory_graph: MemoryGraph = Field(default_factory=MemoryGraph)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     def clear(self) -> None:
         self.events.clear()
         self.file_infos.clear()
         self.tool_infos.clear()
-        self.embeddings.clear()
+        self.memory_graph.clear()
         self.metadata.clear()
 
     # --------------------------------------------------
@@ -209,33 +204,3 @@ class History(BaseModel):
         self.tool_infos = [
             tool_info for tool_info in self.tool_infos if tool_info.name != name
         ]
-
-    # --------------------------------------------------
-    # Embedding Management
-    # --------------------------------------------------
-
-    def get_embedding(self, embedding_id: EmbeddingID) -> Embedding | None:
-        return self.embeddings.get(embedding_id)
-
-    def add_embedding(self, embedding: Embedding) -> None:
-        self.embeddings[embedding.id] = embedding
-
-    def remove_embedding(self, embedding_id: EmbeddingID) -> None:
-        if embedding_id in self.embeddings:
-            del self.embeddings[embedding_id]
-
-    def get_embeddings(
-        self,
-        *,
-        kind: EmbeddingKind | None = None,
-        space_id: EmbeddingSpaceID | None = None,
-    ) -> list[Embedding]:
-        embeddings = list(self.embeddings.values())
-
-        if kind is not None:
-            embeddings = [e for e in embeddings if e.kind == kind]
-
-        if space_id is not None:
-            embeddings = [e for e in embeddings if e.space_id == space_id]
-
-        return embeddings

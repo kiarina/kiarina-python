@@ -1,6 +1,5 @@
 import pytest
 
-from kiarina.agi.embedding import Embedding
 from kiarina.agi.event import AIMessageEvent, HumanMessageEvent, ToolMessageEvent
 from kiarina.agi.file_info import TextFileInfo
 from kiarina.agi.history import History
@@ -245,45 +244,3 @@ def test_remove_tool_info(history: History) -> None:
     history.remove_tool_info("tool1")
 
     assert len(history.tool_infos) == 0
-
-
-# --------------------------------------------------
-# Embedding Management
-# --------------------------------------------------
-
-
-def test_get_embedding() -> None:
-    embedding = Embedding(id="e1", kind="text", space_id="s1", vector=[0.1, 0.2, 0.3])
-    history = History(embeddings={"e1": embedding})
-
-    assert history.get_embedding("e1") == embedding
-
-
-def test_add_embedding(history: History) -> None:
-    embedding = Embedding(id="e1", kind="text", space_id="s1", vector=[0.1, 0.2, 0.3])
-    history.add_embedding(embedding)
-
-    assert len(history.embeddings) == 1
-    assert history.embeddings["e1"] == embedding
-
-
-def test_remove_embedding(history: History) -> None:
-    embedding = Embedding(id="e1", kind="text", space_id="s1", vector=[0.1, 0.2, 0.3])
-    history.add_embedding(embedding)
-
-    history.remove_embedding("e1")
-
-    assert len(history.embeddings) == 0
-
-
-def test_get_embeddings(history: History) -> None:
-    embedding1 = Embedding(id="e1", kind="text", space_id="s1", vector=[0.1, 0.2, 0.3])
-    embedding2 = Embedding(id="e2", kind="image", space_id="s1", vector=[0.4, 0.5, 0.6])
-    embedding3 = Embedding(id="e3", kind="text", space_id="s2", vector=[0.7, 0.8, 0.9])
-    history.add_embedding(embedding1)
-    history.add_embedding(embedding2)
-    history.add_embedding(embedding3)
-
-    assert len(history.get_embeddings()) == 3
-    assert len(history.get_embeddings(kind="text")) == 2
-    assert len(history.get_embeddings(space_id="s1")) == 2

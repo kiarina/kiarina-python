@@ -33,7 +33,9 @@ pip install kiarina-agi-data
 - **Content and file metadata**
   Represent text and files together, estimate tokens, convert to XML, shrink content, and move file data to and from a shared pool.
 - **History**
-  Keep events, files, tools, and embeddings in one state and query or update them by purpose.
+  Keep events, files, tools, and a working memory graph in one state and query or update them by purpose.
+- **Memory graphs**
+  Represent text, assets, vectors, and metadata as connected memories with permanent or decaying edges.
 - **Embeddings**
   Normalize vectors, calculate cosine similarity, and search for the highest-scoring candidates.
 - **File bundles**
@@ -691,7 +693,7 @@ class History:
     events: list[Event] = []
     file_infos: FileInfoPool = []
     tool_infos: list[ToolInfo] = []
-    embeddings: dict[EmbeddingID, Embedding] = {}
+    memory_graph: MemoryGraph = MemoryGraph()
     metadata: dict[str, Any] = {}
 
     def clear(self) -> None: ...
@@ -723,15 +725,79 @@ class History:
     ) -> list[ToolInfo]: ...
     def add_tool_info(self, tool_info: ToolInfo) -> None: ...
     def remove_tool_info(self, name: ToolName) -> None: ...
-    def get_embedding(self, embedding_id: EmbeddingID) -> Embedding | None: ...
-    def add_embedding(self, embedding: Embedding) -> None: ...
-    def remove_embedding(self, embedding_id: EmbeddingID) -> None: ...
-    def get_embeddings(
+```
+
+### `kiarina.agi.memory`
+
+```python
+from kiarina.agi.memory import Memory, MemoryID, MemoryType
+
+MemoryID: TypeAlias = str
+MemoryType: TypeAlias = str
+
+class Memory:
+    id: MemoryID = <generated ULID>
+    type: MemoryType
+    version: int = 1
+    text: str = ""
+    asset_uri: URIOrFilePath | None = None
+    vector: list[float] | None = None
+    edit_protected: bool = False
+    delete_protected: bool = False
+    activated_at: datetime = <current UTC time>
+    metadata: dict[str, Any] = {}
+```
+
+### `kiarina.agi.memory_graph`
+
+```python
+from kiarina.agi.memory_graph import DecayTime, MemoryGraph
+
+DecayTime: TypeAlias = float
+
+class MemoryGraph:
+    nodes: dict[MemoryID, Memory] = {}
+    edges: dict[MemoryID, dict[MemoryID, DecayTime]] = {}
+
+    def clear(self) -> None: ...
+    def count(self) -> int: ...
+    def get(self, id: MemoryID) -> Memory | None: ...
+    def mget(self, ids: list[MemoryID]) -> list[Memory]: ...
+    def set(self, memory: Memory) -> None: ...
+    def mset(self, memories: list[Memory]) -> None: ...
+    def delete(self, id: MemoryID) -> None: ...
+    def connect(
         self,
+        source_id: MemoryID,
+        target_id: MemoryID,
         *,
-        kind: EmbeddingKind | None = None,
-        space_id: EmbeddingSpaceID | None = None,
-    ) -> list[Embedding]: ...
+        bidirectional: bool = True,
+        remaining_time: float = 0,
+    ) -> None: ...
+    def disconnect(
+        self,
+        source_id: MemoryID,
+        target_id: MemoryID,
+        *,
+        bidirectional: bool = True,
+    ) -> None: ...
+    def forget(
+        self,
+        source_id: MemoryID,
+        target_id: MemoryID,
+        *,
+        bidirectional: bool = True,
+        acceleration_time: float = 0,
+    ) -> None: ...
+    def find_adjacent_ids(
+        self,
+        id: MemoryID,
+        *,
+        depth: int = 1,
+        memory_type: MemoryType | None = None,
+        offset: int = 0,
+        limit: int = 0,
+    ) -> list[MemoryID]: ...
 ```
 
 ### `kiarina.agi.message`
