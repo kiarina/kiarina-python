@@ -35,7 +35,10 @@ class AssetCache:
         if not metadata:
             return None
 
-        if time.time() - metadata["timestamp"] > self.settings.cache_ttl:
+        if (
+            self.settings.cache_ttl > 0
+            and time.time() - metadata["timestamp"] > self.settings.cache_ttl
+        ):
             await self.delete(uri)
             return None
 

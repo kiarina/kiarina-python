@@ -51,7 +51,7 @@ pip install "kiarina-agi-file[all]"
 - **Pluggable asset storage**
   Provides an async API independent of the asset store implementation and supports implementations registered by import path.
 - **Local asset cache**
-  Caches retrieved content by URI and fetches it again after its TTL expires.
+  Caches retrieved content by URI indefinitely by default, or fetches it again after a configured TTL expires.
 - **Unified file resolution**
   Detects URIs and local file paths and returns either as a `FileBlob`.
 
@@ -277,10 +277,12 @@ class AssetCache:
 
 class AssetCacheSettings(BaseSettings):
     hash_algorithm: str = "sha256"
-    cache_ttl: int = 86400
+    cache_ttl: int = 0
 
 settings_manager: SettingsManager[AssetCacheSettings]
 ```
+
+`cache_ttl` is measured in seconds. Set it to `0` to keep cached assets until they are explicitly refreshed or deleted.
 
 ### `kiarina.agi.asset_repository`
 

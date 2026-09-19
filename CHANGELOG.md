@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-agi-file**: Make asset caches non-expiring by default. `cache_ttl=0` now disables expiration, positive values retain time-based expiration, and negative values are rejected.
+
 ## [2.31.0] - 2026-09-16
 
 ### Added

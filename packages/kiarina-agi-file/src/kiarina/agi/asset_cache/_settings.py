@@ -17,9 +17,10 @@ class AssetCacheSettings(BaseSettings):
         description="Hash algorithm used to derive cache keys from asset URIs.",
     )
     cache_ttl: int = Field(
-        default=86400,
+        default=0,
+        ge=0,
         title="Cache TTL",
-        description="Maximum cache lifetime in seconds.",
+        description="Maximum cache lifetime in seconds. Set to 0 for no expiration.",
     )
 
 
