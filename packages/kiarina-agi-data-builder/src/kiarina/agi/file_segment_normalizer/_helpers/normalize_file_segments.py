@@ -3,7 +3,9 @@ from kiarina.agi.file_info import FileInfo
 from kiarina.agi.run_context import RunContext
 from kiarina.utils.file import FileBlob
 
-from .._operations.create_file_segment_normalizer import create_file_segment_normalizer
+from .._instances.file_segment_normalizer_registry import (
+    file_segment_normalizer_registry,
+)
 
 
 async def normalize_file_segments(
@@ -75,5 +77,5 @@ async def _normalize_file_segments(
 
     # Multiple actual file infos, normalize segments
     file_type = actual_file_infos[0].type
-    normalizer = create_file_segment_normalizer(file_type, run_context=run_context)
+    normalizer = file_segment_normalizer_registry.resolve(file_type, run_context)
     return await normalizer.normalize_file_segments(actual_file_infos, file_blob)

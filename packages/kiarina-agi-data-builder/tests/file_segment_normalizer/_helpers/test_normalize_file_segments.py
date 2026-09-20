@@ -27,7 +27,7 @@ class MyFileSegmentNormalizer(BaseFileSegmentNormalizer):
 @pytest.fixture
 def setup() -> Iterator[None]:
     settings_manager.cli_args = {
-        "normalizers": {"text": f"{__name__}:MyFileSegmentNormalizer"}
+        "customs": {"text": f"{__name__}:MyFileSegmentNormalizer"}
     }
     yield
     settings_manager.cli_args = {}
