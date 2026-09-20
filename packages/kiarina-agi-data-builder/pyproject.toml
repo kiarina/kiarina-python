@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-data-builder"
-version = "2.21.1"
+version = "2.32.0"
 description = "Data building utilities for AI agents"
 readme = "README.md"
 license = "MIT"

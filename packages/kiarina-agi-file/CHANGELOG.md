@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.32.0] - 2026-09-20
+
+### Changed
+- Make asset caches non-expiring by default. `cache_ttl=0` now disables expiration, positive values retain time-based expiration, and negative values are rejected.
+
 ## [2.21.3] - 2026-08-12
 
 ### Changed

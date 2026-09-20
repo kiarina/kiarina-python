@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.32.0] - 2026-09-20
+
 ### Changed (BREAKING)
 - **kiarina-agi-data-builder**: Resolve file segment normalizers through a `ComponentRegistry`. `file_segment_normalizer_registry` replaces `create_file_segment_normalizer`, which is removed, and the `FileSegmentNormalizerSettings.normalizers` setting is renamed to `customs`. Normalizers can now be registered at runtime and selected with a `{name}?{config}` specifier.
 
