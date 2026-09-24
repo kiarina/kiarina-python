@@ -23,7 +23,7 @@ class ChatModelSettings(BaseSettings):
             "vlm": "gpt-5.6-sol",
             "omni": "gemini-3.6-flash",
             # providers
-            "local": "qwen3.6-fast",
+            "local": "qwen3.8-flash-next-fast",
             "openai": "gpt-5.6-sol",
             "anthropic": "claude-sonnet-5",
             "google": "gemini-3.6-flash",
@@ -53,11 +53,11 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # Local models incur no API charge. Costs are set explicitly
             # because the lc_openai provider defaults are not zero.
-            "qwen3.6": ChatModelConfig(
+            "qwen3.8-flash-next": ChatModelConfig(
                 provider_name="lc_openai",
                 provider_config={
                     "openai_settings_key": "local",
-                    "model_name": "qwen3.6-27b",
+                    "model_name": "qwen3.8-flash-next",
                     "context_window": 262_144,
                     "max_output_tokens": 62_144,
                     "input_cost_microdollars_per_1k_tokens": 0,
@@ -70,11 +70,11 @@ class ChatModelSettings(BaseSettings):
                 },
                 visible=False,
             ),
-            "qwen3.6-fast": ChatModelConfig(
+            "qwen3.8-flash-next-fast": ChatModelConfig(
                 provider_name="lc_openai",
                 provider_config={
                     "openai_settings_key": "local",
-                    "model_name": "qwen3.6-27b",
+                    "model_name": "qwen3.8-flash-next",
                     "context_window": 262_144,
                     "max_output_tokens": 62_144,
                     "input_cost_microdollars_per_1k_tokens": 0,
