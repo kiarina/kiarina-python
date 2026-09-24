@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.33.0] - 2026-09-24
+
 ### Changed (BREAKING)
 - Replace the `qwen3.6` and `qwen3.6-fast` chat model presets with `qwen3.8-flash-next` and `qwen3.8-flash-next-fast`. Both call the kiapi `qwen3.8-flash-next` model (Qwen3.8-Flash-Next), with and without thinking. The `local` alias now resolves to `qwen3.8-flash-next-fast`. kiapi is dropping `qwen3.6-27b`.
 

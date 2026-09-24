@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.33.0] - 2026-09-24
+
 ### Changed (BREAKING)
 - **kiarina-agi-text**: Replace the `qwen3.6` and `qwen3.6-fast` chat model presets with `qwen3.8-flash-next` and `qwen3.8-flash-next-fast`, which call the kiapi `qwen3.8-flash-next` model. The `local` alias now resolves to `qwen3.8-flash-next-fast`.
 
