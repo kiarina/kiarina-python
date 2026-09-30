@@ -52,6 +52,9 @@ commit、push は行いません。ユーザーが確認の省略を明示した
 pydantic-settings に関連したタスクを行う場合は、先に下記を把握してください。
 - https://github.com/kiarina/pydantic-settings-manager
 
+RunContext を受け取る component、registry、tool を追加・変更する場合は、先に下記を把握してください。
+- docs/concepts/run-context-and-registries.md
+
 依存パッケージを追加・変更する場合、または `{mod}_impl.{name}` 以下を追加・変更する場合は、先に下記を把握してください。
 - docs/concepts/implementation-optional-dependencies.md
 
