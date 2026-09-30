@@ -161,7 +161,7 @@ mise run test-assets:download
 
 ### 次に着手・進行中
 
-（なし）
+- `tasks/replace-node-id-with-runner-id.md` — RunContext の node_id を廃止して runner_id を足す（kiari・Spirits Garden Brain が追う）
 
 ### 相談待ち（合意してから着手する）
 
