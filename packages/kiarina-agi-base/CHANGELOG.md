@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.34.0] - 2026-09-30
+
 ### Changed (BREAKING)
 - Replace `RunContext.node_id` with `runner_id`. It defaults to a new ULID and is not read from settings.
 - Remove `RunContextSettings.node_id` (`KIARINA_AGI_RUN_CONTEXT_NODE_ID`) and `get_node_id()`.

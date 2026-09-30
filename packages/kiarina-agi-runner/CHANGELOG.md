@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.34.0] - 2026-09-30
+
 ### Changed (BREAKING)
 - `BaseAgent._update_file_infos` updates every file info regardless of `node_id`. Override it when the files do not live where the agent runs.
 
