@@ -21,8 +21,6 @@ class RunContextSettings(BaseSettings):
 
     agent_id: IDStr | None = "default"
 
-    node_id: IDStr | None = "default"
-
     disallow_default_ids: bool = Field(
         default=False,
         title="Disallow default IDs",

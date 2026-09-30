@@ -35,6 +35,7 @@ dependencies = [
     "pydantic-settings-manager>=3.2.0",
     "pyyaml>=6.0.2",
     "tiktoken>=0.13.0",
+    "ulid-py>=1.1.0",
 ]
 
 [project.urls]

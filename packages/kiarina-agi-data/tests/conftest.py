@@ -46,7 +46,7 @@ def create_file_info_args(
 def configure_app() -> Iterator[None]:
     configure(app_author="kiarina", app_name="kiarina-agi-data")
     cli_args = settings_manager.cli_args
-    settings_manager.cli_args = {"node_id": "pytest"}
+    settings_manager.cli_args = {}
     yield
     settings_manager.cli_args = cli_args
     reset()
@@ -58,7 +58,7 @@ def run_context(request: pytest.FixtureRequest) -> RunContext:
         organization_id="kiarina.agi",
         user_id=request.module.__name__,
         agent_id=re.sub(r"[^a-zA-Z0-9_-]", "", request.node.name),
-        node_id="pytest",
+        runner_id="pytest",
     )
 
 

@@ -31,7 +31,7 @@ def test_id_str_valid(id_str: str) -> None:
         organization_id=id_str,
         user_id=id_str,
         agent_id=id_str,
-        node_id=id_str,
+        runner_id=id_str,
     )
 
 
@@ -68,5 +68,5 @@ def test_id_str_invalid(id_str: str) -> None:
             organization_id=id_str,
             user_id=id_str,
             agent_id=id_str,
-            node_id=id_str,
+            runner_id=id_str,
         )

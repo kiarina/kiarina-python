@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field, field_validator
 from kiarina.agi.chat_estimates import ChatEstimates
 from kiarina.agi.file import URIOrFilePath
 from kiarina.agi.file_utils import format_xml_attributes, is_uri
-from kiarina.agi.run_context import get_node_id
 from kiarina.agi.token_utils import TokenCount, calc_text_token
 
 from .._types.file_id import FileID
@@ -22,7 +21,7 @@ class BaseFileInfo(BaseModel):
 
     id: FileID = Field(default_factory=lambda: ulid.new().str)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    node_id: str = Field(default_factory=get_node_id)
+    node_id: str | None = None
 
     mime_type: str
     file_hash: str

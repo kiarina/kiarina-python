@@ -21,5 +21,5 @@ def run_context(request: FixtureRequest) -> RunContext:
         organization_id="kiarina.agi",
         user_id=request.module.__name__,
         agent_id=re.sub(r"[^a-zA-Z0-9_-]", "", request.node.name),
-        node_id="pytest",
+        runner_id="pytest",
     )

@@ -1651,6 +1651,7 @@ dependencies = [
     { name = "pydantic-settings-manager" },
     { name = "pyyaml" },
     { name = "tiktoken" },
+    { name = "ulid-py" },
 ]
 
 [package.metadata]
@@ -1667,6 +1668,7 @@ requires-dist = [
     { name = "pydantic-settings-manager", specifier = ">=3.2.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "tiktoken", specifier = ">=0.13.0" },
+    { name = "ulid-py", specifier = ">=1.1.0" },
 ]
 
 [[package]]

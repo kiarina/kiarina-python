@@ -541,7 +541,7 @@ class BaseFileInfo:
     type: FileType
     id: FileID = <generated ULID>
     created_at: datetime = <current UTC time>
-    node_id: str = <current node ID>
+    node_id: str | None = None
     mime_type: str
     file_hash: str
     file_size: int

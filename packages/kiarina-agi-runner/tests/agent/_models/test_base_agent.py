@@ -125,33 +125,33 @@ async def test_prepare_file_infos(
     assert len(history.file_infos) == 2
 
 
-async def test_update_file_infos_only_updates_current_runner(
+async def test_update_file_infos_updates_all_file_infos(
     tmp_path: Path,
     run_context: RunContext,
     agent: BaseAgent,
 ) -> None:
-    current_file_path = tmp_path / "current.txt"
-    current_file_path.write_text("current")
-    other_file_path = tmp_path / "other.txt"
-    other_file_path.write_text("other")
+    kept_file_path = tmp_path / "kept.txt"
+    kept_file_path.write_text("kept")
+    deleted_file_path = tmp_path / "deleted.txt"
+    deleted_file_path.write_text("deleted")
 
-    current_file_info = await load_file_info(
-        str(current_file_path),
+    kept_file_info = await load_file_info(
+        str(kept_file_path),
         run_context=run_context,
     )
-    other_file_info = await load_file_info(
-        str(other_file_path),
+    deleted_file_info = await load_file_info(
+        str(deleted_file_path),
         run_context=run_context,
     )
-    assert current_file_info is not None
-    assert other_file_info is not None
+    assert kept_file_info is not None
+    assert deleted_file_info is not None
 
-    other_file_info = other_file_info.model_copy(update={"node_id": "other"})
+    kept_file_info = kept_file_info.model_copy(update={"node_id": "body-a"})
+    deleted_file_info = deleted_file_info.model_copy(update={"node_id": "body-b"})
 
-    history = History(file_infos=[current_file_info, other_file_info])
+    history = History(file_infos=[kept_file_info, deleted_file_info])
 
-    current_file_path.unlink()
-    other_file_path.unlink()
+    deleted_file_path.unlink()
 
     [
         _
@@ -160,33 +160,9 @@ async def test_update_file_infos_only_updates_current_runner(
         )
     ]
 
-    assert history.file_infos == [other_file_info]
-
-
-async def test_update_file_infos_uses_local_node_id(
-    tmp_path: Path,
-    run_context: RunContext,
-    agent: BaseAgent,
-) -> None:
-    current_file_path = tmp_path / "current.txt"
-    current_file_path.write_text("current")
-
-    current_file_info = await load_file_info(
-        str(current_file_path),
-        run_context=run_context,
-    )
-    assert current_file_info is not None
-
-    ctx = AgentContext.create(
-        run_context=run_context.model_copy(update={"node_id": "remote"})
-    )
-    history = History(file_infos=[current_file_info])
-
-    current_file_path.unlink()
-
-    [_ async for _ in agent.pre_run(ctx, history)]
-
-    assert history.file_infos == []
+    assert [fi.uri_or_file_path for fi in history.file_infos] == [
+        kept_file_info.uri_or_file_path
+    ]
 
 
 async def test_update_file_infos_applies_file_limits(

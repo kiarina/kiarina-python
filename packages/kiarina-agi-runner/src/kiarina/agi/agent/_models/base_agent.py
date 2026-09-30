@@ -12,7 +12,6 @@ from kiarina.agi.file_info_builder import rebuild_file_info
 from kiarina.agi.file_segment_normalizer import normalize_file_segments
 from kiarina.agi.history import History
 from kiarina.agi.message import ToolCall
-from kiarina.agi.run_context import get_node_id
 from kiarina.agi.tool import ToolNotFoundError, run_tool
 from kiarina.agi.tool_info import ToolName
 from kiarina.agi.workflow import run_workflow
@@ -112,11 +111,7 @@ class BaseAgent(Agent):
     async def _update_file_infos(
         self, ctx: AgentContext, history: History
     ) -> list[FileInfo]:
-        node_id = get_node_id()
-
-        new_file_infos = [fi for fi in history.file_infos if fi.node_id != node_id]
-
-        file_infos = [fi for fi in history.file_infos if fi.node_id == node_id]
+        file_infos = history.file_infos
 
         file_blobs: dict[URIOrFilePath, FileBlob] = {}
 
@@ -161,10 +156,7 @@ class BaseAgent(Agent):
             run_context=ctx.run_context,
         )
 
-        new_file_infos.extend(file_infos)
-        new_file_infos.sort(key=lambda fi: fi.created_at)
-
-        return new_file_infos
+        return sorted(file_infos, key=lambda fi: fi.created_at)
 
     async def _prepare_file_infos(
         self, ctx: AgentContext, file_infos: list[FileInfo]

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- **kiarina-agi-base**: Replace `RunContext.node_id` with `runner_id`, which identifies the runner executing the agent and defaults to a new ULID instead of a setting. Remove `RunContextSettings.node_id` and `get_node_id()`.
+- **kiarina-agi-data**: Make `FileInfo.node_id` optional (`str | None`, default `None`). It marks the node a file comes from and is no longer filled from settings.
+- **kiarina-agi-runner**: `BaseAgent._update_file_infos` updates every file info regardless of `node_id`. Agents whose files live elsewhere should override it.
+
 ## [2.33.0] - 2026-09-24
 
 ### Changed (BREAKING)

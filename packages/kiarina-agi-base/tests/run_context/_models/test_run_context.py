@@ -18,7 +18,6 @@ def test_run_context() -> None:
         "organization_id": "org-123",
         "user_id": "user-456",
         "agent_id": "agent-789",
-        "node_id": "node-001",
         "timezone": "Asia/Tokyo",
     }
 
@@ -27,7 +26,6 @@ def test_run_context() -> None:
     assert run_context.organization_id == "org-123"
     assert run_context.user_id == "user-456"
     assert run_context.agent_id == "agent-789"
-    assert run_context.node_id == "node-001"
     assert run_context.timezone == "Asia/Tokyo"
     assert run_context.model_dump()["timezone"] == "Asia/Tokyo"
 
@@ -45,7 +43,16 @@ def test_allow_default_ids() -> None:
     assert run_context.organization_id == "default"
     assert run_context.user_id == "default"
     assert run_context.agent_id == "default"
-    assert run_context.node_id == "default"
+
+
+def test_runner_id() -> None:
+    assert RunContext().runner_id != RunContext().runner_id
+    assert RunContext(runner_id="runner-1").runner_id == "runner-1"
+
+
+def test_rejects_node_id() -> None:
+    with pytest.raises(ValidationError, match="node_id"):
+        RunContext.model_validate({"node_id": "node-001"})
 
 
 def test_disallow_default_ids() -> None:

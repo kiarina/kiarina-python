@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- Make `FileInfo.node_id` optional (`str | None`, default `None`) instead of filling it from the configured node ID.
+
 ## [2.31.0] - 2026-09-16
 
 ### Added

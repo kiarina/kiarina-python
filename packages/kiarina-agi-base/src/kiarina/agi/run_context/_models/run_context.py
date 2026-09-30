@@ -1,6 +1,7 @@
 from typing import Any, Self
 from zoneinfo import ZoneInfo
 
+import ulid
 from pydantic import BaseModel, ConfigDict, Field
 
 from kiarina.currency import CurrencyCode
@@ -26,7 +27,7 @@ class RunContext(BaseModel):
 
     agent_id: IDStr = Field(default_factory=lambda: get_id("agent_id"))
 
-    node_id: IDStr = Field(default_factory=lambda: get_id("node_id"))
+    runner_id: IDStr = Field(default_factory=lambda: ulid.new().str)
 
     timezone: TimeZone = Field(
         default_factory=lambda: settings_manager.get_settings().timezone

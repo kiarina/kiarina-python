@@ -20,7 +20,7 @@ def configure_script() -> RunContext:
         organization_id="kiarina.agi",
         user_id="scripts",
         agent_id=Path(__file__).stem,
-        node_id="scripts",
+        runner_id="scripts",
     )
 
 

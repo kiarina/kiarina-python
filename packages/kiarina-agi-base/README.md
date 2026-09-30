@@ -23,6 +23,7 @@
 | [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
 | [PyYAML](https://github.com/yaml/pyyaml) | `>=6.0.2` | [MIT](https://github.com/yaml/pyyaml/blob/main/LICENSE) |
 | [tiktoken](https://github.com/openai/tiktoken) | `>=0.13.0` | [MIT](https://github.com/openai/tiktoken/blob/main/LICENSE) |
+| [ulid-py](https://github.com/ahawker/ulid) | `>=1.1.0` | Apache-2.0 |
 
 ## Installation
 
@@ -154,18 +155,9 @@ from kiarina.agi.run_context import (
     RunContext,
     RunContextSettings,
     TimeZone,
-    get_node_id,
     settings_manager,
 )
 ```
-
-#### `get_node_id`
-
-```python
-def get_node_id() -> str: ...
-```
-
-Returns the node ID from the current settings. Raises `ValueError` when it is not set.
 
 #### `RunContext`
 
@@ -176,7 +168,7 @@ class RunContext(BaseModel):
     organization_id: IDStr = <configured organization ID>
     user_id: IDStr = <configured user ID>
     agent_id: IDStr = <configured agent ID>
-    node_id: IDStr = <configured node ID>
+    runner_id: IDStr = <generated ULID>
     timezone: TimeZone = "UTC"
     language: Language = "en"
     currency: CurrencyCode = "USD"
@@ -188,6 +180,8 @@ class RunContext(BaseModel):
     def with_metadata(self, **kwargs: Any) -> Self: ...
 ```
 
+`runner_id` identifies the runner that executes the agent. It is not read from settings; each `RunContext` without an explicit value gets a new ULID.
+
 `with_metadata` returns a copy with the existing metadata updated.
 
 #### `RunContextSettings`
@@ -197,7 +191,6 @@ class RunContextSettings(BaseSettings):
     organization_id: IDStr | None = "default"
     user_id: IDStr | None = "default"
     agent_id: IDStr | None = "default"
-    node_id: IDStr | None = "default"
     disallow_default_ids: bool = False
     timezone: TimeZone = "UTC"
     language: Language = "en"

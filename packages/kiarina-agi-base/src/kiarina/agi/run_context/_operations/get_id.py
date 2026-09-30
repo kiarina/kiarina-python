@@ -5,7 +5,7 @@ from .._types.id_str import IDStr
 
 
 def get_id(
-    name: Literal["organization_id", "user_id", "agent_id", "node_id"],
+    name: Literal["organization_id", "user_id", "agent_id"],
 ) -> IDStr:
     settings = settings_manager.get_settings()
     value: IDStr | None = getattr(settings, name)
