@@ -27,8 +27,8 @@ class ChatModelSettings(BaseSettings):
             "openai": "gpt-6.1-sol",
             "anthropic": "claude-sonnet-5-5",
             "google": "gemini-3.8-flash",
-            "codex_app_server": "codex-gpt-6.1-sol",
-            "claude_agent_sdk": "claude-code-opus-5-5",
+            "codex": "codex-gpt-6.1-sol",
+            "claude_code": "claude-code-opus-5-5",
         }
     )
 
