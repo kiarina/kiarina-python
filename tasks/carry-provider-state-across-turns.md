@@ -68,6 +68,6 @@ the process is gone, so the provider starts fresh.
 
 ## Next steps
 
-1. Add Add `BaseMessage.metadata` and the state convention.
-3. Implement Codex thread resumption, then carry reasoning state in `openai`, `google_genai`, and
+1. Add `BaseMessage.metadata` and the state convention.
+2. Implement Codex thread resumption, then carry reasoning state in `openai`, `google_genai`, and
    `anthropic`, and thinking blocks in `claude_agent_sdk`.
