@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.35.0] - 2026-10-07
+
 ### Added
 - **kiarina-agi-text**: Add the `google_genai` chat provider, which calls Gemini with the google-genai SDK directly (`chat-provider-google-genai` extra).
 - **kiarina-agi-text**: Add the `anthropic` and `anthropic_vertex` chat providers, which call the Anthropic SDK directly (`chat-provider-anthropic` and `chat-provider-anthropic-vertex` extras).

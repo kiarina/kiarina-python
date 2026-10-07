@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.35.0] - 2026-10-07
+
 ### Added
 - Add the `qwen3.8-27b` chat model preset for the kiapi Qwen3.8-27B model (without thinking).
 - Add the `google_genai` chat provider (`kiarina.agi.chat_provider_impl.google_genai`), which calls Gemini with the google-genai SDK directly instead of LangChain, through the Gemini API or Vertex AI, with the same settings as `lc_google_genai`. Install it with the `chat-provider-google-genai` extra.

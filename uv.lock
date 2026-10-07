@@ -1287,7 +1287,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.34.0"
+version = "2.35.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1835,7 +1835,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-text"
-version = "2.33.0"
+version = "2.35.0"
 source = { editable = "packages/kiarina-agi-text" }
 dependencies = [
     { name = "kiarina-agi-base" },
