@@ -7,10 +7,12 @@ How the `kiarina-agi-text` chat providers are built, and the vendor behavior the
 | Layer | Responsibility |
 | --- | --- |
 | `kiarina.agi.chat_provider` | `ChatProvider` contract, `BaseChatProvider` (request logging), `ChatCapabilities`, and the errors `TokenOverflowError`, `MaxTokenError`, and `SafetyError` |
-| `kiarina.agi.chat_content` | Provider-independent content conversion: file bundles, metadata XML, merging text files, moving media a tool message cannot include into a following human turn, and `cache_control` |
+| `kiarina.agi.chat_content` | Provider-independent content conversion: file bundles, metadata XML, merging text files, moving media a tool message cannot include into a following human turn, `cache_control`, and the `<messages>` XML transcript for runtimes that take one prompt |
 | `kiarina.agi.chat_provider_impl.<name>` | One vendor SDK each: request and response conversion in `_operations`, and logging, cost, and error mapping in the provider model |
 
 Providers call the vendor SDKs directly. There is no LangChain layer.
+
+`codex_app_server` and `claude_agent_sdk` are different: they run the Codex and Claude Code agents with the local subscription logins, as one-turn chat models. See [Subscription Runtimes](#subscription-runtimes-codex_app_server-claude_agent_sdk).
 
 ## Adding or Changing a Provider
 
@@ -26,6 +28,7 @@ Providers call the vendor SDKs directly. There is no LangChain layer.
 
 - Unit tests use a fake client and SDK response objects built with `model_validate`. They must pass without API keys, because CI has none.
 - Costly tests call the real API with the cheapest model of the provider. Keep them few and run them only when they check something new. For high-priced models, send one short request instead of running tests. See [Update Chat Model Presets](../runbooks/update-chat-model-presets.md).
+- `codex_app_server` and `claude_agent_sdk` tests use a fake `codex app-server` script and a fake `claude_agent_sdk.query`. To see what a runtime really sends without using the subscription, point it at a local capture server: `config_overrides` with a `model_providers` entry for Codex, and `env` with `ANTHROPIC_BASE_URL` and a dummy `ANTHROPIC_API_KEY` for Claude Code.
 - A host without quota can be checked through a relay: give the SDK client an HTTP transport that forwards its requests to another endpoint. `test_relay_to_anthropic_api` relays Vertex AI requests to the Anthropic API.
 
 ## Vendor Notes
@@ -64,3 +67,22 @@ Checked on 2026-10-07. Recheck when a request fails in a way these notes do not 
 - Function calls arrive whole in one stream chunk. Usage in a stream is cumulative, so the last chunk holds the total.
 - Thought tokens are billed as output.
 - `temperature` is deprecated for Gemini 3 and ignored.
+
+### Subscription Runtimes (`codex_app_server`, `claude_agent_sdk`)
+
+Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). The experiments, captures, and measurements are in the [agent-runtimes-as-llm-api lab](https://github.com/kiarina/labs/tree/main/2026/10/07/agent-runtimes-as-llm-api).
+
+- Each request starts a new process and session, and sends the conversation as one `<messages>` XML prompt (`to_transcript`). The leading system messages and how to read the XML go in the system prompt. Startup adds a few seconds per request.
+- The runtime's own tools, instructions, settings, and MCP servers are turned off, so the model sees only the caller's instructions, tools, and transcript. Claude Code still adds one line naming the SDK and a short environment section.
+- The run must stop after the first model turn without running the tools and without a second model request:
+  - Claude Code runs with `max_turns=1`. It calls the tool handlers before it stops, so they return a placeholder. Stopping the stream at `message_stop` does not work: Claude Code sends the interrupted tool results to the model. A PreToolUse hook returning `defer` stops it too, but reports only one tool call. The SDK raises `ResultError` after the `error_max_turns` result, which is expected.
+  - Claude Code sends each tool use of a turn as its own assistant message, and starts the first handler before the second arrives.
+  - Codex requests one tool call at a time and waits for each reply. The provider never replies. With `experimentalRawEvents`, every response item arrives as `rawResponseItem/completed` before any tool runs, and `rawResponse/completed` ends the response with its usage. The provider closes the process there.
+  - Codex sends app tools with `parallel_tool_calls: false`. `supports_parallel_tool_calls` is an MCP server setting and does not change it.
+- New Codex models call tools only from inside a JavaScript cell (`tool_mode: code_mode_only` in `~/.codex/models_cache.json`). Neither features nor `thread/start` config change it. The provider copies the model entry with the tool mode cleared into its own `model_catalog_json`. Codex updates can change these fields.
+- Codex config (`features.*`, `model_catalog_json`) takes effect only as `--config` when the process starts. `baseInstructions` is sent as a developer message.
+- The Claude Agent SDK passes the parent environment to Claude Code. An inherited `ANTHROPIC_API_KEY` would bill the API, and a host Claude Code session's `CLAUDE_CODE_*` variables would lend its login, so the provider sets them to empty strings, which Claude Code treats as unset. `--name` stops Claude Code from sending the whole prompt again to name the session.
+- Usage is recorded at zero cost. Claude Code reports what the request would cost on the API (`total_cost_usd`), kept as `api_cost_microdollars`. Codex's `inputTokens` includes cached tokens.
+- The subscription context window can be smaller than the API's. Codex's model list gives GPT-6.1 Sol 272K.
+- Claude tends to point out contradictions in the transcript, including its own earlier messages, even when not asked.
+- These runtimes are for the user's own login. Whether they may serve other people under a subscription depends on each vendor's terms, which keep changing.

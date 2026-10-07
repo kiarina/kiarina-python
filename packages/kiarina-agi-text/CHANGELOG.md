@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add the `codex_app_server` chat provider (`kiarina.agi.chat_provider_impl.codex_app_server`), which runs `codex app-server` with the local Codex login (a ChatGPT subscription). Install it with the `chat-provider-codex-app-server` extra.
+  - Each request starts a new process and ephemeral thread, sends the conversation as one `<messages>` XML prompt, and turns off Codex's own tools, instructions, and MCP servers.
+  - The process is closed when the first model response completes, leaving tool call requests unanswered, so the caller runs the tools and the model gets no second request.
+  - The model entry is copied from Codex's cached model list with direct tool calls, because new models otherwise call tools only from a JavaScript cell.
+- Add the `claude_agent_sdk` chat provider (`kiarina.agi.chat_provider_impl.claude_agent_sdk`), which runs Claude Code through the Claude Agent SDK with the local Claude login (a Claude subscription). Install it with the `chat-provider-claude-agent-sdk` extra.
+  - Each request starts a new session, sends the conversation as one `<messages>` XML prompt, turns off Claude Code's own tools and settings, and stops after the first model turn (`max_turns=1`).
+  - Inherited `ANTHROPIC_*` and `CLAUDE_CODE_*` environment variables are cleared, so an API key or a host Claude Code session does not take over the login.
+- Add the hidden `codex-gpt-6.1-sol` and `claude-code-sonnet-5-5` chat model presets for the two providers. They record zero cost.
+- Add `to_transcript` and `Transcript` to `kiarina.agi.chat_content`, which flatten messages into a system prompt and a `<messages>` XML prompt with the media moved to attachments.
+
 ## [2.35.0] - 2026-10-07
 
 ### Added

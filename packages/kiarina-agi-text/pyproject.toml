@@ -37,12 +37,14 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "anthropic[vertex]>=0.84.0,<2",
+    "claude-agent-sdk>=0.2.164",
     "google-genai>=1.65.0,<3",
     "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
     "kiarina-lib-openai>=2.3.1",
     "numpy>=2.0",
     "openai>=2.0.1,<4",
+    "openai-codex-cli-bin>=0.160.1",
     "tiktoken>=0.13.0",
     "ulid-py>=1.1.0",
 ]
@@ -54,6 +56,12 @@ chat-provider-anthropic-vertex = [
     "anthropic[vertex]>=0.84.0,<2",
     "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
+]
+chat-provider-claude-agent-sdk = [
+    "claude-agent-sdk>=0.2.164",
+]
+chat-provider-codex-app-server = [
+    "openai-codex-cli-bin>=0.160.1",
 ]
 chat-provider-google-genai = [
     "google-genai>=1.65.0,<3",

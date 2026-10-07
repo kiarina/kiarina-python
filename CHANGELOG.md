@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-text**: Add the `codex_app_server` and `claude_agent_sdk` chat providers, which run Codex and Claude Code with their local subscription logins as one-turn chat models (`chat-provider-codex-app-server` and `chat-provider-claude-agent-sdk` extras), and the hidden `codex-gpt-6.1-sol` and `claude-code-sonnet-5-5` presets.
+
 ## [2.35.0] - 2026-10-07
 
 ### Added

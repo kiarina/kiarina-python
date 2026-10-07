@@ -138,4 +138,5 @@ Checked on 2026-10-07.
 - Anthropic: Claude Sonnet 5.5 (`anthropic` alias), Opus 5.5, Fable 5.1 (hidden), and Haiku 4.5 (lower cost), each also as a hidden `vclaude-*` preset on the `global` location.
 - Google: Gemini 3.8 Flash (`google` and `omni` aliases) and Gemini 3.5 Flash-Lite (lower cost). The only newer Pro model is a preview, so it is not a preset.
 - local: Qwen3.8-Flash-Next with and without thinking (`local` alias), Qwen3.8-27B, and Qwen3-Omni on kiapi, at zero cost.
+- Subscriptions: `codex-gpt-6.1-sol` (Codex) and `claude-code-sonnet-5-5` (Claude Code), both hidden, at zero cost. Their context windows are the subscription's, not the API's: Codex's model list gives GPT-6.1 Sol 272K.
 - Prices are list prices. Temporary promotional prices are not used.
