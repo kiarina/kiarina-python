@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-text"
-version = "2.35.0"
+version = "2.36.0"
 description = "Chat and text embedding abstractions for AI agents"
 readme = "README.md"
 license = "MIT"
@@ -24,7 +24,7 @@ classifiers = [
 requires-python = ">=3.12"
 dependencies = [
     "kiarina-agi-base>=2.6.0",
-    "kiarina-agi-data>=2.6.0",
+    "kiarina-agi-data>=2.36.0",
     "kiarina-agi-file>=2.6.0",
     "kiarina-utils-app>=2.4.0",
     "kiarina-utils-common>=2.3.0",

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.36.0] - 2026-10-08
+
+### Added
+- **kiarina-agi-text**: Add the `codex` and `claude_code` chat providers, which run Codex and Claude Code with their local subscription logins as one-turn chat models (`chat-provider-codex` and `chat-provider-claude-code` extras), with hidden `codex-*` and `claude-code-*` presets and the `codex` and `claude_code` aliases. `codex` keeps its thread between requests, so Codex reads the prompt cache.
+- **kiarina-agi-text**: Add `ChatProviderState`, the convention for a chat provider to keep state on its `AIMessage` and use it while the history up to that message still matches.
+- **kiarina-agi-text**: Carry reasoning between turns: thinking blocks in `anthropic` and `anthropic_vertex`, encrypted reasoning items in `openai` (Responses API), and thought signatures in `google`.
+
+### Changed
+- **kiarina-agi-data**: Move `metadata` from `ToolMessage` to `BaseMessage`, so every message can keep free data.
+
+### Changed (BREAKING)
+- **kiarina-agi-text**: Rename the `google_genai` chat provider to `google`, with its settings prefix and extra (`chat-provider-google`).
+
 ## [2.35.0] - 2026-10-07
 
 ### Added

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.36.0] - 2026-10-08
+
 ### Changed
 - Move `metadata: dict[str, Any]` from `ToolMessage` to `BaseMessage`, so every message can keep free data. It is never sent to a model, and `ToolMessage` keeps it as before.
 

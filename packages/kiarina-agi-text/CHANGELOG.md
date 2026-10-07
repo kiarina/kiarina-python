@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.36.0] - 2026-10-08
+
 ### Added
 - Add the `codex` chat provider (`kiarina.agi.chat_provider_impl.codex`), which runs `codex app-server` with the local Codex login (a ChatGPT subscription). Install it with the `chat-provider-codex` extra.
   - Each request starts a new process and ephemeral thread, injects the conversation as raw Responses API items (`thread/inject_items`), and turns off Codex's own tools, instructions, and MCP servers.
@@ -23,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `openai` (Responses API) asks for encrypted reasoning items and sends them back with their turn. `carry_reasoning` turns it off.
 - `google` keeps the thought signatures of function calls and text and sends them back, instead of the signature bypass where one was kept.
 - Add `to_transcript` and `Transcript` to `kiarina.agi.chat_content`, which flatten messages into a system prompt and `<messages>` XML, as one text or as one part per message.
+
+### Changed
+- Require `kiarina-agi-data>=2.36.0`, for `BaseMessage.metadata`.
 
 ### Changed (BREAKING)
 - Rename the `google_genai` chat provider to `google` (`kiarina.agi.chat_provider_impl.google`, `GoogleChatProvider`, `GoogleChatProviderSettings`, `create_google_chat_provider`), its settings prefix to `KIARINA_AGI_CHAT_PROVIDER_IMPL_GOOGLE_`, and its extra to `chat-provider-google`, so chat providers are named after what they call, like the `google` text embedding provider.
