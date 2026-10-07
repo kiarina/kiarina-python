@@ -368,38 +368,6 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             # --------------------------------------------------
-            # codex_app_server, claude_agent_sdk
-            # --------------------------------------------------
-            # Run with the local Codex and Claude Code logins (subscriptions), so
-            # they record no cost. Each request starts a new process.
-            "codex-gpt-6.1-sol": ChatModelConfig(
-                provider_name="codex_app_server",
-                provider_config={
-                    "model_name": "gpt-6.1-sol",
-                    "reasoning_effort": "low",
-                    "context_window": 272_000,
-                    "token_count_limit": 240_000,
-                    "image_file_count_limit": 100,
-                    "input_enabled": {"image": True},
-                    "output_enabled": {"image": True},
-                },
-                visible=False,
-            ),
-            "claude-code-sonnet-5-5": ChatModelConfig(
-                provider_name="claude_agent_sdk",
-                provider_config={
-                    "model_name": "claude-sonnet-5-5",
-                    "context_window": 200_000,
-                    "token_count_limit": 160_000,
-                    "image_file_count_limit": 100,
-                    "pdf_page_count_limit": 100,
-                    "input_enabled": {"image": True, "pdf": True},
-                    "output_enabled": {"image": True},
-                },
-                token_scale_factor=0.7,
-                visible=False,
-            ),
-            # --------------------------------------------------
             # google_genai
             # --------------------------------------------------
             "gemini-3.8-flash": ChatModelConfig(
@@ -449,6 +417,112 @@ class ChatModelSettings(BaseSettings):
                     },
                 },
                 token_scale_factor=1.0,
+            ),
+            # --------------------------------------------------
+            # codex_app_server
+            # --------------------------------------------------
+            # Runs Codex with its local login (a ChatGPT subscription), so it
+            # records no cost. The context window is the subscription's, and the
+            # reasoning effort is Codex's default for each model.
+            "codex-gpt-6-astra": ChatModelConfig(
+                provider_name="codex_app_server",
+                provider_config={
+                    "model_name": "gpt-6-astra",
+                    "reasoning_effort": "medium",
+                    "context_window": 272_000,
+                    "token_count_limit": 240_000,
+                    "image_file_count_limit": 100,
+                    "input_enabled": {"image": True},
+                    "output_enabled": {"image": True},
+                },
+                visible=False,
+            ),
+            "codex-gpt-6.1-sol": ChatModelConfig(
+                provider_name="codex_app_server",
+                provider_config={
+                    "model_name": "gpt-6.1-sol",
+                    "reasoning_effort": "low",
+                    "context_window": 272_000,
+                    "token_count_limit": 240_000,
+                    "image_file_count_limit": 100,
+                    "input_enabled": {"image": True},
+                    "output_enabled": {"image": True},
+                },
+                visible=False,
+            ),
+            "codex-gpt-6-luna": ChatModelConfig(
+                provider_name="codex_app_server",
+                provider_config={
+                    "model_name": "gpt-6-luna",
+                    "reasoning_effort": "medium",
+                    "context_window": 272_000,
+                    "token_count_limit": 240_000,
+                    "image_file_count_limit": 100,
+                    "input_enabled": {"image": True},
+                    "output_enabled": {"image": True},
+                },
+                visible=False,
+            ),
+            # --------------------------------------------------
+            # claude_agent_sdk
+            # --------------------------------------------------
+            # Runs Claude Code with its local login (a Claude subscription), so it
+            # records no cost.
+            "claude-code-sonnet-5-5": ChatModelConfig(
+                provider_name="claude_agent_sdk",
+                provider_config={
+                    "model_name": "claude-sonnet-5-5",
+                    "context_window": 200_000,
+                    "token_count_limit": 160_000,
+                    "image_file_count_limit": 100,
+                    "pdf_page_count_limit": 100,
+                    "input_enabled": {"image": True, "pdf": True},
+                    "output_enabled": {"image": True},
+                },
+                token_scale_factor=0.7,
+                visible=False,
+            ),
+            "claude-code-opus-5-5": ChatModelConfig(
+                provider_name="claude_agent_sdk",
+                provider_config={
+                    "model_name": "claude-opus-5-5",
+                    "context_window": 200_000,
+                    "token_count_limit": 160_000,
+                    "image_file_count_limit": 100,
+                    "pdf_page_count_limit": 100,
+                    "input_enabled": {"image": True, "pdf": True},
+                    "output_enabled": {"image": True},
+                },
+                token_scale_factor=0.7,
+                visible=False,
+            ),
+            "claude-code-fable-5-1": ChatModelConfig(
+                provider_name="claude_agent_sdk",
+                provider_config={
+                    "model_name": "claude-fable-5-1",
+                    "context_window": 200_000,
+                    "token_count_limit": 160_000,
+                    "image_file_count_limit": 100,
+                    "pdf_page_count_limit": 100,
+                    "input_enabled": {"image": True, "pdf": True},
+                    "output_enabled": {"image": True},
+                },
+                token_scale_factor=0.7,
+                visible=False,
+            ),
+            "claude-code-haiku-4-5": ChatModelConfig(
+                provider_name="claude_agent_sdk",
+                provider_config={
+                    "model_name": "claude-haiku-4-5",
+                    "context_window": 200_000,
+                    "token_count_limit": 160_000,
+                    "image_file_count_limit": 100,
+                    "pdf_page_count_limit": 100,
+                    "input_enabled": {"image": True, "pdf": True},
+                    "output_enabled": {"image": True},
+                },
+                token_scale_factor=0.7,
+                visible=False,
             ),
         }
     )
