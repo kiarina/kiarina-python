@@ -168,7 +168,7 @@ mise run test-assets:download
 
 ### 相談待ち（合意してから着手する）
 
-- [Decide when to deprecate the lc_openai chat provider](tasks/deprecate-lc-openai.md)
+- [Decide when to deprecate the LangChain chat providers](tasks/deprecate-langchain-chat-providers.md)
 
 ### 待機中（着手すると決めたら「次に着手・進行中」へ移す）
 

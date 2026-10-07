@@ -203,10 +203,10 @@ class ChatModelSettings(BaseSettings):
                 },
             ),
             # --------------------------------------------------
-            # lc_anthropic
+            # anthropic
             # --------------------------------------------------
             "claude-sonnet-5": ChatModelConfig(
-                provider_name="lc_anthropic",
+                provider_name="anthropic",
                 provider_config={
                     "model_name": "claude-sonnet-5",
                     "context_window": 1_000_000,
@@ -227,7 +227,7 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=0.7,
             ),
             "claude-opus-5": ChatModelConfig(
-                provider_name="lc_anthropic",
+                provider_name="anthropic",
                 provider_config={
                     "model_name": "claude-opus-5",
                     "context_window": 1_000_000,
@@ -248,7 +248,7 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=0.7,
             ),
             "claude-fable-5": ChatModelConfig(
-                provider_name="lc_anthropic",
+                provider_name="anthropic",
                 provider_config={
                     "model_name": "claude-fable-5",
                     "context_window": 1_000_000,
@@ -270,7 +270,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "claude-haiku-4-5": ChatModelConfig(
-                provider_name="lc_anthropic",
+                provider_name="anthropic",
                 provider_config={
                     "model_name": "claude-haiku-4-5-20251001",
                     "context_window": 200_000,

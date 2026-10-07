@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **kiarina-agi-text**: Switch the OpenAI and local chat model presets from the `lc_openai` provider to the `openai` provider.
+- **kiarina-agi-text**: Switch the Anthropic chat model presets from the `lc_anthropic` provider to the `anthropic` provider.
 
 ### Fixed
 - **kiarina-agi-text**: Add the missing `kiarina-lib-anthropic` dependency to the `chat-provider-lc-anthropic` and `chat-provider-lc-anthropic-vertex` extras.
