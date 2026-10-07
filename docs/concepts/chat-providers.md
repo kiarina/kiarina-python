@@ -24,6 +24,15 @@ Providers call the vendor SDKs directly. There is no LangChain layer.
 - Record cost from the vendor's usage. Check whether the vendor counts cached tokens inside the input token total.
 - Streaming yields `AIMessageChunk` items, then the final `AIMessage`. Tool call chunks and the final tool calls must share ids.
 
+## Provider State
+
+A provider can keep state on the `AIMessage` it returns, to continue from it in a later request: a thread to resume, or reasoning to send back.
+
+- It is a `ChatProviderState` in `message.metadata["chat_provider"]`: the provider name, `history_hash`, and provider-specific `data`. `Message.metadata` is a free dict in kiarina-agi-data, which knows nothing about chat providers; the key is only known here.
+- `history_hash` is `compute_history_hash` of the history up to that message, in the form the provider sends it. `find_chat_provider_state` returns the state of the last AI message only if the named provider wrote it. The provider continues only if the hash still matches its own conversion of the new request's history up to that message; otherwise it starts fresh. Edits to the history (file shrinking, summaries, retries) are caught this way, so correctness never depends on the state.
+- Metadata is never sent to a model. Code that displays message metadata should skip the `chat_provider` key, whose values can be large.
+- Only the final `AIMessage` of a stream carries the state.
+
 ## Testing
 
 - Unit tests use a fake client and SDK response objects built with `model_validate`. They must pass without API keys, because CI has none.

@@ -17,7 +17,6 @@ class ToolMessage(BaseMessage):
     return_direct: bool = False
     failed: bool = False
     artifact: dict[str, Any] = Field(default_factory=dict)
-    metadata: dict[str, Any] = Field(default_factory=dict)
     display_contents: list[DisplayContent] = Field(default_factory=list)
 
     @classmethod

@@ -66,8 +66,17 @@ the process is gone, so the provider starts fresh.
 - Injected items are echoed as `rawResponseItem/completed` with `turnId: "auto-compact-0"`, which
   the provider already skips by matching its own turn id.
 
+## Progress
+
+- 2026-10-08: `BaseMessage.metadata` (moved up from `ToolMessage`) and `ChatProviderState`,
+  `find_chat_provider_state`, `compute_history_hash` in `kiarina.agi.chat_provider`. The
+  convention is in `docs/concepts/chat-providers.md` ("Provider State"). No provider uses it yet.
+  kiari saves `History` as pydantic models, so metadata is saved and restored without changes;
+  its tool message renderer prints tool metadata only.
+- On release: raise kiarina-agi-text's `kiarina-agi-data` floor (now `>=2.6.0`) to the release
+  that has `BaseMessage.metadata`, because `ChatProviderState` reads metadata from AI messages.
+
 ## Next steps
 
-1. Add `BaseMessage.metadata` and the state convention.
-2. Implement Codex thread resumption, then carry reasoning state in `openai`, `google_genai`, and
+1. Implement Codex thread resumption, then carry reasoning state in `openai`, `google_genai`, and
    `anthropic`, and thinking blocks in `claude_agent_sdk`.

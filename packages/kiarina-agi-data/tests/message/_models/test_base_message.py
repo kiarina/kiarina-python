@@ -74,3 +74,28 @@ def test_shrink(text_file_info: TextFileInfo) -> None:
 
     message = messages[0]
     print("Shrunk text:", message.to_text())
+
+
+def test_metadata() -> None:
+    from pydantic import TypeAdapter
+
+    from kiarina.agi.history import History
+    from kiarina.agi.message import AIMessage, ToolMessage
+
+    message = AIMessage.create("Hi")
+    assert message.metadata == {}
+
+    message.metadata["chat_provider"] = {"name": "x", "data": {"thread_id": "t"}}
+    assert message.to_text() == "Hi"
+
+    adapter: TypeAdapter[Message] = TypeAdapter(Message)
+    restored = adapter.validate_json(adapter.dump_json(message))
+    assert restored.metadata == message.metadata
+
+    history = History()
+    history.add_message(message)
+    restored_history = History.model_validate_json(history.model_dump_json())
+    assert restored_history.get_messages()[-1].metadata == message.metadata
+
+    tool_message = ToolMessage.create("ok", tool_name="t", tool_call_id="c")
+    assert tool_message.metadata == {}

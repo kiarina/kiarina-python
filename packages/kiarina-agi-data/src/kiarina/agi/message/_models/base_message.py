@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Any, Self
 
 from pydantic import BaseModel, Field
 
@@ -14,6 +14,11 @@ from .._types.message_type import MessageType
 class BaseMessage(BaseModel):
     type: MessageType = Field(frozen=True)
     contents: list[Content] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    """
+    Free data kept with the message. It is never sent to a model. Its keys are
+    up to the code that writes them.
+    """
 
     def get_file_infos(self) -> list[FileInfo]:
         return [file_info for content in self.contents for file_info in content.files]

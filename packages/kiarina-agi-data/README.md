@@ -835,6 +835,7 @@ def hydrate_messages(
 class BaseMessage:
     type: MessageType
     contents: list[Content] = []
+    metadata: dict[str, Any] = {}  # free data, never sent to a model
 
     def get_file_infos(self) -> list[FileInfo]: ...
     def contents_to_text(self) -> str: ...
@@ -890,7 +891,6 @@ class ToolMessage(BaseMessage):
     return_direct: bool = False
     failed: bool = False
     artifact: dict[str, Any] = {}
-    metadata: dict[str, Any] = {}
     display_contents: list[DisplayContent] = []
 
     @classmethod
