@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **kiarina-agi-image**: Remove the kiapi `ernie` family, which kiapi no longer provides.
+
 ## [2.36.1] - 2026-10-08
 
 ### Changed

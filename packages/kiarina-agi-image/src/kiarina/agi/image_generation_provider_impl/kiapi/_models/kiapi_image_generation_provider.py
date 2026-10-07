@@ -74,22 +74,13 @@ class KiapiImageGenerationProvider(BaseImageGenerationProvider):
         file_paths: list[str],
         output_format: str,
     ) -> httpx.Response:
-        if self.settings.family == "ernie" and len(file_paths) != 1:
-            raise ValueError("The ernie family accepts exactly one input image.")
-
         images = [
             await self._upload_image(client, file_path) for file_path in file_paths
         ]
-        image_params: dict[str, Any]
-        if self.settings.family == "ernie":
-            image_params = {"image": images[0]}
-        else:
-            image_params = {"images": images}
-
         return await client.post(
             f"/v1/image/{self.settings.family}/edit",
             headers={"Accept": f"image/{output_format}"},
-            json={**self._build_payload(prompt), **image_params},
+            json={**self._build_payload(prompt), "images": images},
         )
 
     async def _upload_image(

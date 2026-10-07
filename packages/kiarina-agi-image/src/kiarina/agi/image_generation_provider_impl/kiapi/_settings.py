@@ -18,7 +18,7 @@ class KiapiImageGenerationProviderSettings(BaseSettings):
         title="kiapi Base URL",
         description="Base URL of the kiapi server.",
     )
-    family: Literal["flux2", "qwen", "ernie"] = Field(
+    family: Literal["flux2", "qwen"] = Field(
         default="qwen",
         title="Image Family",
         description="kiapi image family used for generation and editing.",

@@ -106,7 +106,7 @@ Each `polygon` contains four points normalized from `0.0` to `1.0` against the s
 
 ### Image Generation through kiapi
 
-The `kiapi` model alias uses kiapi at `http://localhost:8000` and the `qwen` family by default. Select `flux2`, `qwen`, or `ernie` with `family`, and pass family-specific request parameters in `extra_params`.
+The `kiapi` model alias uses kiapi at `http://localhost:8000` and the `qwen` family by default. Select `flux2` or `qwen` with `family`, and pass family-specific request parameters in `extra_params`.
 
 ```python
 from kiarina.agi.image_generation_model import generate_image
@@ -119,7 +119,7 @@ result = await generate_image(
 )
 ```
 
-When `file_paths` are supplied, the files are uploaded to kiapi and passed to the selected family's edit endpoint. The `ernie` family accepts one input image.
+When `file_paths` are supplied, the files are uploaded to kiapi and passed to the selected family's edit endpoint.
 
 ### Model Cache
 
@@ -326,14 +326,14 @@ class KiapiImageGenerationProvider(BaseImageGenerationProvider):
     def __init__(self, settings: KiapiImageGenerationProviderSettings) -> None: ...
 ```
 
-Generates and edits images with the kiapi `flux2`, `qwen`, and `ernie` families.
+Generates and edits images with the kiapi `flux2` and `qwen` families.
 
 #### `KiapiImageGenerationProviderSettings`
 
 ```python
 class KiapiImageGenerationProviderSettings(BaseSettings):
     kiapi_base_url: str = "http://localhost:8000"
-    family: Literal["flux2", "qwen", "ernie"] = "qwen"
+    family: Literal["flux2", "qwen"] = "qwen"
     timeout: float = 1800.0
     extra_params: dict[str, Any] = {}
 ```

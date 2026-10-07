@@ -12,7 +12,6 @@ from kiarina.agi.run_context import RunContext
 EXTRA_PARAMS = {
     "flux2": {"width": 256, "height": 256, "steps": 4},
     "qwen": {"width": 256, "height": 256, "steps": 1},
-    "ernie": {"width": 256, "height": 256, "steps": 1},
 }
 
 
@@ -22,7 +21,7 @@ def provider() -> KiapiImageGenerationProvider:
 
 
 @pytest.mark.costly
-@pytest.mark.parametrize("family", ["flux2", "qwen", "ernie"])
+@pytest.mark.parametrize("family", ["flux2", "qwen"])
 async def test_generate_image(
     tmp_path: Path,
     run_context: RunContext,
@@ -40,7 +39,7 @@ async def test_generate_image(
 
 
 @pytest.mark.costly
-@pytest.mark.parametrize("family", ["flux2", "qwen", "ernie"])
+@pytest.mark.parametrize("family", ["flux2", "qwen"])
 async def test_edit_image(
     tmp_path: Path,
     test_data_dir: Path,
@@ -69,18 +68,5 @@ async def test_missing_input_file(run_context: RunContext) -> None:
         await provider.generate(
             "Edit image",
             file_paths=["missing.png"],
-            run_context=run_context,
-        )
-
-
-async def test_ernie_rejects_multiple_images(run_context: RunContext) -> None:
-    provider = KiapiImageGenerationProvider(
-        KiapiImageGenerationProviderSettings(family="ernie")
-    )
-
-    with pytest.raises(ValueError, match="exactly one"):
-        await provider.generate(
-            "Edit images",
-            file_paths=["first.png", "second.png"],
             run_context=run_context,
         )

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- Remove the kiapi `ernie` family, which kiapi no longer provides.
+
 ## [2.28.0] - 2026-09-05
 
 ### Changed
