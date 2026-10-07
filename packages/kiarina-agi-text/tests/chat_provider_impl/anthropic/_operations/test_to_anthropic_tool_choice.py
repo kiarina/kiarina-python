@@ -23,3 +23,10 @@ def test_to_anthropic_tool_choice(
         to_anthropic_tool_choice(tool_choice, parallel_tool_calls=parallel_tool_calls)
         == expected
     )
+
+
+@pytest.mark.parametrize("tool_choice", ["any", "get_weather"])
+def test_forced_tool_choice_unsupported(tool_choice: str) -> None:
+    assert to_anthropic_tool_choice(
+        tool_choice, parallel_tool_calls=False, forced_tool_choice_supported=False
+    ) == {"type": "auto", "disable_parallel_tool_use": True}

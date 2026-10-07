@@ -187,3 +187,11 @@ async def test_stream_without_final_response(
 
     with pytest.raises(OpenAIResponseError, match="without a final response"):
         _ = [item async for item in endpoint.stream(client, ctx)]  # type: ignore[arg-type]
+
+
+async def test_create_request_without_temperature(
+    endpoint: ResponsesEndpoint, ctx: ChatProviderContext
+) -> None:
+    endpoint.settings.temperature = None
+
+    assert "temperature" not in await endpoint.create_request(ctx)

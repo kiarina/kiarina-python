@@ -155,3 +155,11 @@ async def test_stream(
     assert client.completions.kwargs["stream_options"] == {"include_usage": True}
     assert isinstance(items[-1], OpenAIChatResult)
     assert items[-1].ai_message.to_text() == "Hi"
+
+
+async def test_create_request_without_temperature(
+    endpoint: ChatCompletionsEndpoint, ctx: ChatProviderContext
+) -> None:
+    endpoint.settings.temperature = None
+
+    assert "temperature" not in await endpoint.create_request(ctx)

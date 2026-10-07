@@ -63,7 +63,11 @@ class OpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
         description="Output cost multiplier applied above the extended cost threshold.",
     )
 
-    temperature: float = 1.0
+    temperature: float | None = Field(
+        default=1.0,
+        title="Temperature",
+        description="Sampling temperature. None omits it, for models that reject it.",
+    )
 
     parallel_tool_calls: bool | None = False
 

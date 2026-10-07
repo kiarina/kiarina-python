@@ -61,7 +61,7 @@ async def to_google_genai_request(
             parts += [
                 types.Part(
                     function_call=types.FunctionCall(
-                        name=tool_call.name, args=tool_call.args
+                        id=tool_call.id, name=tool_call.name, args=tool_call.args
                     )
                 )
                 for tool_call in message.tool_calls
@@ -78,6 +78,7 @@ async def to_google_genai_request(
             parts = [
                 types.Part(
                     function_response=types.FunctionResponse(
+                        id=message.tool_call_id,
                         name=message.tool_name,
                         response=_to_function_response(result.parts),
                     )

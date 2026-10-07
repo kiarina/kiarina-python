@@ -54,11 +54,13 @@ async def test_conversation(convert: Any, messages: list[Message]) -> None:
     ]
 
     call = request.contents[3].parts[0]
+    assert call.function_call.id == "123"
     assert call.function_call.name == "generate_image"
     assert call.function_call.args == {"instructions": "Create a image of a cat"}
 
     # The function response and the purged image share one user turn.
     tool_turn = request.contents[4].parts
+    assert tool_turn[0].function_response.id == "123"
     assert tool_turn[0].function_response.name == "generate_image"
     assert tool_turn[0].function_response.response == {"output": "image generated"}
     assert any(part.inline_data for part in tool_turn[1:])

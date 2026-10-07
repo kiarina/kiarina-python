@@ -121,9 +121,11 @@ class ResponsesEndpoint(MediaConverter):
                 run_context=ctx.run_context,
             ),
             "max_output_tokens": self.settings.max_output_tokens,
-            "temperature": self.settings.temperature,
             "store": False,
         }
+
+        if self.settings.temperature is not None:
+            request["temperature"] = self.settings.temperature
 
         if self.settings.reasoning_effort:
             request["reasoning"] = {"effort": self.settings.reasoning_effort}

@@ -11,16 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add the `google_genai` chat provider (`kiarina.agi.chat_provider_impl.google_genai`), which calls Gemini with the google-genai SDK directly instead of LangChain, through the Gemini API or Vertex AI, with the same settings as `lc_google_genai`. Install it with the `chat-provider-google-genai` extra.
   - `SAFETY`, `PROHIBITED_CONTENT`, `BLOCKLIST`, `SPII`, `RECITATION`, and image safety finish reasons, and blocked prompts, raise `SafetyError`. `lc_google_genai` only checked for `safety` in the finish reason.
   - Function calls replayed to Gemini 3 carry the thought signature bypass, as `lc_google_genai` did, because `AIMessage` does not keep signatures.
+  - Function calls and function responses carry the tool call id, as Gemini requires them to match by id and name.
 - Add the `anthropic` chat provider (`kiarina.agi.chat_provider_impl.anthropic`), which calls the Anthropic SDK directly instead of LangChain, with the same settings as `lc_anthropic`. Install it with the `chat-provider-anthropic` extra.
   - A `refusal` stop reason raises `SafetyError`. `lc_anthropic` checked for a `safety` stop reason, which the API does not return.
   - A `model_context_window_exceeded` stop reason raises `MaxTokenError`.
   - Retries are left to the SDK (`max_retry_count`), so a failed stream is no longer restarted after chunks were yielded. The token count check is never retried.
+  - For models that reject forced tool choice (Claude Sonnet 5.5, Opus 5.5, and Fable 5.1), a `tool_choice` of `any` or a tool name falls back to `auto`.
 - Add the `anthropic_vertex` chat provider (`kiarina.agi.chat_provider_impl.anthropic_vertex`), which calls Claude on Vertex AI with the Anthropic SDK. Install it with the `chat-provider-anthropic-vertex` extra.
   - Token counting goes through Vertex AI, so no Anthropic API key is needed. `token_count_model_name` defaults to `model_name`.
   - The project comes from `kiarina.lib.google` settings, the credentials, or the default credentials and `GOOGLE_CLOUD_PROJECT`.
 - Add the `openai` chat provider (`kiarina.agi.chat_provider_impl.openai`), which calls the OpenAI SDK directly instead of LangChain. It supports the Chat Completions API and the Responses API through `endpoint_type`, with the same settings as `lc_openai` except `tiktoken_model_name`. Install it with the `chat-provider-openai` extra.
   - The endpoint follows `endpoint_type` only. Unlike `lc_openai`, a PDF input does not switch Chat Completions requests to the Responses API; Chat Completions sends PDFs as `file` parts.
   - Responses API requests detect `max_output_tokens` and `content_filter` incompletions and raise `MaxTokenError` and `SafetyError`.
+  - `temperature` accepts `None` to omit it, for models that reject a custom temperature such as GPT-6 Astra.
 - Add `kiarina.agi.chat_content`, which converts message contents and files into provider content parts without depending on LangChain. It provides `MediaConverter`, `ContentPart`, `ContentParts`, and `from_contents`.
 
 ### Changed

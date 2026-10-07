@@ -133,6 +133,18 @@ async def test_create_request_with_options(
     assert request["tool_choice"] == {"type": "any", "disable_parallel_tool_use": True}
 
 
+async def test_create_request_forced_tool_choice_unsupported(
+    ctx: ChatProviderContext, tool_infos: list[ToolInfo]
+) -> None:
+    provider = _create_provider(model_name="claude-sonnet-5-5")
+    ctx.tool_infos = tool_infos
+    ctx.tool_choice = "any"
+
+    request = await provider.create_request(ctx)
+
+    assert request["tool_choice"]["type"] == "auto"
+
+
 # --------------------------------------------------
 # Invocation (fake client)
 # --------------------------------------------------
