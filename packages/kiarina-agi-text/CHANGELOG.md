@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add the `anthropic` chat provider (`kiarina.agi.chat_provider_impl.anthropic`), which calls the Anthropic SDK directly instead of LangChain, with the same settings as `lc_anthropic`. Install it with the `chat-provider-anthropic` extra.
+  - A `refusal` stop reason raises `SafetyError`. `lc_anthropic` checked for a `safety` stop reason, which the API does not return.
+  - A `model_context_window_exceeded` stop reason raises `MaxTokenError`.
+  - Retries are left to the SDK (`max_retry_count`), so a failed stream is no longer restarted after chunks were yielded. The token count check is never retried.
+- Add the `anthropic_vertex` chat provider (`kiarina.agi.chat_provider_impl.anthropic_vertex`), which calls Claude on Vertex AI with the Anthropic SDK. Install it with the `chat-provider-anthropic-vertex` extra.
+  - Token counting goes through Vertex AI, so no Anthropic API key is needed. `token_count_model_name` defaults to `model_name`.
+  - The project comes from `kiarina.lib.google` settings, the credentials, or the default credentials and `GOOGLE_CLOUD_PROJECT`.
 - Add the `openai` chat provider (`kiarina.agi.chat_provider_impl.openai`), which calls the OpenAI SDK directly instead of LangChain. It supports the Chat Completions API and the Responses API through `endpoint_type`, with the same settings as `lc_openai` except `tiktoken_model_name`. Install it with the `chat-provider-openai` extra.
   - The endpoint follows `endpoint_type` only. Unlike `lc_openai`, a PDF input does not switch Chat Completions requests to the Responses API; Chat Completions sends PDFs as `file` parts.
   - Responses API requests detect `max_output_tokens` and `content_filter` incompletions and raise `MaxTokenError` and `SafetyError`.
@@ -18,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 - `kiarina.agi.langchain_chat_provider.LangChainMediaConverter` is now an alias of `kiarina.agi.chat_content.MediaConverter`.
+
+### Fixed
+- Add the missing `kiarina-lib-anthropic` dependency to the `chat-provider-lc-anthropic`, `chat-provider-lc-anthropic-vertex`, and `all` extras.
 
 ## [2.33.0] - 2026-09-24
 

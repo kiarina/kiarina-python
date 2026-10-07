@@ -38,8 +38,9 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "anthropic>=0.84.0,<2",
+    "anthropic[vertex]>=0.84.0,<2",
     "google-genai>=1.65.0,<3",
+    "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
     "kiarina-lib-openai>=2.3.1",
     "langchain-anthropic>=1.0.0,<2",
@@ -51,12 +52,23 @@ all = [
     "tiktoken>=0.13.0",
     "ulid-py>=1.1.0",
 ]
+chat-provider-anthropic = [
+    "anthropic>=0.84.0,<2",
+    "kiarina-lib-anthropic>=2.3.1",
+]
+chat-provider-anthropic-vertex = [
+    "anthropic[vertex]>=0.84.0,<2",
+    "kiarina-lib-anthropic>=2.3.1",
+    "kiarina-lib-google>=2.4.0",
+]
 chat-provider-lc-anthropic = [
     "anthropic>=0.84.0,<2",
+    "kiarina-lib-anthropic>=2.3.1",
     "langchain-anthropic>=1.0.0,<2",
 ]
 chat-provider-lc-anthropic-vertex = [
     "anthropic>=0.84.0,<2",
+    "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
     "langchain-anthropic>=1.0.0,<2",
     "langchain-google-vertexai>=3.0.0,<4",

@@ -15,6 +15,8 @@ class ChatProviderSettings(BaseSettings):
 
     presets: dict[ChatProviderName, ImportPath] = Field(
         default_factory=lambda: {
+            "anthropic": "kiarina.agi.chat_provider_impl.anthropic:create_anthropic_chat_provider",
+            "anthropic_vertex": "kiarina.agi.chat_provider_impl.anthropic_vertex:create_anthropic_vertex_chat_provider",
             "lc_anthropic": "kiarina.agi.chat_provider_impl.lc_anthropic:create_lc_anthropic_chat_provider",
             "lc_anthropic_vertex": "kiarina.agi.chat_provider_impl.lc_anthropic_vertex:create_lc_anthropic_vertex_chat_provider",
             "lc_google": "kiarina.agi.chat_provider_impl.lc_google:create_lc_google_chat_provider",

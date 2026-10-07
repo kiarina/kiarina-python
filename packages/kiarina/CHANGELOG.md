@@ -8,11 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **kiarina-agi-text**: Add the `anthropic` and `anthropic_vertex` chat providers, which call the Anthropic SDK directly (`chat-provider-anthropic` and `chat-provider-anthropic-vertex` extras).
 - **kiarina-agi-text**: Add the `openai` chat provider, which calls the OpenAI SDK directly for the Chat Completions API and the Responses API (`chat-provider-openai` extra).
 - **kiarina-agi-text**: Add `kiarina.agi.chat_content`, a LangChain-independent converter from message contents to provider content parts. `LangChainMediaConverter` becomes a deprecated alias of its `MediaConverter`.
 
 ### Changed
 - **kiarina-agi-text**: Switch the OpenAI and local chat model presets from the `lc_openai` provider to the `openai` provider.
+
+### Fixed
+- **kiarina-agi-text**: Add the missing `kiarina-lib-anthropic` dependency to the `chat-provider-lc-anthropic` and `chat-provider-lc-anthropic-vertex` extras.
 
 ## [2.34.0] - 2026-09-30
 
