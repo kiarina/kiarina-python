@@ -53,7 +53,7 @@ def test_create_lc_chat_model_without_temperature(
 
 
 # --------------------------------------------------
-# LangChainMediaConverter
+# MediaConverter
 # --------------------------------------------------
 
 

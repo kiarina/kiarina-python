@@ -64,7 +64,7 @@ class LCAnthropicVertexChatProvider(LCAnthropicChatProvider):
         )
 
     # --------------------------------------------------
-    # Methods (LangChainMediaConverter)
+    # Methods (MediaConverter)
     # --------------------------------------------------
 
     def to_image_content(self, mime_blob: MIMEBlob) -> dict[str, Any] | None:

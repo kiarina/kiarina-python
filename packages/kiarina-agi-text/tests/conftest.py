@@ -8,6 +8,7 @@ import pytest
 from pydantic import BaseModel, Field
 from pydantic_settings_manager import clear_user_configs, load_user_configs
 
+from kiarina.agi.chat_content import MediaConverter
 from kiarina.agi.chat_model import ChatModel, chat_model_registry
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.cost_recorder import CostRecorder
@@ -20,7 +21,6 @@ from kiarina.agi.file_info import (
     VideoFileInfo,
 )
 from kiarina.agi.langchain_chat_provider import (
-    LangChainMediaConverter,
     LCMessage,
     LCToolInfo,
 )
@@ -423,8 +423,8 @@ def all_enabled_capabilities() -> ChatCapabilities:
 
 
 @pytest.fixture
-def media_converter() -> LangChainMediaConverter:
-    class MyMediaConverter(LangChainMediaConverter):
+def media_converter() -> MediaConverter:
+    class MyMediaConverter(MediaConverter):
         def to_image_content(self, mime_blob: MIMEBlob) -> dict[str, Any] | None:
             return {"type": "image", "mime_type": mime_blob.mime_type}
 
@@ -542,7 +542,7 @@ def lc_generate_tool_infos(generate_tool_infos: list[ToolInfo]) -> list[LCToolIn
 async def lc_messages(
     messages: list[Message],
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> list[LCMessage]:
     from kiarina.agi.langchain_chat_provider import from_messages

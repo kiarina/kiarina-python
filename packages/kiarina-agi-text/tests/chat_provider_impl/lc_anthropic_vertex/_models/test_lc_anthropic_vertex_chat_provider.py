@@ -38,7 +38,7 @@ def test_provider(provider: LCAnthropicVertexChatProvider) -> None:
 
 
 # --------------------------------------------------
-# LangChainMediaConverter
+# MediaConverter
 # --------------------------------------------------
 
 

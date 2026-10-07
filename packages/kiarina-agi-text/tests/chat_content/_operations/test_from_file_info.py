@@ -2,6 +2,13 @@ from typing import TypedDict
 
 import pytest
 
+from kiarina.agi.chat_content import MediaConverter
+from kiarina.agi.chat_content._operations.from_content import (
+    from_content,
+)
+from kiarina.agi.chat_content._operations.from_file_info import (
+    from_file_info,
+)
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.content import Content
 from kiarina.agi.file_info import (
@@ -14,13 +21,6 @@ from kiarina.agi.file_info import (
     TextFileInfo,
     VideoFileInfo,
 )
-from kiarina.agi.langchain_chat_provider import LangChainMediaConverter
-from kiarina.agi.langchain_chat_provider._operations.from_content import (
-    from_content,
-)
-from kiarina.agi.langchain_chat_provider._operations.from_file_info import (
-    from_file_info,
-)
 from kiarina.agi.run_context import RunContext
 from kiarina.utils.file import FileBlob
 
@@ -28,14 +28,14 @@ from kiarina.utils.file import FileBlob
 class ConversionArgs(TypedDict):
     tag: str
     capabilities: ChatCapabilities
-    media_converter: LangChainMediaConverter
+    media_converter: MediaConverter
     run_context: RunContext
 
 
 @pytest.fixture
 def args(
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> ConversionArgs:
     return {
@@ -49,7 +49,7 @@ def args(
 @pytest.fixture
 def all_enabled_args(
     all_enabled_capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> ConversionArgs:
     return {
@@ -244,7 +244,7 @@ async def test_asset_uri_not_found(
 async def test_zip_bundle_when_parent_type_is_unsupported(
     audio_file_info: FileInfo,
     bundle_blob: FileBlob,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -257,7 +257,7 @@ async def test_zip_bundle_when_parent_type_is_unsupported(
         return bundle_blob
 
     monkeypatch.setattr(
-        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        "kiarina.agi.chat_content._operations.from_file_info.get_file_blob",
         fake_get_file_blob,
     )
 
@@ -281,7 +281,7 @@ async def test_zip_bundle_extends_multiple_media_items(
     audio_file_info: FileInfo,
     bundle_blob: FileBlob,
     all_enabled_capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -293,7 +293,7 @@ async def test_zip_bundle_extends_multiple_media_items(
         return bundle_blob
 
     monkeypatch.setattr(
-        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        "kiarina.agi.chat_content._operations.from_file_info.get_file_blob",
         fake_get_file_blob,
     )
 
@@ -305,7 +305,7 @@ async def test_zip_bundle_extends_multiple_media_items(
         run_context=run_context,
     )
 
-    assert result.lc_contents == [
+    assert result.parts == [
         {
             "type": "text",
             "text": f"<files>\n{audio_file_info.to_xml('test_tag')}\n</files>",
@@ -360,7 +360,7 @@ async def test_video_bundle_capability_fallback(
     expected_media_dicts: list[dict[str, str]],
     video_file_info: VideoFileInfo,
     video_bundle_blob: FileBlob,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -372,7 +372,7 @@ async def test_video_bundle_capability_fallback(
         return video_bundle_blob
 
     monkeypatch.setattr(
-        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        "kiarina.agi.chat_content._operations.from_file_info.get_file_blob",
         fake_get_file_blob,
     )
 
@@ -423,7 +423,7 @@ async def test_pdf_bundle_capability_fallback(
     expected_media_dicts: list[dict[str, str]],
     pdf_file_info: PDFFileInfo,
     pdf_bundle_blob: FileBlob,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -435,7 +435,7 @@ async def test_pdf_bundle_capability_fallback(
         return pdf_bundle_blob
 
     monkeypatch.setattr(
-        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        "kiarina.agi.chat_content._operations.from_file_info.get_file_blob",
         fake_get_file_blob,
     )
 
@@ -452,7 +452,7 @@ async def test_pdf_bundle_capability_fallback(
 async def test_page_marker_is_omitted_when_image_conversion_fails(
     pdf_file_info: PDFFileInfo,
     pdf_bundle_blob: FileBlob,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -464,7 +464,7 @@ async def test_page_marker_is_omitted_when_image_conversion_fails(
         return pdf_bundle_blob
 
     monkeypatch.setattr(
-        "kiarina.agi.langchain_chat_provider._operations.from_file_info.get_file_blob",
+        "kiarina.agi.chat_content._operations.from_file_info.get_file_blob",
         fake_get_file_blob,
     )
     monkeypatch.setattr(media_converter, "to_image_content", lambda mime_blob: None)

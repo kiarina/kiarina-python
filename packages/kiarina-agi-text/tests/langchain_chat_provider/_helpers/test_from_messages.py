@@ -2,9 +2,10 @@ from typing import TypedDict
 
 import pytest
 
+from kiarina.agi.chat_content import MediaConverter
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.file_info import ImageFileInfo
-from kiarina.agi.langchain_chat_provider import LangChainMediaConverter, from_messages
+from kiarina.agi.langchain_chat_provider import from_messages
 from kiarina.agi.message import (
     AIMessage,
     HumanMessage,
@@ -18,14 +19,14 @@ from kiarina.agi.run_context import RunContext
 
 class ConversionArgs(TypedDict):
     capabilities: ChatCapabilities
-    media_converter: LangChainMediaConverter
+    media_converter: MediaConverter
     run_context: RunContext
 
 
 @pytest.fixture
 def args(
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> ConversionArgs:
     return {

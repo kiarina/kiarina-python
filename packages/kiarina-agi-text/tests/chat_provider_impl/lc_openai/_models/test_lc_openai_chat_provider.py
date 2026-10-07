@@ -88,7 +88,7 @@ def test_provider(provider: LCOpenAIChatProvider) -> None:
 
 
 # --------------------------------------------------
-# LangChainMediaConverter
+# MediaConverter
 # --------------------------------------------------
 
 

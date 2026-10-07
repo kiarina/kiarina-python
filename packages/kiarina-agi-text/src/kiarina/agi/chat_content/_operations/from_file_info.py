@@ -15,7 +15,7 @@ from kiarina.agi.run_context import RunContext
 from kiarina.utils.file import FileBlob
 from kiarina.utils.mime import MIMEBlob
 
-from .._models.langchain_media_converter import LangChainMediaConverter
+from .._models.media_converter import MediaConverter
 
 
 @dataclass
@@ -32,7 +32,7 @@ async def from_file_info(
     *,
     tag: str | None = None,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> Result:
     if file_info.metadata_only:
@@ -91,7 +91,7 @@ def _from_media_blob(
     file_info: FileInfo,
     file_blob: FileBlob,
     tag: str | None,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
 ) -> Result:
     text: str | None = None
     media_dicts: list[dict[str, Any]] = []
@@ -124,7 +124,7 @@ def _from_file_bundle(
     file_blob: FileBlob,
     tag: str | None,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
 ) -> Result:
     text: str | None = None
     media_dicts: list[dict[str, Any]] = []

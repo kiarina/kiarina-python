@@ -5,18 +5,18 @@ from kiarina.agi.content import Content
 from kiarina.agi.message import MessageType
 from kiarina.agi.run_context import RunContext
 
-from .._models.langchain_media_converter import LangChainMediaConverter
-from .._types.lc_content import LCContent
+from .._models.media_converter import MediaConverter
+from .._types.content_part import ContentPart
 from .from_file_info import from_file_info
 
 
 @dataclass
 class Result:
-    lc_contents: list[LCContent] = field(default_factory=list)
-    purged_lc_contents: list[LCContent] = field(default_factory=list)
+    parts: list[ContentPart] = field(default_factory=list)
+    purged_parts: list[ContentPart] = field(default_factory=list)
 
-    def to_tuple(self) -> tuple[list[LCContent], list[LCContent]]:
-        return self.lc_contents, self.purged_lc_contents
+    def to_tuple(self) -> tuple[list[ContentPart], list[ContentPart]]:
+        return self.parts, self.purged_parts
 
 
 async def from_content(
@@ -24,7 +24,7 @@ async def from_content(
     content: Content,
     *,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> Result:
     result = Result()
@@ -61,19 +61,19 @@ async def from_content(
             and capabilities.can_include("human", file_info.type)
         ):
             if text:
-                result.purged_lc_contents.append({"type": "text", "text": text})
+                result.purged_parts.append({"type": "text", "text": text})
             if media_dicts:
-                result.purged_lc_contents.extend(media_dicts)
+                result.purged_parts.extend(media_dicts)
         else:
             if text:
-                result.lc_contents.append({"type": "text", "text": text})
+                result.parts.append({"type": "text", "text": text})
             if media_dicts:
-                result.lc_contents.extend(media_dicts)
+                result.parts.extend(media_dicts)
 
     _flush_mergeable_texts(mergeable_texts, content, result)
 
     if content.text:
-        result.lc_contents.append(
+        result.parts.append(
             {
                 "type": "text",
                 "text": content.text,
@@ -91,7 +91,7 @@ def _flush_mergeable_texts(
     result: Result,
 ) -> None:
     if mergeable_texts:
-        result.lc_contents.append(
+        result.parts.append(
             {
                 "type": "text",
                 "text": text_files_content.to_xml("\n".join(mergeable_texts).strip()),
@@ -105,7 +105,7 @@ def _apply_cache_control(
     result: Result,
 ) -> None:
     if cache_control := text_files_content.cache_control:
-        if result.purged_lc_contents:
-            result.purged_lc_contents[-1]["cache_control"] = cache_control
-        elif result.lc_contents:
-            result.lc_contents[-1]["cache_control"] = cache_control
+        if result.purged_parts:
+            result.purged_parts[-1]["cache_control"] = cache_control
+        elif result.parts:
+            result.parts[-1]["cache_control"] = cache_control

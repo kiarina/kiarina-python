@@ -40,7 +40,7 @@ def ctx(run_context: RunContext) -> LangChainChatProviderContext:
 
 
 # --------------------------------------------------
-# Methods (LangChainMediaConverter)
+# Methods (MediaConverter)
 # --------------------------------------------------
 
 

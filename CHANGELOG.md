@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-text**: Add `kiarina.agi.chat_content`, a LangChain-independent converter from message contents to provider content parts. `LangChainMediaConverter` becomes a deprecated alias of its `MediaConverter`.
+
 ## [2.34.0] - 2026-09-30
 
 ### Changed (BREAKING)

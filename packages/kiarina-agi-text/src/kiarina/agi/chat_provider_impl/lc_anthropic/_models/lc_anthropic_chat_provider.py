@@ -86,7 +86,7 @@ class LCAnthropicChatProvider(LangChainChatProvider):
         return ChatCapabilities.model_validate(self.settings.model_dump())
 
     # --------------------------------------------------
-    # Methods (LangChainMediaConverter)
+    # Methods (MediaConverter)
     # --------------------------------------------------
 
     def to_image_content(self, mime_blob: MIMEBlob) -> dict[str, Any] | None:

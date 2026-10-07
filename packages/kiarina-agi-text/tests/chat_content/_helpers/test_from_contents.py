@@ -2,26 +2,26 @@ from typing import TypedDict
 
 import pytest
 
+from kiarina.agi.chat_content import MediaConverter
+from kiarina.agi.chat_content._helpers.from_contents import (
+    from_contents,
+)
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.content import Content
 from kiarina.agi.file_info import AudioFileInfo, ImageFileInfo, TextFileInfo
-from kiarina.agi.langchain_chat_provider import LangChainMediaConverter
-from kiarina.agi.langchain_chat_provider._operations.from_contents import (
-    from_contents,
-)
 from kiarina.agi.run_context import RunContext
 
 
 class ConversionArgs(TypedDict):
     capabilities: ChatCapabilities
-    media_converter: LangChainMediaConverter
+    media_converter: MediaConverter
     run_context: RunContext
 
 
 @pytest.fixture
 def args(
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> ConversionArgs:
     return {
@@ -38,8 +38,8 @@ async def test_payload(args: ConversionArgs) -> None:
         **args,
     )
 
-    assert len(result.lc_contents) == 1
-    assert len(result.purged_lc_contents) == 0
+    assert len(result.parts) == 1
+    assert len(result.purged_parts) == 0
 
     print(result)
 
@@ -61,8 +61,8 @@ async def test_text_and_files(
         **args,
     )
 
-    assert len(result.lc_contents) == 5
-    assert len(result.purged_lc_contents) == 0
+    assert len(result.parts) == 5
+    assert len(result.purged_parts) == 0
 
     print(result)
 
@@ -76,8 +76,8 @@ async def test_normalize(
         **args,
     )
 
-    assert isinstance(result.normalized_lc_contents, str)
-    assert result.normalized_purged_lc_contents == ""
+    assert isinstance(result.normalized_parts, str)
+    assert result.normalized_purged_parts == ""
 
     result = await from_contents(
         "human",
@@ -90,5 +90,5 @@ async def test_normalize(
         **args,
     )
 
-    assert isinstance(result.normalized_lc_contents, list)
-    assert result.normalized_purged_lc_contents == ""
+    assert isinstance(result.normalized_parts, list)
+    assert result.normalized_purged_parts == ""

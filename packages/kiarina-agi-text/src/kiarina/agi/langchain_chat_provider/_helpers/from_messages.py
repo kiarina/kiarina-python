@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 
+from kiarina.agi.chat_content import MediaConverter, from_contents
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.message import (
     AIMessage,
@@ -10,8 +11,6 @@ from kiarina.agi.message import (
 )
 from kiarina.agi.run_context import RunContext
 
-from .._models.langchain_media_converter import LangChainMediaConverter
-from .._operations.from_contents import from_contents
 from .._types.lc_ai_message import LCAIMessage
 from .._types.lc_human_message import LCHumanMessage
 from .._types.lc_message import LCMessage
@@ -23,7 +22,7 @@ async def from_messages(
     messages: Sequence[Message],
     *,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> list[LCMessage]:
     lc_messages: list[LCMessage] = []
@@ -45,7 +44,7 @@ async def _from_messages(
     message: Message,
     *,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> Sequence[LCMessage]:
     if message.type == "system":
@@ -94,7 +93,7 @@ async def _from_system_message(
     message: SystemMessage,
     *,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> LCSystemMessage:
     result = await from_contents(
@@ -105,14 +104,14 @@ async def _from_system_message(
         run_context=run_context,
     )
 
-    return LCSystemMessage(content=result.normalized_lc_contents)
+    return LCSystemMessage(content=result.normalized_parts)
 
 
 async def _from_human_message(
     message: HumanMessage,
     *,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> LCHumanMessage:
     result = await from_contents(
@@ -123,14 +122,14 @@ async def _from_human_message(
         run_context=run_context,
     )
 
-    return LCHumanMessage(content=result.normalized_lc_contents)
+    return LCHumanMessage(content=result.normalized_parts)
 
 
 async def _from_ai_message(
     message: AIMessage,
     *,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> LCAIMessage:
     result = await from_contents(
@@ -142,7 +141,7 @@ async def _from_ai_message(
     )
 
     return LCAIMessage(
-        content=result.normalized_lc_contents,
+        content=result.normalized_parts,
         tool_calls=[
             {
                 "id": tool_call.id,
@@ -158,7 +157,7 @@ async def _from_tool_message(
     message: ToolMessage,
     *,
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> Sequence[LCToolMessage | LCHumanMessage]:
     result = await from_contents(
@@ -171,14 +170,14 @@ async def _from_tool_message(
 
     lc_messages: list[LCToolMessage | LCHumanMessage] = [
         LCToolMessage(
-            content=result.normalized_lc_contents,
+            content=result.normalized_parts,
             tool_call_id=message.tool_call_id,
             artifact=message.artifact,
             status="error" if message.failed else "success",
         )
     ]
 
-    if result.purged_lc_contents:
-        lc_messages.append(LCHumanMessage(content=result.normalized_purged_lc_contents))
+    if result.purged_parts:
+        lc_messages.append(LCHumanMessage(content=result.normalized_purged_parts))
 
     return lc_messages

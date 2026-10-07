@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator
 from typing import Any
 
+from kiarina.agi.chat_content import MediaConverter
 from kiarina.agi.chat_logger import chat_logger_registry
 from kiarina.agi.chat_provider import (
     BaseChatProvider,
@@ -31,10 +32,9 @@ from .._types.lc_ai_message_chunk import LCAIMessageChunk
 from .._types.lc_message import LCMessage
 from .._types.lc_tool_call import LCToolCall
 from .._types.lc_tool_info import LCToolInfo
-from .langchain_media_converter import LangChainMediaConverter
 
 
-class LangChainChatProvider(BaseChatProvider, LangChainMediaConverter, ABC):
+class LangChainChatProvider(BaseChatProvider, MediaConverter, ABC):
     @property
     def request_logger(self) -> RequestLogger:
         return request_logger_registry.resolve()

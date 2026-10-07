@@ -2,26 +2,26 @@ from typing import TypedDict
 
 import pytest
 
+from kiarina.agi.chat_content import MediaConverter
+from kiarina.agi.chat_content._operations.from_content import (
+    from_content,
+)
 from kiarina.agi.chat_provider import ChatCapabilities
 from kiarina.agi.content import Content
 from kiarina.agi.file_info import ImageFileInfo, TextFileInfo
-from kiarina.agi.langchain_chat_provider import LangChainMediaConverter
-from kiarina.agi.langchain_chat_provider._operations.from_content import (
-    from_content,
-)
 from kiarina.agi.run_context import RunContext
 
 
 class ConversionArgs(TypedDict):
     capabilities: ChatCapabilities
-    media_converter: LangChainMediaConverter
+    media_converter: MediaConverter
     run_context: RunContext
 
 
 @pytest.fixture
 def args(
     capabilities: ChatCapabilities,
-    media_converter: LangChainMediaConverter,
+    media_converter: MediaConverter,
     run_context: RunContext,
 ) -> ConversionArgs:
     return {
@@ -44,8 +44,8 @@ async def test_human(
         **args,
     )
 
-    assert len(result.lc_contents) == 4
-    assert len(result.purged_lc_contents) == 0
+    assert len(result.parts) == 4
+    assert len(result.purged_parts) == 0
 
     print(result)
 
@@ -62,7 +62,7 @@ async def test_tool(
         **args,
     )
 
-    assert len(result.lc_contents) == 2
-    assert len(result.purged_lc_contents) == 2
+    assert len(result.parts) == 2
+    assert len(result.purged_parts) == 2
 
     print(result)

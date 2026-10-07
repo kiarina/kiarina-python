@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add `kiarina.agi.chat_content`, which converts message contents and files into provider content parts without depending on LangChain. It provides `MediaConverter`, `ContentPart`, `ContentParts`, and `from_contents`.
+
+### Deprecated
+- `kiarina.agi.langchain_chat_provider.LangChainMediaConverter` is now an alias of `kiarina.agi.chat_content.MediaConverter`.
+
 ## [2.33.0] - 2026-09-24
 
 ### Changed (BREAKING)
