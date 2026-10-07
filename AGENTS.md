@@ -109,6 +109,11 @@ Makefile を追加・変更する場合は、作業前に下記を把握して�
 make
 ```
 
+format は `make`（`mise run format`）に任せ、パッケージのディレクトリへ直接 `ruff format` をかけないでください。
+ruff は README など Markdown の中の Python のコードまで整形します（2026-10-08、意図しない差分が出た）。
+依存を足したり extra を変えたりした後は `make update`（`uv sync --all-packages --all-extras --all-groups`）で同期してください。
+`--all-groups` を付けないと開発用の依存（`puremagic` など）が外れ、lint の mypy が落ちます。
+
 また、修正したパッケージのテストが通るか確認してください。
 
 ```bash

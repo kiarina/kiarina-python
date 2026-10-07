@@ -79,6 +79,11 @@ If you forget this, the release job fails at the new package's upload with
 already be uploaded. Register the pending publisher, then re-run the failed
 job — `skip-existing: true` makes the re-run safe (2026-07-28, v2.20.0).
 
+## After the Release
+
+- Confirm the publication on the simple index (`https://pypi.org/simple/<package>/`). The JSON API (`/pypi/<package>/json`) can report the previous version for a while after the release job succeeds.
+- Projects that take kiarina from the git `main` branch (kiari, kiari-plugins) lock every `kiarina-*` package to the same commit. Upgrading only some of them leaves the lock unchanged; pass every `kiarina-*` package (`uv lock -P kiarina -P kiarina-agi-text ...`). They do not wait for PyPI, but raise their `kiarina` floor only to a released version, because their release CI resolves without the git source.
+
 ## Automated Processes
 
 When you push a tag, the `.github/workflows/release-pypi.yml` workflow in GitHub Actions automatically executes the following processes:
