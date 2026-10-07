@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Each request starts a new session, sends the conversation as `<messages>` XML with one content block per message, turns off Claude Code's own tools and settings, and stops after the first model turn (`max_turns=1`).
   - A cache breakpoint on the last message lets the next request, which only appends, read the conversation from the prompt cache.
   - Inherited `ANTHROPIC_*` and `CLAUDE_CODE_*` environment variables are cleared, so an API key or a host Claude Code session does not take over the login.
-- Add the hidden `codex-gpt-6.1-sol` and `claude-code-sonnet-5-5` chat model presets for the two providers. They record zero cost.
+- Add hidden chat model presets for the two providers, which record zero cost: `codex-gpt-6-astra`, `codex-gpt-6.1-sol`, and `codex-gpt-6-luna`, and `claude-code-sonnet-5-5`, `claude-code-opus-5-5`, `claude-code-fable-5-1`, and `claude-code-haiku-4-5`.
 - Add `ChatProviderState`, `find_chat_provider_state`, `collect_message_states`, `compute_history_hash`, `compute_message_hashes`, and `CHAT_PROVIDER_STATE_KEY` to `kiarina.agi.chat_provider`: the convention for a chat provider to keep state on the `AIMessage` it returns (in `metadata["chat_provider"]`), with the hash of the history up to that message, and to use it only while the history still matches.
 - `anthropic` and `anthropic_vertex` keep thinking blocks and send them back unchanged with their turn, as the models with thinking always on ask for.
 - `openai` (Responses API) asks for encrypted reasoning items and sends them back with their turn. `carry_reasoning` turns it off.
