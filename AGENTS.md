@@ -55,6 +55,9 @@ pydantic-settings に関連したタスクを行う場合は、先に下記を�
 RunContext を受け取る component、registry、tool を追加・変更する場合は、先に下記を把握してください。
 - docs/concepts/run-context-and-registries.md
 
+chat provider（`kiarina-agi-text` の `chat_provider_impl`）を追加・変更する場合、または各社の LLM SDK の振る舞いを調べる場合は、先に下記を把握してください。
+- docs/concepts/chat-providers.md
+
 依存パッケージを追加・変更する場合、または `{mod}_impl.{name}` 以下を追加・変更する場合は、先に下記を把握してください。
 - docs/concepts/implementation-optional-dependencies.md
 

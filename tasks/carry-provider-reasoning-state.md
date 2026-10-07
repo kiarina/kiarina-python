@@ -11,7 +11,8 @@ on the next turn is dropped:
   `skip_thought_signature_validator` bypass instead. Gemini accepts it, but the reasoning
   context is lost between tool calls.
 - Anthropic models with thinking always on (Sonnet 5.5, Opus 5.5, Fable 5.1): thinking
-  blocks are dropped.
+  blocks are dropped. The Sonnet 5.5 migration guide says to pass them back unchanged.
+  Replayed tool calls without them still passed the shared chat model tests on 2026-10-07.
 
 ## To decide
 
