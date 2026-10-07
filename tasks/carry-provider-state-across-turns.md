@@ -46,10 +46,28 @@ Open points: how long a paused process lives, how many live at once, two request
 at the same time, and cleanup on exit. After a restart the state is still in the saved history but
 the process is gone, so the provider starts fresh.
 
+## Findings (2026-10-08)
+
+- Capture server: a tool call request held for 3 seconds sent nothing to the model. Answering it
+  later continued the same turn (the next request carried the function call outputs and the same
+  `prompt_cache_key`), and a later `turn/start` with a new message continued the same thread.
+- Live, GPT-6.1 Sol, the model calls a tool, the request is held 5 seconds, then answered:
+
+  | History | New thread each time | Same thread, resumed |
+  | --- | --- | --- |
+  | 3.3K tokens | 0 read | 0 read |
+  | 12K tokens | 0 read | 11,520 read |
+
+  So resuming makes the cache work, above a size somewhere between 3.3K and 12K tokens. Codex
+  reports `cacheWriteInputTokens` as 0 even when the next request reads the cache.
+- On the live server the tool call request (`item/tool/call`) arrives before `rawResponse/completed`,
+  so resumption must remember requests seen before the response ends. The capture server sends
+  them in the other order.
+- Injected items are echoed as `rawResponseItem/completed` with `turnId: "auto-compact-0"`, which
+  the provider already skips by matching its own turn id.
+
 ## Next steps
 
-1. With the capture server: does Codex continue the same turn when a held tool call request is
-   answered later? Then one live pair: does the resumed request read the cache?
-2. Add `BaseMessage.metadata` and the state convention.
+1. Add Add `BaseMessage.metadata` and the state convention.
 3. Implement Codex thread resumption, then carry reasoning state in `openai`, `google_genai`, and
    `anthropic`, and thinking blocks in `claude_agent_sdk`.
