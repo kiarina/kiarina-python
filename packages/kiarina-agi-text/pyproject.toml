@@ -61,6 +61,10 @@ chat-provider-anthropic-vertex = [
     "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
 ]
+chat-provider-google-genai = [
+    "google-genai>=1.65.0,<3",
+    "kiarina-lib-google>=2.4.0",
+]
 chat-provider-lc-anthropic = [
     "anthropic>=0.84.0,<2",
     "kiarina-lib-anthropic>=2.3.1",

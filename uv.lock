@@ -2037,6 +2037,10 @@ chat-provider-anthropic-vertex = [
     { name = "kiarina-lib-anthropic" },
     { name = "kiarina-lib-google" },
 ]
+chat-provider-google-genai = [
+    { name = "google-genai" },
+    { name = "kiarina-lib-google" },
+]
 chat-provider-lc-anthropic = [
     { name = "anthropic" },
     { name = "kiarina-lib-anthropic" },
@@ -2089,6 +2093,7 @@ requires-dist = [
     { name = "anthropic", extras = ["vertex"], marker = "extra == 'all'", specifier = ">=0.84.0,<2" },
     { name = "anthropic", extras = ["vertex"], marker = "extra == 'chat-provider-anthropic-vertex'", specifier = ">=0.84.0,<2" },
     { name = "google-genai", marker = "extra == 'all'", specifier = ">=1.65.0,<3" },
+    { name = "google-genai", marker = "extra == 'chat-provider-google-genai'", specifier = ">=1.65.0,<3" },
     { name = "google-genai", marker = "extra == 'chat-provider-lc-google-genai'", specifier = ">=1.65.0,<3" },
     { name = "google-genai", marker = "extra == 'text-embedding-provider-google'", specifier = ">=1.65.0,<3" },
     { name = "kiarina-agi-base", editable = "packages/kiarina-agi-base" },
@@ -2101,6 +2106,7 @@ requires-dist = [
     { name = "kiarina-lib-anthropic", marker = "extra == 'chat-provider-lc-anthropic-vertex'", editable = "packages/kiarina-lib-anthropic" },
     { name = "kiarina-lib-google", marker = "extra == 'all'", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-google", marker = "extra == 'chat-provider-anthropic-vertex'", editable = "packages/kiarina-lib-google" },
+    { name = "kiarina-lib-google", marker = "extra == 'chat-provider-google-genai'", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-google", marker = "extra == 'chat-provider-lc-anthropic-vertex'", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-google", marker = "extra == 'chat-provider-lc-google-genai'", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-google", marker = "extra == 'text-embedding-provider-google'", editable = "packages/kiarina-lib-google" },
@@ -2138,7 +2144,7 @@ requires-dist = [
     { name = "ulid-py", marker = "extra == 'all'", specifier = ">=1.1.0" },
     { name = "ulid-py", marker = "extra == 'chat-provider-mock'", specifier = ">=1.1.0" },
 ]
-provides-extras = ["all", "chat-provider-anthropic", "chat-provider-anthropic-vertex", "chat-provider-lc-anthropic", "chat-provider-lc-anthropic-vertex", "chat-provider-lc-google-genai", "chat-provider-lc-openai", "chat-provider-openai", "chat-provider-mock", "text-embedding-provider-google", "text-embedding-provider-mock", "text-embedding-provider-openai"]
+provides-extras = ["all", "chat-provider-anthropic", "chat-provider-anthropic-vertex", "chat-provider-google-genai", "chat-provider-lc-anthropic", "chat-provider-lc-anthropic-vertex", "chat-provider-lc-google-genai", "chat-provider-lc-openai", "chat-provider-openai", "chat-provider-mock", "text-embedding-provider-google", "text-embedding-provider-mock", "text-embedding-provider-openai"]
 
 [[package]]
 name = "kiarina-agi-tool"

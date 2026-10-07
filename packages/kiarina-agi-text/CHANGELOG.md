@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add the `google_genai` chat provider (`kiarina.agi.chat_provider_impl.google_genai`), which calls Gemini with the google-genai SDK directly instead of LangChain, through the Gemini API or Vertex AI, with the same settings as `lc_google_genai`. Install it with the `chat-provider-google-genai` extra.
+  - `SAFETY`, `PROHIBITED_CONTENT`, `BLOCKLIST`, `SPII`, `RECITATION`, and image safety finish reasons, and blocked prompts, raise `SafetyError`. `lc_google_genai` only checked for `safety` in the finish reason.
+  - Function calls replayed to Gemini 3 carry the thought signature bypass, as `lc_google_genai` did, because `AIMessage` does not keep signatures.
 - Add the `anthropic` chat provider (`kiarina.agi.chat_provider_impl.anthropic`), which calls the Anthropic SDK directly instead of LangChain, with the same settings as `lc_anthropic`. Install it with the `chat-provider-anthropic` extra.
   - A `refusal` stop reason raises `SafetyError`. `lc_anthropic` checked for a `safety` stop reason, which the API does not return.
   - A `model_context_window_exceeded` stop reason raises `MaxTokenError`.
@@ -27,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 - `kiarina.agi.langchain_chat_provider.LangChainMediaConverter` is now an alias of `kiarina.agi.chat_content.MediaConverter`.
+
+### Removed
+- Remove the `lc_google` chat provider preset, which pointed to a module that does not exist.
 
 ### Fixed
 - Add the missing `kiarina-lib-anthropic` dependency to the `chat-provider-lc-anthropic`, `chat-provider-lc-anthropic-vertex`, and `all` extras.

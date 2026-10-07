@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **kiarina-agi-text**: Add the `google_genai` chat provider, which calls Gemini with the google-genai SDK directly (`chat-provider-google-genai` extra).
 - **kiarina-agi-text**: Add the `anthropic` and `anthropic_vertex` chat providers, which call the Anthropic SDK directly (`chat-provider-anthropic` and `chat-provider-anthropic-vertex` extras).
 - **kiarina-agi-text**: Add the `openai` chat provider, which calls the OpenAI SDK directly for the Chat Completions API and the Responses API (`chat-provider-openai` extra).
 - **kiarina-agi-text**: Add `kiarina.agi.chat_content`, a LangChain-independent converter from message contents to provider content parts. `LangChainMediaConverter` becomes a deprecated alias of its `MediaConverter`.
@@ -15,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **kiarina-agi-text**: Switch the OpenAI and local chat model presets from the `lc_openai` provider to the `openai` provider.
 - **kiarina-agi-text**: Switch the Anthropic and Vertex AI Claude chat model presets from the `lc_anthropic` and `lc_anthropic_vertex` providers to the `anthropic` and `anthropic_vertex` providers.
+
+### Removed
+- **kiarina-agi-text**: Remove the `lc_google` chat provider preset, which pointed to a module that does not exist.
 
 ### Fixed
 - **kiarina-agi-text**: Add the missing `kiarina-lib-anthropic` dependency to the `chat-provider-lc-anthropic` and `chat-provider-lc-anthropic-vertex` extras.

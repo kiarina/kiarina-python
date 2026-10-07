@@ -17,9 +17,9 @@ class ChatProviderSettings(BaseSettings):
         default_factory=lambda: {
             "anthropic": "kiarina.agi.chat_provider_impl.anthropic:create_anthropic_chat_provider",
             "anthropic_vertex": "kiarina.agi.chat_provider_impl.anthropic_vertex:create_anthropic_vertex_chat_provider",
+            "google_genai": "kiarina.agi.chat_provider_impl.google_genai:create_google_genai_chat_provider",
             "lc_anthropic": "kiarina.agi.chat_provider_impl.lc_anthropic:create_lc_anthropic_chat_provider",
             "lc_anthropic_vertex": "kiarina.agi.chat_provider_impl.lc_anthropic_vertex:create_lc_anthropic_vertex_chat_provider",
-            "lc_google": "kiarina.agi.chat_provider_impl.lc_google:create_lc_google_chat_provider",
             "lc_google_genai": "kiarina.agi.chat_provider_impl.lc_google_genai:create_lc_google_genai_chat_provider",
             "lc_openai": "kiarina.agi.chat_provider_impl.lc_openai:create_lc_openai_chat_provider",
             "mock": "kiarina.agi.chat_provider_impl.mock:create_mock_chat_provider",
