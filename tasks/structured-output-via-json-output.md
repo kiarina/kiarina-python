@@ -10,6 +10,12 @@ Anthropic API has no replacement that guarantees a tool call. The `anthropic` pr
 back to `auto` and asks for a tool call in the last user turn
 (`append_tool_choice_instruction`). The model usually complies, but nothing guarantees it.
 
+The `codex` and `claude_code` providers (added in v2.36.0) cannot force a tool call either:
+Codex always sends `tool_choice: auto`, and Claude Code exposes no tool choice. Both ask for the
+call in an instruction (a developer message for Codex, the user turn for Claude Code). Codex's
+`turn/start` takes an `output_schema`, which could carry a response format; Claude Code's
+`ClaudeAgentOptions.output_format` may too (neither checked).
+
 Anthropic's documented options (checked 2026-10-07):
 
 - JSON outputs: `output_config.format` with a `json_schema` makes the whole response match the
@@ -25,7 +31,7 @@ is not supported), https://platform.claude.com/docs/en/build-with-claude/structu
 
 - Design how a caller asks for a response format (for example a JSON schema in `ChatOptions`),
   and how each provider maps it: Anthropic `output_config.format`, OpenAI and Gemini
-  structured outputs.
+  structured outputs, and possibly Codex `output_schema` and Claude Code `output_format`.
 - Switch structured output in `kiarina-agi-runner` to it where the model supports it, and keep
   the tool-call path for the rest.
 - Decide whether to send `strict: true` for structured output tools, given the JSON Schema
