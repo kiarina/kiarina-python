@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Responses API requests detect `max_output_tokens` and `content_filter` incompletions and raise `MaxTokenError` and `SafetyError`.
 - Add `kiarina.agi.chat_content`, which converts message contents and files into provider content parts without depending on LangChain. It provides `MediaConverter`, `ContentPart`, `ContentParts`, and `from_contents`.
 
+### Changed
+- Switch the OpenAI and local chat model presets (`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.4-nano`, `gpt-5.4-mini`, `qwen3.8-flash-next`, `qwen3.8-flash-next-fast`, and `qwen3-omni`) from the `lc_openai` provider to the `openai` provider. Their provider configs are unchanged.
+
 ### Deprecated
 - `kiarina.agi.langchain_chat_provider.LangChainMediaConverter` is now an alias of `kiarina.agi.chat_content.MediaConverter`.
 

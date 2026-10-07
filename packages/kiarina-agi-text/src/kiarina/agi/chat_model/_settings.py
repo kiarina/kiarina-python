@@ -52,9 +52,9 @@ class ChatModelSettings(BaseSettings):
             # local
             # --------------------------------------------------
             # Local models incur no API charge. Costs are set explicitly
-            # because the lc_openai provider defaults are not zero.
+            # because the openai provider defaults are not zero.
             "qwen3.8-flash-next": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "openai_settings_key": "local",
                     "model_name": "qwen3.8-flash-next",
@@ -71,7 +71,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "qwen3.8-flash-next-fast": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "openai_settings_key": "local",
                     "model_name": "qwen3.8-flash-next",
@@ -88,7 +88,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "qwen3-omni": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "openai_settings_key": "local",
                     "model_name": "qwen3-omni",
@@ -108,10 +108,10 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             # --------------------------------------------------
-            # lc_openai
+            # openai
             # --------------------------------------------------
             "gpt-5.6-sol": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "model_name": "gpt-5.6-sol",
                     "context_window": 1_050_000,
@@ -131,7 +131,7 @@ class ChatModelSettings(BaseSettings):
                 },
             ),
             "gpt-5.6-terra": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "model_name": "gpt-5.6-terra",
                     "context_window": 1_050_000,
@@ -151,7 +151,7 @@ class ChatModelSettings(BaseSettings):
                 },
             ),
             "gpt-5.6-luna": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "model_name": "gpt-5.6-luna",
                     "context_window": 1_050_000,
@@ -171,7 +171,7 @@ class ChatModelSettings(BaseSettings):
                 },
             ),
             "gpt-5.4-nano": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "model_name": "gpt-5.4-nano",
                     "context_window": 400_000,
@@ -187,7 +187,7 @@ class ChatModelSettings(BaseSettings):
                 },
             ),
             "gpt-5.4-mini": ChatModelConfig(
-                provider_name="lc_openai",
+                provider_name="openai",
                 provider_config={
                     "model_name": "gpt-5.4-mini",
                     "context_window": 400_000,
