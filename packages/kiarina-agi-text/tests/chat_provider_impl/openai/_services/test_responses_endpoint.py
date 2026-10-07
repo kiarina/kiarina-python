@@ -4,7 +4,11 @@ from typing import Any
 import pytest
 from openai.types.responses import Response
 
-from kiarina.agi.chat_provider import ChatProviderContext
+from kiarina.agi.chat_provider import (
+    ChatProviderContext,
+    ChatProviderState,
+    compute_message_hash,
+)
 from kiarina.agi.chat_provider_impl.openai import OpenAIChatProviderSettings
 from kiarina.agi.chat_provider_impl.openai._exceptions.openai_response_error import (
     OpenAIResponseError,
@@ -15,7 +19,7 @@ from kiarina.agi.chat_provider_impl.openai._schemas.openai_chat_result import (
 from kiarina.agi.chat_provider_impl.openai._services.responses_endpoint import (
     ResponsesEndpoint,
 )
-from kiarina.agi.message import HumanMessage
+from kiarina.agi.message import AIMessage, HumanMessage, ToolCall, ToolMessage
 from kiarina.agi.run_context import RunContext
 from kiarina.agi.tool_info import ToolInfo
 from kiarina.utils.file import FileBlob
@@ -58,6 +62,7 @@ async def test_create_request(
         "max_output_tokens": 128_000,
         "temperature": 1.0,
         "store": False,
+        "include": ["reasoning.encrypted_content"],
     }
 
 
@@ -195,3 +200,42 @@ async def test_create_request_without_temperature(
     endpoint.settings.temperature = None
 
     assert "temperature" not in await endpoint.create_request(ctx)
+
+
+async def test_create_request_reasoning(
+    endpoint: ResponsesEndpoint, run_context: RunContext
+) -> None:
+    reasoning = {
+        "type": "reasoning",
+        "id": "rs_1",
+        "summary": [],
+        "encrypted_content": "e",
+    }
+    ai_message = AIMessage.create(tool_calls=[ToolCall(id="c", name="f")])
+    ChatProviderState(
+        name="openai",
+        history_hash=compute_message_hash(ai_message, model_name="gpt-test"),
+        data={"reasoning_items": [reasoning]},
+    ).write_to(ai_message)
+    ctx = ChatProviderContext.create(
+        messages=[
+            HumanMessage.create("Hello"),
+            ai_message,
+            ToolMessage.create("ok", tool_name="f", tool_call_id="c"),
+        ],
+        run_context=run_context,
+    )
+
+    request = await endpoint.create_request(ctx, provider_name="openai")
+    assert request["input"][1] == reasoning
+    assert request["input"][2]["type"] == "function_call"
+    assert request["include"] == ["reasoning.encrypted_content"]
+
+    # Another provider name, or carrying turned off, sends no reasoning.
+    request = await endpoint.create_request(ctx, provider_name="openai_other")
+    assert request["input"][1]["type"] == "function_call"
+
+    endpoint.settings.carry_reasoning = False
+    request = await endpoint.create_request(ctx, provider_name="openai")
+    assert request["input"][1]["type"] == "function_call"
+    assert "include" not in request

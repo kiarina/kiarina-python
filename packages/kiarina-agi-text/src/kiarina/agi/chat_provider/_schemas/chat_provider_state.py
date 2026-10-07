@@ -14,14 +14,18 @@ class ChatProviderState(BaseModel):
     in a later request, such as a thread to resume or reasoning to send back.
 
     It is kept in `metadata["chat_provider"]`. A provider uses it only when the
-    name is its own and `history_hash` still matches the history it would send,
-    so edits to the history make it start fresh. It is only an optimization.
+    name is its own and `history_hash` still matches what the state depends on,
+    so edits make it start fresh. It is only an optimization.
     """
 
     name: ChatProviderName
 
     history_hash: str
-    """`compute_history_hash` of the history up to this message, as the provider sends it."""
+    """
+    The hash of what the state depends on: `compute_history_hash` of the history
+    up to this message as the provider sends it, for a thread, or
+    `compute_message_hash` of this message, for its reasoning.
+    """
 
     data: dict[str, Any] = Field(default_factory=dict)
     """Provider-specific state."""

@@ -4,7 +4,12 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from kiarina.agi.chat_provider import MaxTokenError, SafetyError, TokenOverflowError
+from kiarina.agi.chat_provider import (
+    ChatProviderState,
+    MaxTokenError,
+    SafetyError,
+    TokenOverflowError,
+)
 from kiarina.agi.chat_provider_impl.openai import (
     OpenAIChatProvider,
     OpenAIChatProviderSettings,
@@ -97,13 +102,15 @@ class _FakeEndpoint:
         self.result = result or OpenAIChatResult(ai_message=AIMessage.create("Hi"))
         self.error = error
 
-    async def invoke(self, client: Any, ctx: Any) -> OpenAIChatResult:
+    async def invoke(
+        self, client: Any, ctx: Any, *, provider_name: str
+    ) -> OpenAIChatResult:
         if self.error:
             raise self.error
         return self.result
 
     async def stream(
-        self, client: Any, ctx: Any
+        self, client: Any, ctx: Any, *, provider_name: str
     ) -> AsyncIterator[AIMessageChunk | OpenAIChatResult]:
         if self.error:
             raise self.error
@@ -470,3 +477,30 @@ def _ctx(messages: list[Message], run_context: RunContext) -> Any:
     from kiarina.agi.chat_provider import ChatProviderContext
 
     return ChatProviderContext.create(messages=messages, run_context=run_context)
+
+
+async def test_run_reasoning_state(
+    fake_provider: OpenAIChatProvider,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
+) -> None:
+    reasoning = {
+        "type": "reasoning",
+        "id": "rs_1",
+        "summary": [],
+        "encrypted_content": "e",
+    }
+    fake_provider.endpoint = _FakeEndpoint(  # type: ignore[assignment]
+        OpenAIChatResult(ai_message=AIMessage.create("Hi"), reasoning_items=[reasoning])
+    )
+
+    [ai_message] = await _run(
+        fake_provider,
+        [HumanMessage.create("Hello")],
+        cost_recorder=cost_recorder,
+        run_context=run_context,
+    )
+
+    state = ChatProviderState.from_message(ai_message, "openai")
+    assert state is not None
+    assert state.data == {"reasoning_items": [reasoning]}

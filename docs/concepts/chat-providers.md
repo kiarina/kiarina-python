@@ -29,7 +29,9 @@ Providers call the vendor SDKs directly. There is no LangChain layer.
 A provider can keep state on the `AIMessage` it returns, to continue from it in a later request: a thread to resume, or reasoning to send back.
 
 - It is a `ChatProviderState` in `message.metadata["chat_provider"]`: the provider name, `history_hash`, and provider-specific `data`. `Message.metadata` is a free dict in kiarina-agi-data, which knows nothing about chat providers; the key is only known here.
-- `history_hash` is `compute_history_hash` of the history up to that message, in the form the provider sends it. `find_chat_provider_state` returns the state of the last AI message only if the named provider wrote it. The provider continues only if the hash still matches its own conversion of the new request's history up to that message; otherwise it starts fresh. Edits to the history (file shrinking, summaries, retries) are caught this way, so correctness never depends on the state.
+- `history_hash` is the hash of what the state depends on, and the provider uses the state only while it still matches, so correctness never depends on the state:
+  - A thread (`codex_app_server`) depends on the whole history: `compute_history_hash` of the history up to that message, in the form the provider sends it. `find_chat_provider_state` returns the last AI message's state; the provider continues only if the hash matches its conversion of the new history up to that message. Edits to the history (file shrinking, summaries, retries) start a new thread.
+  - Reasoning depends on the message it belongs to: `compute_message_hash` of that message's text and tool calls, with the model name. `collect_message_states` returns every AI message whose state still matches. Reasoning is a record of what the model thought when it wrote that message, and the signatures and encryption are tied to that message, so earlier edits to the history do not invalidate it. An edited message, or another model, drops it.
 - Metadata is never sent to a model. Code that displays message metadata should skip the `chat_provider` key, whose values can be large.
 - Only the final `AIMessage` of a stream carries the state.
 
@@ -46,7 +48,7 @@ Checked on 2026-10-07. Recheck when a request fails in a way these notes do not 
 
 ### OpenAI (`openai`)
 
-- Responses API requests use `store=False`. Reasoning items are not kept between turns.
+- Responses API requests use `store=False`, so reasoning is kept only by asking for `include=["reasoning.encrypted_content"]`. The encrypted reasoning items are kept as provider state and sent back before their message's items (`carry_reasoning`). A model that does not reason on a request, such as GPT-6 Luna on an easy tool call, returns none.
 - Chat Completions serves OpenAI-compatible local servers such as kiapi. `extra_body` passes server-specific options.
 - A single message string is limited to 10,485,760 characters, which a huge prompt hits before the token limit.
 - GPT-6 Astra rejects a custom `temperature`. Set `temperature` to `None` to omit it.
@@ -58,7 +60,7 @@ Checked on 2026-10-07. Recheck when a request fails in a way these notes do not 
 - `usage.input_tokens` excludes cache reads and cache writes. Cache writes are split into 5-minute and 1-hour TTLs.
 - A refusal is `stop_reason: "refusal"`. `model_context_window_exceeded` stops the output like `max_tokens`.
 - Claude Sonnet 5.5, Opus 5.5, and Fable 5.1 reject `tool_choice` of type `any` or `tool`, and nothing replaces it. The provider sends `auto` and asks for a tool call in the last user turn.
-- Thinking blocks are dropped from responses and not sent back.
+- Thinking blocks (`thinking`, `redacted_thinking`) are kept as provider state and sent back unchanged at the start of their turn. The 5.5 models think adaptively, with `display: "omitted"` by default: a block has an empty `thinking` field and a signature that carries the encrypted thinking. On an easy request the model may not think, and no block comes back. Modified blocks are rejected with `400`.
 - The SDK uses `httpx2`. A custom `http_client` must be an `httpx2` client.
 - Token counting never retries, because a failed count only skips the overflow check.
 
@@ -71,7 +73,7 @@ Checked on 2026-10-07. Recheck when a request fails in a way these notes do not 
 
 ### Gemini (`google_genai`)
 
-- Gemini 3 rejects replayed function calls without a `thought_signature` (`400 INVALID_ARGUMENT`). Signatures are not kept, so the first function call of each model turn in the active loop carries `skip_thought_signature_validator`. The value is assigned after the `Part` is built, so it is sent as a string.
+- Gemini 3 rejects replayed function calls without a `thought_signature` (`400 INVALID_ARGUMENT`). The signatures on function call parts (by tool call id) and on the text are kept as provider state and put back on their parts. A first function call of a model turn in the active loop with no kept signature carries `skip_thought_signature_validator` instead. The value is assigned after the `Part` is built, so it is sent as a string.
 - Function calls and function responses carry the tool call id, because Gemini matches them by id and name.
 - Function calls arrive whole in one stream chunk. Usage in a stream is cumulative, so the last chunk holds the total.
 - Thought tokens are billed as output.
@@ -100,5 +102,6 @@ Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). T
 - On the live server, Codex's tool call request (`item/tool/call`) arrives before `rawResponse/completed`. Injected items are echoed with `turnId: "auto-compact-0"`, and `turn/completed` carries its turn id in `turn.id`. GPT-6 itself caches at the end of the latest message only, and `prompt_cache_key`, which Codex sets to the thread id, only separates accounting on the API.
 - Usage is recorded at zero cost. Claude Code reports what the request would cost on the API (`total_cost_usd`), kept as `api_cost_microdollars`. Codex's `inputTokens` includes cached tokens.
 - The subscription context window can be smaller than the API's. Codex's model list gives GPT-6.1 Sol 272K.
+- `claude_agent_sdk` sends the conversation as XML text in one user turn, so there is nowhere to send thinking blocks back; it keeps no reasoning state.
 - Claude tends to point out contradictions in the transcript, including its own earlier messages, even when not asked.
 - These runtimes are for the user's own login. Whether they may serve other people under a subscription depends on each vendor's terms, which keep changing.

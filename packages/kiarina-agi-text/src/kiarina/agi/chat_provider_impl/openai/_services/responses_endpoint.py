@@ -2,7 +2,7 @@ from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Any
 
 from kiarina.agi.chat_content import ContentPart, MediaConverter
-from kiarina.agi.chat_provider import ChatProviderContext
+from kiarina.agi.chat_provider import ChatProviderContext, collect_message_states
 from kiarina.agi.content import Content
 from kiarina.agi.message import AIMessageChunk, ToolCallChunk
 from kiarina.utils.mime import MIMEBlob
@@ -25,6 +25,7 @@ class ResponsesEndpoint(MediaConverter):
     Responses API
 
     Requests are sent with `store=False`, so nothing is kept on the OpenAI side.
+    Reasoning items come back encrypted and are sent back with their turn.
     Audio and video input are not supported.
     """
 
@@ -56,18 +57,29 @@ class ResponsesEndpoint(MediaConverter):
     # --------------------------------------------------
 
     async def invoke(
-        self, client: "AsyncOpenAI", ctx: ChatProviderContext
+        self,
+        client: "AsyncOpenAI",
+        ctx: ChatProviderContext,
+        *,
+        provider_name: str = "openai",
     ) -> OpenAIChatResult:
-        response = await client.responses.create(**await self.create_request(ctx))
+        response = await client.responses.create(
+            **await self.create_request(ctx, provider_name=provider_name)
+        )
         return from_response(response)
 
     async def stream(
-        self, client: "AsyncOpenAI", ctx: ChatProviderContext
+        self,
+        client: "AsyncOpenAI",
+        ctx: ChatProviderContext,
+        *,
+        provider_name: str = "openai",
     ) -> AsyncIterator[AIMessageChunk | OpenAIChatResult]:
         final_response: Response | None = None
 
         stream = await client.responses.create(
-            **await self.create_request(ctx), stream=True
+            **await self.create_request(ctx, provider_name=provider_name),
+            stream=True,
         )
 
         async for event in stream:
@@ -111,7 +123,20 @@ class ResponsesEndpoint(MediaConverter):
 
         yield from_response(final_response)
 
-    async def create_request(self, ctx: ChatProviderContext) -> dict[str, Any]:
+    async def create_request(
+        self, ctx: ChatProviderContext, *, provider_name: str = "openai"
+    ) -> dict[str, Any]:
+        reasoning_items: dict[int, list[dict[str, Any]]] = {}
+
+        if self.settings.carry_reasoning:
+            states = collect_message_states(
+                ctx.messages, provider_name, model_name=self.settings.model_name
+            )
+            reasoning_items = {
+                index: state.data.get("reasoning_items", [])
+                for index, state in states.items()
+            }
+
         request: dict[str, Any] = {
             "model": self.settings.model_name,
             "input": await to_responses_input(
@@ -119,10 +144,15 @@ class ResponsesEndpoint(MediaConverter):
                 capabilities=ctx.capabilities,
                 media_converter=self,
                 run_context=ctx.run_context,
+                reasoning_items=reasoning_items,
             ),
             "max_output_tokens": self.settings.max_output_tokens,
             "store": False,
         }
+
+        if self.settings.carry_reasoning:
+            # NOTE: With `store=False`, reasoning can only be sent back encrypted.
+            request["include"] = ["reasoning.encrypted_content"]
 
         if self.settings.temperature is not None:
             request["temperature"] = self.settings.temperature

@@ -82,7 +82,15 @@ the process is gone, so the provider starts fresh.
   4.2 s and 0 cached, then the resumed request 2.5 s and 11,392 cached, then the next turn 11,520
   cached. The changes stayed inside `codex_app_server` (and its tests).
 
+- 2026-10-08: reasoning state in `anthropic` (thinking blocks), `openai` (encrypted reasoning
+  items, Responses API), and `google_genai` (thought signatures), with `compute_message_hash` of the
+  message itself and the model name. Live, one tool loop each: Gemini 3.5 Flash-Lite kept the
+  function call signature and the next request took it; GPT-6 Luna returned reasoning items on a
+  question that needed thought (not on an easy tool call) and the next request took them; Claude
+  Sonnet 5.5 returned an omitted thinking block when the question needed thought and the next
+  request took it unchanged. `claude_agent_sdk` has nowhere to send thinking back (XML text in one
+  user turn), so it keeps none.
+
 ## Next steps
 
-1. Carry reasoning state in `openai` (encrypted reasoning items), `google_genai` (thought
-   signatures), and `anthropic` (thinking blocks), and thinking blocks in `claude_agent_sdk`.
+- Release, with the `kiarina-agi-data` floor raised as noted above. Then this task is done.

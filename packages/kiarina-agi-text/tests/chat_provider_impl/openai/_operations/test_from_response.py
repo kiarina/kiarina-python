@@ -48,6 +48,34 @@ def test_from_response(make_response: Callable[..., Response]) -> None:
     assert result.stop_reason == "stop"
     assert result.usage is not None
     assert result.usage.cache_write_tokens == 1
+    # A reasoning item without encrypted content cannot be sent back.
+    assert result.reasoning_items == []
+
+
+def test_from_response_reasoning(make_response: Callable[..., Response]) -> None:
+    result = from_response(
+        make_response(
+            [
+                {
+                    "type": "reasoning",
+                    "id": "rs_1",
+                    "summary": [],
+                    "encrypted_content": "enc",
+                    "status": "completed",
+                },
+                {
+                    "type": "function_call",
+                    "call_id": "c",
+                    "name": "f",
+                    "arguments": "{}",
+                },
+            ]
+        )
+    )
+
+    assert result.reasoning_items == [
+        {"type": "reasoning", "id": "rs_1", "summary": [], "encrypted_content": "enc"}
+    ]
 
 
 @pytest.mark.parametrize(

@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 from kiarina.agi.chat_provider import (
     ChatProviderContext,
+    ChatProviderState,
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
@@ -660,3 +661,51 @@ async def test_image_and_pdf(
     print(ai_messages[-1].to_text())
 
     assert ai_messages[-1].to_text()
+
+
+async def test_thinking_blocks_round_trip(
+    fake_provider: AnthropicChatProvider,
+    make_message: Callable[..., AnthropicMessage],
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
+) -> None:
+    block = {"type": "thinking", "thinking": "Hmm", "signature": "sig"}
+    fake_provider._client = _FakeClient(
+        make_message(
+            [block, {"type": "tool_use", "id": "toolu_1", "name": "f", "input": {}}],
+            stop_reason="tool_use",
+        )
+    )
+    [ai_message] = await _run(
+        fake_provider,
+        [HumanMessage.create("Hello")],
+        cost_recorder=cost_recorder,
+        run_context=run_context,
+    )
+    assert isinstance(ai_message, AIMessage)
+
+    state = ChatProviderState.from_message(ai_message, "anthropic")
+    assert state is not None
+    assert state.data == {"thinking_blocks": [block]}
+
+    request = await fake_provider.create_request(
+        ChatProviderContext.create(
+            messages=[
+                HumanMessage.create("Hello"),
+                ai_message,
+                ToolMessage.create("ok", tool_name="f", tool_call_id="toolu_1"),
+            ],
+            run_context=run_context,
+        )
+    )
+    assert request["messages"][1]["content"][0] == block
+
+    # Another model does not get them back.
+    other = _create_provider(model_name="claude-opus-5-5")
+    request = await other.create_request(
+        ChatProviderContext.create(
+            messages=[HumanMessage.create("Hello"), ai_message],
+            run_context=run_context,
+        )
+    )
+    assert request["messages"][1]["content"][0]["type"] == "tool_use"

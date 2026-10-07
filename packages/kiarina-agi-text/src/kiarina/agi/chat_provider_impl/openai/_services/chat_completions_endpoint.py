@@ -66,7 +66,11 @@ class ChatCompletionsEndpoint(MediaConverter):
     # --------------------------------------------------
 
     async def invoke(
-        self, client: "AsyncOpenAI", ctx: ChatProviderContext
+        self,
+        client: "AsyncOpenAI",
+        ctx: ChatProviderContext,
+        *,
+        provider_name: str = "openai",
     ) -> OpenAIChatResult:
         completion = await client.chat.completions.create(
             **await self.create_request(ctx)
@@ -74,7 +78,11 @@ class ChatCompletionsEndpoint(MediaConverter):
         return from_chat_completion(completion)
 
     async def stream(
-        self, client: "AsyncOpenAI", ctx: ChatProviderContext
+        self,
+        client: "AsyncOpenAI",
+        ctx: ChatProviderContext,
+        *,
+        provider_name: str = "openai",
     ) -> AsyncIterator[AIMessageChunk | OpenAIChatResult]:
         accumulator = ChatCompletionsStreamAccumulator()
 

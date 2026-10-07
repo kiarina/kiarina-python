@@ -7,9 +7,11 @@ from kiarina.agi.chat_provider import (
     BaseChatProvider,
     ChatCapabilities,
     ChatProviderContext,
+    ChatProviderState,
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
+    compute_message_hash,
 )
 from kiarina.agi.cost_record import CostRecord
 from kiarina.agi.message import AIMessage, AIMessageChunk
@@ -107,7 +109,9 @@ class OpenAIChatProvider(BaseChatProvider):
         chat_logger.log_chat_invoke_start(ctx.run_context)
 
         try:
-            result = await self.endpoint.invoke(self.client, ctx)
+            result = await self.endpoint.invoke(
+                self.client, ctx, provider_name=self.name
+            )
         except Exception as e:
             if token_count := self._extract_overflow_token_count(e):
                 raise TokenOverflowError(token_count) from e
@@ -124,7 +128,9 @@ class OpenAIChatProvider(BaseChatProvider):
 
         try:
             with chat_logger.log_chat_stream(ctx.run_context):
-                async for item in self.endpoint.stream(self.client, ctx):
+                async for item in self.endpoint.stream(
+                    self.client, ctx, provider_name=self.name
+                ):
                     if isinstance(item, OpenAIChatResult):
                         result = item
                     else:
@@ -151,6 +157,15 @@ class OpenAIChatProvider(BaseChatProvider):
 
         if result.stop_reason == "max_tokens":
             raise MaxTokenError()
+
+        if result.reasoning_items:
+            ChatProviderState(
+                name=self.name,
+                history_hash=compute_message_hash(
+                    result.ai_message, model_name=self.settings.model_name
+                ),
+                data={"reasoning_items": result.reasoning_items},
+            ).write_to(result.ai_message)
 
         return result.ai_message
 

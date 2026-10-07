@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from kiarina.agi.chat_provider import (
     ChatProviderContext,
+    ChatProviderState,
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
@@ -490,3 +491,43 @@ async def test_max_token_error(
             cost_recorder=cost_recorder,
             run_context=run_context,
         )
+
+
+async def test_thought_signature_state(
+    make_response: MakeResponse,
+    cost_recorder: CostRecorder,
+    run_context: RunContext,
+) -> None:
+    provider = _create_provider()
+    provider._client = _FakeClient(  # type: ignore[assignment]
+        make_response(
+            [
+                {
+                    "function_call": {"id": "call_1", "name": "f"},
+                    "thought_signature": b"sig",
+                }
+            ]
+        )
+    )
+
+    [ai_message] = await _run(
+        provider,
+        [HumanMessage.create("Hello")],
+        cost_recorder=cost_recorder,
+        run_context=run_context,
+    )
+    assert isinstance(ai_message, AIMessage)
+    state = ChatProviderState.from_message(ai_message, "google_genai")
+    assert state is not None
+
+    request = await provider.create_request(
+        ChatProviderContext.create(
+            messages=[
+                HumanMessage.create("Hello"),
+                ai_message,
+                ToolMessage.create("ok", tool_name="f", tool_call_id="call_1"),
+            ],
+            run_context=run_context,
+        )
+    )
+    assert request["contents"][1].parts[0].thought_signature == b"sig"

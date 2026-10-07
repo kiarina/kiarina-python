@@ -1,3 +1,4 @@
+import base64
 from typing import Any
 
 import pytest
@@ -114,3 +115,34 @@ async def test_consecutive_human_messages_are_merged(convert: Any) -> None:
 
     assert len(request.contents) == 1
     assert [p.text for p in request.contents[0].parts] == ["A", "B"]
+
+
+async def test_thought_signatures(
+    capabilities: ChatCapabilities, run_context: RunContext
+) -> None:
+    request = await to_google_genai_request(
+        [
+            HumanMessage.create("Hi"),
+            AIMessage.create(
+                "Checking.",
+                tool_calls=[ToolCall(id="c1", name="f"), ToolCall(id="c2", name="g")],
+            ),
+            ToolMessage.create("ok", tool_name="f", tool_call_id="c1"),
+            ToolMessage.create("ok", tool_name="g", tool_call_id="c2"),
+        ],
+        capabilities=capabilities,
+        media_converter=GoogleGenAIChatProvider(GoogleGenAIChatProviderSettings()),
+        run_context=run_context,
+        thought_signatures={
+            1: {
+                "tool_calls": {"c1": base64.b64encode(b"s1").decode()},
+                "text": base64.b64encode(b"t").decode(),
+            }
+        },
+    )
+
+    text, first, second = request.contents[1].parts
+    assert text.thought_signature == b"t"
+    assert first.thought_signature == b"s1"
+    # The real signature replaces the bypass, and later calls carry none.
+    assert second.thought_signature is None

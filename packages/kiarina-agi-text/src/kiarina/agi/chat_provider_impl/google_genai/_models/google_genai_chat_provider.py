@@ -11,9 +11,12 @@ from kiarina.agi.chat_provider import (
     BaseChatProvider,
     ChatCapabilities,
     ChatProviderContext,
+    ChatProviderState,
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
+    collect_message_states,
+    compute_message_hash,
 )
 from kiarina.agi.content import Content
 from kiarina.agi.cost_record import CostRecord
@@ -118,11 +121,15 @@ class GoogleGenAIChatProvider(BaseChatProvider, MediaConverter):
     # --------------------------------------------------
 
     async def create_request(self, ctx: ChatProviderContext) -> dict[str, Any]:
+        states = collect_message_states(
+            ctx.messages, self.name, model_name=self.settings.model_name
+        )
         google_genai_request = await to_google_genai_request(
             ctx.messages,
             capabilities=ctx.capabilities,
             media_converter=self,
             run_context=ctx.run_context,
+            thought_signatures={index: state.data for index, state in states.items()},
         )
 
         config: dict[str, Any] = {
@@ -237,6 +244,27 @@ class GoogleGenAIChatProvider(BaseChatProvider, MediaConverter):
             and result.usage.output_tokens >= self.settings.max_output_tokens
         ):
             raise MaxTokenError()
+
+        tool_call_signatures = {
+            tool_call.id: result.thought_signatures[tool_call.id]
+            for tool_call in ai_message.tool_calls
+            if tool_call.id in result.thought_signatures
+        }
+
+        if tool_call_signatures or result.text_thought_signature:
+            # NOTE: Gemini 3 expects its thought signatures back with the turn.
+            data: dict[str, Any] = {"tool_calls": tool_call_signatures}
+
+            if result.text_thought_signature:
+                data["text"] = result.text_thought_signature
+
+            ChatProviderState(
+                name=self.name,
+                history_hash=compute_message_hash(
+                    ai_message, model_name=self.settings.model_name
+                ),
+                data=data,
+            ).write_to(ai_message)
 
         return ai_message
 

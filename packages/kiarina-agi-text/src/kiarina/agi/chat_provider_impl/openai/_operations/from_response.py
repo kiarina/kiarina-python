@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from kiarina.agi.message import AIMessage, ToolCall
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def from_response(response: "Response") -> OpenAIChatResult:
-    """Reasoning items are dropped because requests are sent with `store=False`."""
+    """Reasoning items are kept only with their encrypted content."""
     if response.status == "failed":
         error = response.error
         detail = f"{error.code}: {error.message}" if error else "unknown error"
@@ -21,9 +21,16 @@ def from_response(response: "Response") -> OpenAIChatResult:
 
     texts: list[str] = []
     tool_calls: list[ToolCall] = []
+    reasoning_items: list[dict[str, Any]] = []
 
     for item in response.output:
-        if item.type == "message":
+        if item.type == "reasoning":
+            if item.encrypted_content:
+                reasoning_items.append(
+                    item.model_dump(mode="json", exclude_none=True, exclude={"status"})
+                )
+
+        elif item.type == "message":
             for content in item.content:
                 if content.type == "output_text":
                     texts.append(content.text or "")
@@ -43,6 +50,7 @@ def from_response(response: "Response") -> OpenAIChatResult:
         ai_message=AIMessage.create(text="".join(texts), tool_calls=tool_calls),
         stop_reason=_to_stop_reason(response),
         usage=_to_usage(response),
+        reasoning_items=reasoning_items,
     )
 
 

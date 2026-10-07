@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from typing import Any
 
 from kiarina.agi.chat_content import ContentPart, MediaConverter, from_contents
@@ -20,6 +21,7 @@ async def to_anthropic_request(
     capabilities: ChatCapabilities,
     media_converter: MediaConverter,
     run_context: RunContext,
+    thinking_blocks: Mapping[int, list[dict[str, Any]]] | None = None,
 ) -> AnthropicRequest:
     """
     Convert messages into Anthropic's `system` and `messages`.
@@ -29,6 +31,7 @@ async def to_anthropic_request(
       or at the end; otherwise it is moved to `system`.
     - Consecutive human and tool messages are merged into one user turn, because
       tool results must sit together in the turn after the tool use.
+    - `thinking_blocks` by message index open those AI messages' turns.
     """
     request = AnthropicRequest()
     pending_systems: list[str | list[dict[str, Any]]] = []
@@ -58,7 +61,8 @@ async def to_anthropic_request(
             continue
 
         if message.type == "ai":
-            content = _to_blocks(result.parts, allow_empty=True)
+            content = list((thinking_blocks or {}).get(index, []))
+            content += _to_blocks(result.parts, allow_empty=True)
             content += [
                 {
                     "type": "tool_use",

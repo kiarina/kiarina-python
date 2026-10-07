@@ -81,5 +81,11 @@ class OpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
 
     extra_body: dict[str, Any] | None = None
 
+    carry_reasoning: bool = True
+    """
+    Responses API: ask for encrypted reasoning items and send them back with
+    their turn. Turn it off for a model that rejects `reasoning.encrypted_content`.
+    """
+
 
 settings_manager = SettingsManager(OpenAIChatProviderSettings)

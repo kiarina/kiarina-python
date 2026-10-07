@@ -10,9 +10,12 @@ from kiarina.agi.chat_provider import (
     BaseChatProvider,
     ChatCapabilities,
     ChatProviderContext,
+    ChatProviderState,
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
+    collect_message_states,
+    compute_message_hash,
 )
 from kiarina.agi.content import Content
 from kiarina.agi.cost_record import CostRecord
@@ -145,12 +148,19 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
     # --------------------------------------------------
 
     async def create_request(self, ctx: ChatProviderContext) -> dict[str, Any]:
+        states = collect_message_states(
+            ctx.messages, self.name, model_name=self.settings.model_name
+        )
         anthropic_request = await to_anthropic_request(
             ctx.messages,
             model_name=self.settings.model_name,
             capabilities=ctx.capabilities,
             media_converter=self,
             run_context=ctx.run_context,
+            thinking_blocks={
+                index: state.data.get("thinking_blocks", [])
+                for index, state in states.items()
+            },
         )
 
         request: dict[str, Any] = {
@@ -267,6 +277,17 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
 
         if result.stop_reason == "max_tokens":
             raise MaxTokenError()
+
+        if result.thinking_blocks:
+            # NOTE: Thinking blocks are sent back with this turn, as the models
+            # with thinking always on ask for.
+            ChatProviderState(
+                name=self.name,
+                history_hash=compute_message_hash(
+                    result.ai_message, model_name=self.settings.model_name
+                ),
+                data={"thinking_blocks": result.thinking_blocks},
+            ).write_to(result.ai_message)
 
         return result.ai_message
 

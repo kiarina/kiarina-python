@@ -32,3 +32,22 @@ def test_refusal(make_message: Callable[..., Message]) -> None:
 
     assert result.ai_message.to_text() == ""
     assert result.stop_reason == "refusal"
+
+
+def test_thinking_blocks(make_message: Callable[..., Message]) -> None:
+    result = from_anthropic_message(
+        make_message(
+            [
+                {"type": "thinking", "thinking": "Hmm", "signature": "sig"},
+                {"type": "redacted_thinking", "data": "xyz"},
+                {"type": "text", "text": "Hi"},
+            ]
+        ),
+        cache_ttl="5m",
+    )
+
+    assert result.thinking_blocks == [
+        {"type": "thinking", "thinking": "Hmm", "signature": "sig"},
+        {"type": "redacted_thinking", "data": "xyz"},
+    ]
+    assert result.ai_message.to_text() == "Hi"

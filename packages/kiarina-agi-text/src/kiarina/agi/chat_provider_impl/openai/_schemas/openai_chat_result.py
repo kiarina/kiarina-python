@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Any
 
 from kiarina.agi.message import AIMessage
 
@@ -11,3 +12,5 @@ class OpenAIChatResult:
     ai_message: AIMessage
     stop_reason: OpenAIStopReason = "stop"
     usage: OpenAIUsage | None = None
+    reasoning_items: list[dict[str, Any]] = field(default_factory=list)
+    """Encrypted reasoning items of the Responses API, to send back with this turn."""

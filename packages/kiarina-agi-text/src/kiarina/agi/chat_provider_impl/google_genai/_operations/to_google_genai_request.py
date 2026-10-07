@@ -1,5 +1,7 @@
+import base64
 import json
 import logging
+from collections.abc import Mapping
 from typing import Any
 
 from kiarina.agi.chat_content import ContentPart, MediaConverter, from_contents
@@ -27,19 +29,22 @@ async def to_google_genai_request(
     capabilities: ChatCapabilities,
     media_converter: MediaConverter,
     run_context: RunContext,
+    thought_signatures: Mapping[int, dict[str, Any]] | None = None,
 ) -> GoogleGenAIRequest:
     """
     Convert messages into Gemini's `system_instruction` and `contents`.
 
     - Consecutive human and tool messages are merged into one user turn, because
       the responses to parallel function calls must follow the call together.
+    - `thought_signatures` by message index (`{"tool_calls": {id: base64},
+      "text": base64}`) go back on those AI messages' parts.
     - Function calls in the active loop (after the last user turn with text or
-      media) carry the thought signature bypass, since signatures are not kept.
+      media) that have no signature carry the thought signature bypass.
     """
     request = GoogleGenAIRequest()
     system_texts: list[str] = []
 
-    for message in messages:
+    for index, message in enumerate(messages):
         result = await from_contents(
             message.type,
             message.contents,
@@ -57,15 +62,27 @@ async def to_google_genai_request(
             continue
 
         if message.type == "ai":
+            signatures = (thought_signatures or {}).get(index, {})
             parts = _to_parts(result.parts)
-            parts += [
-                types.Part(
+            text_parts = [part for part in parts if part.text]
+
+            if text_parts and (signature := _decode(signatures.get("text"))):
+                text_parts[-1].thought_signature = signature
+
+            for tool_call in message.tool_calls:
+                part = types.Part(
                     function_call=types.FunctionCall(
                         id=tool_call.id, name=tool_call.name, args=tool_call.args
                     )
                 )
-                for tool_call in message.tool_calls
-            ]
+
+                if signature := _decode(
+                    (signatures.get("tool_calls") or {}).get(tool_call.id)
+                ):
+                    part.thought_signature = signature
+
+                parts.append(part)
+
             request.contents.append(
                 types.Content(role="model", parts=parts or [types.Part(text="")])
             )
@@ -106,6 +123,16 @@ async def to_google_genai_request(
 
     _skip_thought_signatures(request.contents)
     return request
+
+
+def _decode(signature: Any) -> bytes | None:
+    if not isinstance(signature, str) or not signature:
+        return None
+
+    try:
+        return base64.b64decode(signature)
+    except ValueError:
+        return None
 
 
 def _to_parts(parts: list[ContentPart]) -> list[Any]:

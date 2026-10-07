@@ -2,10 +2,12 @@ from ._constants.chat_provider_state_key import CHAT_PROVIDER_STATE_KEY
 from ._exceptions.max_token_error import MaxTokenError
 from ._exceptions.safety_error import SafetyError
 from ._exceptions.token_overflow_error import TokenOverflowError
+from ._helpers.collect_message_states import collect_message_states
 from ._helpers.find_chat_provider_state import find_chat_provider_state
 from ._instances.chat_provider_registry import chat_provider_registry
 from ._models.base_chat_provider import BaseChatProvider
 from ._operations.compute_history_hash import compute_history_hash
+from ._operations.compute_message_hash import compute_message_hash
 from ._schemas.chat_capabilities import ChatCapabilities
 from ._schemas.chat_provider_context import ChatProviderContext
 from ._schemas.chat_provider_state import ChatProviderState
@@ -21,6 +23,7 @@ __all__ = [
     "SafetyError",
     "TokenOverflowError",
     # ._helpers
+    "collect_message_states",
     "find_chat_provider_state",
     # ._instances
     "chat_provider_registry",
@@ -28,6 +31,7 @@ __all__ = [
     "BaseChatProvider",
     # ._operations
     "compute_history_hash",
+    "compute_message_hash",
     # ._schemas
     "ChatCapabilities",
     "ChatProviderContext",

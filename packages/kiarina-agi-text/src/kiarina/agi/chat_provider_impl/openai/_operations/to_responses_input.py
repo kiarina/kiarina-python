@@ -1,4 +1,5 @@
 import json
+from collections.abc import Mapping
 from typing import Any
 
 from kiarina.agi.chat_content import MediaConverter, from_contents
@@ -15,10 +16,12 @@ async def to_responses_input(
     capabilities: ChatCapabilities,
     media_converter: MediaConverter,
     run_context: RunContext,
+    reasoning_items: Mapping[int, list[dict[str, Any]]] | None = None,
 ) -> list[dict[str, Any]]:
+    """`reasoning_items` by message index go before those AI messages' items."""
     items: list[dict[str, Any]] = []
 
-    for message in messages:
+    for index, message in enumerate(messages):
         result = await from_contents(
             message.type,
             message.contents,
@@ -44,6 +47,7 @@ async def to_responses_input(
             )
 
         elif message.type == "ai":
+            items += (reasoning_items or {}).get(index, [])
             content = to_openai_parts(result.parts, text_type="output_text")
 
             if content:

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from kiarina.agi.message import AIMessage, ToolCall
 
@@ -16,9 +16,12 @@ def from_anthropic_message(
 ) -> AnthropicChatResult:
     texts: list[str] = []
     tool_calls: list[ToolCall] = []
+    thinking_blocks: list[dict[str, Any]] = []
 
     for block in message.content:
-        if block.type == "text":
+        if block.type in ("thinking", "redacted_thinking"):
+            thinking_blocks.append(block.model_dump(mode="json", exclude_none=True))
+        elif block.type == "text":
             texts.append(block.text)
         elif block.type == "tool_use":
             tool_calls.append(
@@ -33,4 +36,5 @@ def from_anthropic_message(
         ai_message=AIMessage.create(text="".join(texts), tool_calls=tool_calls),
         stop_reason=from_stop_reason(message.stop_reason),
         usage=from_anthropic_usage(message.usage, cache_ttl=cache_ttl),
+        thinking_blocks=thinking_blocks,
     )

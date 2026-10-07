@@ -203,3 +203,24 @@ async def test_consecutive_human_messages_are_merged(convert: Any) -> None:
             "content": [{"type": "text", "text": "A"}, {"type": "text", "text": "B"}],
         }
     ]
+
+
+async def test_thinking_blocks(
+    capabilities: ChatCapabilities, run_context: RunContext
+) -> None:
+    block = {"type": "thinking", "thinking": "Hmm", "signature": "sig"}
+    request = await to_anthropic_request(
+        [
+            HumanMessage.create("Hi"),
+            AIMessage.create("Hello", tool_calls=[ToolCall(id="t", name="f")]),
+            ToolMessage.create("ok", tool_name="f", tool_call_id="t"),
+        ],
+        model_name="claude-sonnet-5-5",
+        capabilities=capabilities,
+        media_converter=AnthropicChatProvider(AnthropicChatProviderSettings()),
+        run_context=run_context,
+        thinking_blocks={1: [block]},
+    )
+
+    assert request.messages[1]["content"][0] == block
+    assert request.messages[1]["content"][1]["type"] == "text"

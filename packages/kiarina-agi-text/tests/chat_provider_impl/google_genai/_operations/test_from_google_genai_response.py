@@ -1,3 +1,4 @@
+import base64
 from collections.abc import Callable
 
 from google.genai import types
@@ -52,3 +53,25 @@ def test_blocked_prompt() -> None:
 
     assert result.stop_reason == "safety"
     assert result.ai_message.to_text() == ""
+
+
+def test_thought_signatures(
+    make_response: Callable[..., types.GenerateContentResponse],
+) -> None:
+    result = from_google_genai_response(
+        make_response(
+            [
+                {"text": "Hi", "thought_signature": b"text-sig"},
+                {
+                    "function_call": {"id": "call_1", "name": "f"},
+                    "thought_signature": b"call-sig",
+                },
+                {"function_call": {"id": "call_2", "name": "g"}},
+            ]
+        )
+    )
+
+    assert result.thought_signatures == {
+        "call_1": base64.b64encode(b"call-sig").decode()
+    }
+    assert result.text_thought_signature == base64.b64encode(b"text-sig").decode()
