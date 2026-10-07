@@ -54,9 +54,9 @@ class ClaudeAgentSDKChatProvider(BaseChatProvider, MediaConverter):
     Claude Agent SDK Chat Provider Implementation
 
     Runs Claude Code with its own login, one new session per request. The
-    conversation is sent as one `<messages>` XML prompt, Claude Code's own tools
-    and settings are turned off, and the run stops after the first model turn
-    (`max_turns=1`), so the caller runs the tool calls.
+    conversation is sent as `<messages>` XML, one content block per message,
+    Claude Code's own tools and settings are turned off, and the run stops after
+    the first model turn (`max_turns=1`), so the caller runs the tool calls.
     """
 
     def __init__(self, settings: ClaudeAgentSDKChatProviderSettings) -> None:
@@ -120,13 +120,15 @@ class ClaudeAgentSDKChatProvider(BaseChatProvider, MediaConverter):
         )
         tool_infos = ctx.tool_infos or []
         system_prompt = transcript.to_system_prompt(tools_enabled=bool(tool_infos))
-        user_prompt = transcript.to_user_prompt(
-            tool_choice=ctx.tool_choice if tool_infos else None
+        # NOTE: The conversation is sent one part per message, with a cache
+        # breakpoint after the last one, so the next request reads it from the
+        # cache. Claude Code adds three breakpoints of its own, so this is the
+        # fourth and last one the API allows. Its breakpoint after this one uses
+        # the 1-hour TTL, and a 5-minute one may not come before it.
+        user_content = transcript.to_user_parts(
+            tool_choice=ctx.tool_choice if tool_infos else None,
+            cache_control={"type": "ephemeral", "ttl": "1h"},
         )
-        user_content: list[ContentPart] = [
-            {"type": "text", "text": user_prompt},
-            *transcript.media_parts,
-        ]
 
         parallel_tool_calls = ctx.parallel_tool_calls
 

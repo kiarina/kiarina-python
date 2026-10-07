@@ -5,7 +5,7 @@ from collections.abc import AsyncIterator
 from pathlib import Path
 from typing import Any
 
-from kiarina.agi.chat_content import ContentPart, MediaConverter, to_transcript
+from kiarina.agi.chat_content import ContentPart, MediaConverter
 from kiarina.agi.chat_logger import chat_logger_registry
 from kiarina.agi.chat_provider import (
     BaseChatProvider,
@@ -22,6 +22,7 @@ from .._operations.create_config_overrides import create_config_overrides
 from .._operations.create_model_catalog import create_model_catalog
 from .._operations.from_raw_response_items import from_raw_response_items
 from .._operations.to_dynamic_tools import to_dynamic_tools
+from .._operations.to_thread_items import to_thread_items
 from .._schemas.codex_app_server_chat_result import CodexAppServerChatResult
 from .._settings import CodexAppServerChatProviderSettings
 from .codex_app_server_session import CodexAppServerSession
@@ -36,15 +37,19 @@ except ImportError as exc:
 
 _CLIENT_INFO = {"name": "kiarina-agi-text", "title": "kiarina-agi-text", "version": "1"}
 
+_DEFAULT_INSTRUCTIONS = "You are a helpful assistant."
+"""Without base instructions, Codex would send its own."""
+
 
 class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
     """
     Codex App Server Chat Provider Implementation
 
     Runs `codex app-server` with its own login, one new process and ephemeral
-    thread per request. The conversation is sent as one `<messages>` XML prompt,
-    Codex's own tools and instructions are turned off, and the process is closed
-    when the first model response completes. Tool call requests are never
+    thread per request. The conversation is injected into the thread as raw
+    Responses API items, as the API would get it, and the turn starts with no
+    input. Codex's own tools and instructions are turned off, and the process is
+    closed when the first model response completes. Tool call requests are never
     answered, so the caller runs the tools.
 
     Codex sends app tools with `parallel_tool_calls: false`, so a turn has at most
@@ -86,8 +91,8 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
 
     def to_image_content(self, mime_blob: MIMEBlob) -> ContentPart | None:
         return {
-            "type": "image",
-            "url": f"data:{mime_blob.mime_type};base64,{mime_blob.raw_base64_str}",
+            "type": "input_image",
+            "image_url": f"data:{mime_blob.mime_type};base64,{mime_blob.raw_base64_str}",
         }
 
     # --------------------------------------------------
@@ -97,23 +102,14 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
     async def _run(
         self, ctx: ChatProviderContext
     ) -> AsyncIterator[AIMessageChunk | AIMessage]:
-        transcript = await to_transcript(
+        tool_infos = ctx.tool_infos or []
+        request = await to_thread_items(
             ctx.messages,
+            tool_choice=ctx.tool_choice if tool_infos else None,
             capabilities=ctx.capabilities,
             media_converter=self,
             run_context=ctx.run_context,
         )
-        tool_infos = ctx.tool_infos or []
-        system_prompt = transcript.to_system_prompt(tools_enabled=bool(tool_infos))
-        user_input: list[dict[str, Any]] = [
-            {
-                "type": "text",
-                "text": transcript.to_user_prompt(
-                    tool_choice=ctx.tool_choice if tool_infos else None
-                ),
-            },
-            *transcript.media_parts,
-        ]
 
         chat_logger = chat_logger_registry.resolve()
 
@@ -124,7 +120,7 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
                 "ephemeral": True,
                 "approvalPolicy": "never",
                 "sandbox": "read-only",
-                "baseInstructions": system_prompt,
+                "baseInstructions": request.instructions or _DEFAULT_INSTRUCTIONS,
                 "model": self.settings.model_name,
                 "dynamicTools": to_dynamic_tools(tool_infos),
                 "experimentalRawEvents": True,
@@ -132,7 +128,7 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
 
             if ctx.streaming:
                 with chat_logger.log_chat_stream(ctx.run_context):
-                    async for item in self._turn(session, thread_params, user_input):
+                    async for item in self._turn(session, thread_params, request.items):
                         if isinstance(item, AIMessageChunk):
                             chat_logger.log_chat_stream_chunk(item)
                             yield item
@@ -141,7 +137,7 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
             else:
                 chat_logger.log_chat_invoke_start(ctx.run_context)
 
-                async for item in self._turn(session, thread_params, user_input):
+                async for item in self._turn(session, thread_params, request.items):
                     if isinstance(item, CodexAppServerChatResult):
                         ai_message = self._handle_result(ctx, item)
                         chat_logger.log_chat_invoke_end(ai_message, ctx.run_context)
@@ -184,7 +180,7 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
         self,
         session: CodexAppServerSession,
         thread_params: dict[str, Any],
-        user_input: list[dict[str, Any]],
+        thread_items: list[dict[str, Any]],
     ) -> AsyncIterator[AIMessageChunk | CodexAppServerChatResult]:
         items: list[dict[str, Any]] = []
 
@@ -201,20 +197,29 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
                 await session.notify("initialized", None)
 
                 thread = await session.request("thread/start", thread_params)
-                turn_params: dict[str, Any] = {
-                    "threadId": thread["thread"]["id"],
-                    "input": user_input,
-                }
+                thread_id = thread["thread"]["id"]
+
+                if thread_items:
+                    await session.request(
+                        "thread/inject_items",
+                        {"threadId": thread_id, "items": thread_items},
+                    )
+
+                turn_params: dict[str, Any] = {"threadId": thread_id, "input": []}
 
                 if self.settings.reasoning_effort:
                     turn_params["effort"] = self.settings.reasoning_effort
 
-                await session.request("turn/start", turn_params)
+                turn = await session.request("turn/start", turn_params)
+                turn_id = turn["turn"]["id"]
 
                 while True:
                     event = await session.next_event()
                     method = event["method"]
                     params = event.get("params") or {}
+
+                    if params.get("turnId", turn_id) != turn_id:
+                        continue
 
                     if method == "item/agentMessage/delta":
                         if delta := params.get("delta"):
@@ -277,6 +282,7 @@ class CodexAppServerChatProvider(BaseChatProvider, MediaConverter):
                 "model_name": self.settings.model_name,
                 "input_tokens": (usage.get("inputTokens") or 0) - cached_input_tokens,
                 "cached_input_tokens": cached_input_tokens,
+                "cache_write_tokens": usage.get("cacheWriteInputTokens") or 0,
                 "output_tokens": usage.get("outputTokens") or 0,
                 "reasoning_output_tokens": usage.get("reasoningOutputTokens") or 0,
             },

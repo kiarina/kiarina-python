@@ -72,7 +72,8 @@ Checked on 2026-10-07. Recheck when a request fails in a way these notes do not 
 
 Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). The experiments, captures, and measurements are in the [agent-runtimes-as-llm-api lab](https://github.com/kiarina/labs/tree/main/2026/10/07/agent-runtimes-as-llm-api).
 
-- Each request starts a new process and session, and sends the conversation as one `<messages>` XML prompt (`to_transcript`). The leading system messages and how to read the XML go in the system prompt. Startup adds a few seconds per request.
+- Each request starts a new process and session. Startup adds a few seconds per request.
+- Claude Code gets the conversation as `<messages>` XML (`to_transcript`), one content block per message, with how to read it in the system prompt. Codex gets it as raw Responses API items through `thread/inject_items`, as the API would, and the turn starts with no input.
 - The runtime's own tools, instructions, settings, and MCP servers are turned off, so the model sees only the caller's instructions, tools, and transcript. Claude Code still adds one line naming the SDK and a short environment section.
 - The run must stop after the first model turn without running the tools and without a second model request:
   - Claude Code runs with `max_turns=1`. It calls the tool handlers before it stops, so they return a placeholder. Stopping the stream at `message_stop` does not work: Claude Code sends the interrupted tool results to the model. A PreToolUse hook returning `defer` stops it too, but reports only one tool call. The SDK raises `ResultError` after the `error_max_turns` result, which is expected.
@@ -82,6 +83,10 @@ Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). T
 - New Codex models call tools only from inside a JavaScript cell (`tool_mode: code_mode_only` in `~/.codex/models_cache.json`). Neither features nor `thread/start` config change it. The provider copies the model entry with the tool mode cleared into its own `model_catalog_json`. Codex updates can change these fields.
 - Codex config (`features.*`, `model_catalog_json`) takes effect only as `--config` when the process starts. `baseInstructions` is sent as a developer message.
 - The Claude Agent SDK passes the parent environment to Claude Code. An inherited `ANTHROPIC_API_KEY` would bill the API, and a host Claude Code session's `CLAUDE_CODE_*` variables would lend its login, so the provider sets them to empty strings, which Claude Code treats as unset. `--name` stops Claude Code from sending the whole prompt again to name the session.
+- Prompt caching, measured with two requests that share a 5K-token history:
+  - Claude caches block by block, so a transcript in one text block never matches the next request (773 of about 5,100 input tokens read from the cache). With one block per message and a breakpoint on the last one, the second request read 4,508 tokens and wrote 588.
+  - Claude Code adds three breakpoints (two in the system prompt, one on the environment section it appends after the user turn), so the provider's is the fourth and last the API allows. Claude Code's use the 1-hour TTL, and a 5-minute breakpoint may not come before a 1-hour one (`400`), so the provider's uses 1 hour too.
+  - Codex read and wrote nothing across new threads, with the history in one message or as items, at 3K and 12K tokens. Within one thread the lab's later requests did read the cache. GPT-6 itself caches at the end of the latest message only, and `prompt_cache_key`, which Codex sets to the thread id, only separates accounting on the API.
 - Usage is recorded at zero cost. Claude Code reports what the request would cost on the API (`total_cost_usd`), kept as `api_cost_microdollars`. Codex's `inputTokens` includes cached tokens.
 - The subscription context window can be smaller than the API's. Codex's model list gives GPT-6.1 Sol 272K.
 - Claude tends to point out contradictions in the transcript, including its own earlier messages, even when not asked.

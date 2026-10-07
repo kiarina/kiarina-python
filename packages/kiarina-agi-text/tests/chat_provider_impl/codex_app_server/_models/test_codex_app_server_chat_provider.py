@@ -86,6 +86,17 @@ def _tool_events() -> list[Any]:
 
 def _text_events() -> list[Any]:
     return [
+        {
+            "method": "rawResponseItem/completed",
+            "params": {
+                "turnId": "turn_0",
+                "item": {
+                    "type": "message",
+                    "role": "assistant",
+                    "content": [{"type": "output_text", "text": "Old"}],
+                },
+            },
+        },
         {"method": "item/agentMessage/delta", "params": {"delta": "Hi"}},
         _raw_item(
             {
@@ -170,8 +181,8 @@ def test_to_image_content(image_file_blob: FileBlob) -> None:
     content = provider.to_image_content(image_file_blob.mime_blob)
 
     assert content is not None
-    assert content["type"] == "image"
-    assert content["url"].startswith("data:image/png;base64,")
+    assert content["type"] == "input_image"
+    assert content["image_url"].startswith("data:image/png;base64,")
     assert provider.get_capabilities().can_include("human", "image")
 
 
@@ -233,14 +244,19 @@ async def test_run_tool_call(
 
     log = _read_log(tmp_path)
     assert log["initialize"]["capabilities"] == {"experimentalApi": True}
-    assert log["thread/start"]["baseInstructions"].startswith("Be brief.\n\n")
+    assert log["thread/start"]["baseInstructions"] == "Be brief."
     assert log["thread/start"]["experimentalRawEvents"] is True
     assert log["thread/start"]["dynamicTools"][0]["name"] == "get_weather"
-    assert log["turn/start"]["threadId"] == "thread_1"
-    assert log["turn/start"]["effort"] == "medium"
-    assert log["turn/start"]["input"][0]["text"].endswith(
-        "You must respond by calling the `get_weather` tool."
-    )
+    assert log["thread/inject_items"]["threadId"] == "thread_1"
+    assert [i["role"] for i in log["thread/inject_items"]["items"]] == [
+        "user",
+        "developer",
+    ]
+    assert log["turn/start"] == {
+        "threadId": "thread_1",
+        "input": [],
+        "effort": "medium",
+    }
 
     [record] = recorder.records
     assert record.microdollars == 0
@@ -248,6 +264,7 @@ async def test_run_tool_call(
         "model_name": "gpt-6.1-sol",
         "input_tokens": 60,
         "cached_input_tokens": 40,
+        "cache_write_tokens": 0,
         "output_tokens": 10,
         "reasoning_output_tokens": 3,
     }
@@ -263,7 +280,9 @@ async def test_run_text(
 
     assert ai_messages[-1].to_text() == "Hi"
     assert [m.to_text() for m in ai_messages[:-1]] == (["Hi"] if streaming else [])
-    assert "effort" not in _read_log(tmp_path)["turn/start"]
+    log = _read_log(tmp_path)
+    assert "effort" not in log["turn/start"]
+    assert log["thread/start"]["baseInstructions"] == "Be brief."
 
 
 @pytest.mark.parametrize(

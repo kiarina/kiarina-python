@@ -245,9 +245,16 @@ async def test_run_tool_call(
         assert len(ai_messages) == 1
 
     [user_message] = fake.calls[0]["prompt"]
-    text = user_message["message"]["content"][0]["text"]
-    assert text.startswith("<messages>\n<human_message>\nWeather?")
-    assert text.endswith("You must respond by calling one of the provided tools.")
+    first, last = user_message["message"]["content"]
+    assert first == {
+        "type": "text",
+        "text": "<messages>\n<human_message>\nWeather?\n</human_message>",
+        "cache_control": {"type": "ephemeral", "ttl": "1h"},
+    }
+    assert last["text"].startswith("</messages>\n\nRespond to the last message")
+    assert last["text"].endswith(
+        "You must respond by calling one of the provided tools."
+    )
     assert fake.calls[0]["options"].system_prompt.startswith("Be brief.\n\n")
 
     [record] = recorder.records

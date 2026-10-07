@@ -52,6 +52,7 @@ async def test_to_transcript(
         "</messages>"
     )
     assert transcript.media_parts == []
+    assert len(transcript.parts) == 6
 
 
 async def test_to_transcript_media(
@@ -68,6 +69,8 @@ async def test_to_transcript_media(
     )
 
     assert transcript.system is None
-    assert transcript.media_parts == [{"type": "image", "mime_type": "image/png"}]
-    assert '<attachment index="1" />' in transcript.prompt
+    image = {"type": "image", "mime_type": "image/png"}
+    assert transcript.media_parts == [image]
+    assert transcript.parts[1] == image
+    assert '<attachment index="1" />' in transcript.parts[0]["text"]
     assert "What is this?" in transcript.prompt

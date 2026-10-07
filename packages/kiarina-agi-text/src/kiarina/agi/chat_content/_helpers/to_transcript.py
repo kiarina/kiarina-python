@@ -22,12 +22,12 @@ async def to_transcript(
 
     - Leading system messages become `system`. A later one stays in place as
       `<system_message>`.
-    - Media parts are moved to `media_parts` and marked in place, so the prompt
-      can be sent as one text followed by the attachments.
+    - Media parts follow the element that marks them, so the conversation can be
+      sent as parts in order, or as one text followed by the attachments.
     """
     transcript = Transcript()
     systems: list[str] = []
-    lines: list[str] = []
+    media_count = 0
 
     for message in messages:
         result = await from_contents(
@@ -37,23 +37,25 @@ async def to_transcript(
             media_converter=media_converter,
             run_context=run_context,
         )
-        text = _to_text(result.parts + result.purged_parts, transcript.media_parts)
+        text, media_parts = _to_text(result.parts + result.purged_parts, media_count)
+        media_count += len(media_parts)
+        elements: list[str] = []
 
         if message.type == "system":
-            if not lines:
+            if not transcript.parts:
                 systems.append(text)
             else:
-                lines.append(_element("system_message", text))
+                elements.append(_element("system_message", text))
 
         elif message.type == "human":
-            lines.append(_element("human_message", text))
+            elements.append(_element("human_message", text))
 
         elif message.type == "ai":
             if text:
-                lines.append(_element("ai_message", text))
+                elements.append(_element("ai_message", text))
 
             for tool_call in message.tool_calls:
-                lines.append(
+                elements.append(
                     _element(
                         "tool_call",
                         json.dumps(tool_call.args, ensure_ascii=False),
@@ -68,18 +70,23 @@ async def to_transcript(
             if message.failed:
                 attrs["failed"] = "true"
 
-            lines.append(_element("tool_result", text, **attrs))
+            elements.append(_element("tool_result", text, **attrs))
 
         else:  # pragma: no cover
             raise AssertionError(f"Unsupported message type: {message.type}")
 
+        transcript.parts += [{"type": "text", "text": e} for e in elements]
+        transcript.parts += media_parts
+
     transcript.system = "\n\n".join(s for s in systems if s) or None
-    transcript.prompt = "\n".join(["<messages>", *lines, "</messages>"])
     return transcript
 
 
-def _to_text(parts: list[ContentPart], media_parts: list[ContentPart]) -> str:
+def _to_text(
+    parts: list[ContentPart], media_offset: int
+) -> tuple[str, list[ContentPart]]:
     texts: list[str] = []
+    media_parts: list[ContentPart] = []
 
     for part in parts:
         if part.get("type") == "text":
@@ -87,9 +94,9 @@ def _to_text(parts: list[ContentPart], media_parts: list[ContentPart]) -> str:
                 texts.append(text)
         else:
             media_parts.append(part)
-            texts.append(f'<attachment index="{len(media_parts)}" />')
+            texts.append(f'<attachment index="{media_offset + len(media_parts)}" />')
 
-    return "\n\n".join(texts)
+    return "\n\n".join(texts), media_parts
 
 
 def _element(tag: str, text: str, **attrs: str) -> str:
