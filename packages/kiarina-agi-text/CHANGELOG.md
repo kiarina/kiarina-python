@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch the OpenAI and local chat model presets (`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.4-nano`, `gpt-5.4-mini`, `qwen3.8-flash-next`, `qwen3.8-flash-next-fast`, and `qwen3-omni`) from the `lc_openai` provider to the `openai` provider. Their provider configs are unchanged.
 - Switch the Anthropic chat model presets (`claude-sonnet-5`, `claude-opus-5`, `claude-fable-5`, and `claude-haiku-4-5`) from the `lc_anthropic` provider to the `anthropic` provider. 
 - Switch the `vclaude-*` chat model presets from the `lc_anthropic_vertex` provider to the `anthropic_vertex` provider and drop their `token_count_model_name`, so token counting uses the Vertex AI model names.
+- Switch the Gemini chat model presets (`gemini-3.6-flash` and `gemini-3.5-flash-lite`, and with them the `omni` and `google` aliases) from the `lc_google_genai` provider to the `google_genai` provider.
 
 ### Deprecated
 - `kiarina.agi.langchain_chat_provider.LangChainMediaConverter` is now an alias of `kiarina.agi.chat_content.MediaConverter`.

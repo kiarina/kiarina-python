@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **kiarina-agi-text**: Switch the OpenAI and local chat model presets from the `lc_openai` provider to the `openai` provider.
 - **kiarina-agi-text**: Switch the Anthropic and Vertex AI Claude chat model presets from the `lc_anthropic` and `lc_anthropic_vertex` providers to the `anthropic` and `anthropic_vertex` providers.
+- **kiarina-agi-text**: Switch the Gemini chat model presets from the `lc_google_genai` provider to the `google_genai` provider.
 
 ### Removed
 - **kiarina-agi-text**: Remove the `lc_google` chat provider preset, which pointed to a module that does not exist.

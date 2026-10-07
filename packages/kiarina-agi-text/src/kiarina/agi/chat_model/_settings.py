@@ -378,10 +378,10 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             # --------------------------------------------------
-            # lc_google_genai
+            # google_genai
             # --------------------------------------------------
             "gemini-3.6-flash": ChatModelConfig(
-                provider_name="lc_google_genai",
+                provider_name="google_genai",
                 provider_config={
                     "model_name": "gemini-3.6-flash",
                     "context_window": 1_048_576,
@@ -405,7 +405,7 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=1.0,
             ),
             "gemini-3.5-flash-lite": ChatModelConfig(
-                provider_name="lc_google_genai",
+                provider_name="google_genai",
                 provider_config={
                     "model_name": "gemini-3.5-flash-lite",
                     "context_window": 1_048_576,
