@@ -22,6 +22,9 @@ from kiarina.utils.mime import MIMEBlob
 from .._constants.no_forced_tool_choice_model_prefixes import (
     NO_FORCED_TOOL_CHOICE_MODEL_PREFIXES,
 )
+from .._operations.append_tool_choice_instruction import (
+    append_tool_choice_instruction,
+)
 from .._operations.from_anthropic_message import from_anthropic_message
 from .._operations.to_anthropic_request import to_anthropic_request
 from .._operations.to_anthropic_tool_choice import to_anthropic_tool_choice
@@ -175,13 +178,17 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
             request["tools"] = to_anthropic_tools(
                 ctx.tool_infos, cache_ttl=self.settings.cache_ttl
             )
+            forced_tool_choice_supported = not self.settings.model_name.startswith(
+                NO_FORCED_TOOL_CHOICE_MODEL_PREFIXES
+            )
             request["tool_choice"] = to_anthropic_tool_choice(
                 ctx.tool_choice,
                 parallel_tool_calls=parallel_tool_calls,
-                forced_tool_choice_supported=not self.settings.model_name.startswith(
-                    NO_FORCED_TOOL_CHOICE_MODEL_PREFIXES
-                ),
+                forced_tool_choice_supported=forced_tool_choice_supported,
             )
+
+            if not forced_tool_choice_supported:
+                append_tool_choice_instruction(request["messages"], ctx.tool_choice)
 
         return request
 

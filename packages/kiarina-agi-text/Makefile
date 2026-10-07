@@ -30,5 +30,5 @@ text_embedding_provider_openai_test:
 	mise run test --costly --path tests/text_embedding_provider_impl/openai
 
 tmp_test:
-	KIARINA_AGI_TEXT_TEST_CHAT_MODEL=claude-sonnet-5 \
+	KIARINA_AGI_TEXT_TEST_CHAT_MODEL=claude-sonnet-5-5 \
 	mise run test kiarina-agi-text --no-pytest-args --costly --path tests/chat_model/_helpers/

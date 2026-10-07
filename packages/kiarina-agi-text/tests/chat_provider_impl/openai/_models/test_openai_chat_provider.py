@@ -272,7 +272,7 @@ ENDPOINT_TYPES = ["chat_completions", "responses"]
 @pytest.fixture(params=ENDPOINT_TYPES)
 def provider(request: pytest.FixtureRequest) -> OpenAIChatProvider:
     return _create_provider(
-        model_name="gpt-5.4-nano",
+        model_name="gpt-6-luna",
         endpoint_type=request.param,
         input_enabled={"image": True, "pdf": True},
     )
@@ -332,7 +332,7 @@ async def test_max_token_error(
 ) -> None:
     for endpoint_type in ENDPOINT_TYPES:
         provider = _create_provider(
-            model_name="gpt-5.4-nano",
+            model_name="gpt-6-luna",
             endpoint_type=endpoint_type,
             max_output_tokens=50,
             reasoning_effort="none",

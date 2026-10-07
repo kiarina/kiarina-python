@@ -15,10 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Add the `openai` chat provider, which calls the OpenAI SDK directly for the Chat Completions API and the Responses API (`chat-provider-openai` extra).
 - **kiarina-agi-text**: Add `kiarina.agi.chat_content`, a LangChain-independent converter from message contents to provider content parts.
 
+### Changed (BREAKING)
+- **kiarina-agi-text**: Update the chat model presets to GPT-6 (`gpt-6-astra`, `gpt-6.1-sol`, `gpt-6-luna`), Claude Sonnet 5.5, Opus 5.5, and Fable 5.1 (with `vclaude-*` on the `global` location), and Gemini 3.8 Flash, and remove the superseded presets. Add a `qwen3.8-27b` preset.
+
 ### Changed
-- **kiarina-agi-text**: Switch the OpenAI and local chat model presets from the `lc_openai` provider to the `openai` provider.
-- **kiarina-agi-text**: Switch the Anthropic and Vertex AI Claude chat model presets from the `lc_anthropic` and `lc_anthropic_vertex` providers to the `anthropic` and `anthropic_vertex` providers.
-- **kiarina-agi-text**: Switch the Gemini chat model presets from the `lc_google_genai` provider to the `google_genai` provider.
+- **kiarina-agi-text**: Every chat model preset uses the SDK providers (`openai`, `anthropic`, `anthropic_vertex`, and `google_genai`) instead of the `lc_*` providers.
 
 ### Removed (BREAKING)
 - **kiarina-agi-text**: Remove the LangChain chat providers (`lc_openai`, `lc_anthropic`, `lc_anthropic_vertex`, `lc_google_genai`), the `langchain_chat_provider` package, and the `chat-provider-lc-*` extras. `langchain` and `langchain-core` are no longer dependencies.

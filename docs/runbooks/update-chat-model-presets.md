@@ -69,7 +69,7 @@ Multiply `$/MTok` by 1,000 to convert it to microdollars per 1K tokens. For exam
 
 Enable settings representing long-context surcharges only when the model actually has an additional charge. Do not enable them when the full context uses standard pricing.
 
-For OpenAI GPT-5.6 presets, prompts over 272K input tokens apply a 2x input and 1.5x output multiplier to the full request. Cache writes cost 1.25x the uncached input rate. Use input tokens including cache reads and cache writes when evaluating the threshold.
+For OpenAI GPT-5.6 and GPT-6 presets, prompts over 272K input tokens apply a 2x input and 1.5x output multiplier to the full request. Cache writes cost 1.25x the uncached input rate. Use input tokens including cache reads and cache writes when evaluating the threshold.
 
 Search for references to removed presets in types and documentation.
 
@@ -86,6 +86,8 @@ Verify API compatibility for new presets through the addition-only API tests. Wh
 ### 5. Run addition-only API tests
 
 Run the costly chat model helper tests for each new preset only when adding that preset. Do not run them for price-only changes or routine regression tests.
+
+For high-priced presets (such as GPT-6 Astra or Claude Fable), do not run the helper tests. Send one request with a few output tokens to confirm the model ID and settings are accepted, and test behavior with a cheaper model of the same provider and provider path.
 
 ```bash
 KIARINA_AGI_TEXT_TEST_CHAT_MODEL=<preset-name> \
@@ -138,3 +140,13 @@ The first update following this procedure made these changes:
 - applied GPT-5.6 pricing for prompts over 272K tokens and cache writes to cost records
 - set Fable 5 and Vertex Claude presets to `visible=False`
 - updated the `llm`, `vlm`, `openai`, `anthropic`, `google`, and `omni` aliases to the new presets
+
+## 2026-10 Update
+
+- OpenAI: added GPT-6 Astra, GPT-6.1 Sol, and GPT-6 Luna; removed GPT-5.6 Sol, Terra, and Luna and GPT-5.4 Mini and Nano (Nano is deprecated with GPT-6 Luna as its successor; Mini and Terra had no remaining cost role)
+- Anthropic: added Claude Sonnet 5.5, Opus 5.5, Fable 5.1, and their Vertex presets on the `global` location; removed the 5.0 presets; raised Haiku 4.5 output to 64K
+- Google: added Gemini 3.8 Flash; removed Gemini 3.6 Flash (retired on Vertex AI on 2026-11-19); kept 3.5 Flash-Lite
+- local: added Qwen3.8-27B
+- used list prices, not temporary promotional prices (GPT-5.6 Sol and Gemini 3.x Flash had promotions at the time)
+- GPT-6 Astra rejects a custom `temperature`, and Claude Sonnet 5.5, Opus 5.5, and Fable 5.1 reject forced tool choice; the providers handle both
+- ran the helper tests for GPT-6 Luna, GPT-6.1 Sol, Claude Sonnet 5.5, Gemini 3.8 Flash, and Qwen3.8-27B; GPT-6 Astra, Claude Opus 5.5, and Claude Fable 5.1 got a single short request

@@ -19,14 +19,14 @@ class ChatModelSettings(BaseSettings):
     aliases: dict[ChatModelAlias, ChatModelName] = Field(
         default_factory=lambda: {
             # modalities
-            "llm": "gpt-5.6-sol",
-            "vlm": "gpt-5.6-sol",
-            "omni": "gemini-3.6-flash",
+            "llm": "gpt-6.1-sol",
+            "vlm": "gpt-6.1-sol",
+            "omni": "gemini-3.8-flash",
             # providers
             "local": "qwen3.8-flash-next-fast",
-            "openai": "gpt-5.6-sol",
-            "anthropic": "claude-sonnet-5",
-            "google": "gemini-3.6-flash",
+            "openai": "gpt-6.1-sol",
+            "anthropic": "claude-sonnet-5-5",
+            "google": "gemini-3.8-flash",
         }
     )
 
@@ -87,6 +87,23 @@ class ChatModelSettings(BaseSettings):
                 },
                 visible=False,
             ),
+            "qwen3.8-27b": ChatModelConfig(
+                provider_name="openai",
+                provider_config={
+                    "openai_settings_key": "local",
+                    "model_name": "qwen3.8-27b",
+                    "context_window": 262_144,
+                    "max_output_tokens": 62_144,
+                    "input_cost_microdollars_per_1k_tokens": 0,
+                    "cached_input_cost_microdollars_per_1k_tokens": 0,
+                    "output_cost_microdollars_per_1k_tokens": 0,
+                    "extra_body": {"chat_template_kwargs": {"enable_thinking": False}},
+                    "token_count_limit": 200_000,
+                    "image_file_count_limit": 100,
+                    "input_enabled": {"image": True},
+                },
+                visible=False,
+            ),
             "qwen3-omni": ChatModelConfig(
                 provider_name="openai",
                 provider_config={
@@ -110,55 +127,36 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # openai
             # --------------------------------------------------
-            "gpt-5.6-sol": ChatModelConfig(
+            "gpt-6-astra": ChatModelConfig(
                 provider_name="openai",
                 provider_config={
-                    "model_name": "gpt-5.6-sol",
+                    "model_name": "gpt-6-astra",
                     "context_window": 1_050_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 5_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 500,
-                    "output_cost_microdollars_per_1k_tokens": 30_000,
+                    "input_cost_microdollars_per_1k_tokens": 10_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 1_000,
+                    "output_cost_microdollars_per_1k_tokens": 50_000,
                     "cache_write_cost_multiplier": 1.25,
                     "extended_cost_threshold_tokens": 272_000,
                     "extended_input_cost_multiplier": 2.0,
                     "extended_output_cost_multiplier": 1.5,
                     "endpoint_type": "responses",
+                    "temperature": None,
                     "token_count_limit": 800_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
                 },
             ),
-            "gpt-5.6-terra": ChatModelConfig(
+            "gpt-6.1-sol": ChatModelConfig(
                 provider_name="openai",
                 provider_config={
-                    "model_name": "gpt-5.6-terra",
+                    "model_name": "gpt-6.1-sol",
                     "context_window": 1_050_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 2_500,
-                    "cached_input_cost_microdollars_per_1k_tokens": 250,
-                    "output_cost_microdollars_per_1k_tokens": 15_000,
-                    "cache_write_cost_multiplier": 1.25,
-                    "extended_cost_threshold_tokens": 272_000,
-                    "extended_input_cost_multiplier": 2.0,
-                    "extended_output_cost_multiplier": 1.5,
-                    "endpoint_type": "responses",
-                    "token_count_limit": 800_000,
-                    "image_file_count_limit": 100,
-                    "pdf_page_count_limit": 100,
-                    "input_enabled": {"image": True, "pdf": True},
-                },
-            ),
-            "gpt-5.6-luna": ChatModelConfig(
-                provider_name="openai",
-                provider_config={
-                    "model_name": "gpt-5.6-luna",
-                    "context_window": 1_050_000,
-                    "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 1_000,
+                    "input_cost_microdollars_per_1k_tokens": 2_000,
                     "cached_input_cost_microdollars_per_1k_tokens": 100,
-                    "output_cost_microdollars_per_1k_tokens": 6_000,
+                    "output_cost_microdollars_per_1k_tokens": 10_000,
                     "cache_write_cost_multiplier": 1.25,
                     "extended_cost_threshold_tokens": 272_000,
                     "extended_input_cost_multiplier": 2.0,
@@ -170,33 +168,21 @@ class ChatModelSettings(BaseSettings):
                     "input_enabled": {"image": True, "pdf": True},
                 },
             ),
-            "gpt-5.4-nano": ChatModelConfig(
+            "gpt-6-luna": ChatModelConfig(
                 provider_name="openai",
                 provider_config={
-                    "model_name": "gpt-5.4-nano",
-                    "context_window": 400_000,
+                    "model_name": "gpt-6-luna",
+                    "context_window": 1_050_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 200,
-                    "cached_input_cost_microdollars_per_1k_tokens": 20,
-                    "output_cost_microdollars_per_1k_tokens": 1_250,
+                    "input_cost_microdollars_per_1k_tokens": 100,
+                    "cached_input_cost_microdollars_per_1k_tokens": 10,
+                    "output_cost_microdollars_per_1k_tokens": 500,
+                    "cache_write_cost_multiplier": 1.25,
+                    "extended_cost_threshold_tokens": 272_000,
+                    "extended_input_cost_multiplier": 2.0,
+                    "extended_output_cost_multiplier": 1.5,
                     "endpoint_type": "responses",
-                    "token_count_limit": 272_000,
-                    "image_file_count_limit": 100,
-                    "pdf_page_count_limit": 100,
-                    "input_enabled": {"image": True, "pdf": True},
-                },
-            ),
-            "gpt-5.4-mini": ChatModelConfig(
-                provider_name="openai",
-                provider_config={
-                    "model_name": "gpt-5.4-mini",
-                    "context_window": 400_000,
-                    "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 750,
-                    "cached_input_cost_microdollars_per_1k_tokens": 75,
-                    "output_cost_microdollars_per_1k_tokens": 4_500,
-                    "endpoint_type": "responses",
-                    "token_count_limit": 272_000,
+                    "token_count_limit": 800_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
@@ -205,17 +191,17 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # anthropic
             # --------------------------------------------------
-            "claude-sonnet-5": ChatModelConfig(
+            "claude-sonnet-5-5": ChatModelConfig(
                 provider_name="anthropic",
                 provider_config={
-                    "model_name": "claude-sonnet-5",
+                    "model_name": "claude-sonnet-5-5",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 3_000,
-                    "cache_write_5m_cost_microdollars_per_1k_tokens": 3_750,
-                    "cache_write_1h_cost_microdollars_per_1k_tokens": 6_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 300,
-                    "output_cost_microdollars_per_1k_tokens": 15_000,
+                    "input_cost_microdollars_per_1k_tokens": 2_000,
+                    "cache_write_5m_cost_microdollars_per_1k_tokens": 2_500,
+                    "cache_write_1h_cost_microdollars_per_1k_tokens": 4_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 200,
+                    "output_cost_microdollars_per_1k_tokens": 10_000,
                     "temperature": None,
                     "context_1m_enabled": False,
                     "token_count_limit": 872_000,
@@ -226,17 +212,17 @@ class ChatModelSettings(BaseSettings):
                 },
                 token_scale_factor=0.7,
             ),
-            "claude-opus-5": ChatModelConfig(
+            "claude-opus-5-5": ChatModelConfig(
                 provider_name="anthropic",
                 provider_config={
-                    "model_name": "claude-opus-5",
+                    "model_name": "claude-opus-5-5",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 5_000,
-                    "cache_write_5m_cost_microdollars_per_1k_tokens": 6_250,
-                    "cache_write_1h_cost_microdollars_per_1k_tokens": 10_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 500,
-                    "output_cost_microdollars_per_1k_tokens": 25_000,
+                    "input_cost_microdollars_per_1k_tokens": 4_000,
+                    "cache_write_5m_cost_microdollars_per_1k_tokens": 5_000,
+                    "cache_write_1h_cost_microdollars_per_1k_tokens": 8_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 200,
+                    "output_cost_microdollars_per_1k_tokens": 20_000,
                     "temperature": None,
                     "context_1m_enabled": False,
                     "token_count_limit": 872_000,
@@ -247,16 +233,16 @@ class ChatModelSettings(BaseSettings):
                 },
                 token_scale_factor=0.7,
             ),
-            "claude-fable-5": ChatModelConfig(
+            "claude-fable-5-1": ChatModelConfig(
                 provider_name="anthropic",
                 provider_config={
-                    "model_name": "claude-fable-5",
+                    "model_name": "claude-fable-5-1",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
                     "input_cost_microdollars_per_1k_tokens": 10_000,
                     "cache_write_5m_cost_microdollars_per_1k_tokens": 12_500,
                     "cache_write_1h_cost_microdollars_per_1k_tokens": 20_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 1_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 250,
                     "output_cost_microdollars_per_1k_tokens": 50_000,
                     "temperature": None,
                     "context_1m_enabled": False,
@@ -274,7 +260,7 @@ class ChatModelSettings(BaseSettings):
                 provider_config={
                     "model_name": "claude-haiku-4-5-20251001",
                     "context_window": 200_000,
-                    "max_output_tokens": 20_000,  # 64k
+                    "max_output_tokens": 64_000,
                     "input_cost_microdollars_per_1k_tokens": 1_000,
                     "cache_write_5m_cost_microdollars_per_1k_tokens": 1_250,
                     "cache_write_1h_cost_microdollars_per_1k_tokens": 2_000,
@@ -291,19 +277,20 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # anthropic_vertex
             # --------------------------------------------------
-            "vclaude-sonnet-5": ChatModelConfig(
+            "vclaude-sonnet-5-5": ChatModelConfig(
                 provider_name="anthropic_vertex",
                 provider_config={
-                    "model_name": "claude-sonnet-5",
+                    "model_name": "claude-sonnet-5-5",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 3_000,
-                    "cache_write_5m_cost_microdollars_per_1k_tokens": 3_750,
-                    "cache_write_1h_cost_microdollars_per_1k_tokens": 6_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 300,
-                    "output_cost_microdollars_per_1k_tokens": 15_000,
+                    "input_cost_microdollars_per_1k_tokens": 2_000,
+                    "cache_write_5m_cost_microdollars_per_1k_tokens": 2_500,
+                    "cache_write_1h_cost_microdollars_per_1k_tokens": 4_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 200,
+                    "output_cost_microdollars_per_1k_tokens": 10_000,
                     "temperature": None,
                     "context_1m_enabled": False,
+                    "vertex_ai_location": "global",
                     "token_count_limit": 872_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
@@ -313,19 +300,20 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=0.7,
                 visible=False,
             ),
-            "vclaude-opus-5": ChatModelConfig(
+            "vclaude-opus-5-5": ChatModelConfig(
                 provider_name="anthropic_vertex",
                 provider_config={
-                    "model_name": "claude-opus-5",
+                    "model_name": "claude-opus-5-5",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 5_000,
-                    "cache_write_5m_cost_microdollars_per_1k_tokens": 6_250,
-                    "cache_write_1h_cost_microdollars_per_1k_tokens": 10_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 500,
-                    "output_cost_microdollars_per_1k_tokens": 25_000,
+                    "input_cost_microdollars_per_1k_tokens": 4_000,
+                    "cache_write_5m_cost_microdollars_per_1k_tokens": 5_000,
+                    "cache_write_1h_cost_microdollars_per_1k_tokens": 8_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 200,
+                    "output_cost_microdollars_per_1k_tokens": 20_000,
                     "temperature": None,
                     "context_1m_enabled": False,
+                    "vertex_ai_location": "global",
                     "token_count_limit": 872_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
@@ -335,19 +323,20 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=0.7,
                 visible=False,
             ),
-            "vclaude-fable-5": ChatModelConfig(
+            "vclaude-fable-5-1": ChatModelConfig(
                 provider_name="anthropic_vertex",
                 provider_config={
-                    "model_name": "claude-fable-5",
+                    "model_name": "claude-fable-5-1",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
                     "input_cost_microdollars_per_1k_tokens": 10_000,
                     "cache_write_5m_cost_microdollars_per_1k_tokens": 12_500,
                     "cache_write_1h_cost_microdollars_per_1k_tokens": 20_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 1_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 250,
                     "output_cost_microdollars_per_1k_tokens": 50_000,
                     "temperature": None,
                     "context_1m_enabled": False,
+                    "vertex_ai_location": "global",
                     "token_count_limit": 872_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
@@ -362,12 +351,13 @@ class ChatModelSettings(BaseSettings):
                 provider_config={
                     "model_name": "claude-haiku-4-5@20251001",
                     "context_window": 200_000,
-                    "max_output_tokens": 20_000,  # 64k
+                    "max_output_tokens": 64_000,
                     "input_cost_microdollars_per_1k_tokens": 1_000,
                     "cache_write_5m_cost_microdollars_per_1k_tokens": 1_250,
                     "cache_write_1h_cost_microdollars_per_1k_tokens": 2_000,
                     "cached_input_cost_microdollars_per_1k_tokens": 100,
                     "output_cost_microdollars_per_1k_tokens": 5_000,
+                    "vertex_ai_location": "global",
                     "token_count_limit": 120_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
@@ -380,10 +370,10 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # google_genai
             # --------------------------------------------------
-            "gemini-3.6-flash": ChatModelConfig(
+            "gemini-3.8-flash": ChatModelConfig(
                 provider_name="google_genai",
                 provider_config={
-                    "model_name": "gemini-3.6-flash",
+                    "model_name": "gemini-3.8-flash",
                     "context_window": 1_048_576,
                     "max_output_tokens": 65_536,
                     "input_cost_microdollars_per_1k_tokens": 1_500,
@@ -393,8 +383,8 @@ class ChatModelSettings(BaseSettings):
                     "output_cost_microdollars_per_1k_tokens": 7_500,
                     "extended_output_cost_microdollars_per_1k_tokens": 7_500,
                     "token_count_limit": 983_040,
-                    "image_file_count_limit": 3600,
-                    "pdf_page_count_limit": 1000,
+                    "image_file_count_limit": 3_600,
+                    "pdf_page_count_limit": 1_000,
                     "input_enabled": {
                         "image": True,
                         "audio": True,
@@ -417,8 +407,8 @@ class ChatModelSettings(BaseSettings):
                     "output_cost_microdollars_per_1k_tokens": 2_500,
                     "extended_output_cost_microdollars_per_1k_tokens": 2_500,
                     "token_count_limit": 983_040,
-                    "image_file_count_limit": 3600,
-                    "pdf_page_count_limit": 1000,
+                    "image_file_count_limit": 3_600,
+                    "pdf_page_count_limit": 1_000,
                     "input_enabled": {
                         "image": True,
                         "audio": True,

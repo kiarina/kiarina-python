@@ -143,6 +143,10 @@ async def test_create_request_forced_tool_choice_unsupported(
     request = await provider.create_request(ctx)
 
     assert request["tool_choice"]["type"] == "auto"
+    assert request["messages"][-1]["content"][-1] == {
+        "type": "text",
+        "text": "You must respond by calling one of the provided tools.",
+    }
 
 
 # --------------------------------------------------

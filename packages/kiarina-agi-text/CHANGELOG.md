@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add the `qwen3.8-27b` chat model preset for the kiapi Qwen3.8-27B model (without thinking).
 - Add the `google_genai` chat provider (`kiarina.agi.chat_provider_impl.google_genai`), which calls Gemini with the google-genai SDK directly instead of LangChain, through the Gemini API or Vertex AI, with the same settings as `lc_google_genai`. Install it with the `chat-provider-google-genai` extra.
   - `SAFETY`, `PROHIBITED_CONTENT`, `BLOCKLIST`, `SPII`, `RECITATION`, and image safety finish reasons, and blocked prompts, raise `SafetyError`. `lc_google_genai` only checked for `safety` in the finish reason.
   - Function calls replayed to Gemini 3 carry the thought signature bypass, as `lc_google_genai` did, because `AIMessage` does not keep signatures.
@@ -16,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - A `refusal` stop reason raises `SafetyError`. `lc_anthropic` checked for a `safety` stop reason, which the API does not return.
   - A `model_context_window_exceeded` stop reason raises `MaxTokenError`.
   - Retries are left to the SDK (`max_retry_count`), so a failed stream is no longer restarted after chunks were yielded. The token count check is never retried.
-  - For models that reject forced tool choice (Claude Sonnet 5.5, Opus 5.5, and Fable 5.1), a `tool_choice` of `any` or a tool name falls back to `auto`.
+  - For models that reject forced tool choice (Claude Sonnet 5.5, Opus 5.5, and Fable 5.1), a `tool_choice` of `any` or a tool name falls back to `auto`, and the last user turn asks the model to call a tool.
 - Add the `anthropic_vertex` chat provider (`kiarina.agi.chat_provider_impl.anthropic_vertex`), which calls Claude on Vertex AI with the Anthropic SDK. Install it with the `chat-provider-anthropic-vertex` extra.
   - Token counting goes through Vertex AI, so no Anthropic API key is needed. `token_count_model_name` defaults to `model_name`.
   - The project comes from `kiarina.lib.google` settings, the credentials, or the default credentials and `GOOGLE_CLOUD_PROJECT`.
@@ -26,11 +27,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `temperature` accepts `None` to omit it, for models that reject a custom temperature such as GPT-6 Astra.
 - Add `kiarina.agi.chat_content`, which converts message contents and files into provider content parts without depending on LangChain. It provides `MediaConverter`, `ContentPart`, `ContentParts`, and `from_contents`.
 
+### Changed (BREAKING)
+- Update the chat model presets to the current models (checked 2026-10-07). Removed presets: `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.4-mini`, `gpt-5.4-nano`, `claude-sonnet-5`, `claude-opus-5`, `claude-fable-5`, `vclaude-sonnet-5`, `vclaude-opus-5`, `vclaude-fable-5`, and `gemini-3.6-flash`.
+  - OpenAI: `gpt-6-astra`, `gpt-6.1-sol`, and `gpt-6-luna`. `gpt-6-luna` is the named successor of `gpt-5.4-nano`, which is deprecated. GPT-6 has no Terra tier, and `gpt-6-luna` is cheaper than `gpt-5.4-mini` with a larger context.
+  - Anthropic: `claude-sonnet-5-5`, `claude-opus-5-5`, and `claude-fable-5-1`, and the same models as `vclaude-*`. Claude Sonnet 5 pricing is corrected to $2/$10 per MTok.
+  - Google: `gemini-3.8-flash`, which replaces `gemini-3.6-flash` (retired on Vertex AI on 2026-11-19) at the same list price.
+  - `claude-haiku-4-5` and `vclaude-haiku-4-5` allow 64K output tokens.
+  - The `vclaude-*` presets use the `global` Vertex AI location, because the Claude 5 series is not served from `us-east5`.
+  - The `llm`, `vlm`, and `openai` aliases resolve to `gpt-6.1-sol`, `anthropic` to `claude-sonnet-5-5`, and `omni` and `google` to `gemini-3.8-flash`.
+
 ### Changed
-- Switch the OpenAI and local chat model presets (`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `gpt-5.4-nano`, `gpt-5.4-mini`, `qwen3.8-flash-next`, `qwen3.8-flash-next-fast`, and `qwen3-omni`) from the `lc_openai` provider to the `openai` provider. Their provider configs are unchanged.
-- Switch the Anthropic chat model presets (`claude-sonnet-5`, `claude-opus-5`, `claude-fable-5`, and `claude-haiku-4-5`) from the `lc_anthropic` provider to the `anthropic` provider. 
-- Switch the `vclaude-*` chat model presets from the `lc_anthropic_vertex` provider to the `anthropic_vertex` provider and drop their `token_count_model_name`, so token counting uses the Vertex AI model names.
-- Switch the Gemini chat model presets (`gemini-3.6-flash` and `gemini-3.5-flash-lite`, and with them the `omni` and `google` aliases) from the `lc_google_genai` provider to the `google_genai` provider.
+- Every chat model preset uses the SDK providers (`openai`, `anthropic`, `anthropic_vertex`, and `google_genai`) instead of the `lc_*` providers.
 
 ### Removed (BREAKING)
 - Remove the LangChain chat providers `lc_openai`, `lc_anthropic`, `lc_anthropic_vertex`, and `lc_google_genai`, the `kiarina.agi.langchain_chat_provider` package (including `LangChainMediaConverter`), and the `chat-provider-lc-*` extras. Use the `openai`, `anthropic`, `anthropic_vertex`, and `google_genai` providers instead. `langchain` and `langchain-core` are no longer dependencies.
