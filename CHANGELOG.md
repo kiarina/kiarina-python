@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-agi-text**: Show the `codex-*` and `claude-code-*` chat model presets in model lists.
+
 ## [2.36.0] - 2026-10-08
 
 ### Added

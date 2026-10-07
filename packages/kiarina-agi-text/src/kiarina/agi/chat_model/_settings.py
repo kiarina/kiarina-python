@@ -437,7 +437,6 @@ class ChatModelSettings(BaseSettings):
                     "input_enabled": {"image": True},
                     "output_enabled": {"image": True},
                 },
-                visible=False,
             ),
             "codex-gpt-6.1-sol": ChatModelConfig(
                 provider_name="codex",
@@ -450,7 +449,6 @@ class ChatModelSettings(BaseSettings):
                     "input_enabled": {"image": True},
                     "output_enabled": {"image": True},
                 },
-                visible=False,
             ),
             "codex-gpt-6-luna": ChatModelConfig(
                 provider_name="codex",
@@ -463,7 +461,6 @@ class ChatModelSettings(BaseSettings):
                     "input_enabled": {"image": True},
                     "output_enabled": {"image": True},
                 },
-                visible=False,
             ),
             # --------------------------------------------------
             # claude_code
@@ -482,7 +479,6 @@ class ChatModelSettings(BaseSettings):
                     "output_enabled": {"image": True},
                 },
                 token_scale_factor=0.7,
-                visible=False,
             ),
             "claude-code-opus-5-5": ChatModelConfig(
                 provider_name="claude_code",
@@ -496,7 +492,6 @@ class ChatModelSettings(BaseSettings):
                     "output_enabled": {"image": True},
                 },
                 token_scale_factor=0.7,
-                visible=False,
             ),
             "claude-code-fable-5-1": ChatModelConfig(
                 provider_name="claude_code",
@@ -510,7 +505,6 @@ class ChatModelSettings(BaseSettings):
                     "output_enabled": {"image": True},
                 },
                 token_scale_factor=0.7,
-                visible=False,
             ),
             "claude-code-haiku-4-5": ChatModelConfig(
                 provider_name="claude_code",
@@ -524,7 +518,6 @@ class ChatModelSettings(BaseSettings):
                     "output_enabled": {"image": True},
                 },
                 token_scale_factor=0.7,
-                visible=False,
             ),
         }
     )
