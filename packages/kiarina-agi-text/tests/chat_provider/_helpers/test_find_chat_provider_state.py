@@ -20,17 +20,17 @@ def _ai(name: str | None) -> AIMessage:
 def test_find_chat_provider_state() -> None:
     messages: list[Message] = [
         HumanMessage.create("Hi"),
-        _ai("codex_app_server"),
+        _ai("codex"),
         ToolMessage.create("ok", tool_name="t", tool_call_id="c"),
     ]
 
-    found = find_chat_provider_state(messages, "codex_app_server")
+    found = find_chat_provider_state(messages, "codex")
     assert found is not None
     assert found[0] == 1
     assert found[1].history_hash == "h"
 
-    assert find_chat_provider_state(messages, "claude_agent_sdk") is None
-    assert find_chat_provider_state(messages[:1], "codex_app_server") is None
+    assert find_chat_provider_state(messages, "claude_code") is None
+    assert find_chat_provider_state(messages[:1], "codex") is None
 
     # A later AI message without the state hides the older one.
-    assert find_chat_provider_state([*messages, _ai(None)], "codex_app_server") is None
+    assert find_chat_provider_state([*messages, _ai(None)], "codex") is None

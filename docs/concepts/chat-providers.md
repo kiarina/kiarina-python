@@ -12,7 +12,7 @@ How the `kiarina-agi-text` chat providers are built, and the vendor behavior the
 
 Providers call the vendor SDKs directly. There is no LangChain layer.
 
-`codex_app_server` and `claude_agent_sdk` are different: they run the Codex and Claude Code agents with the local subscription logins, as one-turn chat models. See [Subscription Runtimes](#subscription-runtimes-codex_app_server-claude_agent_sdk).
+`codex` and `claude_code` are different: they run the Codex and Claude Code agents with the local subscription logins, as one-turn chat models. See [Subscription Runtimes](#subscription-runtimes-codex-claude_code).
 
 ## Adding or Changing a Provider
 
@@ -30,8 +30,8 @@ A provider can keep state on the `AIMessage` it returns, to continue from it in 
 
 - It is a `ChatProviderState` in `message.metadata["chat_provider"]`: the provider name, `history_hash`, and provider-specific `data`. `Message.metadata` is a free dict in kiarina-agi-data, which knows nothing about chat providers; the key is only known here.
 - `history_hash` is the hash of the history up to and including that message, and the provider uses the state only while it still matches, so edits to the history (file shrinking, summaries, retries) make the provider start fresh and correctness never depends on the state:
-  - A thread (`codex_app_server`): `compute_history_hash` of the history in the form the provider sends it. `find_chat_provider_state` returns the last AI message's state, and the provider continues only if the hash matches its conversion of the new history up to that message.
-  - Reasoning (`anthropic`, `openai`, `google_genai`): `compute_message_hashes`, a chained hash over the messages (type, text, tool calls, tool result fields) with the model name, computed in one pass. `collect_message_states` returns every AI message whose state still matches. An edit drops the reasoning of the AI messages after it and keeps the ones before it. Reasoning sent with a history it was not written for could rely on facts the model can no longer see, and the 5.5 Claude models keep earlier turns' thinking in context, so a mismatch sends none; the APIs accept a turn without it.
+  - A thread (`codex`): `compute_history_hash` of the history in the form the provider sends it. `find_chat_provider_state` returns the last AI message's state, and the provider continues only if the hash matches its conversion of the new history up to that message.
+  - Reasoning (`anthropic`, `openai`, `google`): `compute_message_hashes`, a chained hash over the messages (type, text, tool calls, tool result fields) with the model name, computed in one pass. `collect_message_states` returns every AI message whose state still matches. An edit drops the reasoning of the AI messages after it and keeps the ones before it. Reasoning sent with a history it was not written for could rely on facts the model can no longer see, and the 5.5 Claude models keep earlier turns' thinking in context, so a mismatch sends none; the APIs accept a turn without it.
 - Metadata is never sent to a model. Code that displays message metadata should skip the `chat_provider` key, whose values can be large.
 - Only the final `AIMessage` of a stream carries the state.
 
@@ -39,7 +39,7 @@ A provider can keep state on the `AIMessage` it returns, to continue from it in 
 
 - Unit tests use a fake client and SDK response objects built with `model_validate`. They must pass without API keys, because CI has none.
 - Costly tests call the real API with the cheapest model of the provider. Keep them few and run them only when they check something new. For high-priced models, send one short request instead of running tests. See [Update Chat Model Presets](../runbooks/update-chat-model-presets.md).
-- `codex_app_server` and `claude_agent_sdk` tests use a fake `codex app-server` script and a fake `claude_agent_sdk.query`. To see what a runtime really sends without using the subscription, point it at a local capture server: `config_overrides` with a `model_providers` entry for Codex, and `env` with `ANTHROPIC_BASE_URL` and a dummy `ANTHROPIC_API_KEY` for Claude Code.
+- `codex` and `claude_code` tests use a fake `codex app-server` script and a fake `claude_agent_sdk.query`. To see what a runtime really sends without using the subscription, point it at a local capture server: `config_overrides` with a `model_providers` entry for Codex, and `env` with `ANTHROPIC_BASE_URL` and a dummy `ANTHROPIC_API_KEY` for Claude Code.
 - A host without quota can be checked through a relay: give the SDK client an HTTP transport that forwards its requests to another endpoint. `test_relay_to_anthropic_api` relays Vertex AI requests to the Anthropic API.
 
 ## Vendor Notes
@@ -71,7 +71,7 @@ Checked on 2026-10-07. Recheck when a request fails in a way these notes do not 
 - Each model is enabled in the console with an access request form and a Cloud Marketplace agreement. Fable models also need the Advanced AI Safety Addendum.
 - A new project has a Claude quota of 0 and cannot request an increase until it has usage history.
 
-### Gemini (`google_genai`)
+### Gemini (`google`)
 
 - Gemini 3 rejects replayed function calls without a `thought_signature` (`400 INVALID_ARGUMENT`). The signatures on function call parts (by tool call id) and on the text are kept as provider state and put back on their parts. A first function call of a model turn in the active loop with no kept signature carries `skip_thought_signature_validator` instead. The value is assigned after the `Part` is built, so it is sent as a string.
 - Function calls and function responses carry the tool call id, because Gemini matches them by id and name.
@@ -79,11 +79,11 @@ Checked on 2026-10-07. Recheck when a request fails in a way these notes do not 
 - Thought tokens are billed as output.
 - `temperature` is deprecated for Gemini 3 and ignored.
 
-### Subscription Runtimes (`codex_app_server`, `claude_agent_sdk`)
+### Subscription Runtimes (`codex`, `claude_code`)
 
 Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). The experiments, captures, and measurements are in the [agent-runtimes-as-llm-api lab](https://github.com/kiarina/labs/tree/main/2026/10/07/agent-runtimes-as-llm-api).
 
-- Each request starts a new process and session, which adds a few seconds, except when `codex_app_server` continues a kept thread (below).
+- Each request starts a new process and session, which adds a few seconds, except when `codex` continues a kept thread (below).
 - Claude Code gets the conversation as `<messages>` XML (`to_transcript`), one content block per message, with how to read it in the system prompt. Codex gets it as raw Responses API items through `thread/inject_items`, as the API would, and the turn starts with no input.
 - The runtime's own tools, instructions, settings, and MCP servers are turned off, so the model sees only the caller's instructions, tools, and transcript. Claude Code still adds one line naming the SDK and a short environment section.
 - The run must stop after the first model turn without running the tools and without a second model request:
@@ -98,10 +98,10 @@ Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). T
   - Claude caches block by block, so a transcript in one text block never matches the next request (773 of about 5,100 input tokens read from the cache). With one block per message and a breakpoint on the last one, the second request read 4,508 tokens and wrote 588.
   - Claude Code adds three breakpoints (two in the system prompt, one on the environment section it appends after the user turn), so the provider's is the fourth and last the API allows. Claude Code's use the 1-hour TTL, and a 5-minute breakpoint may not come before a 1-hour one (`400`), so the provider's uses 1 hour too.
   - Codex read nothing across new threads, with the history in one message or as items, at 3K and 12K tokens. Within one thread a resumed turn read 11,520 of 11,697 tokens at 12K, and nothing at 3.3K. Codex reports no cache writes either way.
-- `codex_app_server` therefore keeps the process and thread after a response (`thread_reuse`), and records the thread id and the history hash as `ChatProviderState` on the returned message. When the next request extends that history, a paused turn gets the tool results as replies to its held requests, and a completed turn gets the new messages injected and a new turn. Anything else, including an edited history, a forced tool choice, or a dead process, starts a new thread. Kept threads live in a per-process pool (`thread_idle_timeout`, `max_live_threads`) and end with the program, because their stdin closes. Through the provider with a 12K history, the resumed request read 11,392 tokens from the cache and took 2.5 seconds instead of 4.2.
+- `codex` therefore keeps the process and thread after a response (`thread_reuse`), and records the thread id and the history hash as `ChatProviderState` on the returned message. When the next request extends that history, a paused turn gets the tool results as replies to its held requests, and a completed turn gets the new messages injected and a new turn. Anything else, including an edited history, a forced tool choice, or a dead process, starts a new thread. Kept threads live in a per-process pool (`thread_idle_timeout`, `max_live_threads`) and end with the program, because their stdin closes. Through the provider with a 12K history, the resumed request read 11,392 tokens from the cache and took 2.5 seconds instead of 4.2.
 - On the live server, Codex's tool call request (`item/tool/call`) arrives before `rawResponse/completed`. Injected items are echoed with `turnId: "auto-compact-0"`, and `turn/completed` carries its turn id in `turn.id`. GPT-6 itself caches at the end of the latest message only, and `prompt_cache_key`, which Codex sets to the thread id, only separates accounting on the API.
 - Usage is recorded at zero cost. Claude Code reports what the request would cost on the API (`total_cost_usd`), kept as `api_cost_microdollars`. Codex's `inputTokens` includes cached tokens.
 - The subscription context window can be smaller than the API's. Codex's model list gives GPT-6.1 Sol 272K.
-- `claude_agent_sdk` sends the conversation as XML text in one user turn, so there is nowhere to send thinking blocks back; it keeps no reasoning state.
+- `claude_code` sends the conversation as XML text in one user turn, so there is nowhere to send thinking blocks back; it keeps no reasoning state.
 - Claude tends to point out contradictions in the transcript, including its own earlier messages, even when not asked.
 - These runtimes are for the user's own login. Whether they may serve other people under a subscription depends on each vendor's terms, which keep changing.

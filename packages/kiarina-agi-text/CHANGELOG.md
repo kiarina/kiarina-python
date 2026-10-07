@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add the `codex_app_server` chat provider (`kiarina.agi.chat_provider_impl.codex_app_server`), which runs `codex app-server` with the local Codex login (a ChatGPT subscription). Install it with the `chat-provider-codex-app-server` extra.
+- Add the `codex` chat provider (`kiarina.agi.chat_provider_impl.codex`), which runs `codex app-server` with the local Codex login (a ChatGPT subscription). Install it with the `chat-provider-codex` extra.
   - Each request starts a new process and ephemeral thread, injects the conversation as raw Responses API items (`thread/inject_items`), and turns off Codex's own tools, instructions, and MCP servers.
   - The request ends when the first model response completes, with tool call requests left unanswered, so the caller runs the tools and the model gets no second request.
   - With `thread_reuse` (default on), the process and thread are kept after a response, and the next request that extends the same history continues them, answering the held tool call requests or starting a new turn. Codex reads the prompt cache only within a thread. `thread_idle_timeout` and `max_live_threads` limit the kept threads.
   - The model entry is copied from Codex's cached model list with direct tool calls, because new models otherwise call tools only from a JavaScript cell.
-- Add the `claude_agent_sdk` chat provider (`kiarina.agi.chat_provider_impl.claude_agent_sdk`), which runs Claude Code through the Claude Agent SDK with the local Claude login (a Claude subscription). Install it with the `chat-provider-claude-agent-sdk` extra.
+- Add the `claude_code` chat provider (`kiarina.agi.chat_provider_impl.claude_code`), which runs Claude Code through the Claude Agent SDK with the local Claude login (a Claude subscription). Install it with the `chat-provider-claude-code` extra.
   - Each request starts a new session, sends the conversation as `<messages>` XML with one content block per message, turns off Claude Code's own tools and settings, and stops after the first model turn (`max_turns=1`).
   - A cache breakpoint on the last message lets the next request, which only appends, read the conversation from the prompt cache.
   - Inherited `ANTHROPIC_*` and `CLAUDE_CODE_*` environment variables are cleared, so an API key or a host Claude Code session does not take over the login.
@@ -21,8 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `ChatProviderState`, `find_chat_provider_state`, `collect_message_states`, `compute_history_hash`, `compute_message_hashes`, and `CHAT_PROVIDER_STATE_KEY` to `kiarina.agi.chat_provider`: the convention for a chat provider to keep state on the `AIMessage` it returns (in `metadata["chat_provider"]`), with the hash of the history up to that message, and to use it only while the history still matches.
 - `anthropic` and `anthropic_vertex` keep thinking blocks and send them back unchanged with their turn, as the models with thinking always on ask for.
 - `openai` (Responses API) asks for encrypted reasoning items and sends them back with their turn. `carry_reasoning` turns it off.
-- `google_genai` keeps the thought signatures of function calls and text and sends them back, instead of the signature bypass where one was kept.
+- `google` keeps the thought signatures of function calls and text and sends them back, instead of the signature bypass where one was kept.
 - Add `to_transcript` and `Transcript` to `kiarina.agi.chat_content`, which flatten messages into a system prompt and `<messages>` XML, as one text or as one part per message.
+
+### Changed (BREAKING)
+- Rename the `google_genai` chat provider to `google` (`kiarina.agi.chat_provider_impl.google`, `GoogleChatProvider`, `GoogleChatProviderSettings`, `create_google_chat_provider`), its settings prefix to `KIARINA_AGI_CHAT_PROVIDER_IMPL_GOOGLE_`, and its extra to `chat-provider-google`, so chat providers are named after what they call, like the `google` text embedding provider.
 
 ## [2.35.0] - 2026-10-07
 

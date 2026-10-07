@@ -370,10 +370,10 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             # --------------------------------------------------
-            # google_genai
+            # google
             # --------------------------------------------------
             "gemini-3.8-flash": ChatModelConfig(
-                provider_name="google_genai",
+                provider_name="google",
                 provider_config={
                     "model_name": "gemini-3.8-flash",
                     "context_window": 1_048_576,
@@ -397,7 +397,7 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=1.0,
             ),
             "gemini-3.5-flash-lite": ChatModelConfig(
-                provider_name="google_genai",
+                provider_name="google",
                 provider_config={
                     "model_name": "gemini-3.5-flash-lite",
                     "context_window": 1_048_576,
@@ -421,13 +421,13 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=1.0,
             ),
             # --------------------------------------------------
-            # codex_app_server
+            # codex
             # --------------------------------------------------
             # Runs Codex with its local login (a ChatGPT subscription), so it
             # records no cost. The context window is the subscription's, and the
             # reasoning effort is Codex's default for each model.
             "codex-gpt-6-astra": ChatModelConfig(
-                provider_name="codex_app_server",
+                provider_name="codex",
                 provider_config={
                     "model_name": "gpt-6-astra",
                     "reasoning_effort": "medium",
@@ -440,7 +440,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "codex-gpt-6.1-sol": ChatModelConfig(
-                provider_name="codex_app_server",
+                provider_name="codex",
                 provider_config={
                     "model_name": "gpt-6.1-sol",
                     "reasoning_effort": "low",
@@ -453,7 +453,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "codex-gpt-6-luna": ChatModelConfig(
-                provider_name="codex_app_server",
+                provider_name="codex",
                 provider_config={
                     "model_name": "gpt-6-luna",
                     "reasoning_effort": "medium",
@@ -466,12 +466,12 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             # --------------------------------------------------
-            # claude_agent_sdk
+            # claude_code
             # --------------------------------------------------
             # Runs Claude Code with its local login (a Claude subscription), so it
             # records no cost.
             "claude-code-sonnet-5-5": ChatModelConfig(
-                provider_name="claude_agent_sdk",
+                provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-sonnet-5-5",
                     "context_window": 200_000,
@@ -485,7 +485,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "claude-code-opus-5-5": ChatModelConfig(
-                provider_name="claude_agent_sdk",
+                provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-opus-5-5",
                     "context_window": 200_000,
@@ -499,7 +499,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "claude-code-fable-5-1": ChatModelConfig(
-                provider_name="claude_agent_sdk",
+                provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-fable-5-1",
                     "context_window": 200_000,
@@ -513,7 +513,7 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "claude-code-haiku-4-5": ChatModelConfig(
-                provider_name="claude_agent_sdk",
+                provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-haiku-4-5",
                     "context_window": 200_000,

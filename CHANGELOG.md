@@ -12,7 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **kiarina-agi-data**: Move `metadata` from `ToolMessage` to `BaseMessage`, so every message can keep free data.
 - **kiarina-agi-text**: Add `ChatProviderState`, the convention for a chat provider to keep state on its `AIMessage` and continue from it while the history still matches.
-- **kiarina-agi-text**: Add the `codex_app_server` and `claude_agent_sdk` chat providers, which run Codex and Claude Code with their local subscription logins as one-turn chat models (`chat-provider-codex-app-server` and `chat-provider-claude-agent-sdk` extras), and hidden `codex-*` and `claude-code-*` presets for the GPT-6 and Claude models.
+- **kiarina-agi-text**: Add the `codex_app_server` and `claude_code` chat providers, which run Codex and Claude Code with their local subscription logins as one-turn chat models (`chat-provider-codex` and `chat-provider-claude-code` extras), and hidden `codex-*` and `claude-code-*` presets for the GPT-6 and Claude models.
+
+### Changed (BREAKING)
+- **kiarina-agi-text**: Rename the `google_genai` chat provider to `google`, with its settings prefix and extra (`chat-provider-google`).
 
 ## [2.35.0] - 2026-10-07
 

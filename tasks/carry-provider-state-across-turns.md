@@ -7,13 +7,13 @@ is dropped:
 
 - OpenAI Responses API: reasoning items. Requests use `store=False`, so they could be
   carried with `include=["reasoning.encrypted_content"]`.
-- Gemini 3: `thought_signature` on function call parts. `google_genai` sends the documented
+- Gemini 3: `thought_signature` on function call parts. `google` sends the documented
   `skip_thought_signature_validator` bypass instead. Gemini accepts it, but the reasoning
   context is lost between tool calls.
 - Anthropic models with thinking always on (Sonnet 5.5, Opus 5.5, Fable 5.1): thinking
   blocks are dropped. The Sonnet 5.5 migration guide says to pass them back unchanged.
   Replayed tool calls without them still passed the shared chat model tests on 2026-10-07.
-- `codex_app_server`: each request starts a new thread, and Codex reads no prompt cache across
+- `codex`: each request starts a new thread, and Codex reads no prompt cache across
   threads (measured 2026-10-07, see `docs/concepts/chat-providers.md`). Within one thread the
   cache works. Keeping the thread would also skip the few seconds of startup.
 
@@ -22,7 +22,7 @@ is dropped:
 - Move `ToolMessage.metadata: dict[str, Any]` up to `BaseMessage.metadata`. kiarina-agi-data only
   knows a free dict on every message, so it does not depend on chat providers.
 - A chat provider keeps its state under one key, for example
-  `metadata["chat_provider"] = {"name": "codex_app_server", "history_hash": ..., ...}`. Only
+  `metadata["chat_provider"] = {"name": "codex", "history_hash": ..., ...}`. Only
   kiarina-agi-text knows the key. Other providers ignore state with another name, and display code
   (kiari, the console tool logger) skips the key, because values such as encrypted reasoning can be
   large.
@@ -76,21 +76,21 @@ the process is gone, so the provider starts fresh.
 - On release: raise kiarina-agi-text's `kiarina-agi-data` floor (now `>=2.6.0`) to the release
   that has `BaseMessage.metadata`, because `ChatProviderState` reads metadata from AI messages.
 
-- 2026-10-08: Codex thread resumption in `codex_app_server` (`thread_reuse`, default on). Kept
+- 2026-10-08: Codex thread resumption in `codex` (`thread_reuse`, default on). Kept
   threads live in `live_thread_pool`; a paused turn gets tool results as replies, a completed turn
   gets the new messages and a new turn, anything else starts a new thread. Live, 12K history:
   4.2 s and 0 cached, then the resumed request 2.5 s and 11,392 cached, then the next turn 11,520
-  cached. The changes stayed inside `codex_app_server` (and its tests).
+  cached. The changes stayed inside `codex` (and its tests).
 
 - 2026-10-08: reasoning state in `anthropic` (thinking blocks), `openai` (encrypted reasoning
-  items, Responses API), and `google_genai` (thought signatures). At first the hash covered only
+  items, Responses API), and `google` (thought signatures). At first the hash covered only
   the message itself; kiarina pointed out that reasoning sent with an edited history could rely on
   facts the model no longer sees, so it is now a chained hash over the history
   (`compute_message_hashes`), and an edit drops the reasoning after it. Live, one tool loop each: Gemini 3.5 Flash-Lite kept the
   function call signature and the next request took it; GPT-6 Luna returned reasoning items on a
   question that needed thought (not on an easy tool call) and the next request took them; Claude
   Sonnet 5.5 returned an omitted thinking block when the question needed thought and the next
-  request took it unchanged. `claude_agent_sdk` has nowhere to send thinking back (XML text in one
+  request took it unchanged. `claude_code` has nowhere to send thinking back (XML text in one
   user turn), so it keeps none.
 
 ## Next steps

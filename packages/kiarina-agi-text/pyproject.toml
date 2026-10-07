@@ -57,13 +57,13 @@ chat-provider-anthropic-vertex = [
     "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
 ]
-chat-provider-claude-agent-sdk = [
+chat-provider-claude-code = [
     "claude-agent-sdk>=0.2.164",
 ]
-chat-provider-codex-app-server = [
+chat-provider-codex = [
     "openai-codex-cli-bin>=0.160.1",
 ]
-chat-provider-google-genai = [
+chat-provider-google = [
     "google-genai>=1.65.0,<3",
     "kiarina-lib-google>=2.4.0",
 ]
