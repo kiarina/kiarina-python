@@ -20,10 +20,6 @@ from kiarina.agi.file_info import (
     TextFileInfo,
     VideoFileInfo,
 )
-from kiarina.agi.langchain_chat_provider import (
-    LCMessage,
-    LCToolInfo,
-)
 from kiarina.agi.message import (
     AIMessage,
     HumanMessage,
@@ -512,44 +508,3 @@ def messages(image_file_info: ImageFileInfo) -> list[Message]:
         ),
         AIMessage.create("Created a cute image of a cat"),
     ]
-
-
-# --------------------------------------------------
-# LangChain Tool Infos
-# --------------------------------------------------
-
-
-@pytest.fixture
-def lc_tool_infos(tool_infos: list[ToolInfo]) -> list[LCToolInfo]:
-    from kiarina.agi.langchain_chat_provider import from_tool_infos
-
-    return from_tool_infos(tool_infos)
-
-
-@pytest.fixture
-def lc_generate_tool_infos(generate_tool_infos: list[ToolInfo]) -> list[LCToolInfo]:
-    from kiarina.agi.langchain_chat_provider import from_tool_infos
-
-    return from_tool_infos(generate_tool_infos)
-
-
-# --------------------------------------------------
-# LangChain Messages
-# --------------------------------------------------
-
-
-@pytest.fixture
-async def lc_messages(
-    messages: list[Message],
-    capabilities: ChatCapabilities,
-    media_converter: MediaConverter,
-    run_context: RunContext,
-) -> list[LCMessage]:
-    from kiarina.agi.langchain_chat_provider import from_messages
-
-    return await from_messages(
-        messages,
-        capabilities=capabilities,
-        media_converter=media_converter,
-        run_context=run_context,
-    )

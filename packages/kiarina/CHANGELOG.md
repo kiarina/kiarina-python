@@ -11,18 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Add the `google_genai` chat provider, which calls Gemini with the google-genai SDK directly (`chat-provider-google-genai` extra).
 - **kiarina-agi-text**: Add the `anthropic` and `anthropic_vertex` chat providers, which call the Anthropic SDK directly (`chat-provider-anthropic` and `chat-provider-anthropic-vertex` extras).
 - **kiarina-agi-text**: Add the `openai` chat provider, which calls the OpenAI SDK directly for the Chat Completions API and the Responses API (`chat-provider-openai` extra).
-- **kiarina-agi-text**: Add `kiarina.agi.chat_content`, a LangChain-independent converter from message contents to provider content parts. `LangChainMediaConverter` becomes a deprecated alias of its `MediaConverter`.
+- **kiarina-agi-text**: Add `kiarina.agi.chat_content`, a LangChain-independent converter from message contents to provider content parts.
 
 ### Changed
 - **kiarina-agi-text**: Switch the OpenAI and local chat model presets from the `lc_openai` provider to the `openai` provider.
 - **kiarina-agi-text**: Switch the Anthropic and Vertex AI Claude chat model presets from the `lc_anthropic` and `lc_anthropic_vertex` providers to the `anthropic` and `anthropic_vertex` providers.
 - **kiarina-agi-text**: Switch the Gemini chat model presets from the `lc_google_genai` provider to the `google_genai` provider.
 
-### Removed
+### Removed (BREAKING)
+- **kiarina-agi-text**: Remove the LangChain chat providers (`lc_openai`, `lc_anthropic`, `lc_anthropic_vertex`, `lc_google_genai`), the `langchain_chat_provider` package, and the `chat-provider-lc-*` extras. `langchain` and `langchain-core` are no longer dependencies.
 - **kiarina-agi-text**: Remove the `lc_google` chat provider preset, which pointed to a module that does not exist.
-
-### Fixed
-- **kiarina-agi-text**: Add the missing `kiarina-lib-anthropic` dependency to the `chat-provider-lc-anthropic` and `chat-provider-lc-anthropic-vertex` extras.
 
 ## [2.34.0] - 2026-09-30
 

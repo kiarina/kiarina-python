@@ -22,14 +22,6 @@ chat_provider_anthropic_vertex_test:
 	mise run test --costly --path tests/chat_provider_impl/anthropic_vertex
 chat_provider_google_genai_test:
 	mise run test --costly --path tests/chat_provider_impl/google_genai
-chat_provider_lc_anthropic_test:
-	mise run test --costly --path tests/chat_provider_impl/lc_anthropic
-chat_provider_lc_anthropic_vertex_test:
-	mise run test --costly --path tests/chat_provider_impl/lc_anthropic_vertex
-chat_provider_lc_google_genai_test:
-	mise run test --costly --path tests/chat_provider_impl/lc_google_genai
-chat_provider_lc_openai_test:
-	mise run test --costly --path tests/chat_provider_impl/lc_openai
 chat_provider_openai_test:
 	mise run test --costly --path tests/chat_provider_impl/openai
 text_embedding_provider_google_test:

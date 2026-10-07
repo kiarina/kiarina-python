@@ -10,7 +10,7 @@ authors = [
 maintainers = [
     { name = "kiarina", email = "kiarinadawa@gmail.com" }
 ]
-keywords = ["ai", "agents", "chat", "embeddings", "langchain"]
+keywords = ["ai", "agents", "chat", "embeddings"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -29,8 +29,6 @@ dependencies = [
     "kiarina-utils-app>=2.4.0",
     "kiarina-utils-common>=2.3.0",
     "kiarina-utils-file>=2.3.1",
-    "langchain>=1.0.0,<2",
-    "langchain-core>=1.0.0,<2",
     "pydantic>=2.11.7",
     "pydantic-settings>=2.10.1",
     "pydantic-settings-manager>=3.2.0",
@@ -43,10 +41,6 @@ all = [
     "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
     "kiarina-lib-openai>=2.3.1",
-    "langchain-anthropic>=1.0.0,<2",
-    "langchain-google-genai>=4.0.0,<5",
-    "langchain-google-vertexai>=3.0.0,<4",
-    "langchain-openai>=1.0.0,<2",
     "numpy>=2.0",
     "openai>=2.0.1,<4",
     "tiktoken>=0.13.0",
@@ -64,28 +58,6 @@ chat-provider-anthropic-vertex = [
 chat-provider-google-genai = [
     "google-genai>=1.65.0,<3",
     "kiarina-lib-google>=2.4.0",
-]
-chat-provider-lc-anthropic = [
-    "anthropic>=0.84.0,<2",
-    "kiarina-lib-anthropic>=2.3.1",
-    "langchain-anthropic>=1.0.0,<2",
-]
-chat-provider-lc-anthropic-vertex = [
-    "anthropic>=0.84.0,<2",
-    "kiarina-lib-anthropic>=2.3.1",
-    "kiarina-lib-google>=2.4.0",
-    "langchain-anthropic>=1.0.0,<2",
-    "langchain-google-vertexai>=3.0.0,<4",
-]
-chat-provider-lc-google-genai = [
-    "google-genai>=1.65.0,<3",
-    "kiarina-lib-google>=2.4.0",
-    "langchain-google-genai>=4.0.0,<5",
-]
-chat-provider-lc-openai = [
-    "kiarina-lib-openai>=2.3.1",
-    "langchain-openai>=1.0.0,<2",
-    "openai>=2.0.1,<4",
 ]
 chat-provider-openai = [
     "kiarina-lib-openai>=2.3.1",

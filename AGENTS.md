@@ -168,8 +168,8 @@ mise run test-assets:download
 
 ### 相談待ち（合意してから着手する）
 
-- [Decide when to deprecate the LangChain chat providers](tasks/deprecate-langchain-chat-providers.md)
+- [Carry provider reasoning state across turns](tasks/carry-provider-reasoning-state.md)
 
 ### 待機中（着手すると決めたら「次に着手・進行中」へ移す）
 
-（なし）
+- [Verify anthropic_vertex against Vertex AI](tasks/verify-anthropic-vertex-on-vertex-ai.md) — waiting for Claude quota on Vertex AI

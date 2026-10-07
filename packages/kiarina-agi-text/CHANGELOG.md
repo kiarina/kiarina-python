@@ -29,14 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch the `vclaude-*` chat model presets from the `lc_anthropic_vertex` provider to the `anthropic_vertex` provider and drop their `token_count_model_name`, so token counting uses the Vertex AI model names.
 - Switch the Gemini chat model presets (`gemini-3.6-flash` and `gemini-3.5-flash-lite`, and with them the `omni` and `google` aliases) from the `lc_google_genai` provider to the `google_genai` provider.
 
-### Deprecated
-- `kiarina.agi.langchain_chat_provider.LangChainMediaConverter` is now an alias of `kiarina.agi.chat_content.MediaConverter`.
-
-### Removed
+### Removed (BREAKING)
+- Remove the LangChain chat providers `lc_openai`, `lc_anthropic`, `lc_anthropic_vertex`, and `lc_google_genai`, the `kiarina.agi.langchain_chat_provider` package (including `LangChainMediaConverter`), and the `chat-provider-lc-*` extras. Use the `openai`, `anthropic`, `anthropic_vertex`, and `google_genai` providers instead. `langchain` and `langchain-core` are no longer dependencies.
 - Remove the `lc_google` chat provider preset, which pointed to a module that does not exist.
-
-### Fixed
-- Add the missing `kiarina-lib-anthropic` dependency to the `chat-provider-lc-anthropic`, `chat-provider-lc-anthropic-vertex`, and `all` extras.
 
 ## [2.33.0] - 2026-09-24
 
