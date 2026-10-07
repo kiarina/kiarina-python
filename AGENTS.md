@@ -167,7 +167,7 @@ mise run test-assets:download
 
 ### 次に着手・進行中
 
-- [Carry provider state across turns](tasks/carry-provider-state-across-turns.md)
+（なし）
 
 ### 相談待ち（合意してから着手する）
 
