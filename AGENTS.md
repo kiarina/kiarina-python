@@ -167,11 +167,10 @@ mise run test-assets:download
 
 ### 次に着手・進行中
 
-（なし）
+- [Carry provider state across turns](tasks/carry-provider-state-across-turns.md)
 
 ### 相談待ち（合意してから着手する）
 
-- [Carry provider reasoning state across turns](tasks/carry-provider-reasoning-state.md)
 - [Make structured output reliable on models without forced tool choice](tasks/structured-output-via-json-output.md)
 
 ### 待機中（着手すると決めたら「次に着手・進行中」へ移す）
