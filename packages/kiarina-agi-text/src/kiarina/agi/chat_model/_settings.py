@@ -289,13 +289,12 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=0.7,
             ),
             # --------------------------------------------------
-            # lc_anthropic_vertex
+            # anthropic_vertex
             # --------------------------------------------------
             "vclaude-sonnet-5": ChatModelConfig(
-                provider_name="lc_anthropic_vertex",
+                provider_name="anthropic_vertex",
                 provider_config={
                     "model_name": "claude-sonnet-5",
-                    "token_count_model_name": "claude-sonnet-5",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
                     "input_cost_microdollars_per_1k_tokens": 3_000,
@@ -315,10 +314,9 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "vclaude-opus-5": ChatModelConfig(
-                provider_name="lc_anthropic_vertex",
+                provider_name="anthropic_vertex",
                 provider_config={
                     "model_name": "claude-opus-5",
-                    "token_count_model_name": "claude-opus-5",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
                     "input_cost_microdollars_per_1k_tokens": 5_000,
@@ -338,10 +336,9 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "vclaude-fable-5": ChatModelConfig(
-                provider_name="lc_anthropic_vertex",
+                provider_name="anthropic_vertex",
                 provider_config={
                     "model_name": "claude-fable-5",
-                    "token_count_model_name": "claude-fable-5",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
                     "input_cost_microdollars_per_1k_tokens": 10_000,
@@ -361,10 +358,9 @@ class ChatModelSettings(BaseSettings):
                 visible=False,
             ),
             "vclaude-haiku-4-5": ChatModelConfig(
-                provider_name="lc_anthropic_vertex",
+                provider_name="anthropic_vertex",
                 provider_config={
                     "model_name": "claude-haiku-4-5@20251001",
-                    "token_count_model_name": "claude-haiku-4-5-20251001",
                     "context_window": 200_000,
                     "max_output_tokens": 20_000,  # 64k
                     "input_cost_microdollars_per_1k_tokens": 1_000,

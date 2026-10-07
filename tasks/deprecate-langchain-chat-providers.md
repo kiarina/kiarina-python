@@ -4,21 +4,21 @@
 
 kiarina-agi-text now has chat providers that call the vendor SDKs directly:
 `openai` (replaces `lc_openai`), `anthropic` (replaces `lc_anthropic`), and
-`anthropic_vertex` (replaces `lc_anthropic_vertex`). The OpenAI, local, and `claude-*`
-presets use them. The LangChain providers remain for users who reference them by name.
+`anthropic_vertex` (replaces `lc_anthropic_vertex`). The OpenAI, local, `claude-*`, and
+`vclaude-*` presets use them. The LangChain providers remain for users who reference them by name.
 
-## Before switching the vclaude presets
+## Vertex AI live check
 
-- `anthropic_vertex` is covered by unit tests only. Run
-  `make chat_provider_anthropic_vertex_test` with a project that can call Claude on
-  Vertex AI (put `kiarina.lib.google` settings in
-  `tests/chat_provider_impl/anthropic_vertex/test_settings.yaml`), then switch the
-  `vclaude-*` presets and drop their `token_count_model_name`, since token counting
-  now goes through Vertex AI with the Vertex model names.
-- On 2026-10-07 no project on the development machine worked: one had no Claude
-  models enabled, another returned 429 for every request and for count-tokens.
+- All `vclaude-*` presets use `anthropic_vertex`. Its Vertex request path is checked by
+  `test_relay_to_anthropic_api`, which relays the SDK's Vertex requests to the Anthropic API.
+- Not yet checked against Vertex AI itself. On 2026-10-07 Claude Haiku 4.5, Sonnet 5, Opus 5,
+  and Fable 5 were enabled in the `blazeworks` project, but its Claude quota is 0 (`429` on
+  every call and on count-tokens, in `us-east5` and `global`). New projects cannot request an
+  increase until they have usage history. When calls go through, run
+  `make chat_provider_anthropic_vertex_test` with `kiarina.lib.google` settings in
+  `tests/chat_provider_impl/anthropic_vertex/test_settings.yaml`.
 - `lc_anthropic_vertex` fails on Anthropic SDK 1.x when `temperature` is set
-  (`ChatAnthropicVertex` passes it as a keyword), so `vclaude-haiku-4-5` is broken today.
+  (`ChatAnthropicVertex` passes it as a keyword).
 
 ## To decide
 
