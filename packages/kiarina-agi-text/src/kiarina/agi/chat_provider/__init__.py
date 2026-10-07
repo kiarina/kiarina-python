@@ -7,7 +7,7 @@ from ._helpers.find_chat_provider_state import find_chat_provider_state
 from ._instances.chat_provider_registry import chat_provider_registry
 from ._models.base_chat_provider import BaseChatProvider
 from ._operations.compute_history_hash import compute_history_hash
-from ._operations.compute_message_hash import compute_message_hash
+from ._operations.compute_message_hashes import compute_message_hashes
 from ._schemas.chat_capabilities import ChatCapabilities
 from ._schemas.chat_provider_context import ChatProviderContext
 from ._schemas.chat_provider_state import ChatProviderState
@@ -31,7 +31,7 @@ __all__ = [
     "BaseChatProvider",
     # ._operations
     "compute_history_hash",
-    "compute_message_hash",
+    "compute_message_hashes",
     # ._schemas
     "ChatCapabilities",
     "ChatProviderContext",

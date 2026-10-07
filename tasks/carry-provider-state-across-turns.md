@@ -83,8 +83,10 @@ the process is gone, so the provider starts fresh.
   cached. The changes stayed inside `codex_app_server` (and its tests).
 
 - 2026-10-08: reasoning state in `anthropic` (thinking blocks), `openai` (encrypted reasoning
-  items, Responses API), and `google_genai` (thought signatures), with `compute_message_hash` of the
-  message itself and the model name. Live, one tool loop each: Gemini 3.5 Flash-Lite kept the
+  items, Responses API), and `google_genai` (thought signatures). At first the hash covered only
+  the message itself; kiarina pointed out that reasoning sent with an edited history could rely on
+  facts the model no longer sees, so it is now a chained hash over the history
+  (`compute_message_hashes`), and an edit drops the reasoning after it. Live, one tool loop each: Gemini 3.5 Flash-Lite kept the
   function call signature and the next request took it; GPT-6 Luna returned reasoning items on a
   question that needed thought (not on an easy tool call) and the next request took them; Claude
   Sonnet 5.5 returned an omitted thinking block when the question needed thought and the next

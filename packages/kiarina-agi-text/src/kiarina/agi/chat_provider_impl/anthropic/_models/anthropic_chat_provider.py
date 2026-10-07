@@ -15,7 +15,7 @@ from kiarina.agi.chat_provider import (
     SafetyError,
     TokenOverflowError,
     collect_message_states,
-    compute_message_hash,
+    compute_message_hashes,
 )
 from kiarina.agi.content import Content
 from kiarina.agi.cost_record import CostRecord
@@ -283,9 +283,10 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
             # with thinking always on ask for.
             ChatProviderState(
                 name=self.name,
-                history_hash=compute_message_hash(
-                    result.ai_message, model_name=self.settings.model_name
-                ),
+                history_hash=compute_message_hashes(
+                    [*ctx.messages, result.ai_message],
+                    model_name=self.settings.model_name,
+                )[-1],
                 data={"thinking_blocks": result.thinking_blocks},
             ).write_to(result.ai_message)
 

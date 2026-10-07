@@ -22,9 +22,9 @@ class ChatProviderState(BaseModel):
 
     history_hash: str
     """
-    The hash of what the state depends on: `compute_history_hash` of the history
-    up to this message as the provider sends it, for a thread, or
-    `compute_message_hash` of this message, for its reasoning.
+    The hash of the history up to and including this message: of the history as
+    the provider sends it (`compute_history_hash`), for a thread, or of the
+    messages (`compute_message_hashes`), for its reasoning.
     """
 
     data: dict[str, Any] = Field(default_factory=dict)

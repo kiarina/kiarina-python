@@ -7,7 +7,7 @@ from openai.types.responses import Response
 from kiarina.agi.chat_provider import (
     ChatProviderContext,
     ChatProviderState,
-    compute_message_hash,
+    compute_message_hashes,
 )
 from kiarina.agi.chat_provider_impl.openai import OpenAIChatProviderSettings
 from kiarina.agi.chat_provider_impl.openai._exceptions.openai_response_error import (
@@ -214,7 +214,9 @@ async def test_create_request_reasoning(
     ai_message = AIMessage.create(tool_calls=[ToolCall(id="c", name="f")])
     ChatProviderState(
         name="openai",
-        history_hash=compute_message_hash(ai_message, model_name="gpt-test"),
+        history_hash=compute_message_hashes(
+            [HumanMessage.create("Hello"), ai_message], model_name="gpt-test"
+        )[-1],
         data={"reasoning_items": [reasoning]},
     ).write_to(ai_message)
     ctx = ChatProviderContext.create(

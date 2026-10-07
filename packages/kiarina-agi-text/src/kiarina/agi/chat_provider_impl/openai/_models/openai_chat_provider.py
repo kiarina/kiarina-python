@@ -11,7 +11,7 @@ from kiarina.agi.chat_provider import (
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
-    compute_message_hash,
+    compute_message_hashes,
 )
 from kiarina.agi.cost_record import CostRecord
 from kiarina.agi.message import AIMessage, AIMessageChunk
@@ -161,9 +161,10 @@ class OpenAIChatProvider(BaseChatProvider):
         if result.reasoning_items:
             ChatProviderState(
                 name=self.name,
-                history_hash=compute_message_hash(
-                    result.ai_message, model_name=self.settings.model_name
-                ),
+                history_hash=compute_message_hashes(
+                    [*ctx.messages, result.ai_message],
+                    model_name=self.settings.model_name,
+                )[-1],
                 data={"reasoning_items": result.reasoning_items},
             ).write_to(result.ai_message)
 
