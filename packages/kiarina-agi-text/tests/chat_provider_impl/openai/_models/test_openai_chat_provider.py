@@ -63,7 +63,8 @@ def test_endpoint() -> None:
     )
 
 
-def test_provider() -> None:
+def test_provider(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "dummy")
     provider = _create_provider(model_name="gpt-test", endpoint_type="responses")
 
     assert str(provider) == "OpenAIChatProvider(gpt-test, responses)"
@@ -111,8 +112,9 @@ class _FakeEndpoint:
 
 
 @pytest.fixture
-def fake_provider() -> OpenAIChatProvider:
-    return _create_provider(api_key="dummy")
+def fake_provider(monkeypatch: pytest.MonkeyPatch) -> OpenAIChatProvider:
+    monkeypatch.setenv("OPENAI_API_KEY", "dummy")
+    return _create_provider()
 
 
 @pytest.mark.parametrize("streaming", [False, True])
