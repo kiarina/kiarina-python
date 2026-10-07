@@ -21,6 +21,7 @@ class ChatProviderSettings(BaseSettings):
             "lc_google_genai": "kiarina.agi.chat_provider_impl.lc_google_genai:create_lc_google_genai_chat_provider",
             "lc_openai": "kiarina.agi.chat_provider_impl.lc_openai:create_lc_openai_chat_provider",
             "mock": "kiarina.agi.chat_provider_impl.mock:create_mock_chat_provider",
+            "openai": "kiarina.agi.chat_provider_impl.openai:create_openai_chat_provider",
         }
     )
 

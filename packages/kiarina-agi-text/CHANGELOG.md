@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add the `openai` chat provider (`kiarina.agi.chat_provider_impl.openai`), which calls the OpenAI SDK directly instead of LangChain. It supports the Chat Completions API and the Responses API through `endpoint_type`, with the same settings as `lc_openai` except `tiktoken_model_name`. Install it with the `chat-provider-openai` extra.
+  - The endpoint follows `endpoint_type` only. Unlike `lc_openai`, a PDF input does not switch Chat Completions requests to the Responses API; Chat Completions sends PDFs as `file` parts.
+  - Responses API requests detect `max_output_tokens` and `content_filter` incompletions and raise `MaxTokenError` and `SafetyError`.
 - Add `kiarina.agi.chat_content`, which converts message contents and files into provider content parts without depending on LangChain. It provides `MediaConverter`, `ContentPart`, `ContentParts`, and `from_contents`.
 
 ### Deprecated

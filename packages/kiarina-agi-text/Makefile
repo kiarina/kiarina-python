@@ -24,6 +24,8 @@ chat_provider_lc_google_genai_test:
 	mise run test --costly --path tests/chat_provider_impl/lc_google_genai
 chat_provider_lc_openai_test:
 	mise run test --costly --path tests/chat_provider_impl/lc_openai
+chat_provider_openai_test:
+	mise run test --costly --path tests/chat_provider_impl/openai
 text_embedding_provider_google_test:
 	mise run test --costly --path tests/text_embedding_provider_impl/google
 text_embedding_provider_openai_test:

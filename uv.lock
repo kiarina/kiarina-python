@@ -2045,6 +2045,10 @@ chat-provider-lc-openai = [
 chat-provider-mock = [
     { name = "ulid-py" },
 ]
+chat-provider-openai = [
+    { name = "kiarina-lib-openai" },
+    { name = "openai" },
+]
 text-embedding-provider-google = [
     { name = "google-genai" },
     { name = "kiarina-lib-google" },
@@ -2077,6 +2081,7 @@ requires-dist = [
     { name = "kiarina-lib-google", marker = "extra == 'text-embedding-provider-google'", editable = "packages/kiarina-lib-google" },
     { name = "kiarina-lib-openai", marker = "extra == 'all'", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-openai", marker = "extra == 'chat-provider-lc-openai'", editable = "packages/kiarina-lib-openai" },
+    { name = "kiarina-lib-openai", marker = "extra == 'chat-provider-openai'", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-lib-openai", marker = "extra == 'text-embedding-provider-openai'", editable = "packages/kiarina-lib-openai" },
     { name = "kiarina-utils-app", editable = "packages/kiarina-utils-app" },
     { name = "kiarina-utils-common", editable = "packages/kiarina-utils-common" },
@@ -2098,6 +2103,7 @@ requires-dist = [
     { name = "numpy", marker = "extra == 'text-embedding-provider-openai'", specifier = ">=2.0" },
     { name = "openai", marker = "extra == 'all'", specifier = ">=2.0.1,<4" },
     { name = "openai", marker = "extra == 'chat-provider-lc-openai'", specifier = ">=2.0.1,<4" },
+    { name = "openai", marker = "extra == 'chat-provider-openai'", specifier = ">=2.0.1,<4" },
     { name = "openai", marker = "extra == 'text-embedding-provider-openai'", specifier = ">=2.0.1,<4" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
@@ -2107,7 +2113,7 @@ requires-dist = [
     { name = "ulid-py", marker = "extra == 'all'", specifier = ">=1.1.0" },
     { name = "ulid-py", marker = "extra == 'chat-provider-mock'", specifier = ">=1.1.0" },
 ]
-provides-extras = ["all", "chat-provider-lc-anthropic", "chat-provider-lc-anthropic-vertex", "chat-provider-lc-google-genai", "chat-provider-lc-openai", "chat-provider-mock", "text-embedding-provider-google", "text-embedding-provider-mock", "text-embedding-provider-openai"]
+provides-extras = ["all", "chat-provider-lc-anthropic", "chat-provider-lc-anthropic-vertex", "chat-provider-lc-google-genai", "chat-provider-lc-openai", "chat-provider-openai", "chat-provider-mock", "text-embedding-provider-google", "text-embedding-provider-mock", "text-embedding-provider-openai"]
 
 [[package]]
 name = "kiarina-agi-tool"
