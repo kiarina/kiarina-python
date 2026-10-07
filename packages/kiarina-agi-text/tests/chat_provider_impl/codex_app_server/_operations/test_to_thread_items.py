@@ -49,6 +49,7 @@ async def test_to_thread_items(
     )
 
     assert request.instructions == "Be brief."
+    assert request.item_ends == [0, 1, 3, 4, 6, 6, 7]
     user, assistant, call, output, image_output, purged, developer = request.items
     assert user["role"] == "user"
     assert _IMAGE in user["content"]
@@ -106,11 +107,17 @@ async def test_to_thread_items_tool_choice(
     assert request.instructions is None
     assert request.items[0]["content"] == [{"type": "input_text", "text": "Hi"}]
 
+    assert len(request.items) == 1
+    assert request.item_ends == [1]
+
     if instruction:
-        assert request.items[-1] == {
+        item = {
             "type": "message",
             "role": "developer",
             "content": [{"type": "input_text", "text": instruction}],
         }
+        assert request.instruction_item == item
+        assert request.injected_items == [*request.items, item]
     else:
-        assert len(request.items) == 1
+        assert request.instruction_item is None
+        assert request.injected_items == request.items

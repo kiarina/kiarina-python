@@ -57,6 +57,10 @@ class CodexAppServerSession:
     async def notify(self, method: str, params: dict[str, Any] | None) -> None:
         await self._write({"method": method, "params": params})
 
+    async def respond(self, request_id: Any, result: dict[str, Any]) -> None:
+        """Answer a request from the server."""
+        await self._write({"id": request_id, "result": result})
+
     async def next_event(self) -> dict[str, Any]:
         """The next notification or server request: `{"method", "params", ["id"]}`."""
         return await self._events.get()
@@ -82,6 +86,24 @@ class CodexAppServerSession:
 
             with contextlib.suppress(asyncio.CancelledError):
                 await task
+
+    def kill(self) -> None:
+        """Stop the process without waiting, for when the event loop is not usable."""
+        process = self._process
+        self._process = None
+
+        if process is not None and process.returncode is None:
+            try:
+                process.kill()
+            except (ProcessLookupError, RuntimeError):  # pragma: no cover
+                pass
+
+        for task in self._tasks:
+            if not task.done():
+                try:
+                    task.cancel()
+                except RuntimeError:  # pragma: no cover
+                    pass
 
     async def _write(self, message: dict[str, Any]) -> None:
         if self._process is None or self._process.stdin is None:

@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add the `codex_app_server` chat provider (`kiarina.agi.chat_provider_impl.codex_app_server`), which runs `codex app-server` with the local Codex login (a ChatGPT subscription). Install it with the `chat-provider-codex-app-server` extra.
   - Each request starts a new process and ephemeral thread, injects the conversation as raw Responses API items (`thread/inject_items`), and turns off Codex's own tools, instructions, and MCP servers.
-  - The process is closed when the first model response completes, leaving tool call requests unanswered, so the caller runs the tools and the model gets no second request.
+  - The request ends when the first model response completes, with tool call requests left unanswered, so the caller runs the tools and the model gets no second request.
+  - With `thread_reuse` (default on), the process and thread are kept after a response, and the next request that extends the same history continues them, answering the held tool call requests or starting a new turn. Codex reads the prompt cache only within a thread. `thread_idle_timeout` and `max_live_threads` limit the kept threads.
   - The model entry is copied from Codex's cached model list with direct tool calls, because new models otherwise call tools only from a JavaScript cell.
 - Add the `claude_agent_sdk` chat provider (`kiarina.agi.chat_provider_impl.claude_agent_sdk`), which runs Claude Code through the Claude Agent SDK with the local Claude login (a Claude subscription). Install it with the `chat-provider-claude-agent-sdk` extra.
   - Each request starts a new session, sends the conversation as `<messages>` XML with one content block per message, turns off Claude Code's own tools and settings, and stops after the first model turn (`max_turns=1`).

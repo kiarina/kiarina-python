@@ -27,7 +27,7 @@ async def to_thread_items(
     more, finds the cache only if the last item comes back unchanged.
 
     Codex always sends `tool_choice: auto`, so a forced tool choice is asked for
-    in a last developer message. The request after it then misses the cache.
+    in a developer message after the conversation (`instruction_item`).
     """
     request = CodexAppServerRequest()
     systems: list[str] = []
@@ -87,6 +87,8 @@ async def to_thread_items(
         else:  # pragma: no cover
             raise AssertionError(f"Unsupported message type: {message.type}")
 
+        request.item_ends.append(len(request.items))
+
     if tool_choice == "any":
         instruction = "You must respond by calling one of the provided tools."
     elif tool_choice is not None and tool_choice != "auto":
@@ -95,8 +97,8 @@ async def to_thread_items(
         instruction = None
 
     if instruction:
-        request.items.append(
-            _message("developer", [{"type": "text", "text": instruction}])
+        request.instruction_item = _message(
+            "developer", [{"type": "text", "text": instruction}]
         )
 
     request.instructions = "\n\n".join(s for s in systems if s) or None

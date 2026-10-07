@@ -41,6 +41,19 @@ class CodexAppServerChatProviderSettings(ChatCapabilities, BaseSettings):
 
     timeout: float | None = 600.0
 
+    thread_reuse: bool = True
+    """
+    Keep the process and thread after a response, and continue them when the next
+    request extends the same history. Codex reads the prompt cache only within a
+    thread.
+    """
+
+    thread_idle_timeout: float = 600.0
+    """Seconds a kept thread waits for the next request before it is stopped."""
+
+    max_live_threads: int = 4
+    """Kept threads per process. The oldest is stopped beyond this."""
+
     codex_bin: str | None = None
     """Codex to run. The one bundled in `openai-codex-cli-bin` when unset."""
 

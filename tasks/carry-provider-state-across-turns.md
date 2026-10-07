@@ -76,7 +76,13 @@ the process is gone, so the provider starts fresh.
 - On release: raise kiarina-agi-text's `kiarina-agi-data` floor (now `>=2.6.0`) to the release
   that has `BaseMessage.metadata`, because `ChatProviderState` reads metadata from AI messages.
 
+- 2026-10-08: Codex thread resumption in `codex_app_server` (`thread_reuse`, default on). Kept
+  threads live in `live_thread_pool`; a paused turn gets tool results as replies, a completed turn
+  gets the new messages and a new turn, anything else starts a new thread. Live, 12K history:
+  4.2 s and 0 cached, then the resumed request 2.5 s and 11,392 cached, then the next turn 11,520
+  cached. The changes stayed inside `codex_app_server` (and its tests).
+
 ## Next steps
 
-1. Implement Codex thread resumption, then carry reasoning state in `openai`, `google_genai`, and
-   `anthropic`, and thinking blocks in `claude_agent_sdk`.
+1. Carry reasoning state in `openai` (encrypted reasoning items), `google_genai` (thought
+   signatures), and `anthropic` (thinking blocks), and thinking blocks in `claude_agent_sdk`.
