@@ -177,6 +177,7 @@ mise run test-assets:download
 ### 相談待ち（合意してから着手する）
 
 - [Make structured output reliable on models without forced tool choice](tasks/structured-output-via-json-output.md)
+- [Carry file contents inline in FileInfo for agents whose files live on remote nodes](tasks/file-info-inline-transfer.md)
 
 ### 待機中（着手すると決めたら「次に着手・進行中」へ移す）
 
