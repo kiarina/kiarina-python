@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Self
 
 import numpy as np
@@ -13,7 +13,7 @@ from .._types.embedding_vector import EmbeddingVector
 
 class Embedding(BaseModel):
     id: EmbeddingID = Field(default_factory=lambda: ulid.new().str)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     kind: EmbeddingKind
     space_id: EmbeddingSpaceID
     vector: list[float]

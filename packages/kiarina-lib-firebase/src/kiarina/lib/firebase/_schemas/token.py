@@ -1,7 +1,7 @@
 import base64
 import binascii
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from functools import cached_property
 from typing import Any
 
@@ -47,7 +47,7 @@ class Token(BaseModel):
         if not isinstance(exp, (int, float)) or isinstance(exp, bool):
             raise ValueError("The 'exp' claim in id_token is not a number")
 
-        return datetime.fromtimestamp(exp, tz=timezone.utc)
+        return datetime.fromtimestamp(exp, tz=UTC)
 
 
 def _get_claim(id_token: str, name: str) -> Any:

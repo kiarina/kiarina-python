@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Self
 
 import ulid
@@ -20,7 +20,7 @@ class BaseFileInfo(BaseModel):
     type: FileType = Field(frozen=True)
 
     id: FileID = Field(default_factory=lambda: ulid.new().str)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     node_id: str | None = None
 
     mime_type: str

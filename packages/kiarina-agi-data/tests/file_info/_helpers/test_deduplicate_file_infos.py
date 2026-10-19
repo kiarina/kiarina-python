@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from kiarina.agi.file_info import TextFileInfo, deduplicate_file_infos
 
@@ -19,7 +19,7 @@ def _make_text_file_info(
         line_count=5,
         raw_text="hello\n" * 5,
         unique_key=unique_key,
-        created_at=created_at or datetime.now(timezone.utc),
+        created_at=created_at or datetime.now(UTC),
     )
 
 
@@ -44,12 +44,12 @@ def test_unique_key_deduplication_keeps_newer() -> None:
     older = _make_text_file_info(
         "old.txt",
         unique_key="key1",
-        created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
+        created_at=datetime(2024, 1, 1, tzinfo=UTC),
     )
     newer = _make_text_file_info(
         "new.txt",
         unique_key="key1",
-        created_at=datetime(2024, 1, 2, tzinfo=timezone.utc),
+        created_at=datetime(2024, 1, 2, tzinfo=UTC),
     )
 
     result = deduplicate_file_infos([older, newer])
@@ -59,7 +59,7 @@ def test_unique_key_deduplication_keeps_newer() -> None:
 
 
 def test_unique_key_deduplication_same_created_at_keeps_last_seen() -> None:
-    ts = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    ts = datetime(2024, 1, 1, tzinfo=UTC)
     fi1 = _make_text_file_info("file1.txt", unique_key="key1", created_at=ts)
     fi2 = _make_text_file_info("file2.txt", unique_key="key1", created_at=ts)
 
@@ -86,12 +86,12 @@ def test_mix_of_unique_key_and_no_unique_key() -> None:
     older = _make_text_file_info(
         "old.txt",
         unique_key="key1",
-        created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
+        created_at=datetime(2024, 1, 1, tzinfo=UTC),
     )
     newer = _make_text_file_info(
         "new.txt",
         unique_key="key1",
-        created_at=datetime(2024, 1, 2, tzinfo=timezone.utc),
+        created_at=datetime(2024, 1, 2, tzinfo=UTC),
     )
 
     result = deduplicate_file_infos([no_key1, older, no_key2, newer])

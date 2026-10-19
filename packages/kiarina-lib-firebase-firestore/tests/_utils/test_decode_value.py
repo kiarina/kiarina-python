@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -24,10 +24,10 @@ def test_scalar_values() -> None:
 
 def test_timestamp_value() -> None:
     decoded = decode_value({"timestampValue": "2026-07-28T12:34:56.123456789Z"})
-    assert decoded == datetime(2026, 7, 28, 12, 34, 56, 123456, tzinfo=timezone.utc)
+    assert decoded == datetime(2026, 7, 28, 12, 34, 56, 123456, tzinfo=UTC)
 
     decoded = decode_value({"timestampValue": "2026-07-28T12:34:56Z"})
-    assert decoded == datetime(2026, 7, 28, 12, 34, 56, tzinfo=timezone.utc)
+    assert decoded == datetime(2026, 7, 28, 12, 34, 56, tzinfo=UTC)
 
 
 def test_array_value() -> None:

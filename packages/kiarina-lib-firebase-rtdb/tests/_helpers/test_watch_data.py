@@ -17,7 +17,7 @@ async def test_unauthorized(database_url: str, token_manager: TokenManager) -> N
 
     try:
         await asyncio.wait_for(watch_task, timeout=1.0)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         watch_task.cancel()
 
         try:
@@ -57,7 +57,7 @@ async def test_happy_path(
         # but it takes time, so stop with timeout
         await asyncio.wait_for(watch_task, timeout=2.0)
 
-    except asyncio.TimeoutError:
+    except TimeoutError:
         watch_task.cancel()
 
         try:

@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from .._helpers.refresh_id_token import refresh_id_token
 from .._schemas.token import Token
@@ -44,7 +44,7 @@ class TokenManager:
             return token
 
     def _needs_refresh(self, token: Token) -> bool:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         refresh_threshold = token.expires_at - timedelta(
             seconds=self._refresh_buffer_seconds
         )

@@ -1,6 +1,5 @@
-from pathlib import Path
-
 import tomllib
+from pathlib import Path
 
 from .._constants.disabled_features import DISABLED_FEATURES, DISABLED_INSTRUCTIONS
 

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import ulid
@@ -20,6 +20,6 @@ class Memory(BaseModel):
     vector: list[float] | None = None
     edit_protected: bool = False
     delete_protected: bool = False
-    activated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    activated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     """The time when the memory was explicitly used in cognition, rather than merely read."""
     metadata: dict[str, Any] = Field(default_factory=dict)

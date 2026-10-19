@@ -1,6 +1,6 @@
 import base64
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -21,7 +21,7 @@ def make_token(payload: object) -> Token:
 
 
 def test_claims() -> None:
-    expires_at = datetime(2026, 1, 1, 1, tzinfo=timezone.utc)
+    expires_at = datetime(2026, 1, 1, 1, tzinfo=UTC)
 
     token = make_token(
         {
