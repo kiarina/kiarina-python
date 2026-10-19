@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-agi-data-builder, kiarina-agi-image**: Allow Pillow 13.
+
 ### Removed
 - **kiarina-agi-image**: Remove the kiapi `ernie` family, which kiapi no longer provides.
 
