@@ -39,7 +39,7 @@ dependencies = [
 all = [
     "imageio-ffmpeg>=0.6.0,<1",
     "pillow>=12.3.0,<14",
-    "pypdf>=6.7.4,<7",
+    "pypdf>=6.21.2,<7",
     "pypdfium2>=5.12.1,<6",
     "soundfile>=0.13.1,<1",
 ]
@@ -50,7 +50,7 @@ file-info-builder-audio = [
 file-info-builder-image = ["pillow>=12.3.0,<14"]
 file-info-builder-pdf = [
     "pillow>=12.3.0,<14",
-    "pypdf>=6.7.4,<7",
+    "pypdf>=6.21.2,<7",
     "pypdfium2>=5.12.1,<6",
 ]
 file-info-builder-video = [
