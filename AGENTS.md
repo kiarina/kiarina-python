@@ -182,4 +182,3 @@ mise run test-assets:download
 ### 待機中（着手すると決めたら「次に着手・進行中」へ移す）
 
 - [Verify anthropic_vertex against Vertex AI](tasks/verify-anthropic-vertex-on-vertex-ai.md) — waiting for Claude quota on Vertex AI
-- [Verify the gemini-4-argon preset](tasks/verify-gemini-4-argon-preset.md) — waiting for Gemini API prepayment credits
