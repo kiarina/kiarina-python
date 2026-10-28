@@ -286,6 +286,25 @@ async def test_run_text(
     assert len(ai_messages) == (2 if streaming else 1)
 
 
+async def test_run_extra_instruction(
+    monkeypatch: pytest.MonkeyPatch, run_context: RunContext
+) -> None:
+    fake = _FakeQuery(_text_turn())
+    monkeypatch.setattr(claude_agent_sdk, "query", fake)
+
+    await _run(
+        _create_provider(extra_instruction="Reply in plain text."),
+        cost_recorder=_Recorder(),  # type: ignore[arg-type]
+        run_context=run_context,
+    )
+
+    [user_message] = fake.calls[0]["prompt"]
+    last = user_message["message"]["content"][-1]
+    assert last["text"].endswith(
+        "Respond to the last message in <messages>.\nReply in plain text."
+    )
+
+
 async def test_run_parallel_tool_calls_disabled(
     monkeypatch: pytest.MonkeyPatch, run_context: RunContext
 ) -> None:

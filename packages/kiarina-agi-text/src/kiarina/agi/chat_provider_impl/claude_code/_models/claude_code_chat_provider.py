@@ -128,6 +128,7 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
         user_content = transcript.to_user_parts(
             tool_choice=ctx.tool_choice if tool_infos else None,
             cache_control={"type": "ephemeral", "ttl": "1h"},
+            extra_instruction=self.settings.extra_instruction,
         )
 
         parallel_tool_calls = ctx.parallel_tool_calls

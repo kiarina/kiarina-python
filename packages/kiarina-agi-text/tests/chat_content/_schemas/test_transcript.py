@@ -71,6 +71,16 @@ def test_to_user_parts() -> None:
     assert transcript.parts[1]["cache_control"] == {"type": "ephemeral"}
 
 
+def test_to_user_parts_extra_instruction() -> None:
+    parts = Transcript().to_user_parts(
+        tool_choice="any", extra_instruction="Reply in plain text."
+    )
+
+    assert parts[-1]["text"].endswith(
+        "You must respond by calling one of the provided tools.\nReply in plain text."
+    )
+
+
 def test_to_user_parts_empty() -> None:
     assert Transcript().to_user_parts(cache_control={"type": "ephemeral"}) == [
         {

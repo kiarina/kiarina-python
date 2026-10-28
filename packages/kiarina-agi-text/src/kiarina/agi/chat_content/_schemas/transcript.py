@@ -53,14 +53,22 @@ class Transcript:
 
         return f"{self.system}\n\n{instructions}" if self.system else instructions
 
-    def to_instruction(self, *, tool_choice: ToolChoice | None = None) -> str:
-        """The request to respond, and the tool choice."""
+    def to_instruction(
+        self,
+        *,
+        tool_choice: ToolChoice | None = None,
+        extra_instruction: str | None = None,
+    ) -> str:
+        """The request to respond, the tool choice, and the caller's extra instruction."""
         lines = ["Respond to the last message in <messages>."]
 
         if tool_choice == "any":
             lines.append("You must respond by calling one of the provided tools.")
         elif tool_choice is not None and tool_choice != "auto":
             lines.append(f"You must respond by calling the `{tool_choice}` tool.")
+
+        if extra_instruction:
+            lines.append(extra_instruction)
 
         return "\n".join(lines)
 
@@ -73,6 +81,7 @@ class Transcript:
         *,
         tool_choice: ToolChoice | None = None,
         cache_control: dict[str, Any] | None = None,
+        extra_instruction: str | None = None,
     ) -> list[ContentPart]:
         """
         The transcript as parts, one per element with its media, then the
@@ -97,5 +106,7 @@ class Transcript:
         if parts and cache_control:
             parts[-1] = {**parts[-1], "cache_control": cache_control}
 
-        instruction = self.to_instruction(tool_choice=tool_choice)
+        instruction = self.to_instruction(
+            tool_choice=tool_choice, extra_instruction=extra_instruction
+        )
         return [*parts, {"type": "text", "text": f"{closing}\n\n{instruction}"}]

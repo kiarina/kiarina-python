@@ -43,6 +43,12 @@ class ClaudeCodeChatProviderSettings(ChatCapabilities, BaseSettings):
 
     timeout: float | None = 600.0
 
+    extra_instruction: str | None = None
+    """
+    Text sent after the request to respond, at the end of the user turn: the last
+    words the model reads. Nothing is added when unset.
+    """
+
     cli_path: str | None = None
     """Claude Code to run. The SDK's bundled one when unset."""
 
