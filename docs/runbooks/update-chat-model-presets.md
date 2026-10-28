@@ -103,6 +103,8 @@ This test covers the invoke, stream, tool calling, parallel tool calling, suppor
 
 If credentials are unavailable, resolve authentication separately before evaluating the model settings. Do not treat a pre-authentication failure as a model compatibility result. Never store secrets in the repository or test output.
 
+Billing and quota failures are not model results either: the Gemini API answers `402 RESOURCE_EXHAUSTED` when its prepayment credits are depleted, and Vertex AI answers `429` when the project has no quota for the base model. Check another preset of the same provider to tell them apart. The `anthropic_vertex` provider retries a `429` up to `max_retry_count` times, which keeps a run going for many minutes; set `KIARINA_AGI_CHAT_PROVIDER_IMPL_ANTHROPIC_VERTEX_MAX_RETRY_COUNT=0` for these tests.
+
 See [Pytest Markers](../playbooks/pytest-markers.md) for the costly marker and [External Service Tests](../playbooks/external-service-tests.md) for external API tests and authentication.
 
 ### 6. Run package and repository checks
