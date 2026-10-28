@@ -107,4 +107,5 @@ Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). T
 - `claude_code` sends the conversation as XML text in one user turn, so there is nowhere to send thinking blocks back; it keeps no reasoning state.
 - `claude_code` starts a new session for every request, on purpose. The Claude Agent SDK could keep one (`ClaudeSDKClient`), with tool handlers held like Codex's requests, but Anthropic caches by content across sessions, so the cache already works; keeping it would save only the startup seconds, against the cost of a session pool and unverified handler timeouts.
 - Claude tends to point out contradictions in the transcript, including its own earlier messages, even when not asked.
+- Claude Haiku 4.5 copies the transcript's tags into its replies: replayed from a real conversation, 2 of 3 replies ended with `</ai_message>` or `</message>` (Claude Opus 5.5: none of 6). The format instructions tell it not to write them.
 - These runtimes are for the user's own login. Whether they may serve other people under a subscription depends on each vendor's terms, which keep changing.

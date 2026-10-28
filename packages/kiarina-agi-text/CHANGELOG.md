@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
+
 ## [2.36.1] - 2026-10-08
 
 ### Changed

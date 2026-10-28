@@ -11,6 +11,9 @@ def test_to_system_prompt() -> None:
         .to_system_prompt(tools_enabled=False)
         .startswith("The conversation so far is given in <messages>")
     )
+    assert "never write the transcript's XML tags" in Transcript().to_system_prompt(
+        tools_enabled=False
+    )
 
     system_prompt = Transcript(system="Be brief.").to_system_prompt(tools_enabled=True)
 

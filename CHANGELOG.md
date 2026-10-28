@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **kiarina-agi-text**: Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
 - **kiarina-agi-data-builder, kiarina-agi-image**: Allow Pillow 13.
 
 ### Removed

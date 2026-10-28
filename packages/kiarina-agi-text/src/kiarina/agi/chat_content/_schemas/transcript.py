@@ -10,7 +10,9 @@ _FORMAT_INSTRUCTIONS = (
     "human_message is the user, ai_message is you, tool_call and tool_result are "
     "the tools you called and their results, and system_message is an instruction "
     'from the system. <attachment index="N" /> marks the Nth attached file. '
-    "Continue the conversation as the assistant by responding to the last message."
+    "Continue the conversation as the assistant by responding to the last message. "
+    "Write your reply as plain text only: never write the transcript's XML tags "
+    "(such as </ai_message>) in it."
 )
 
 _TOOL_INSTRUCTIONS = (
