@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add the `codex-gpt-6.1-terra` and `claude-code-haiku-5-5` chat model presets, and give `codex-gpt-6.1-sol` the 500K context window of Codex's model list.
 - Add `extra_instruction` to the `claude_code` provider settings: text sent at the end of the user turn, after the request to respond (`claude-code-haiku-4-5?extra_instruction=(...)`).
 
 ### Changed

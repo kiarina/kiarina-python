@@ -443,8 +443,20 @@ class ChatModelSettings(BaseSettings):
                 provider_config={
                     "model_name": "gpt-6.1-sol",
                     "reasoning_effort": "low",
-                    "context_window": 272_000,
-                    "token_count_limit": 240_000,
+                    "context_window": 500_000,
+                    "token_count_limit": 440_000,
+                    "image_file_count_limit": 100,
+                    "input_enabled": {"image": True},
+                    "output_enabled": {"image": True},
+                },
+            ),
+            "codex-gpt-6.1-terra": ChatModelConfig(
+                provider_name="codex",
+                provider_config={
+                    "model_name": "gpt-6.1-terra",
+                    "reasoning_effort": "low",
+                    "context_window": 500_000,
+                    "token_count_limit": 440_000,
                     "image_file_count_limit": 100,
                     "input_enabled": {"image": True},
                     "output_enabled": {"image": True},
@@ -497,6 +509,19 @@ class ChatModelSettings(BaseSettings):
                 provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-fable-5-1",
+                    "context_window": 200_000,
+                    "token_count_limit": 160_000,
+                    "image_file_count_limit": 100,
+                    "pdf_page_count_limit": 100,
+                    "input_enabled": {"image": True, "pdf": True},
+                    "output_enabled": {"image": True},
+                },
+                token_scale_factor=0.7,
+            ),
+            "claude-code-haiku-5-5": ChatModelConfig(
+                provider_name="claude_code",
+                provider_config={
+                    "model_name": "claude-haiku-5-5",
                     "context_window": 200_000,
                     "token_count_limit": 160_000,
                     "image_file_count_limit": 100,
