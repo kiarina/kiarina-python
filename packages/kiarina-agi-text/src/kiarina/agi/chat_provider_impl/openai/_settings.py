@@ -16,13 +16,13 @@ class OpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
 
     openai_settings_key: SettingsKey | None = None
 
-    model_name: str = "gpt-5.5"
+    model_name: str = "gpt-6.1-sol"
 
     max_output_tokens: int = 128_000
 
-    context_window: int = 400_000
+    context_window: int = 1_050_000
 
-    token_count_limit: int = 272_000
+    token_count_limit: int = 800_000
 
     image_file_count_limit: int = 100
 
@@ -33,32 +33,32 @@ class OpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
         "pdf": True,
     }
 
-    input_cost_microdollars_per_1k_tokens: int = 50
+    input_cost_microdollars_per_1k_tokens: int = 2_000
 
-    cached_input_cost_microdollars_per_1k_tokens: int = 5
+    cached_input_cost_microdollars_per_1k_tokens: int = 100
 
-    output_cost_microdollars_per_1k_tokens: int = 400
+    output_cost_microdollars_per_1k_tokens: int = 10_000
 
     cache_write_cost_multiplier: float = Field(
-        default=1.0,
+        default=1.25,
         title="Cache Write Cost Multiplier",
         description="Multiplier applied to uncached input pricing for cache writes.",
     )
 
     extended_cost_threshold_tokens: int | None = Field(
-        default=None,
+        default=272_000,
         title="Extended Cost Threshold Tokens",
         description="Input token threshold above which extended pricing applies.",
     )
 
     extended_input_cost_multiplier: float = Field(
-        default=1.0,
+        default=2.0,
         title="Extended Input Cost Multiplier",
         description="Input cost multiplier applied above the extended cost threshold.",
     )
 
     extended_output_cost_multiplier: float = Field(
-        default=1.0,
+        default=1.5,
         title="Extended Output Cost Multiplier",
         description="Output cost multiplier applied above the extended cost threshold.",
     )

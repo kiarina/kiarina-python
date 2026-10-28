@@ -332,7 +332,7 @@ async def test_run_text(
                 },
             ],
             TokenOverflowError,
-            "272000",
+            "500000",
         ),
         (
             [{"method": "error", "params": {"error": {"message": "usage limit"}}}],

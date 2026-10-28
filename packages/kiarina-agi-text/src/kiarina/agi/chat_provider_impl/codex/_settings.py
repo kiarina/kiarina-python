@@ -24,10 +24,10 @@ class CodexChatProviderSettings(ChatCapabilities, BaseSettings):
         Literal["none", "minimal", "low", "medium", "high", "xhigh", "max"] | None
     ) = "low"
 
-    context_window: int = 272_000
+    context_window: int = 500_000
     """The subscription's window in Codex's model list, smaller than the API's."""
 
-    token_count_limit: int = 240_000
+    token_count_limit: int = 440_000
 
     image_file_count_limit: int = 100
 

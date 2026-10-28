@@ -247,7 +247,7 @@ def test_get_cost_record_extended_pricing(
 
     assert cost_record.microdollars == expected_microdollars
     assert cost_record.metadata == {
-        "model_name": "gpt-5.5",
+        "model_name": "gpt-6.1-sol",
         "input_tokens": prompt_tokens - 2_000,
         "cache_write_tokens": 1_000,
         "cached_input_tokens": 1_000,
@@ -255,8 +255,11 @@ def test_get_cost_record_extended_pricing(
     }
 
 
-def test_get_cost_record_cache_write_uses_input_cost_by_default() -> None:
-    provider = _create_provider()
+def test_get_cost_record_cache_write_at_input_cost() -> None:
+    provider = _create_provider(
+        input_cost_microdollars_per_1k_tokens=50,
+        cache_write_cost_multiplier=1.0,
+    )
 
     without_cache_write = provider._get_cost_record(OpenAIUsage(prompt_tokens=1_001))
     with_cache_write = provider._get_cost_record(

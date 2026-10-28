@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsKey, SettingsManager
 
@@ -15,15 +16,15 @@ class AnthropicChatProviderSettings(ChatCapabilities, BaseSettings):
 
     anthropic_settings_key: SettingsKey | None = None
 
-    model_name: str = "claude-haiku-4-5"
+    model_name: str = "claude-haiku-5-5"
 
     token_count_model_name: str | None = None
 
-    context_window: int = 200_000
+    context_window: int = 1_000_000
 
-    max_output_tokens: int = 64_000
+    max_output_tokens: int = 128_000
 
-    token_count_limit: int = 136_000
+    token_count_limit: int = 872_000
 
     image_file_count_limit: int = 100
 
@@ -38,17 +39,39 @@ class AnthropicChatProviderSettings(ChatCapabilities, BaseSettings):
         "image": True,
     }
 
-    input_cost_microdollars_per_1k_tokens: int = 3_000
+    input_cost_microdollars_per_1k_tokens: int = 100
 
-    cache_write_5m_cost_microdollars_per_1k_tokens: int = 3_750
+    cache_write_5m_cost_microdollars_per_1k_tokens: int = 125
 
-    cache_write_1h_cost_microdollars_per_1k_tokens: int = 6_000
+    cache_write_1h_cost_microdollars_per_1k_tokens: int = 200
 
-    cached_input_cost_microdollars_per_1k_tokens: int = 300
+    cached_input_cost_microdollars_per_1k_tokens: int = 10
 
-    output_cost_microdollars_per_1k_tokens: int = 15_000
+    output_cost_microdollars_per_1k_tokens: int = 500
 
-    temperature: float | None = 0.0
+    extended_cost_threshold_tokens: int | None = Field(
+        default=100_000,
+        title="Extended Cost Threshold Tokens",
+        description=(
+            "Prompt length above which extended pricing applies to the whole request. "
+            "The prompt counts uncached input, cache writes, and cache reads. "
+            "None turns it off."
+        ),
+    )
+
+    extended_input_cost_multiplier: float = Field(
+        default=5.0,
+        title="Extended Input Cost Multiplier",
+        description="Multiplier for input, cache write, and cache read prices above the threshold.",
+    )
+
+    extended_output_cost_multiplier: float = Field(
+        default=5.0,
+        title="Extended Output Cost Multiplier",
+        description="Multiplier for output prices above the threshold.",
+    )
+
+    temperature: float | None = None
 
     parallel_tool_calls: bool | None = False
 

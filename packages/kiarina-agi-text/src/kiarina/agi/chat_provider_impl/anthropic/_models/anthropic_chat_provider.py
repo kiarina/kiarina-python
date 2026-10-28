@@ -351,6 +351,20 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
             multiplier_input = self.settings.context_1m_input_cost_multiplier
             multiplier_output = self.settings.context_1m_output_cost_multiplier
 
+        # A prompt over the threshold, cache reads and writes included, prices the
+        # whole request higher (Claude Haiku 5.5 over 100K tokens).
+        threshold = self.settings.extended_cost_threshold_tokens
+        prompt_tokens = (
+            usage.input_tokens
+            + usage.cache_write_5m_tokens
+            + usage.cache_write_1h_tokens
+            + usage.cached_input_tokens
+        )
+
+        if threshold is not None and prompt_tokens > threshold:
+            multiplier_input *= self.settings.extended_input_cost_multiplier
+            multiplier_output *= self.settings.extended_output_cost_multiplier
+
         # fmt: off
         cost = math.ceil(
             input_cost * multiplier_input * usage.input_tokens / 1_000

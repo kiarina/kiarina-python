@@ -338,7 +338,17 @@ async def test_run_request_errors(
     [(200_000, 422_200), (200_001, 832_404)],
 )
 def test_get_cost_record(prompt_tokens: int, expected_microdollars: int) -> None:
-    cost_record = _create_provider()._get_cost_record(
+    provider = _create_provider(
+        model_name="gemini-test",
+        input_cost_microdollars_per_1k_tokens=2_000,
+        extended_input_cost_microdollars_per_1k_tokens=4_000,
+        cached_input_cost_microdollars_per_1k_tokens=200,
+        extended_cached_input_cost_microdollars_per_1k_tokens=400,
+        output_cost_microdollars_per_1k_tokens=12_000,
+        extended_output_cost_microdollars_per_1k_tokens=18_000,
+        threshold_tokens=200_000,
+    )
+    cost_record = provider._get_cost_record(
         GoogleUsage(
             prompt_tokens=prompt_tokens,
             cached_input_tokens=1_000,
@@ -348,7 +358,7 @@ def test_get_cost_record(prompt_tokens: int, expected_microdollars: int) -> None
 
     assert cost_record.microdollars == expected_microdollars
     assert cost_record.metadata == {
-        "model_name": "gemini-3.1-pro-preview",
+        "model_name": "gemini-test",
         "input_tokens": prompt_tokens - 1_000,
         "cached_input_tokens": 1_000,
         "output_tokens": 2_000,

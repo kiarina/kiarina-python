@@ -112,8 +112,7 @@ async def test_create_request(ctx: ChatProviderContext) -> None:
     assert request == {
         "model": "claude-test",
         "messages": [{"role": "user", "content": [{"type": "text", "text": "Hello"}]}],
-        "max_tokens": 64_000,
-        "extra_body": {"temperature": 0.0},
+        "max_tokens": 128_000,
     }
 
 
@@ -299,7 +298,7 @@ async def test_run(
 
     assert ai_messages[-1].type == "ai"
     assert ai_messages[-1].to_text() == "Hi"
-    assert client.messages.count_kwargs["model"] == "claude-haiku-4-5"
+    assert client.messages.count_kwargs["model"] == "claude-haiku-5-5"
 
     if streaming:
         assert [m.to_text() for m in ai_messages[:3]] == ["Hi", "", ""]
@@ -430,7 +429,16 @@ async def test_check_token_overflow_ignores_count_errors(
 def test_get_cost_record(
     context_1m_enabled: bool, input_tokens: int, expected_microdollars: int
 ) -> None:
-    provider = _create_provider(context_1m_enabled=context_1m_enabled)
+    provider = _create_provider(
+        model_name="claude-test",
+        input_cost_microdollars_per_1k_tokens=3_000,
+        cache_write_5m_cost_microdollars_per_1k_tokens=3_750,
+        cache_write_1h_cost_microdollars_per_1k_tokens=6_000,
+        cached_input_cost_microdollars_per_1k_tokens=300,
+        output_cost_microdollars_per_1k_tokens=15_000,
+        extended_cost_threshold_tokens=None,
+        context_1m_enabled=context_1m_enabled,
+    )
 
     cost_record = provider._get_cost_record(
         AnthropicUsage(
@@ -444,13 +452,41 @@ def test_get_cost_record(
 
     assert cost_record.microdollars == expected_microdollars
     assert cost_record.metadata == {
-        "model_name": "claude-haiku-4-5",
+        "model_name": "claude-test",
         "input_tokens": input_tokens,
         "cache_write_5m_tokens": 1_000,
         "cache_write_1h_tokens": 1_000,
         "cached_input_tokens": 1_000,
         "output_tokens": 2_000,
     }
+
+
+@pytest.mark.parametrize(
+    ("input_tokens", "expected_microdollars"),
+    [
+        # 97,000 + 1,000 + 1,000 + 1,000 = 100,000 prompt tokens: the base prices.
+        (97_000, 11_035),
+        # 100,001 prompt tokens, cache reads and writes included: 5x for all of it.
+        (97_001, 55_176),
+    ],
+)
+def test_get_cost_record_extended_pricing(
+    input_tokens: int, expected_microdollars: int
+) -> None:
+    # The defaults are Claude Haiku 5.5's: 5x above 100,000 prompt tokens.
+    provider = _create_provider()
+
+    cost_record = provider._get_cost_record(
+        AnthropicUsage(
+            input_tokens=input_tokens,
+            cache_write_5m_tokens=1_000,
+            cache_write_1h_tokens=1_000,
+            cached_input_tokens=1_000,
+            output_tokens=2_000,
+        )
+    )
+
+    assert cost_record.microdollars == expected_microdollars
 
 
 # --------------------------------------------------

@@ -46,7 +46,7 @@ def test_create_client(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert client.project_id == "from-credentials"
     assert client.region == "us-east5"
-    assert provider.token_count_model_name == "claude-haiku-4-5@20251001"
+    assert provider.token_count_model_name == "claude-haiku-5-5"
 
 
 def test_resolve_project_id(monkeypatch: pytest.MonkeyPatch) -> None:

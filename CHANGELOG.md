@@ -10,14 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **kiarina-agi-text**: Add the `gpt-6.1-terra`, `claude-haiku-5-5`, `vclaude-haiku-5-5`, and `gemini-4-argon` chat model presets.
+- **kiarina-agi-text**: Add `extended_cost_threshold_tokens`, `extended_input_cost_multiplier`, and `extended_output_cost_multiplier` to the `anthropic` provider settings, to record Claude Haiku 5.5's 5x price for a prompt over 100K tokens (cache reads and writes included).
 - **kiarina-agi-text**: Add the `codex-gpt-6.1-terra` and `claude-code-haiku-5-5` chat model presets, and give `codex-gpt-6.1-sol` the 500K context window of Codex's model list.
-- **kiarina-agi-text**: Add `extra_instruction` to the `claude_code` provider settings: text sent at the end of the user turn, after the request to respond (`claude-code-haiku-4-5?extra_instruction=(...)`).
+- **kiarina-agi-text**: Add `extra_instruction` to the `claude_code` provider settings: text sent at the end of the user turn, after the request to respond (`claude-code-haiku-5-5?extra_instruction=(...)`).
 
 ### Changed
+- **kiarina-agi-text**: Update the provider defaults to current models, with their windows and prices: `openai` GPT-6.1 Sol, `anthropic` and `anthropic_vertex` Claude Haiku 5.5 (`temperature` omitted, and `anthropic_vertex` on `global`), `google` Gemini 4 Argon, and `codex` the 500K window. A provider used without a preset now records these prices.
 - **kiarina-agi-text**: Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
 - **kiarina-agi-data-builder, kiarina-agi-image**: Allow Pillow 13.
 
 ### Removed
+- **kiarina-agi-text**: Remove the `claude-haiku-4-5`, `vclaude-haiku-4-5`, and `claude-code-haiku-4-5` chat model presets. Claude Haiku 5.5 replaces them.
 - **kiarina-agi-image**: Remove the kiapi `ernie` family, which kiapi no longer provides.
 
 ## [2.36.1] - 2026-10-08

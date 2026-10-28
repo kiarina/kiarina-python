@@ -15,3 +15,9 @@ increase until they have usage history.
   `kiarina.lib.google` settings in
   `tests/chat_provider_impl/anthropic_vertex/test_settings.yaml`.
 - The Claude 5 series is served only from `global`, `us`, and `eu` on Vertex AI.
+- `vclaude-haiku-5-5` (added 2026-10-28) is not verified either: its addition-only helper tests
+  got `429` for `global_online_prediction_requests_per_base_model` (base model
+  `anthropic-claude-haiku`). Run them when the quota allows:
+  `KIARINA_AGI_TEXT_TEST_CHAT_MODEL=vclaude-haiku-5-5 mise run test kiarina-agi-text --no-pytest-args --costly --path tests/chat_model/_helpers/`.
+  Set `KIARINA_AGI_CHAT_PROVIDER_IMPL_ANTHROPIC_VERTEX_MAX_RETRY_COUNT=0` first, or the
+  retries on `429` keep a run going for many minutes.

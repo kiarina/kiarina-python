@@ -14,7 +14,7 @@ from kiarina.agi.message import HumanMessage
 async def main() -> None:
     run_context = configure_script()
     provider = AnthropicChatProvider(
-        AnthropicChatProviderSettings(model_name="claude-haiku-4-5-20251001")
+        AnthropicChatProviderSettings(model_name="claude-haiku-5-5")
     )
     provider.name = "anthropic"
 

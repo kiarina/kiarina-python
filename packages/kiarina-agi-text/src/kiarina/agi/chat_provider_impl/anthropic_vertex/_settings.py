@@ -12,13 +12,13 @@ class AnthropicVertexChatProviderSettings(AnthropicChatProviderSettings):
         extra="ignore",
     )
 
-    model_name: str = "claude-haiku-4-5@20251001"
+    model_name: str = "claude-haiku-5-5"
 
     token_count_model_name: str | None = None
 
     google_auth_settings_key: SettingsKey | None = None
 
-    vertex_ai_location: str = "us-east5"
+    vertex_ai_location: str = "global"
 
 
 settings_manager = SettingsManager(AnthropicVertexChatProviderSettings)

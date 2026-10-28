@@ -13,7 +13,7 @@ class GoogleChatProviderSettings(ChatCapabilities, BaseSettings):
 
     google_auth_settings_key: SettingsKey | None = None
 
-    model_name: str = "gemini-3.1-pro-preview"
+    model_name: str = "gemini-4-argon"
 
     context_window: int = 1_048_576
 
@@ -32,17 +32,17 @@ class GoogleChatProviderSettings(ChatCapabilities, BaseSettings):
         "pdf": True,
     }
 
-    input_cost_microdollars_per_1k_tokens: int = 2_000
+    input_cost_microdollars_per_1k_tokens: int = 4_000
 
     extended_input_cost_microdollars_per_1k_tokens: int = 4_000
 
     cached_input_cost_microdollars_per_1k_tokens: int = 200
 
-    extended_cached_input_cost_microdollars_per_1k_tokens: int = 400
+    extended_cached_input_cost_microdollars_per_1k_tokens: int = 200
 
-    output_cost_microdollars_per_1k_tokens: int = 12_000
+    output_cost_microdollars_per_1k_tokens: int = 20_000
 
-    extended_output_cost_microdollars_per_1k_tokens: int = 18_000
+    extended_output_cost_microdollars_per_1k_tokens: int = 20_000
 
     threshold_tokens: int = 200_000
 
