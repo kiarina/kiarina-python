@@ -57,7 +57,7 @@ Register the model-specific values in `ChatModelSettings.presets`.
 | Field | Rule |
 | --- | --- |
 | `model_name` | Official model ID sent to the API |
-| `context_window` | Context limit documented by the provider |
+| `context_window` | Context limit documented by the provider. For `claude-code-*` and `codex-*`, what the runtime accepts, which can differ from the API's (`docs/concepts/chat-providers.md`) |
 | `max_output_tokens` | Output limit documented by the provider |
 | `token_count_limit` | Input limit that reserves output and operational headroom |
 | cost fields | Standard prices in microdollars per 1K tokens |
