@@ -377,6 +377,8 @@ async def test_run_token_overflow(
         )
 
     assert exc_info.value.token_count == 250_000
+    assert exc_info.value.limit == 200_000
+    assert str(exc_info.value) == "Token overflow error: 250000 tokens > 200000 maximum"
 
 
 _SAFEGUARD_MESSAGE = """API Error: Opus 5.5's safeguards flagged this message (https://www.anthropic.com/legal/aup). This sometimes happens with safe, normal conversations. Claude Code can't respond to this message with Opus 5.5.

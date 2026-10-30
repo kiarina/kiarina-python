@@ -255,7 +255,9 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
             message_text = str(result_message.result or result_message.errors or error)
 
             if token_count := _extract_overflow_token_count(message_text):
-                raise TokenOverflowError(token_count) from error
+                raise TokenOverflowError(
+                    token_count, limit=_extract_overflow_limit(message_text)
+                ) from error
 
             if _is_safeguard_block(message_text):
                 raise SafetyError(
@@ -313,6 +315,11 @@ def _is_turn_limit(result_message: ResultMessage) -> bool:
 
 def _extract_overflow_token_count(message: str) -> int | None:
     match = re.search(r"prompt is too long:\s*(\d+)\s*tokens", message, re.IGNORECASE)
+    return int(match.group(1)) if match else None
+
+
+def _extract_overflow_limit(message: str) -> int | None:
+    match = re.search(r"tokens\s*>\s*(\d+)\s*maximum", message, re.IGNORECASE)
     return int(match.group(1)) if match else None
 
 

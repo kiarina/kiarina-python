@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update the provider defaults to current models, with their windows and prices: `openai` GPT-6.1 Sol, `anthropic` and `anthropic_vertex` Claude Haiku 5.5 (`temperature` omitted, and `anthropic_vertex` on `global`), `google` Gemini 4 Argon, and `codex` the 500K window. A provider used without a preset now records these prices.
 - Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
 - Raise `SafetyError` instead of `RuntimeError` when Claude Code reports that the model's safeguards flagged the message (`claude_code`), with the full text, the `Details` value as `category`, and `request_id`. Add the optional `category` and `request_id` attributes to `SafetyError`.
+- Keep the maximum the vendor names with a context overflow (`prompt is too long: N tokens > M maximum`) on `TokenOverflowError` as the optional `limit`, and in its message (`claude_code`, `anthropic`). Only the token count was kept, so the window that refused the prompt was lost.
 
 ### Removed
 - Remove the `claude-haiku-4-5`, `vclaude-haiku-4-5`, and `claude-code-haiku-4-5` chat model presets. Claude Haiku 5.5 replaces them.

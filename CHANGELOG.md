@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
 - **kiarina-agi-data-builder, kiarina-agi-image**: Allow Pillow 13.
 - **kiarina-agi-text**: Raise `SafetyError` instead of `RuntimeError` when Claude Code reports that the model's safeguards flagged the message (`claude_code`), with the full text, the `Details` value as `category`, and `request_id`. Add the optional `category` and `request_id` attributes to `SafetyError`.
+- **kiarina-agi-text**: Keep the maximum the vendor names with a context overflow (`prompt is too long: N tokens > M maximum`) on `TokenOverflowError` as the optional `limit`, and in its message (`claude_code`, `anthropic`). Only the token count was kept, so the window that refused the prompt was lost.
 
 ### Removed
 - **kiarina-agi-text**: Remove the `claude-haiku-4-5`, `vclaude-haiku-4-5`, and `claude-code-haiku-4-5` chat model presets. Claude Haiku 5.5 replaces them.

@@ -237,7 +237,9 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
             message = await self.client.messages.create(**request)
         except Exception as e:
             if token_count := self._extract_overflow_token_count(e):
-                raise TokenOverflowError(token_count) from e
+                raise TokenOverflowError(
+                    token_count, limit=_extract_overflow_limit(str(e))
+                ) from e
             raise
 
         result = from_anthropic_message(message, cache_ttl=self.settings.cache_ttl)
@@ -260,7 +262,9 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
                     message = await stream.get_final_message()
         except Exception as e:
             if token_count := self._extract_overflow_token_count(e):
-                raise TokenOverflowError(token_count) from e
+                raise TokenOverflowError(
+                    token_count, limit=_extract_overflow_limit(str(e))
+                ) from e
             raise
 
         result = from_anthropic_message(message, cache_ttl=self.settings.cache_ttl)
@@ -418,3 +422,8 @@ def _to_ai_message_chunk(event: Any) -> AIMessageChunk | None:
             )
 
     return None
+
+
+def _extract_overflow_limit(message: str) -> int | None:
+    match = re.search(r"tokens\s*>\s*(\d+)\s*maximum", message, re.IGNORECASE)
+    return int(match.group(1)) if match else None
