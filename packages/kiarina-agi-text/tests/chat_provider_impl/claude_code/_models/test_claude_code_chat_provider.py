@@ -379,6 +379,54 @@ async def test_run_token_overflow(
     assert exc_info.value.token_count == 250_000
 
 
+_SAFEGUARD_MESSAGE = """API Error: Opus 5.5's safeguards flagged this message (https://www.anthropic.com/legal/aup). This sometimes happens with safe, normal conversations. Claude Code can't respond to this message with Opus 5.5.
+
+Try rephrasing the request in a new session or change your model.
+
+Learn more: https://support.claude.com/en/articles/8106465
+
+Details: `[reasoning_extraction]`
+
+Request ID: req_011abc
+
+Message ID: msg_011def"""
+
+
+@pytest.mark.parametrize(
+    ("message", "category", "request_id"),
+    [
+        (_SAFEGUARD_MESSAGE, "reasoning_extraction", "req_011abc"),
+        (
+            "API Error: Fable 5.1's safeguards flagged this message.",
+            None,
+            None,
+        ),
+    ],
+)
+async def test_run_safeguard_block(
+    monkeypatch: pytest.MonkeyPatch,
+    message: str,
+    category: str | None,
+    request_id: str | None,
+    run_context: RunContext,
+) -> None:
+    result = _result_message(subtype="success", result=message)
+    monkeypatch.setattr(
+        claude_agent_sdk, "query", _FakeQuery([result], error=ResultError(message))
+    )
+
+    with pytest.raises(SafetyError) as exc_info:
+        await _run(
+            _create_provider(),
+            cost_recorder=_Recorder(),  # type: ignore[arg-type]
+            run_context=run_context,
+        )
+
+    assert str(exc_info.value) == message
+    assert exc_info.value.category == category
+    assert exc_info.value.request_id == request_id
+
+
 async def test_run_errors(
     monkeypatch: pytest.MonkeyPatch, run_context: RunContext
 ) -> None:

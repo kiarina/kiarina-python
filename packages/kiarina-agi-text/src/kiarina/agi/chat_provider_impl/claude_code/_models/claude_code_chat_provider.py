@@ -257,6 +257,13 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
             if token_count := _extract_overflow_token_count(message_text):
                 raise TokenOverflowError(token_count) from error
 
+            if _is_safeguard_block(message_text):
+                raise SafetyError(
+                    message_text,
+                    category=_extract_safeguard_category(message_text),
+                    request_id=_extract_request_id(message_text),
+                ) from error
+
             raise RuntimeError(
                 f"Claude Code failed ({result_message.subtype}): {message_text}"
             ) from error
@@ -307,6 +314,23 @@ def _is_turn_limit(result_message: ResultMessage) -> bool:
 def _extract_overflow_token_count(message: str) -> int | None:
     match = re.search(r"prompt is too long:\s*(\d+)\s*tokens", message, re.IGNORECASE)
     return int(match.group(1)) if match else None
+
+
+def _is_safeguard_block(message: str) -> bool:
+    """An API error from the model's safeguards, which the same input repeats."""
+    return bool(
+        re.search(r"safeguards\s+flagged|anthropic\.com/legal/aup", message, re.I)
+    )
+
+
+def _extract_safeguard_category(message: str) -> str | None:
+    match = re.search(r"Details:\s*`?\[?([\w.-]+)\]?`?", message, re.IGNORECASE)
+    return match.group(1) if match else None
+
+
+def _extract_request_id(message: str) -> str | None:
+    match = re.search(r"Request ID:\s*(\S+)", message, re.IGNORECASE)
+    return match.group(1) if match else None
 
 
 def _to_ai_message_chunk(event: dict[str, Any]) -> AIMessageChunk | None:

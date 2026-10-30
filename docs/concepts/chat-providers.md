@@ -21,7 +21,7 @@ Providers call the vendor SDKs directly. There is no LangChain layer.
 - Dependencies go in a `chat-provider-<name>` extra. See [Implementation Optional Dependencies](implementation-optional-dependencies.md).
 - Register the factory in `ChatProviderSettings.presets`.
 - The provider is also the `MediaConverter`, returning the vendor's content part for each media type, or `None` to send only the file metadata.
-- Map the vendor's stop reasons to `SafetyError` and `MaxTokenError`, and parse the vendor's context overflow error text into `TokenOverflowError`.
+- Map the vendor's stop reasons to `SafetyError` and `MaxTokenError` (`SafetyError` takes an optional `category` and `request_id` when the vendor gives them), and parse the vendor's context overflow error text into `TokenOverflowError`.
 - Record cost from the vendor's usage. Check whether the vendor counts cached tokens inside the input token total.
 - Streaming yields `AIMessageChunk` items, then the final `AIMessage`. Tool call chunks and the final tool calls must share ids.
 
@@ -105,6 +105,7 @@ Checked with Codex 0.160.1 and Claude Agent SDK 0.2.164 (Claude Code 2.1.292). T
 - On the live server, Codex's tool call request (`item/tool/call`) arrives before `rawResponse/completed`. Injected items are echoed with `turnId: "auto-compact-0"`, and `turn/completed` carries its turn id in `turn.id`.
 - Usage is recorded at zero cost. Claude Code reports what the request would cost on the API (`total_cost_usd`), kept as `api_cost_microdollars`. Codex's `inputTokens` includes cached tokens.
 - The subscription context window can be smaller than the API's. Codex's model list gives GPT-6.1 Sol and Terra 500K, and the other GPT-6 models 272K.
+- A block by the model's safeguards (seen with Claude Opus 5.5) is not a `refusal` stop reason. Claude Code ends with an error result whose text says the safeguards flagged the message, with a `Details` line such as `[reasoning_extraction]` and a `Request ID`. The provider raises `SafetyError` with the full text, `category` (the Details value), and `request_id`, matching on "safeguards flagged" or the AUP link, because no structured field marks it. Every request sends the whole history, so the same history fails again; the provider does not retry.
 - `claude_code` sends the conversation as XML text in one user turn, so there is nowhere to send thinking blocks back; it keeps no reasoning state.
 - `claude_code` starts a new session for every request, on purpose. The Claude Agent SDK could keep one (`ClaudeSDKClient`), with tool handlers held like Codex's requests, but Anthropic caches by content across sessions, so the cache already works; keeping it would save only the startup seconds, against the cost of a session pool and unverified handler timeouts.
 - Claude tends to point out contradictions in the transcript, including its own earlier messages, even when not asked.
