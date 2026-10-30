@@ -22,9 +22,9 @@ class ClaudeCodeChatProviderSettings(ChatCapabilities, BaseSettings):
 
     effort: Literal["low", "medium", "high", "xhigh", "max"] | None = None
 
-    context_window: int = 200_000
+    context_window: int = 1_000_000
 
-    token_count_limit: int = 160_000
+    token_count_limit: int = 872_000
 
     image_file_count_limit: int = 100
 

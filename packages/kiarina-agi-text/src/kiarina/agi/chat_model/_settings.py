@@ -541,8 +541,8 @@ class ChatModelSettings(BaseSettings):
                 provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-sonnet-5-5",
-                    "context_window": 200_000,
-                    "token_count_limit": 160_000,
+                    "context_window": 1_000_000,
+                    "token_count_limit": 872_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
@@ -554,8 +554,8 @@ class ChatModelSettings(BaseSettings):
                 provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-opus-5-5",
-                    "context_window": 200_000,
-                    "token_count_limit": 160_000,
+                    "context_window": 1_000_000,
+                    "token_count_limit": 872_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
@@ -567,8 +567,8 @@ class ChatModelSettings(BaseSettings):
                 provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-fable-5-1",
-                    "context_window": 200_000,
-                    "token_count_limit": 160_000,
+                    "context_window": 1_000_000,
+                    "token_count_limit": 872_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
@@ -580,8 +580,8 @@ class ChatModelSettings(BaseSettings):
                 provider_name="claude_code",
                 provider_config={
                     "model_name": "claude-haiku-5-5",
-                    "context_window": 200_000,
-                    "token_count_limit": 160_000,
+                    "context_window": 1_000_000,
+                    "token_count_limit": 872_000,
                     "image_file_count_limit": 100,
                     "pdf_page_count_limit": 100,
                     "input_enabled": {"image": True, "pdf": True},
