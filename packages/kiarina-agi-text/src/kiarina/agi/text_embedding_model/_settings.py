@@ -39,6 +39,7 @@ class TextEmbeddingModelSettings(BaseSettings):
                     "openai_settings_key": "local",
                     "model_name": "qwen3-embedding-8b",
                     "dimension": 4096,
+                    "max_token_count": 4096,
                     "cost_microdollars_per_1k_tokens": 0,
                 },
             ),

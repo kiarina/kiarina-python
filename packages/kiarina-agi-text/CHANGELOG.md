@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
 - Raise `SafetyError` instead of `RuntimeError` when Claude Code reports that the model's safeguards flagged the message (`claude_code`), with the full text, the `Details` value as `category`, and `request_id`. Add the optional `category` and `request_id` attributes to `SafetyError`.
 - Send `qwen3-embedding-8b` as the model name of the `qwen3-embedding-8b-mxfp8` text embedding preset, the name kiapi serves on `/v1/embeddings`. Its embedding space id changes with the model name.
+- Split text at 4,096 tokens in the `qwen3-embedding-8b-mxfp8` text embedding preset. Long inputs slow down faster than their length on kiapi.
 - Give the `claude_code` provider and the `claude-code-*` chat model presets the 1M context window of the API (`token_count_limit` 872K, as `anthropic`). The subscription's Claude Code took a 305K-token prompt with the plain `claude-opus-5-5`, but the presets stopped prompts over 112K before sending them.
 - Keep the maximum the vendor names with a context overflow (`prompt is too long: N tokens > M maximum`) on `TokenOverflowError` as the optional `limit`, and in its message (`claude_code`, `anthropic`). Only the token count was kept, so the window that refused the prompt was lost.
 
