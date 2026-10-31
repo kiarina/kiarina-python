@@ -17,12 +17,12 @@ def test_create_openai_text_embedding_provider() -> None:
 
 def test_create_openai_text_embedding_provider_for_openai_compatible_server() -> None:
     provider = create_openai_text_embedding_provider(
-        model_name="Qwen3-Embedding-8B-mxfp8",
-        openai_settings_key="omlx",
+        model_name="qwen3-embedding-8b",
+        openai_settings_key="local",
         dimension=4096,
     )
 
     assert isinstance(provider, OpenAITextEmbeddingProvider)
-    assert provider.settings.model_name == "Qwen3-Embedding-8B-mxfp8"
-    assert provider.settings.openai_settings_key == "omlx"
+    assert provider.settings.model_name == "qwen3-embedding-8b"
+    assert provider.settings.openai_settings_key == "local"
     assert provider.settings.dimension == 4096

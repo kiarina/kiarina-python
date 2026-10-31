@@ -37,7 +37,7 @@ class TextEmbeddingModelSettings(BaseSettings):
                 provider_name="openai",
                 provider_config={
                     "openai_settings_key": "local",
-                    "model_name": "Qwen3-Embedding-8B-mxfp8",
+                    "model_name": "qwen3-embedding-8b",
                     "dimension": 4096,
                     "cost_microdollars_per_1k_tokens": 0,
                 },
