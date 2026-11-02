@@ -1,3 +1,5 @@
+from datetime import UTC
+
 import pytest
 
 from kiarina.agi.memory import Memory
@@ -238,3 +240,144 @@ def test_model_dump_and_validate_restore_the_graph() -> None:
     restored = MemoryGraph.model_validate(graph.model_dump(mode="json"))
 
     assert restored == graph
+
+
+def test_find_ids_orders_by_activation_then_id_and_pages_after_type_filter(
+    graph: MemoryGraph,
+) -> None:
+    from datetime import datetime
+
+    old = datetime(2026, 1, 1, tzinfo=UTC)
+    recent = datetime(2026, 2, 1, tzinfo=UTC)
+    graph.mset(
+        [
+            Memory(id="z", type="episode", activated_at=old),
+            Memory(id="b", type="episode", activated_at=recent),
+            Memory(id="a", type="episode", activated_at=recent),
+            Memory(id="c", type="identity", activated_at=recent),
+        ]
+    )
+    before = graph.model_dump_json()
+    assert graph.find_ids() == ["a", "b", "c", "z"]
+    assert graph.find_ids(memory_type="episode") == ["a", "b", "z"]
+    assert graph.find_ids(memory_type="episode", offset=1, limit=1) == ["b"]
+    assert graph.find_ids(memory_type="episode", offset=1) == ["b", "z"]
+    assert graph.find_ids(offset=20) == []
+    assert graph.find_ids(memory_type="absent") == []
+    assert graph.model_dump_json() == before
+    graph.nodes["z"].activated_at = datetime(2026, 3, 1, tzinfo=UTC)
+    assert graph.find_ids()[0] == "z"
+
+
+@pytest.fixture
+def vector_graph() -> MemoryGraph:
+    graph = MemoryGraph()
+    graph.mset(
+        [
+            Memory(id="b", type="episode", vector=[2.0, 0.0]),
+            Memory(id="a", type="episode", vector=[1.0, 0.0]),
+            Memory(id="d", type="identity", vector=[1.0, 1.0]),
+            Memory(id="c", type="episode", vector=[0.0, 1.0]),
+            Memory(id="e", type="episode", vector=[-1.0, 0.0]),
+            Memory(id="no-vector", type="episode"),
+            Memory(id="empty-vector", type="episode", vector=[]),
+        ]
+    )
+    return graph
+
+
+def test_search_ids_ranks_cosine_with_stable_ties_and_no_mutation(
+    vector_graph: MemoryGraph,
+) -> None:
+    before = vector_graph.model_dump_json()
+    assert vector_graph.search_ids([1.0, 0.0]) == ["a", "b", "d"]
+    assert vector_graph.search_ids([1.0, 0.0], k=20) == ["a", "b", "d", "c", "e"]
+    assert vector_graph.search_ids([1.0, 0.0], k=20, min_score=0) == [
+        "a",
+        "b",
+        "d",
+        "c",
+    ]
+    assert vector_graph.search_ids([1.0, 0.0], min_score=1) == ["a", "b"]
+    assert vector_graph.search_ids([1.0, 0.0], memory_type="identity") == ["d"]
+    assert vector_graph.model_dump_json() == before
+
+
+def test_search_ids_intersects_type_and_ids_before_top_k(
+    vector_graph: MemoryGraph,
+) -> None:
+    assert vector_graph.search_ids(
+        [1.0, 0.0], ids=["c", "d", "e"], memory_type="episode", k=1
+    ) == ["c"]
+    assert vector_graph.search_ids([1.0, 0.0], ids=["b", "a", "b", "missing"]) == [
+        "a",
+        "b",
+    ]
+    assert vector_graph.search_ids([1.0, 0.0], ids=[]) == []
+    assert vector_graph.search_ids([1.0, 0.0], ids=["missing"]) == []
+    assert vector_graph.search_ids([1.0, 0.0], ids=["no-vector", "empty-vector"]) == []
+    assert vector_graph.search_ids([1.0, 0.0], memory_type="absent") == []
+    assert MemoryGraph().search_ids([1.0, 0.0]) == []
+
+
+def test_adjacent_ids_feed_search_without_expanding_empty_scope(
+    vector_graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("time.time", lambda: 100.0)
+    vector_graph.connect("emotion", "c", bidirectional=False)
+    vector_graph.connect("emotion", "e", bidirectional=False)
+    vector_graph.edges["emotion"]["a"] = 99.0
+    assert vector_graph.search_ids(
+        [1.0, 0.0], ids=vector_graph.find_adjacent_ids("emotion"), k=1
+    ) == ["c"]
+    assert (
+        vector_graph.search_ids(
+            [1.0, 0.0], ids=vector_graph.find_adjacent_ids("unknown")
+        )
+        == []
+    )
+
+
+@pytest.mark.parametrize(
+    "query", [[], [0.0, 0.0], [float("nan"), 0.0], [float("inf"), 0.0]]
+)
+def test_search_ids_rejects_invalid_query(
+    vector_graph: MemoryGraph, query: list[float]
+) -> None:
+    with pytest.raises(ValueError, match="query_vector"):
+        vector_graph.search_ids(query)
+
+
+@pytest.mark.parametrize(
+    "vector", [[1.0], [0.0, 0.0], [float("nan"), 0.0], [float("inf"), 0.0]]
+)
+def test_search_ids_validates_only_selected_candidate_vectors(
+    vector_graph: MemoryGraph, vector: list[float]
+) -> None:
+    vector_graph.set(Memory(id="invalid", type="invalid", vector=vector))
+    assert vector_graph.search_ids([1.0, 0.0], memory_type="episode", k=1) == ["a"]
+    assert vector_graph.search_ids([1.0, 0.0], ids=["a"], k=1) == ["a"]
+    with pytest.raises(ValueError, match="invalid"):
+        vector_graph.search_ids([1.0, 0.0], ids=["invalid"])
+
+
+@pytest.mark.parametrize("offset,limit", [(-1, 0), (0, -1)])
+def test_find_ids_rejects_negative_pagination(
+    graph: MemoryGraph, offset: int, limit: int
+) -> None:
+    with pytest.raises(ValueError):
+        graph.find_ids(offset=offset, limit=limit)
+
+
+@pytest.mark.parametrize("k", [0, -1])
+def test_search_ids_rejects_nonpositive_k(graph: MemoryGraph, k: int) -> None:
+    with pytest.raises(ValueError, match="k"):
+        graph.search_ids([1.0], k=k)
+
+
+@pytest.mark.parametrize("min_score", [-1.1, 1.1, float("nan")])
+def test_search_ids_rejects_invalid_threshold(
+    graph: MemoryGraph, min_score: float
+) -> None:
+    with pytest.raises(ValueError, match="min_score"):
+        graph.search_ids([1.0], min_score=min_score)

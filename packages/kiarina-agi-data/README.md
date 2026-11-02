@@ -789,6 +789,22 @@ class MemoryGraph:
         bidirectional: bool = True,
         acceleration_time: float = 0,
     ) -> None: ...
+    def find_ids(
+        self,
+        *,
+        memory_type: MemoryType | None = None,
+        offset: int = 0,
+        limit: int = 0,
+    ) -> list[MemoryID]: ...
+    def search_ids(
+        self,
+        query_vector: list[float],
+        *,
+        k: int = 3,
+        memory_type: MemoryType | None = None,
+        ids: list[MemoryID] | None = None,
+        min_score: float | None = None,
+    ) -> list[MemoryID]: ...
     def find_adjacent_ids(
         self,
         id: MemoryID,
@@ -798,6 +814,30 @@ class MemoryGraph:
         offset: int = 0,
         limit: int = 0,
     ) -> list[MemoryID]: ...
+```
+
+`find_ids` returns IDs by descending `activated_at`, then ascending ID for ties.
+Type filtering precedes pagination. `offset` and `limit` must be nonnegative;
+`limit=0` means all remaining matches. Enumeration includes memories without vectors.
+
+`search_ids` returns up to `k` IDs by descending cosine similarity, with ascending
+ID for ties. It delegates scoring to `search_embeddings`. `ids=None` searches all
+nodes; `ids=[]` searches none. Duplicate IDs are deduplicated and absent IDs ignored.
+Type and ID restrictions are intersected before ranking. Missing/empty vectors are
+skipped. `k` must be positive and optional `min_score` is inclusive and in [-1, 1].
+An empty, zero, non-finite or non-1D query, or an invalid/nonmatching candidate
+vector, raises `ValueError`. Neither method activates memories or changes the graph.
+
+Callers ensure that query and candidate vectors belong to compatible embedding
+spaces, including migrations when a model changes. Equal dimensions do not prove
+compatibility. MemoryGraph does not interpret model names or embedding hashes.
+These methods are synchronous; storage-backed repositories may provide async
+operations with the same parameter and ordering semantics.
+
+```python
+ids = graph.find_adjacent_ids(emotion_id)
+matched_ids = graph.search_ids(query_vector, ids=ids, k=2)
+memories = graph.mget(matched_ids)
 ```
 
 ### `kiarina.agi.message`

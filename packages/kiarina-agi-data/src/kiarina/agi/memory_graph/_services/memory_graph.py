@@ -1,7 +1,9 @@
 import time
 
+import numpy as np
 from pydantic import BaseModel, Field
 
+from kiarina.agi.embedding import Embedding, search_embeddings
 from kiarina.agi.memory import Memory, MemoryID, MemoryType
 
 from .._types.decay_time import DecayTime
@@ -86,6 +88,82 @@ class MemoryGraph(BaseModel):
 
         if bidirectional:
             self._forget(target_id, source_id, acceleration_time, now)
+
+    def find_ids(
+        self,
+        *,
+        memory_type: MemoryType | None = None,
+        offset: int = 0,
+        limit: int = 0,
+    ) -> list[MemoryID]:
+        if offset < 0 or limit < 0:
+            raise ValueError("offset and limit must be nonnegative")
+        memories = sorted(
+            (
+                memory
+                for memory in self.nodes.values()
+                if memory_type is None or memory.type == memory_type
+            ),
+            key=lambda memory: (-memory.activated_at.timestamp(), memory.id),
+        )
+        selected = memories[offset : offset + limit] if limit else memories[offset:]
+        return [memory.id for memory in selected]
+
+    def search_ids(
+        self,
+        query_vector: list[float],
+        *,
+        k: int = 3,
+        memory_type: MemoryType | None = None,
+        ids: list[MemoryID] | None = None,
+        min_score: float | None = None,
+    ) -> list[MemoryID]:
+        if k < 1:
+            raise ValueError("k must be positive")
+        if min_score is not None and not -1 <= min_score <= 1:
+            raise ValueError("min_score must be between -1 and 1")
+        query = np.asarray(query_vector, dtype=np.float32)
+        if (
+            query.ndim != 1
+            or not query.size
+            or not np.isfinite(query).all()
+            or not np.any(query)
+        ):
+            raise ValueError("query_vector must be a finite nonzero 1D vector")
+        candidates = []
+        # Stable ID order also makes equal-score results deterministic.
+        for id in sorted(self.nodes if ids is None else set(ids)):
+            memory = self.nodes.get(id)
+            if memory is None or (
+                memory_type is not None and memory.type != memory_type
+            ):
+                continue
+            if not memory.vector:
+                continue
+            vector = np.asarray(memory.vector, dtype=np.float32)
+            if (
+                vector.shape != query.shape
+                or not np.isfinite(vector).all()
+                or not np.any(vector)
+            ):
+                raise ValueError(
+                    f"Invalid vector or dimension mismatch for memory {id!r}"
+                )
+            # Memory carries raw vectors. Space compatibility belongs to the caller.
+            candidates.append(
+                Embedding(
+                    id=id,
+                    kind="memory",
+                    space_id="caller-managed",
+                    vector=memory.vector,
+                )
+            )
+        return [
+            MemoryID(hit.embedding.id)
+            for hit in search_embeddings(
+                query, candidates, top_k=k, min_score=min_score
+            )
+        ]
 
     def find_adjacent_ids(
         self,

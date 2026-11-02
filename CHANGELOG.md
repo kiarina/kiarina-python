@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **kiarina-agi-data**: Add synchronous `MemoryGraph.find_ids()` (activation-time ordering) and `search_ids()` (filtered cosine search via `search_embeddings`), with explicit empty-ID scope and caller-owned embedding-space compatibility.
 - **kiarina-agi-text**: Add the `gpt-6.1-terra`, `claude-haiku-5-5`, `vclaude-haiku-5-5`, and `gemini-4-argon` chat model presets.
 - **kiarina-agi-text**: Add `extended_cost_threshold_tokens`, `extended_input_cost_multiplier`, and `extended_output_cost_multiplier` to the `anthropic` provider settings, to record Claude Haiku 5.5's 5x price for a prompt over 100K tokens (cache reads and writes included).
 - **kiarina-agi-text**: Add the `codex-gpt-6.1-terra` and `claude-code-haiku-5-5` chat model presets, and give `codex-gpt-6.1-sol` the 500K context window of Codex's model list.
