@@ -81,7 +81,7 @@ class FileInfoSection(BaseSection):
     def is_resizable(self) -> bool:
         return len(self.file_infos) > 0
 
-    async def resize(self, reduce: TokenCount) -> AsyncIterator[Event]:
+    async def _resize(self, reduce: TokenCount) -> AsyncIterator[Event]:
         reduced = 0
 
         self.file_infos.sort(key=lambda fi: fi.token_count, reverse=True)

@@ -45,6 +45,13 @@ class BaseSection(Section):
         return False
 
     async def resize(self, reduce: TokenCount) -> AsyncIterator[Event]:
+        try:
+            async for event in self._resize(reduce):
+                yield event
+        finally:
+            self._estimates = None
+
+    async def _resize(self, reduce: TokenCount) -> AsyncIterator[Event]:
         if False:  # pragma: no cover
             yield
 

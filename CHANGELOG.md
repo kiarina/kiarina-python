@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Add `extra_instruction` to the `claude_code` provider settings: text sent at the end of the user turn, after the request to respond (`claude-code-haiku-5-5?extra_instruction=(...)`).
 
 ### Changed
+- **kiarina-agi-flow**: Use the `BaseSection._resize()` extension hook with unconditional estimate invalidation, preserve provider calibration without compounding local resize budgets, exhaust empty-file views, and report fixed-section capacity failures as `TokenOverflowError`. Custom sections overriding `resize()` must migrate to `_resize()`.
 - **kiarina-agi-text**: Update the provider defaults to current models, with their windows and prices: `openai` GPT-6.1 Sol, `anthropic` and `anthropic_vertex` Claude Haiku 5.5 (`temperature` omitted, and `anthropic_vertex` on `global`), `google` Gemini 4 Argon, and `codex` the 500K window. A provider used without a preset now records these prices.
 - **kiarina-agi-text**: Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
 - **kiarina-agi-data-builder, kiarina-agi-image**: Allow Pillow 13.

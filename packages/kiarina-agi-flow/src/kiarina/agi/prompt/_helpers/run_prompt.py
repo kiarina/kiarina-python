@@ -72,13 +72,16 @@ async def run_prompt(
     async for event in section_container.prepare():
         yield event
 
+    base_limits = limits
     token_scale_factor = chat_model.token_scale_factor
     request_count = 0
 
     while True:
-        limits = limits.model_copy(
+        limits = base_limits.model_copy(
             update={
-                "token_count_limit": int(limits.token_count_limit * token_scale_factor)
+                "token_count_limit": max(
+                    1, int(base_limits.token_count_limit * token_scale_factor)
+                )
             }
         )
 
@@ -86,7 +89,9 @@ async def run_prompt(
 
         if estimates.token_count > limits.token_count_limit:
             if not section_container.is_resizable():
-                raise TokenOverflowError(estimates.token_count)
+                raise TokenOverflowError(
+                    estimates.token_count, limit=limits.token_count_limit
+                )
 
             async for event in section_container.resize(limits.token_count_limit):
                 yield event
@@ -132,13 +137,14 @@ async def run_prompt(
                 raise
 
             if e.token_count > 0:
-                token_count = e.token_count
+                token_scale_factor = (
+                    estimates.token_count / e.token_count * (1.0 - 0.01 * request_count)
+                )
             else:
-                token_count = int(estimates.token_count * (1.1 + 0.1 * request_count))
-
-            token_scale_factor = (
-                estimates.token_count / token_count * (1.0 - 0.01 * request_count)
-            )
+                # No observed conversion ratio: reduce the current allowance, not the base.
+                token_scale_factor *= (1.0 - 0.01 * request_count) / (
+                    1.1 + 0.1 * request_count
+                )
             request_count += 1
 
             logger.warning(

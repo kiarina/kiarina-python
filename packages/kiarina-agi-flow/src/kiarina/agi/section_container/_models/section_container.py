@@ -2,6 +2,7 @@ import logging
 from collections.abc import AsyncIterator
 
 from kiarina.agi.chat_estimates import ChatEstimates
+from kiarina.agi.chat_provider import TokenOverflowError
 from kiarina.agi.content import Content
 from kiarina.agi.event import Event
 from kiarina.agi.message import Message, SystemMessage
@@ -145,10 +146,7 @@ class SectionContainer:
                 resizable_sections.append(section)
 
         if available <= 0:
-            raise ValueError(
-                "Non-resizable sections alone exceed token limit."
-                "Please review the structure of the section."
-            )
+            raise TokenOverflowError(self.get_estimates().token_count, limit=limit)
 
         while True:
             # Distribute available tokens according to surplus token occupancy weight.

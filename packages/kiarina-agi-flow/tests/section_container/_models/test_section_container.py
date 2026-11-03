@@ -16,10 +16,10 @@ from kiarina.agi.tool_info import ToolInfo
 def dump(title: str, container: SectionContainer) -> None:
     print("\n" + "=" * 20 + f" {title} " + "=" * 20)
 
-    print(f"total: {container.get_estimates(ignore_cache=True)}")
+    print(f"total: {container.get_estimates()}")
     for i, section in enumerate(container.sections):
         print(f"--- sections[{i}] {type(section).__name__} ({section.weight}) ---")
-        print(str(section.get_estimates(ignore_cache=True)))
+        print(str(section.get_estimates()))
 
     print("\nMessages:")
     for i, message in enumerate(container.get_messages()):
@@ -91,7 +91,7 @@ async def test_resize(container: SectionContainer) -> None:
     limits = ChatLimits(token_count_limit=300)
 
     while True:
-        estimates = container.get_estimates(ignore_cache=True)
+        estimates = container.get_estimates()
 
         print(
             f"estimates: {estimates.token_count} tokens / {limits.token_count_limit} tokens",

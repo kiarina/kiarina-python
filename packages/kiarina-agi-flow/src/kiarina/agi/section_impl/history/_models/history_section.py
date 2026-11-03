@@ -49,7 +49,7 @@ class HistorySection(BaseSection):
 
         return False
 
-    async def resize(self, reduce: TokenCount) -> AsyncIterator[Event]:
+    async def _resize(self, reduce: TokenCount) -> AsyncIterator[Event]:
         reduced = 0
 
         if self.messages:
@@ -129,7 +129,9 @@ class HistorySection(BaseSection):
     def _shrink_pool(self, reduce: TokenCount) -> TokenCount:
         self.pool.sort(key=lambda fi: fi.created_at)
         self.pool, reduced = shrink_file_infos(self.pool, reduce=reduce)
-        self.pool = [fi for fi in self.pool if not fi.metadata_only]
+        self.pool = [
+            fi for fi in self.pool if not fi.metadata_only and fi.token_count > 0
+        ]
         return reduced
 
     def _resize_messages(self, messages: list[Message]) -> list[Message]:
