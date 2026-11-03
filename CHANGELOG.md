@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-agi-runner**: Validate `generate_model` tool arguments as JSON so strict tuple and date fields accept their JSON representations; retain first-tool-call selection.
+
 ### Added
 - **kiarina-agi-data**: Add synchronous `MemoryGraph.find_ids()` (activation-time ordering) and `search_ids()` (filtered cosine search via `search_embeddings`), with explicit empty-ID scope and caller-owned embedding-space compatibility.
 - **kiarina-agi-text**: Add the `gpt-6.1-terra`, `claude-haiku-5-5`, `vclaude-haiku-5-5`, and `gemini-4-argon` chat model presets.

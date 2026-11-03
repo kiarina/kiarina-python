@@ -36,3 +36,17 @@ is not supported), https://platform.claude.com/docs/en/build-with-claude/structu
   the tool-call path for the rest.
 - Decide whether to send `strict: true` for structured output tools, given the JSON Schema
   limits.
+
+## Caller contract and current verification
+
+`generate_model` validates the first tool call's arguments through Pydantic's JSON path.
+Keep accepting the first call when multiple calls are returned; call count alone is not a
+validation error. Invalid values in the first call still fail instead of selecting a later call.
+A string/list/specification builds a new History; an existing History is reused and its
+`tool_infos` are replaced. No history-copying change is part of this adjustment.
+
+Mock-provider regressions cover strict tuples/dates, multiple calls, and strict scalar
+rejection. The runner package has 34 passing tests; repository `make` checks and the runner
+sdist/wheel build pass. This changes no model instructions or provider requests; no real-model
+evaluation was run. Response-format support and forced-tool-choice behavior above remain
+separate work.

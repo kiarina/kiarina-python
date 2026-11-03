@@ -1,3 +1,4 @@
+import json
 from typing import Any, TypeVar
 
 from pydantic import BaseModel
@@ -55,4 +56,6 @@ async def generate_model(
     if not tool_calls:  # pragma: no cover
         raise RuntimeError("No tool call was generated")
 
-    return python_schema(**tool_calls[0].args)
+    return python_schema.model_validate_json(
+        json.dumps(tool_calls[0].args, ensure_ascii=False)
+    )

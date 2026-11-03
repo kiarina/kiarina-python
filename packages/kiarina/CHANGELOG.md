@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **kiarina-agi-runner**: Validate `generate_model` tool arguments through Pydantic JSON validation, including strict tuple/date fields.
+
 ## [2.36.1] - 2026-10-08
 
 ### Changed
