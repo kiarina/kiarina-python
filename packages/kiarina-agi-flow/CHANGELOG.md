@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.37.0] - 2026-11-06
+
 ### Changed
 - Move custom section resizing to `BaseSection._resize()`. The public `resize()` wrapper always invalidates cached estimates; `HistorySection` and `FileInfoSection` use the hook. Subclasses overriding `resize()` must migrate to `_resize()`.
 - Report fixed-section capacity failures as `TokenOverflowError` with the effective local limit, matching exhausted resizable sections.

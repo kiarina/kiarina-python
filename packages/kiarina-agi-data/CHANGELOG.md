@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.37.0] - 2026-11-06
+
 ### Added
 - Add `MemoryGraph.find_ids()` for activation-ordered enumeration and `search_ids()` for type/ID-filtered cosine search. `ids=None` searches all nodes; `ids=[]` searches none. Callers ensure embedding-space compatibility.
 

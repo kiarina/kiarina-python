@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.37.0] - 2026-11-06
+
 ### Fixed
 - **kiarina-agi-runner**: Validate `generate_model` tool arguments as JSON so strict tuple and date fields accept their JSON representations; retain first-tool-call selection.
 
@@ -26,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-text**: Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
 - **kiarina-agi-data-builder, kiarina-agi-image**: Allow Pillow 13.
 - **kiarina-agi-text**: Raise `SafetyError` instead of `RuntimeError` when Claude Code reports that the model's safeguards flagged the message (`claude_code`), with the full text, the `Details` value as `category`, and `request_id`. Add the optional `category` and `request_id` attributes to `SafetyError`.
+- **kiarina-agi-text**: Send `qwen3-embedding-8b` as the model name of the `qwen3-embedding-8b-mxfp8` text embedding preset, the name kiapi serves on `/v1/embeddings`, and split its text at 4,096 tokens. Its embedding space id changes with the model name.
+- **kiarina-agi-text**: Give the `claude_code` provider and the `claude-code-*` chat model presets the 1M context window of the API (`token_count_limit` 872K, as `anthropic`).
 - **kiarina-agi-text**: Keep the maximum the vendor names with a context overflow (`prompt is too long: N tokens > M maximum`) on `TokenOverflowError` as the optional `limit`, and in its message (`claude_code`, `anthropic`). Only the token count was kept, so the window that refused the prompt was lost.
 
 ### Removed

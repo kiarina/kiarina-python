@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.37.0] - 2026-11-06
+
 ### Fixed
 - Validate the first tool call in `generate_model` with `model_validate_json()` so strict tuple/date fields accept JSON arrays/strings without weakening scalar validation. Additional calls remain ignored.
 

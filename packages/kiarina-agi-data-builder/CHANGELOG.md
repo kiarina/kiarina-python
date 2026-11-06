@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.37.0] - 2026-11-06
+
+### Changed
+
+- Allow Pillow 13.
+
 ## [2.32.0] - 2026-09-20
 
 ### Changed (BREAKING)

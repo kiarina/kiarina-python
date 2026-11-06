@@ -7,8 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.37.0] - 2026-11-06
+
 ### Fixed
-- **kiarina-agi-runner**: Validate `generate_model` tool arguments through Pydantic JSON validation, including strict tuple/date fields.
+- **kiarina-agi-runner**: Validate `generate_model` tool arguments as JSON so strict tuple and date fields accept their JSON representations; retain first-tool-call selection.
+
+### Added
+- **kiarina-agi-text**: Add the chat proxy (`kiarina.agi.chat_proxy`, `chat-proxy` extra, `kiarina-chat-proxy` command), an HTTP server that runs requests on its own chat models, and the `proxy` chat provider (`chat-provider-proxy` extra) that calls it. Messages, provider state, tool infos, cost records, and chat provider errors cross it as kiarina's own types, and media files are sent once by their SHA-256 (the proxy answers `409` with the hashes it lacks). A container can use `codex` and `claude_code` with the host's subscription logins this way.
+- **kiarina-agi-data**: Add synchronous `MemoryGraph.find_ids()` (activation-time ordering) and `search_ids()` (filtered cosine search via `search_embeddings`), with explicit empty-ID scope and caller-owned embedding-space compatibility.
+- **kiarina-agi-text**: Add the `gpt-6.1-terra`, `claude-haiku-5-5`, `vclaude-haiku-5-5`, and `gemini-4-argon` chat model presets.
+- **kiarina-agi-text**: Add `extended_cost_threshold_tokens`, `extended_input_cost_multiplier`, and `extended_output_cost_multiplier` to the `anthropic` provider settings, to record Claude Haiku 5.5's 5x price for a prompt over 100K tokens (cache reads and writes included).
+- **kiarina-agi-text**: Add the `codex-gpt-6.1-terra` and `claude-code-haiku-5-5` chat model presets, and give `codex-gpt-6.1-sol` the 500K context window of Codex's model list.
+- **kiarina-agi-text**: Add `extra_instruction` to the `claude_code` provider settings: text sent at the end of the user turn, after the request to respond (`claude-code-haiku-5-5?extra_instruction=(...)`).
+
+### Changed
+- **kiarina-agi-flow**: Use the `BaseSection._resize()` extension hook with unconditional estimate invalidation, preserve provider calibration without compounding local resize budgets, exhaust empty-file views, and report fixed-section capacity failures as `TokenOverflowError`. Custom sections overriding `resize()` must migrate to `_resize()`.
+- **kiarina-agi-text**: Update the provider defaults to current models, with their windows and prices: `openai` GPT-6.1 Sol, `anthropic` and `anthropic_vertex` Claude Haiku 5.5 (`temperature` omitted, and `anthropic_vertex` on `global`), `google` Gemini 4 Argon, and `codex` the 500K window. A provider used without a preset now records these prices.
+- **kiarina-agi-text**: Tell the model in the `<messages>` transcript's instructions (`claude_code`) to reply in plain text, without the transcript's XML tags. Claude Haiku 4.5 sometimes ended its replies with `</ai_message>`.
+- **kiarina-agi-data-builder, kiarina-agi-image**: Allow Pillow 13.
+- **kiarina-agi-text**: Raise `SafetyError` instead of `RuntimeError` when Claude Code reports that the model's safeguards flagged the message (`claude_code`), with the full text, the `Details` value as `category`, and `request_id`. Add the optional `category` and `request_id` attributes to `SafetyError`.
+- **kiarina-agi-text**: Send `qwen3-embedding-8b` as the model name of the `qwen3-embedding-8b-mxfp8` text embedding preset, the name kiapi serves on `/v1/embeddings`, and split its text at 4,096 tokens. Its embedding space id changes with the model name.
+- **kiarina-agi-text**: Give the `claude_code` provider and the `claude-code-*` chat model presets the 1M context window of the API (`token_count_limit` 872K, as `anthropic`).
+- **kiarina-agi-text**: Keep the maximum the vendor names with a context overflow (`prompt is too long: N tokens > M maximum`) on `TokenOverflowError` as the optional `limit`, and in its message (`claude_code`, `anthropic`). Only the token count was kept, so the window that refused the prompt was lost.
+
+### Removed
+- **kiarina-agi-text**: Remove the `claude-haiku-4-5`, `vclaude-haiku-4-5`, and `claude-code-haiku-4-5` chat model presets. Claude Haiku 5.5 replaces them.
+- **kiarina-agi-image**: Remove the kiapi `ernie` family, which kiapi no longer provides.
 
 ## [2.36.1] - 2026-10-08
 
