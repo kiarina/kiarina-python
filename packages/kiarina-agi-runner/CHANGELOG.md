@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Set `asset_hash` with `asset_uri` when the agent prepares a file (`FileInfo.with_asset()`).
+
 ## [2.37.0] - 2026-11-06
 
 ### Fixed

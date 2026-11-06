@@ -234,7 +234,7 @@ async def test_text(text_file_info: TextFileInfo, args: ConversionArgs) -> None:
 async def test_asset_uri_not_found(
     image_file_info: FileInfo, args: ConversionArgs
 ) -> None:
-    image_file_info.asset_uri = "non_existent_asset_uri"
+    image_file_info = image_file_info.with_asset("non_existent_asset_uri", "0" * 64)
     result = await from_file_info(image_file_info, **args)
     assert result.text is None
     assert result.media_dicts is None
@@ -248,7 +248,7 @@ async def test_zip_bundle_when_parent_type_is_unsupported(
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    audio_file_info.asset_uri = "asset://bundle.zip"
+    audio_file_info = audio_file_info.with_asset("asset://bundle.zip", "0" * 64)
 
     async def fake_get_file_blob(
         uri_or_file_path: str, *, run_context: RunContext
@@ -285,7 +285,7 @@ async def test_zip_bundle_extends_multiple_media_items(
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    audio_file_info.asset_uri = "asset://bundle.zip"
+    audio_file_info = audio_file_info.with_asset("asset://bundle.zip", "0" * 64)
 
     async def fake_get_file_blob(
         uri_or_file_path: str, *, run_context: RunContext
@@ -364,7 +364,7 @@ async def test_video_bundle_capability_fallback(
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    video_file_info.asset_uri = "asset://video_bundle.zip"
+    video_file_info = video_file_info.with_asset("asset://video_bundle.zip", "0" * 64)
 
     async def fake_get_file_blob(
         uri_or_file_path: str, *, run_context: RunContext
@@ -427,7 +427,7 @@ async def test_pdf_bundle_capability_fallback(
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    pdf_file_info.asset_uri = "asset://pdf_bundle.zip"
+    pdf_file_info = pdf_file_info.with_asset("asset://pdf_bundle.zip", "0" * 64)
 
     async def fake_get_file_blob(
         uri_or_file_path: str, *, run_context: RunContext
@@ -456,7 +456,7 @@ async def test_page_marker_is_omitted_when_image_conversion_fails(
     run_context: RunContext,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    pdf_file_info.asset_uri = "asset://pdf_bundle.zip"
+    pdf_file_info = pdf_file_info.with_asset("asset://pdf_bundle.zip", "0" * 64)
 
     async def fake_get_file_blob(
         uri_or_file_path: str, *, run_context: RunContext
@@ -491,7 +491,9 @@ async def test_unsupported(
 async def test_media_asset_uri(
     image_file_info: ImageFileInfo, all_enabled_args: ConversionArgs
 ) -> None:
-    image_file_info.asset_uri = image_file_info.uri_or_file_path
+    image_file_info = image_file_info.with_asset(
+        image_file_info.uri_or_file_path, "0" * 64
+    )
     result = await from_file_info(image_file_info, **all_enabled_args)
     assert result.text is not None
     assert result.media_dicts is not None
@@ -501,7 +503,7 @@ async def test_media_asset_uri(
 async def test_media_not_found(
     image_file_info: ImageFileInfo, all_enabled_args: ConversionArgs
 ) -> None:
-    image_file_info.asset_uri = "non_existent_asset_uri"
+    image_file_info = image_file_info.with_asset("non_existent_asset_uri", "0" * 64)
     result = await from_file_info(image_file_info, **all_enabled_args)
     assert result.text is None
     assert result.media_dicts is None

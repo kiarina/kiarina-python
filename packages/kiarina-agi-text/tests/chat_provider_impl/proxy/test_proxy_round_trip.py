@@ -1,5 +1,7 @@
+import hashlib
 import json
 from collections.abc import AsyncIterator, Iterator
+from pathlib import Path
 from typing import Any, cast
 
 import httpx
@@ -266,6 +268,38 @@ async def test_files_sent_once(
     )
 
     assert sent_data() == [False, True]
+    assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
+
+
+async def test_known_asset_hash_is_not_read(
+    app: FastAPI,
+    run_context: RunContext,
+    cost_recorder: CostRecorder,
+    image_file_info: ImageFileInfo,
+) -> None:
+    """A file whose `asset_hash` the proxy has is sent by that hash, without reading it."""
+    requests: list[dict[str, Any]] = []
+    provider = create_provider(app, requests=requests)
+    raw_data = Path(image_file_info.uri_or_file_path).read_bytes()
+    sha256 = hashlib.sha256(raw_data).hexdigest()
+    first = image_file_info.with_asset(image_file_info.uri_or_file_path, sha256)
+
+    await run(
+        provider,
+        [HumanMessage.create("hi", files=[first])],
+        run_context=run_context,
+        cost_recorder=cost_recorder,
+    )
+    # The same contents, at a path that cannot be read here.
+    gone = image_file_info.with_asset("/nonexistent/image.png", sha256)
+    results = await run(
+        provider,
+        [HumanMessage.create("hi", files=[gone])],
+        run_context=run_context,
+        cost_recorder=cost_recorder,
+    )
+
+    assert [f["sha256"] for f in requests[-1]["files"].values()] == [sha256]
     assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
 
 

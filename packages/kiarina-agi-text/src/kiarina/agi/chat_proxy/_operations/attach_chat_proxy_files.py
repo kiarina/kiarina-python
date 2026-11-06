@@ -27,7 +27,7 @@ async def attach_chat_proxy_files(
     the caller's machine, not on the proxy's.
     """
     asset_repository = create_asset_repository(run_context)
-    asset_uris: dict[str, str] = {}
+    assets: dict[str, tuple[str, str]] = {}
     missing: list[str] = []
 
     for key, file in files.items():
@@ -47,7 +47,7 @@ async def attach_chat_proxy_files(
         elif not await asset_repository.exists(asset_uri):
             missing.append(file.sha256)
 
-        asset_uris[key] = asset_uri
+        assets[key] = (asset_uri, file.sha256)
 
     if missing:
         raise ChatProxyMissingFilesError(sorted(set(missing)))
@@ -58,8 +58,8 @@ async def attach_chat_proxy_files(
         if key is None:
             return file_info
 
-        if key in asset_uris:
-            return file_info.model_copy(update={"asset_uri": asset_uris[key]})
+        if key in assets:
+            return file_info.with_asset(*assets[key])
 
         return file_info.model_copy(update={"metadata_only": True})
 

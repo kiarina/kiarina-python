@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Send a file whose `asset_hash` the chat proxy has by that hash, without reading it (`proxy`), and set `asset_hash` with the `asset_uri` the chat proxy gives a file.
+
 ## [2.37.0] - 2026-11-06
 
 ### Added

@@ -35,10 +35,10 @@ def test_normalize_file_path() -> None:
 def test_prepared(file_info: BaseFileInfo) -> None:
     assert file_info.prepared
 
-    file_info.asset_uri = "asset://" + file_info.uri_or_file_path
-    assert file_info.prepared
+    assert file_info.with_asset(
+        "asset://" + file_info.uri_or_file_path, "0" * 64
+    ).prepared
 
-    file_info.asset_uri = None
     file_info.intermediate_file_path = "/path/to/intermediate/file"
     assert not file_info.prepared
 
@@ -112,3 +112,12 @@ def test_get_field_value(text_file_info: BaseFileInfo) -> None:
 
     text_file_info.tag = "custom_tag"
     assert text_file_info.get_value("tag") == "custom_tag"
+
+
+def test_asset_uri_and_hash_go_together(file_info: BaseFileInfo) -> None:
+    with_asset = file_info.with_asset("asset://a", "ab" * 32)
+    assert (with_asset.asset_uri, with_asset.asset_hash) == ("asset://a", "ab" * 32)
+    with pytest.raises(ValueError, match="set together"):
+        type(file_info).model_validate(
+            {**file_info.model_dump(), "asset_uri": "asset://a"}
+        )

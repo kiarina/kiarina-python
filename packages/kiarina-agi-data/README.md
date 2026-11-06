@@ -108,6 +108,7 @@ Pydantic model constructors accept the listed fields as keyword arguments. Field
 ```python
 from kiarina.agi.chat_estimates import ChatEstimates
 
+
 class ChatEstimates:
     token_count: int = 0
     file_size: int = 0
@@ -152,6 +153,7 @@ from kiarina.agi.chat_limits import ChatLimits, ChatLimitsSpecifier
 
 ChatLimitsSpecifier: TypeAlias = str
 
+
 class ChatLimits:
     token_count_limit: int = 772_000
     file_size_limit: int = 20_000_000
@@ -185,15 +187,18 @@ class ChatLimits:
 ```python
 from kiarina.agi.content import Content, dehydrate_content, hydrate_content
 
+
 def dehydrate_content(
     content: Content,
     pool: FileInfoPool,
 ) -> tuple[Content, FileInfoPool]: ...
 
+
 def hydrate_content(
     content: Content,
     pool: FileInfoPool,
 ) -> tuple[Content, FileInfoPool]: ...
+
 
 class Content:
     payload: dict[str, Any] | None = None
@@ -226,9 +231,11 @@ from kiarina.agi.display_content import (
 DisplayContentType = Literal["text", "file"]
 DisplayContent: TypeAlias = TextDisplayContent | FileDisplayContent
 
+
 class BaseDisplayContent:
     type: DisplayContentType
     mime_type: str
+
 
 class FileDisplayContent(BaseDisplayContent):
     type: Literal["file"] = "file"
@@ -238,6 +245,7 @@ class FileDisplayContent(BaseDisplayContent):
 
     @property
     def uri(self) -> str: ...
+
 
 class TextDisplayContent(BaseDisplayContent):
     type: Literal["text"] = "text"
@@ -432,16 +440,15 @@ FileBundleFilePath: TypeAlias = str
 FileBundleMediaContentType = Literal["image", "audio", "video", "pdf"]
 FileBundleContent: TypeAlias = FileBundleMediaContent | FileBundleTextContent
 FileBundleContentInput: TypeAlias = (
-    str
-    | FileBundleTextContentSpec
-    | FileBundleMediaContentSpec
-    | FileBundleContent
+    str | FileBundleTextContentSpec | FileBundleMediaContentSpec | FileBundleContent
 )
+
 
 class FileBundleTextContentSpec(TypedDict):
     type: Literal["text"]
     text: str
     visibility: NotRequired[FileBundleContentVisibility]
+
 
 class FileBundleMediaContentSpec(TypedDict):
     type: FileBundleMediaContentType
@@ -450,10 +457,12 @@ class FileBundleMediaContentSpec(TypedDict):
     visibility: NotRequired[FileBundleContentVisibility]
     prefix_text: NotRequired[str | None]
 
+
 class FileBundleTextContent:
     type: Literal["text"] = "text"
     text: str
     visibility: FileBundleContentVisibility = "always"
+
 
 class FileBundleMediaContent:
     type: FileBundleMediaContentType
@@ -461,6 +470,7 @@ class FileBundleMediaContent:
     mime_type: str
     visibility: FileBundleContentVisibility = "always"
     prefix_text: str | None = None
+
 
 class FileBundleManifest:
     FILE_NAME: ClassVar[str] = "manifest.json"
@@ -471,6 +481,7 @@ class FileBundleManifest:
         cls,
         contents: list[FileBundleContentInput],
     ) -> Self: ...
+
 
 @dataclass
 class FileBundle:
@@ -543,11 +554,12 @@ class BaseFileInfo:
     created_at: datetime = <current UTC time>
     node_id: str | None = None
     mime_type: str
-    file_hash: str
+    file_hash: str  # the original file's
     file_size: int
     token_count: TokenCount
     intermediate_file_path: str | None
     asset_uri: str | None
+    asset_hash: str | None = None  # SHA-256 of the contents at asset_uri; set together
     uri_or_file_path: URIOrFilePath
     name: str = ""
     description: str = ""
@@ -563,6 +575,7 @@ class BaseFileInfo:
     default_template: str = "<{tag}{attributes} />"
     metadata_only_template: str = '<{tag}{attributes} metadata_only="True" />'
 
+    def with_asset(self, asset_uri: str, asset_hash: str) -> Self: ...
     @property
     def is_uri(self) -> bool: ...
     @property
@@ -606,10 +619,12 @@ class TextFileInfo(BaseFileInfo):
     def segment_line_count(self) -> int: ...
     def shrink_by_line(self, keep_line_count: int) -> Self: ...
 
+
 class ImageFileInfo(BaseFileInfo):
     type: Literal["image"] = "image"
     width: int
     height: int
+
 
 class AudioFileInfo(BaseFileInfo):
     type: Literal["audio"] = "audio"
@@ -623,6 +638,7 @@ class AudioFileInfo(BaseFileInfo):
     def normalized_end_time(self) -> float: ...
     @property
     def segment_duration(self) -> float: ...
+
 
 class VideoFileInfo(BaseFileInfo):
     type: Literal["video"] = "video"
@@ -641,6 +657,7 @@ class VideoFileInfo(BaseFileInfo):
     @property
     def segment_duration(self) -> float: ...
 
+
 class PDFFileInfo(BaseFileInfo):
     type: Literal["pdf"] = "pdf"
     start_page: int = 1
@@ -654,6 +671,7 @@ class PDFFileInfo(BaseFileInfo):
     def normalized_end_page(self) -> int: ...
     @property
     def segment_page_count(self) -> int: ...
+
 
 class OtherFileInfo(BaseFileInfo):
     type: Literal["other"] = "other"
@@ -673,6 +691,7 @@ from kiarina.agi.file_info_pool import (
 
 FileInfoPool: TypeAlias = list[FileInfo]
 
+
 def dehydrate_file_infos(
     file_infos: list[FileInfo],
     pool: FileInfoPool,
@@ -688,6 +707,7 @@ def hydrate_file_infos(
 
 ```python
 from kiarina.agi.history import History
+
 
 class History:
     events: list[Event] = []
@@ -754,6 +774,7 @@ class Memory:
 from kiarina.agi.memory_graph import DecayTime, MemoryGraph
 
 DecayTime: TypeAlias = float
+
 
 class MemoryGraph:
     nodes: dict[MemoryID, Memory] = {}
@@ -974,12 +995,14 @@ ToolName: TypeAlias = str
 ToolChoice: TypeAlias = Literal["auto", "any"] | ToolName
 ToolState = Literal["active", "inactive", "disabled"]
 
+
 def create_tool_info(
     source: type[BaseModel] | dict[str, Any],
     name: ToolName | None = None,
     description: str | None = None,
     cache_control: dict[str, Any] | None = None,
 ) -> ToolInfo: ...
+
 
 class ToolInfo:
     name: ToolName

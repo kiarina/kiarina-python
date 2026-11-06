@@ -18,7 +18,8 @@ async def collect_chat_proxy_files(
 ) -> dict[str, ChatProxyFile]:
     """
     Read the media files the messages refer to, where the caller runs. The contents
-    are left out for hashes in `known_hashes`, which the proxy already has.
+    are left out for hashes in `known_hashes`, which the proxy already has; a file
+    whose `asset_hash` is one of them is not read at all.
     """
     files: dict[str, ChatProxyFile] = {}
     missing: set[str] = set()
@@ -28,6 +29,15 @@ async def collect_chat_proxy_files(
             key = get_file_key(file_info)
 
             if key is None or key in files or key in missing:
+                continue
+
+            if (
+                file_info.asset_hash is not None
+                and file_info.asset_hash in known_hashes
+            ):
+                files[key] = ChatProxyFile(
+                    mime_type=file_info.mime_type, sha256=file_info.asset_hash
+                )
                 continue
 
             file_blob = await get_file_blob(key, run_context=run_context)

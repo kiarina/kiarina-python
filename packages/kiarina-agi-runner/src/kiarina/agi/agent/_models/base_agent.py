@@ -1,3 +1,4 @@
+import hashlib
 import os
 from collections.abc import AsyncIterator
 from contextlib import suppress
@@ -194,7 +195,9 @@ class BaseAgent(Agent):
                 only_not_exists=True,
             )
 
-            new_file_info = file_info.model_copy(update={"asset_uri": asset_uri})
+            new_file_info = file_info.with_asset(
+                asset_uri, hashlib.sha256(file_blob.raw_data).hexdigest()
+            )
             new_file_infos.append(new_file_info)
             changed = True
 

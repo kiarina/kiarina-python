@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import Any, Self
 
 import ulid
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from kiarina.agi.chat_estimates import ChatEstimates
 from kiarina.agi.file import URIOrFilePath
@@ -30,6 +30,9 @@ class BaseFileInfo(BaseModel):
     token_count: TokenCount
     intermediate_file_path: str | None
     asset_uri: str | None
+    asset_hash: str | None = None
+    """The SHA-256 (hex) of the contents at `asset_uri`, set with it (`with_asset()`).
+    `file_hash` is the original file's: a resized image or a page range has its own."""
 
     uri_or_file_path: URIOrFilePath
     name: str = ""
@@ -52,6 +55,19 @@ class BaseFileInfo(BaseModel):
         if not is_uri(v):
             v = os.path.abspath(os.path.expanduser(os.path.expandvars(v)))
         return v
+
+    @model_validator(mode="after")
+    def check_asset_pair(self) -> Self:
+        if (self.asset_uri is None) != (self.asset_hash is None):
+            raise ValueError("asset_uri and asset_hash must be set together")
+        return self
+
+    def with_asset(self, asset_uri: str, asset_hash: str) -> Self:
+        """A copy whose contents are at [asset_uri], [asset_hash] their SHA-256 (hex).
+        Change `asset_uri` only through this: `model_copy(update=...)` skips the check."""
+        return self.model_copy(
+            update={"asset_uri": asset_uri, "asset_hash": asset_hash}
+        )
 
     @property
     def is_uri(self) -> bool:
