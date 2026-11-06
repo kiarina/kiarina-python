@@ -8,9 +8,16 @@ if TYPE_CHECKING:
     from ._helpers.run_chat_proxy import run_chat_proxy
     from ._operations.attach_chat_proxy_files import attach_chat_proxy_files
     from ._operations.collect_chat_proxy_files import collect_chat_proxy_files
+    from ._operations.find_missing_chat_proxy_files import (
+        find_missing_chat_proxy_files,
+    )
     from ._schemas.chat_proxy_error_info import ChatProxyErrorInfo
     from ._schemas.chat_proxy_event import ChatProxyEvent
     from ._schemas.chat_proxy_file import ChatProxyFile
+    from ._schemas.chat_proxy_missing_files import ChatProxyMissingFiles
+    from ._schemas.chat_proxy_missing_files_request import (
+        ChatProxyMissingFilesRequest,
+    )
     from ._schemas.chat_proxy_model_info import ChatProxyModelInfo
     from ._schemas.chat_proxy_request import ChatProxyRequest
     from ._settings import ChatProxySettings, settings_manager
@@ -25,10 +32,13 @@ __all__ = [
     # ._operations
     "attach_chat_proxy_files",
     "collect_chat_proxy_files",
+    "find_missing_chat_proxy_files",
     # ._schemas
     "ChatProxyErrorInfo",
     "ChatProxyEvent",
     "ChatProxyFile",
+    "ChatProxyMissingFiles",
+    "ChatProxyMissingFilesRequest",
     "ChatProxyModelInfo",
     "ChatProxyRequest",
     # ._settings
@@ -51,10 +61,13 @@ def __getattr__(name: str) -> object:
         # ._operations
         "attach_chat_proxy_files": "._operations.attach_chat_proxy_files",
         "collect_chat_proxy_files": "._operations.collect_chat_proxy_files",
+        "find_missing_chat_proxy_files": "._operations.find_missing_chat_proxy_files",
         # ._schemas
         "ChatProxyErrorInfo": "._schemas.chat_proxy_error_info",
         "ChatProxyEvent": "._schemas.chat_proxy_event",
         "ChatProxyFile": "._schemas.chat_proxy_file",
+        "ChatProxyMissingFiles": "._schemas.chat_proxy_missing_files",
+        "ChatProxyMissingFilesRequest": "._schemas.chat_proxy_missing_files_request",
         "ChatProxyModelInfo": "._schemas.chat_proxy_model_info",
         "ChatProxyRequest": "._schemas.chat_proxy_request",
         # ._settings

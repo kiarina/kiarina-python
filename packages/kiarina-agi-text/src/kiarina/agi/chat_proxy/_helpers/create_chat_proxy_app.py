@@ -10,8 +10,11 @@ from kiarina.agi.message import Message
 from .._exceptions.chat_proxy_error import ChatProxyError
 from .._exceptions.chat_proxy_missing_files_error import ChatProxyMissingFilesError
 from .._operations.attach_chat_proxy_files import attach_chat_proxy_files
+from .._operations.find_missing_chat_proxy_files import find_missing_chat_proxy_files
 from .._schemas.chat_proxy_error_info import ChatProxyErrorInfo
 from .._schemas.chat_proxy_event import ChatProxyEvent
+from .._schemas.chat_proxy_missing_files import ChatProxyMissingFiles
+from .._schemas.chat_proxy_missing_files_request import ChatProxyMissingFilesRequest
 from .._schemas.chat_proxy_model_info import ChatProxyModelInfo
 from .._schemas.chat_proxy_request import ChatProxyRequest
 from .._settings import ChatProxySettings, settings_manager
@@ -69,6 +72,16 @@ def create_chat_proxy_app(settings: ChatProxySettings | None = None) -> FastAPI:
 
         return ChatProxyModelInfo(
             name=chat_model.name, capabilities=chat_model.get_capabilities()
+        )
+
+    @app.post("/v1/files/missing", dependencies=[Depends(authorize)])
+    async def find_missing_files(
+        request: ChatProxyMissingFilesRequest,
+    ) -> ChatProxyMissingFiles:
+        return ChatProxyMissingFiles(
+            missing=await find_missing_chat_proxy_files(
+                request.sha256s, run_context=request.run_context
+            )
         )
 
     @app.post("/v1/chat", dependencies=[Depends(authorize)])

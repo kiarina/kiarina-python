@@ -140,8 +140,8 @@ def create_provider(
     requests: list[dict[str, Any]] | None = None,
 ) -> ProxyChatProvider:
     async def capture(request: httpx.Request) -> None:
-        if requests is not None and request.url.path == "/v1/chat":
-            requests.append(json.loads(request.content))
+        if requests is not None and request.method == "POST":
+            requests.append({"path": request.url.path, **json.loads(request.content)})
 
     provider = ProxyChatProvider(
         ProxyChatProviderSettings(
@@ -237,41 +237,74 @@ async def test_files_sent_once(
     cost_recorder: CostRecorder,
     image_file_info: ImageFileInfo,
 ) -> None:
+    """The proxy is asked before each request, so only the files it lacks are sent."""
     requests: list[dict[str, Any]] = []
-    provider = create_provider(app, requests=requests)
     messages: list[Message] = [HumanMessage.create("hi", files=[image_file_info])]
+    sha256 = hashlib.sha256(
+        Path(image_file_info.uri_or_file_path).read_bytes()
+    ).hexdigest()
+    asset_repository = create_asset_repository(run_context)
+    asset_uri = asset_repository.generate_cache_uri(f"chat_proxy/{sha256}")
+    await asset_repository.delete(asset_uri)  # Other tests may have sent it.
 
-    def sent_data() -> list[bool]:
+    def sent() -> list[tuple[str, bool]]:
         return [
-            any(f["base64_data"] is not None for f in r["files"].values())
+            (
+                r["path"],
+                any(f["base64_data"] is not None for f in r.get("files", {}).values()),
+            )
             for r in requests
         ]
 
-    await run(provider, messages, run_context=run_context, cost_recorder=cost_recorder)
-    results = await run(
-        provider, messages, run_context=run_context, cost_recorder=cost_recorder
+    await run(
+        create_provider(app, requests=requests),
+        messages,
+        run_context=run_context,
+        cost_recorder=cost_recorder,
     )
+    assert sent() == [("/v1/files/missing", False), ("/v1/chat", True)]
 
-    assert sent_data() == [True, False]
-    assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
-
-    # The proxy lost the file: it answers 409, and the provider sends it again.
-    sha256 = next(iter(requests[0]["files"].values()))["sha256"]
-    asset_repository = create_asset_repository(run_context)
-    await asset_repository.delete(
-        asset_repository.generate_cache_uri(f"chat_proxy/{sha256}")
-    )
+    # Another provider, such as one after a restart, asks and sends nothing again.
     requests.clear()
-
     results = await run(
-        provider, messages, run_context=run_context, cost_recorder=cost_recorder
+        create_provider(app, requests=requests),
+        messages,
+        run_context=run_context,
+        cost_recorder=cost_recorder,
     )
+    assert sent() == [("/v1/files/missing", False), ("/v1/chat", False)]
+    assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
 
-    assert sent_data() == [False, True]
+    # The proxy purged the file: the next ask names it, and it is sent again.
+    assert requests[0]["sha256s"] == [sha256]
+    await asset_repository.delete(asset_uri)
+    requests.clear()
+    results = await run(
+        create_provider(app, requests=requests),
+        messages,
+        run_context=run_context,
+        cost_recorder=cost_recorder,
+    )
+    assert sent() == [("/v1/files/missing", False), ("/v1/chat", True)]
     assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
 
 
-async def test_known_asset_hash_is_not_read(
+async def test_no_files_no_ask(
+    app: FastAPI, run_context: RunContext, cost_recorder: CostRecorder
+) -> None:
+    requests: list[dict[str, Any]] = []
+
+    await run(
+        create_provider(app, requests=requests),
+        [HumanMessage.create("hi")],
+        run_context=run_context,
+        cost_recorder=cost_recorder,
+    )
+
+    assert [r["path"] for r in requests] == ["/v1/chat"]
+
+
+async def test_asset_hash_the_proxy_has_is_not_read(
     app: FastAPI,
     run_context: RunContext,
     cost_recorder: CostRecorder,
@@ -279,13 +312,12 @@ async def test_known_asset_hash_is_not_read(
 ) -> None:
     """A file whose `asset_hash` the proxy has is sent by that hash, without reading it."""
     requests: list[dict[str, Any]] = []
-    provider = create_provider(app, requests=requests)
     raw_data = Path(image_file_info.uri_or_file_path).read_bytes()
     sha256 = hashlib.sha256(raw_data).hexdigest()
     first = image_file_info.with_asset(image_file_info.uri_or_file_path, sha256)
 
     await run(
-        provider,
+        create_provider(app),
         [HumanMessage.create("hi", files=[first])],
         run_context=run_context,
         cost_recorder=cost_recorder,
@@ -293,14 +325,55 @@ async def test_known_asset_hash_is_not_read(
     # The same contents, at a path that cannot be read here.
     gone = image_file_info.with_asset("/nonexistent/image.png", sha256)
     results = await run(
-        provider,
+        create_provider(app, requests=requests),
         [HumanMessage.create("hi", files=[gone])],
         run_context=run_context,
         cost_recorder=cost_recorder,
     )
 
-    assert [f["sha256"] for f in requests[-1]["files"].values()] == [sha256]
+    assert list(requests[-1]["files"].values()) == [
+        {"mime_type": gone.mime_type, "sha256": sha256, "base64_data": None}
+    ]
     assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
+
+
+async def test_unreadable_file_the_proxy_lacks_is_metadata_only(
+    app: FastAPI,
+    run_context: RunContext,
+    cost_recorder: CostRecorder,
+    image_file_info: ImageFileInfo,
+) -> None:
+    gone = image_file_info.with_asset("/nonexistent/image.png", "1" * 64)
+
+    results = await run(
+        create_provider(app),
+        [HumanMessage.create("hi", files=[gone])],
+        run_context=run_context,
+        cost_recorder=cost_recorder,
+    )
+
+    assert results[-1].to_text().splitlines()[0] == "image:metadata_only"
+
+
+def test_chat_without_contents_the_proxy_lacks(
+    app: FastAPI, run_context: RunContext
+) -> None:
+    """A chat request naming a hash the proxy lacks gets 409 with that hash."""
+    request = ChatProxyRequest(
+        model_name="echo",
+        messages=[HumanMessage.create("hi")],
+        run_context=run_context,
+        files={"a.png": ChatProxyFile(mime_type="image/png", sha256="2" * 64)},
+    )
+
+    response = TestClient(app).post(
+        "/v1/chat",
+        content=request.model_dump_json(),
+        headers={"Authorization": "Bearer secret", "Content-Type": "application/json"},
+    )
+
+    assert response.status_code == 409, response.text
+    assert response.json() == {"missing": ["2" * 64]}
 
 
 def test_rejects_mismatched_hash(app: FastAPI, run_context: RunContext) -> None:

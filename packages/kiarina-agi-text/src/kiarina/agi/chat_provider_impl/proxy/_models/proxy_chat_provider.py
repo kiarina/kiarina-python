@@ -1,4 +1,3 @@
-import json
 from collections.abc import AsyncIterator
 
 from kiarina.agi.chat_provider import (
@@ -9,11 +8,14 @@ from kiarina.agi.chat_provider import (
 from kiarina.agi.chat_proxy import (
     ChatProxyError,
     ChatProxyEvent,
+    ChatProxyMissingFiles,
+    ChatProxyMissingFilesRequest,
     ChatProxyModelInfo,
     ChatProxyRequest,
     collect_chat_proxy_files,
 )
 from kiarina.agi.message import AIMessage, AIMessageChunk
+from kiarina.agi.run_context import RunContext
 
 from .._settings import ProxyChatProviderSettings
 
@@ -40,7 +42,6 @@ class ProxyChatProvider(BaseChatProvider):
         self._client: httpx.Client | None = client
         self._async_client: httpx.AsyncClient | None = async_client
         self._capabilities: ChatCapabilities | None = None
-        self._known_hashes: set[str] = set()
 
     def get_capabilities(self) -> ChatCapabilities:
         if self._capabilities is None:
@@ -77,46 +78,48 @@ class ProxyChatProvider(BaseChatProvider):
     async def _stream(
         self, client: httpx.AsyncClient, ctx: ChatProviderContext
     ) -> AsyncIterator[AIMessageChunk | AIMessage]:
-        # The first try leaves out the files the proxy took before. If it lost
-        # them, it answers 409 with their hashes, and the second try sends them.
-        for attempt in range(2):
-            files = await collect_chat_proxy_files(
-                ctx.messages,
-                run_context=ctx.run_context,
-                known_hashes=self._known_hashes,
-            )
-            request = ChatProxyRequest(
-                model_name=self.settings.model_name,
-                messages=ctx.messages,
-                tool_infos=ctx.tool_infos,
-                tool_choice=ctx.tool_choice,
-                parallel_tool_calls=ctx.parallel_tool_calls,
-                streaming=ctx.streaming,
-                run_context=ctx.run_context,
-                files=files,
-            )
+        async def find_missing(sha256s: list[str]) -> list[str]:
+            return await self._find_missing(client, sha256s, ctx.run_context)
 
-            async with client.stream(
-                "POST",
-                "/v1/chat",
-                content=request.model_dump_json(),
-                headers={**self._headers(), "Content-Type": "application/json"},
-            ) as response:
-                if response.status_code == 409 and attempt == 0:
-                    missing = json.loads(await response.aread()).get("missing", [])
-                    self._known_hashes.difference_update(missing)
-                    continue
+        # Only the files the proxy lacks carry their contents.
+        files = await collect_chat_proxy_files(
+            ctx.messages, run_context=ctx.run_context, find_missing=find_missing
+        )
+        request = ChatProxyRequest(
+            model_name=self.settings.model_name,
+            messages=ctx.messages,
+            tool_infos=ctx.tool_infos,
+            tool_choice=ctx.tool_choice,
+            parallel_tool_calls=ctx.parallel_tool_calls,
+            streaming=ctx.streaming,
+            run_context=ctx.run_context,
+            files=files,
+        )
 
-                if response.status_code != 200:
-                    text = (await response.aread()).decode(errors="replace")
-                    _raise_for_status(response.status_code, text)
+        async with client.stream(
+            "POST",
+            "/v1/chat",
+            content=request.model_dump_json(),
+            headers={**self._headers(), "Content-Type": "application/json"},
+        ) as response:
+            if response.status_code != 200:
+                text = (await response.aread()).decode(errors="replace")
+                _raise_for_status(response.status_code, text)
 
-                self._known_hashes.update(file.sha256 for file in files.values())
+            async for message in _read_events(response, ctx):
+                yield message
 
-                async for message in _read_events(response, ctx):
-                    yield message
-
-                return
+    async def _find_missing(
+        self, client: httpx.AsyncClient, sha256s: list[str], run_context: RunContext
+    ) -> list[str]:
+        request = ChatProxyMissingFilesRequest(sha256s=sha256s, run_context=run_context)
+        response = await client.post(
+            "/v1/files/missing",
+            content=request.model_dump_json(),
+            headers={**self._headers(), "Content-Type": "application/json"},
+        )
+        _raise_for_status(response.status_code, response.text)
+        return ChatProxyMissingFiles.model_validate_json(response.content).missing
 
     def _headers(self) -> dict[str, str]:
         if self.settings.token is None:

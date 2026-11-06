@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import os
 
 from kiarina.agi.asset_repository import create_asset_repository
 from kiarina.agi.file_info import FileInfo
@@ -10,6 +9,7 @@ from kiarina.agi.run_context import RunContext
 from .._exceptions.chat_proxy_error import ChatProxyError
 from .._exceptions.chat_proxy_missing_files_error import ChatProxyMissingFilesError
 from .._schemas.chat_proxy_file import ChatProxyFile
+from .get_chat_proxy_asset_uri import get_chat_proxy_asset_uri
 from .get_file_key import get_file_key
 
 
@@ -31,9 +31,7 @@ async def attach_chat_proxy_files(
     missing: list[str] = []
 
     for key, file in files.items():
-        asset_uri = asset_repository.generate_cache_uri(
-            os.path.join("chat_proxy", file.sha256)
-        )
+        asset_uri = get_chat_proxy_asset_uri(asset_repository, file.sha256)
 
         if file.base64_data is not None:
             raw_data = base64.b64decode(file.base64_data)

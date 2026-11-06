@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 class ChatProxyFile(BaseModel):
     """
     A media file the chat proxy cannot read from its own storage. The caller sends
-    the contents only when the proxy may not have them yet; the proxy answers 409
-    with the hashes it lacks.
+    the contents only for the hashes `POST /v1/files/missing` named; the chat
+    request answers 409 with the hashes the proxy lacks.
     """
 
     mime_type: str = Field(title="MIME Type", description="The file's MIME type.")

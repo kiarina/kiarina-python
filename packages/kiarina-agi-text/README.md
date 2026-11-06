@@ -249,6 +249,7 @@ The chat proxy serves two endpoints, both requiring `Authorization: Bearer <toke
 | Endpoint | Response |
 | --- | --- |
 | `GET /v1/chat-models/{model_name}` | `ChatProxyModelInfo` |
+| `POST /v1/files/missing` with a `ChatProxyMissingFilesRequest` | `ChatProxyMissingFiles`: the hashes the proxy does not have |
 | `POST /v1/chat` with a `ChatProxyRequest` | NDJSON lines of `ChatProxyEvent`: chunks, the final message, then cost records, or an error. `409` with `{"missing": [<sha256>, ...]}` when a file sent without contents is not on the proxy |
 
 Run it with the `kiarina-chat-proxy` command (`pip install "kiarina-agi-text[chat-proxy]"` plus the extras of the chat providers it serves). Callers use the `proxy` chat provider (`pip install "kiarina-agi-text[chat-provider-proxy]"`):
@@ -264,7 +265,7 @@ ChatModelConfig(
 )
 ```
 
-`ProxyChatProviderSettings` (env prefix `KIARINA_AGI_CHAT_PROVIDER_IMPL_PROXY_`) has `base_url`, `model_name`, `token`, and `timeout`. The provider reads the chat model's capabilities from the proxy once. Media files are read where the caller runs and sent with their SHA-256; the proxy stores them in its asset repository under that hash. The provider sends a file's contents only until the proxy has taken them once, and sends them again if the proxy answers `409`. A media file the caller cannot read is sent as metadata only. Chat provider errors (`SafetyError`, `MaxTokenError`, `TokenOverflowError`) are raised again on the caller with their fields; other errors become `ChatProxyError`.
+`ProxyChatProviderSettings` (env prefix `KIARINA_AGI_CHAT_PROVIDER_IMPL_PROXY_`) has `base_url`, `model_name`, `token`, and `timeout`. The provider reads the chat model's capabilities from the proxy once. Media files are read where the caller runs and sent with their SHA-256; the proxy stores them in its asset repository under that hash. Before a request with files, the provider asks the proxy which hashes it lacks and sends contents only for those; it remembers nothing itself, so the proxy may purge its copies at any time. A `409` from the chat request (the proxy lost a file after the check) raises `ChatProxyError`. A media file the caller cannot read is sent as metadata only. Chat provider errors (`SafetyError`, `MaxTokenError`, `TokenOverflowError`) are raised again on the caller with their fields; other errors become `ChatProxyError`.
 
 ### `kiarina.agi.text_embedding_model`
 
