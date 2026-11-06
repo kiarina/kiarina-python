@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.39.0] - 2026-11-07
+
 ### Changed
 - Ask the chat proxy which file hashes it lacks (`POST /v1/files/missing`, new) before a request with files, and send contents only for those (`proxy`). The provider no longer remembers the hashes it sent, so the proxy can purge its copies at any time; a `409` from the chat request now raises `ChatProxyError` instead of resending. Update the chat proxy with the provider: an older proxy has no `/v1/files/missing`.
 
