@@ -29,7 +29,9 @@
 | --- | --- | --- | --- |
 | [anthropic](https://github.com/anthropics/anthropic-sdk-python) | `>=0.84.0,<2` | [MIT](https://github.com/anthropics/anthropic-sdk-python/blob/main/LICENSE) | `chat-provider-anthropic`<br>`chat-provider-anthropic-vertex` |
 | [claude-agent-sdk](https://github.com/anthropics/claude-agent-sdk-python) | `>=0.2.164` | [MIT](https://github.com/anthropics/claude-agent-sdk-python/blob/main/LICENSE) | `chat-provider-claude-code` |
+| [FastAPI](https://github.com/fastapi/fastapi) | `>=0.162.0,<1` | [MIT](https://github.com/fastapi/fastapi/blob/master/LICENSE) | `chat-proxy` |
 | [google-genai](https://github.com/googleapis/python-genai) | `>=1.65.0,<3` | [Apache-2.0](https://github.com/googleapis/python-genai/blob/main/LICENSE) | `chat-provider-google`<br>`text-embedding-provider-google` |
+| [HTTPX](https://github.com/encode/httpx) | `>=0.28.1,<1` | [BSD-3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) | `chat-provider-proxy` |
 | [kiarina-lib-anthropic](https://pypi.org/project/kiarina-lib-anthropic/) | `>=2.3.1` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) | `chat-provider-anthropic`<br>`chat-provider-anthropic-vertex` |
 | [kiarina-lib-google](https://pypi.org/project/kiarina-lib-google/) | `>=2.4.0` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) | `chat-provider-anthropic-vertex`<br>`chat-provider-google`<br>`text-embedding-provider-google` |
 | [kiarina-lib-openai](https://pypi.org/project/kiarina-lib-openai/) | `>=2.3.1` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) | `chat-provider-openai`<br>`text-embedding-provider-openai` |
@@ -38,8 +40,9 @@
 | [openai-codex-cli-bin](https://github.com/openai/codex) | `>=0.160.1` | [Apache-2.0](https://github.com/openai/codex/blob/main/LICENSE) | `chat-provider-codex` |
 | [tiktoken](https://github.com/openai/tiktoken) | `>=0.13.0` | [MIT](https://github.com/openai/tiktoken/blob/main/LICENSE) | `text-embedding-provider-openai` |
 | [ulid-py](https://github.com/ahawker/ulid) | `>=1.1.0` | [Apache-2.0](https://github.com/ahawker/ulid/blob/master/LICENSE) | `chat-provider-mock` |
+| [Uvicorn](https://github.com/encode/uvicorn) | `>=0.54.0,<1` | [BSD-3-Clause](https://github.com/encode/uvicorn/blob/master/LICENSE.md) | `chat-proxy` |
 
-The `all` Extra installs every optional dependency listed above.
+The `all` Extra installs every optional dependency listed above except those of `chat-proxy`, so apps that use chat models do not get a web server.
 
 ## Installation
 
@@ -51,6 +54,8 @@ pip install "kiarina-agi-text[all]"
 
 - **Chat Models**
   Select a model by name or alias and receive one response or a stream. Tool calls and image, audio, video, and PDF inputs and outputs are also supported.
+- **Chat Proxy**
+  Run chat models on another machine over HTTP: the chat proxy serves its chat models, and the `proxy` chat provider calls them. For example, a container can use `codex` and `claude_code` with the host's subscription logins without having them itself.
 - **Text Embeddings**
   Select a registered model and vectorize text through one API.
 
@@ -148,7 +153,112 @@ settings_manager: SettingsManager[ChatModelSettings]
 
 `ChatModelSettings` is a Pydantic settings class with `default`, `aliases`, `presets`, and `customs` fields.
 
+### `kiarina.agi.chat_proxy`
 
+```python
+from kiarina.agi.chat_proxy import (
+    ChatProxyError,
+    ChatProxyErrorInfo,
+    ChatProxyEvent,
+    ChatProxyFile,
+    ChatProxyModelInfo,
+    ChatProxyRequest,
+    ChatProxySettings,
+    attach_chat_proxy_files,
+    collect_chat_proxy_files,
+    create_chat_proxy_app,
+    run_chat_proxy,
+    settings_manager,
+)
+```
+
+```python
+def create_chat_proxy_app(settings: ChatProxySettings | None = None) -> FastAPI: ...
+
+def run_chat_proxy(settings: ChatProxySettings | None = None) -> None: ...
+
+async def collect_chat_proxy_files(
+    messages: list[Message],
+    *,
+    run_context: RunContext,
+) -> dict[str, ChatProxyFile]: ...
+
+async def attach_chat_proxy_files(
+    messages: list[Message],
+    files: dict[str, ChatProxyFile],
+    *,
+    run_context: RunContext,
+) -> list[Message]: ...
+
+class ChatProxySettings(BaseSettings):  # env prefix: KIARINA_AGI_CHAT_PROXY_
+    host: str = "127.0.0.1"
+    port: int = 8795
+    token: SecretStr | None = None
+    allowed_models: list[str] | None = None
+    max_concurrency: int = 4
+
+class ChatProxyRequest(BaseModel):
+    model_name: str
+    messages: list[Message]
+    tool_infos: list[ToolInfo] | None = None
+    tool_choice: ToolChoice | None = None
+    parallel_tool_calls: bool | None = None
+    streaming: bool | None = None
+    run_context: RunContext
+    files: dict[str, ChatProxyFile] = {}
+
+class ChatProxyFile(BaseModel):
+    mime_type: str
+    base64_data: str
+
+class ChatProxyEvent(BaseModel):
+    type: Literal["chunk", "message", "cost", "error"]
+    message: AIMessageChunk | AIMessage | None = None
+    cost_record: CostRecord | None = None
+    error: ChatProxyErrorInfo | None = None
+
+class ChatProxyErrorInfo(BaseModel):
+    kind: Literal["safety", "max_token", "token_overflow", "other"]
+    error_type: str
+    message: str
+    category: str | None = None
+    request_id: str | None = None
+    token_count: int | None = None
+    limit: int | None = None
+    @classmethod
+    def from_exception(cls, error: BaseException) -> Self: ...
+    def to_exception(self) -> Exception: ...
+
+class ChatProxyModelInfo(BaseModel):
+    name: str
+    capabilities: ChatCapabilities
+
+class ChatProxyError(Exception): ...
+
+settings_manager: SettingsManager[ChatProxySettings]
+```
+
+The chat proxy serves two endpoints, both requiring `Authorization: Bearer <token>` when `token` is set:
+
+| Endpoint | Response |
+| --- | --- |
+| `GET /v1/chat-models/{model_name}` | `ChatProxyModelInfo` |
+| `POST /v1/chat` with a `ChatProxyRequest` | NDJSON lines of `ChatProxyEvent`: chunks, the final message, then cost records, or an error |
+
+Run it with the `kiarina-chat-proxy` command (`pip install "kiarina-agi-text[chat-proxy]"` plus the extras of the chat providers it serves). Callers use the `proxy` chat provider (`pip install "kiarina-agi-text[chat-provider-proxy]"`):
+
+```python
+ChatModelConfig(
+    provider_name="proxy",
+    provider_config={
+        "base_url": "http://host.docker.internal:8795",
+        "model_name": "codex",
+        "token": "...",
+    },
+)
+```
+
+`ProxyChatProviderSettings` (env prefix `KIARINA_AGI_CHAT_PROVIDER_IMPL_PROXY_`) has `base_url`, `model_name`, `token`, and `timeout`. The provider reads the chat model's capabilities from the proxy once. Media files are read where the caller runs and sent with the request; the proxy stores them in its asset repository. A media file the caller cannot read is sent as metadata only. Chat provider errors (`SafetyError`, `MaxTokenError`, `TokenOverflowError`) are raised again on the caller with their fields; other errors become `ChatProxyError`.
 
 ### `kiarina.agi.text_embedding_model`
 

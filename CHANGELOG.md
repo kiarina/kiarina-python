@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **kiarina-agi-runner**: Validate `generate_model` tool arguments as JSON so strict tuple and date fields accept their JSON representations; retain first-tool-call selection.
 
 ### Added
+- **kiarina-agi-text**: Add the chat proxy (`kiarina.agi.chat_proxy`, `chat-proxy` extra, `kiarina-chat-proxy` command), an HTTP server that runs requests on its own chat models, and the `proxy` chat provider (`chat-provider-proxy` extra) that calls it. Messages, provider state, tool infos, cost records, and chat provider errors cross it as kiarina's own types, and media files are sent with the request. A container can use `codex` and `claude_code` with the host's subscription logins this way.
 - **kiarina-agi-data**: Add synchronous `MemoryGraph.find_ids()` (activation-time ordering) and `search_ids()` (filtered cosine search via `search_embeddings`), with explicit empty-ID scope and caller-owned embedding-space compatibility.
 - **kiarina-agi-text**: Add the `gpt-6.1-terra`, `claude-haiku-5-5`, `vclaude-haiku-5-5`, and `gemini-4-argon` chat model presets.
 - **kiarina-agi-text**: Add `extended_cost_threshold_tokens`, `extended_input_cost_multiplier`, and `extended_output_cost_multiplier` to the `anthropic` provider settings, to record Claude Haiku 5.5's 5x price for a prompt over 100K tokens (cache reads and writes included).

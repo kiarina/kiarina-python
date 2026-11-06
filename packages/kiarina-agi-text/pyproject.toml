@@ -39,6 +39,7 @@ all = [
     "anthropic[vertex]>=0.84.0,<2",
     "claude-agent-sdk>=0.2.164",
     "google-genai>=1.65.0,<3",
+    "httpx>=0.28.1,<1",
     "kiarina-lib-anthropic>=2.3.1",
     "kiarina-lib-google>=2.4.0",
     "kiarina-lib-openai>=2.3.1",
@@ -71,6 +72,13 @@ chat-provider-openai = [
     "kiarina-lib-openai>=2.3.1",
     "openai>=2.0.1,<4",
 ]
+chat-provider-proxy = [
+    "httpx>=0.28.1,<1",
+]
+chat-proxy = [
+    "fastapi>=0.162.0,<1",
+    "uvicorn>=0.54.0,<1",
+]
 chat-provider-mock = [
     "ulid-py>=1.1.0",
 ]
@@ -88,6 +96,9 @@ text-embedding-provider-openai = [
     "openai>=2.0.1,<4",
     "tiktoken>=0.13.0",
 ]
+
+[project.scripts]
+kiarina-chat-proxy = "kiarina.agi.chat_proxy.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/kiarina/kiarina-python"

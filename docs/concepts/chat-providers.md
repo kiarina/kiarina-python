@@ -36,12 +36,28 @@ A provider can keep state on the `AIMessage` it returns, to continue from it in 
 - Metadata is never sent to a model. Code that displays message metadata should skip the `chat_provider` key, whose values can be large.
 - Only the final `AIMessage` of a stream carries the state.
 
+## Chat Proxy (`proxy`)
+
+`kiarina.agi.chat_proxy` serves the chat models of the machine it runs on over HTTP, and the `proxy` chat provider calls them. Its use is a container or another machine that needs `codex` or `claude_code` without their subscription logins. Production switches the same chat model name to an API provider by configuration.
+
+- The wire format carries kiarina's own types (`Message`, `ToolInfo`, `RunContext`, `CostRecord`), not an OpenAI-compatible API, so nothing is lost on the way:
+  - Provider state in `metadata["chat_provider"]` comes back whole, so `codex` continues its thread on the proxy. Messages are serialized without `exclude_none`, which would drop `None` values in that free dict.
+  - `SafetyError`, `MaxTokenError`, and `TokenOverflowError` are raised again on the caller with their fields.
+  - Cost records are sent after the final message, and before an error, and go into the caller's recorder.
+- Media files are read where the caller runs (`asset_uri`, or `uri_or_file_path` when it has none) and sent base64-encoded with the request. The proxy stores them in its own asset repository under a hash-based cache URI and points `asset_uri` there, so the XML the model sees, which names `uri_or_file_path`, does not change. A file the caller cannot read becomes metadata only on the proxy: its path names a file on the caller's machine, and the proxy must not read its own file at that path.
+- Unlike other providers, the settings do not extend `ChatCapabilities`. The capabilities are those of the proxy's chat model, read with `GET /v1/chat-models/{name}` once per provider instance.
+- The `kiarina-chat-proxy` command configures the app as `kiarina/kiarina-chat-proxy`, because the asset repository needs the app's directories.
+- The `chat-proxy` extra is not in `all`, so apps that use chat models do not get FastAPI and Uvicorn.
+- Use it only for the subscription owner's own development. Requests from other users through someone's subscription are outside what the subscriptions allow.
+- Checked on 2026-11-06 with `codex` (GPT-6.1 Sol) through the proxy: a tool call, its result, and an image question over three requests continued one thread, and with a 5.9K-token history the second and third requests read 5,760 tokens from the cache. `claude_code` answered one request.
+
 ## Testing
 
 - Unit tests use a fake client and SDK response objects built with `model_validate`. They must pass without API keys, because CI has none.
 - Costly tests call the real API with the cheapest model of the provider. Keep them few and run them only when they check something new. For high-priced models, send one short request instead of running tests. See [Update Chat Model Presets](../runbooks/update-chat-model-presets.md).
 - `codex` and `claude_code` tests use a fake `codex app-server` script and a fake `claude_agent_sdk.query`. To see what a runtime really sends without using the subscription, point it at a local capture server: `config_overrides` with a `model_providers` entry for Codex, and `env` with `ANTHROPIC_BASE_URL` and a dummy `ANTHROPIC_API_KEY` for Claude Code.
 - A capture server accepts whatever it gets, so it cannot catch what the real API rejects. A 1-hour cache breakpoint after a 5-minute one passed the capture server and failed live with `400`.
+- The chat proxy and the `proxy` provider are tested together in one process: the provider gets FastAPI's `TestClient` for the capabilities and an `httpx.AsyncClient` on `ASGITransport` for chats.
 - A host without quota can be checked through a relay: give the SDK client an HTTP transport that forwards its requests to another endpoint. `test_relay_to_anthropic_api` relays Vertex AI requests to the Anthropic API.
 
 ## Vendor Notes

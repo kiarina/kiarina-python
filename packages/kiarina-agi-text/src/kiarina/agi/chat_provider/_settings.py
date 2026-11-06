@@ -22,6 +22,7 @@ class ChatProviderSettings(BaseSettings):
             "google": "kiarina.agi.chat_provider_impl.google:create_google_chat_provider",
             "mock": "kiarina.agi.chat_provider_impl.mock:create_mock_chat_provider",
             "openai": "kiarina.agi.chat_provider_impl.openai:create_openai_chat_provider",
+            "proxy": "kiarina.agi.chat_provider_impl.proxy:create_proxy_chat_provider",
         }
     )
 
