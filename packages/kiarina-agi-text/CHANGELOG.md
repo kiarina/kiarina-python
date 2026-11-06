@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add the chat proxy (`kiarina.agi.chat_proxy`, `chat-proxy` extra, `kiarina-chat-proxy` command), an HTTP server that runs requests on its own chat models, and the `proxy` chat provider (`chat-provider-proxy` extra) that calls it. Messages, provider state, tool infos, cost records, and chat provider errors cross it as kiarina's own types, and media files are sent with the request. A container can use `codex` and `claude_code` with the host's subscription logins this way.
+- Add the chat proxy (`kiarina.agi.chat_proxy`, `chat-proxy` extra, `kiarina-chat-proxy` command), an HTTP server that runs requests on its own chat models, and the `proxy` chat provider (`chat-provider-proxy` extra) that calls it. Messages, provider state, tool infos, cost records, and chat provider errors cross it as kiarina's own types, and media files are sent once by their SHA-256 (the proxy answers `409` with the hashes it lacks). A container can use `codex` and `claude_code` with the host's subscription logins this way.
 - Add the `gpt-6.1-terra`, `claude-haiku-5-5`, `vclaude-haiku-5-5`, and `gemini-4-argon` chat model presets.
 - Add `extended_cost_threshold_tokens`, `extended_input_cost_multiplier`, and `extended_output_cost_multiplier` to the `anthropic` provider settings, to record Claude Haiku 5.5's 5x price for a prompt over 100K tokens (cache reads and writes included).
 - Add the `codex-gpt-6.1-terra` and `claude-code-haiku-5-5` chat model presets, and give `codex-gpt-6.1-sol` the 500K context window of Codex's model list.

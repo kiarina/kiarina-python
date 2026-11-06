@@ -1,4 +1,6 @@
 import base64
+import hashlib
+from collections.abc import Container
 
 from kiarina.agi.file import get_file_blob
 from kiarina.agi.message import Message
@@ -12,8 +14,12 @@ async def collect_chat_proxy_files(
     messages: list[Message],
     *,
     run_context: RunContext,
+    known_hashes: Container[str] = (),
 ) -> dict[str, ChatProxyFile]:
-    """Read the media files the messages refer to, where the caller runs."""
+    """
+    Read the media files the messages refer to, where the caller runs. The contents
+    are left out for hashes in `known_hashes`, which the proxy already has.
+    """
     files: dict[str, ChatProxyFile] = {}
     missing: set[str] = set()
 
@@ -30,9 +36,13 @@ async def collect_chat_proxy_files(
                 missing.add(key)
                 continue
 
+            sha256 = hashlib.sha256(file_blob.raw_data).hexdigest()
             files[key] = ChatProxyFile(
                 mime_type=file_blob.mime_type,
-                base64_data=base64.b64encode(file_blob.raw_data).decode("ascii"),
+                sha256=sha256,
+                base64_data=None
+                if sha256 in known_hashes
+                else base64.b64encode(file_blob.raw_data).decode("ascii"),
             )
 
     return files

@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._exceptions.chat_proxy_error import ChatProxyError
+    from ._exceptions.chat_proxy_missing_files_error import ChatProxyMissingFilesError
     from ._helpers.create_chat_proxy_app import create_chat_proxy_app
     from ._helpers.run_chat_proxy import run_chat_proxy
     from ._operations.attach_chat_proxy_files import attach_chat_proxy_files
@@ -17,6 +18,7 @@ if TYPE_CHECKING:
 __all__ = [
     # ._exceptions
     "ChatProxyError",
+    "ChatProxyMissingFilesError",
     # ._helpers
     "create_chat_proxy_app",
     "run_chat_proxy",
@@ -42,6 +44,7 @@ def __getattr__(name: str) -> object:
     module_map = {
         # ._exceptions
         "ChatProxyError": "._exceptions.chat_proxy_error",
+        "ChatProxyMissingFilesError": "._exceptions.chat_proxy_missing_files_error",
         # ._helpers
         "create_chat_proxy_app": "._helpers.create_chat_proxy_app",
         "run_chat_proxy": "._helpers.run_chat_proxy",

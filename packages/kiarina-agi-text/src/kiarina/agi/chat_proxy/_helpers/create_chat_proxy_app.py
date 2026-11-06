@@ -5,7 +5,10 @@ from typing import Annotated
 
 from kiarina.agi.chat_model import ChatModel, chat_model_registry
 from kiarina.agi.cost_recorder_impl.null import NullCostRecorder
+from kiarina.agi.message import Message
 
+from .._exceptions.chat_proxy_error import ChatProxyError
+from .._exceptions.chat_proxy_missing_files_error import ChatProxyMissingFilesError
 from .._operations.attach_chat_proxy_files import attach_chat_proxy_files
 from .._schemas.chat_proxy_error_info import ChatProxyErrorInfo
 from .._schemas.chat_proxy_event import ChatProxyEvent
@@ -15,7 +18,7 @@ from .._settings import ChatProxySettings, settings_manager
 
 try:
     from fastapi import Depends, FastAPI, Header, HTTPException
-    from fastapi.responses import StreamingResponse
+    from fastapi.responses import JSONResponse, Response, StreamingResponse
 except ImportError as exc:
     raise ImportError(
         "fastapi is required to use the chat proxy. "
@@ -69,11 +72,20 @@ def create_chat_proxy_app(settings: ChatProxySettings | None = None) -> FastAPI:
         )
 
     @app.post("/v1/chat", dependencies=[Depends(authorize)])
-    async def chat(request: ChatProxyRequest) -> StreamingResponse:
+    async def chat(request: ChatProxyRequest) -> Response:
         chat_model = resolve_chat_model(request.model_name)
 
+        try:
+            messages = await attach_chat_proxy_files(
+                request.messages, request.files, run_context=request.run_context
+            )
+        except ChatProxyMissingFilesError as e:
+            return JSONResponse(status_code=409, content={"missing": e.hashes})
+        except ChatProxyError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
+
         return StreamingResponse(
-            _run_chat(chat_model, request, semaphore),
+            _run_chat(chat_model, messages, request, semaphore),
             media_type="application/x-ndjson",
         )
 
@@ -82,6 +94,7 @@ def create_chat_proxy_app(settings: ChatProxySettings | None = None) -> FastAPI:
 
 async def _run_chat(
     chat_model: ChatModel,
+    messages: list[Message],
     request: ChatProxyRequest,
     semaphore: asyncio.Semaphore,
 ) -> AsyncIterator[str]:
@@ -90,10 +103,6 @@ async def _run_chat(
         error: ChatProxyErrorInfo | None = None
 
         try:
-            messages = await attach_chat_proxy_files(
-                request.messages, request.files, run_context=request.run_context
-            )
-
             async for message in chat_model.run(
                 messages,
                 tool_infos=request.tool_infos,

@@ -1,5 +1,6 @@
+import json
 from collections.abc import AsyncIterator, Iterator
-from typing import cast
+from typing import Any, cast
 
 import httpx
 import pytest
@@ -7,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
+from kiarina.agi.asset_repository import create_asset_repository
 from kiarina.agi.chat_model import ChatModelConfig, chat_model_registry
 from kiarina.agi.chat_provider import (
     BaseChatProvider,
@@ -23,6 +25,8 @@ from kiarina.agi.chat_provider_impl.proxy import (
 )
 from kiarina.agi.chat_proxy import (
     ChatProxyError,
+    ChatProxyFile,
+    ChatProxyRequest,
     ChatProxySettings,
     create_chat_proxy_app,
 )
@@ -128,8 +132,15 @@ def app() -> FastAPI:
 
 
 def create_provider(
-    app: FastAPI, model_name: str = "echo", token: str | None = "secret"
+    app: FastAPI,
+    model_name: str = "echo",
+    token: str | None = "secret",
+    requests: list[dict[str, Any]] | None = None,
 ) -> ProxyChatProvider:
+    async def capture(request: httpx.Request) -> None:
+        if requests is not None and request.url.path == "/v1/chat":
+            requests.append(json.loads(request.content))
+
     provider = ProxyChatProvider(
         ProxyChatProviderSettings(
             base_url="http://proxy",
@@ -138,7 +149,9 @@ def create_provider(
         ),
         client=cast(httpx.Client, TestClient(app, base_url="http://proxy")),
         async_client=httpx.AsyncClient(
-            transport=httpx.ASGITransport(app=app), base_url="http://proxy"
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://proxy",
+            event_hooks={"request": [capture]},
         ),
     )
     provider.name = "proxy"
@@ -214,6 +227,67 @@ async def test_round_trip(
     )
 
     assert results[-1].to_text().splitlines()[-1] == "resumed:t1"
+
+
+async def test_files_sent_once(
+    app: FastAPI,
+    run_context: RunContext,
+    cost_recorder: CostRecorder,
+    image_file_info: ImageFileInfo,
+) -> None:
+    requests: list[dict[str, Any]] = []
+    provider = create_provider(app, requests=requests)
+    messages: list[Message] = [HumanMessage.create("hi", files=[image_file_info])]
+
+    def sent_data() -> list[bool]:
+        return [
+            any(f["base64_data"] is not None for f in r["files"].values())
+            for r in requests
+        ]
+
+    await run(provider, messages, run_context=run_context, cost_recorder=cost_recorder)
+    results = await run(
+        provider, messages, run_context=run_context, cost_recorder=cost_recorder
+    )
+
+    assert sent_data() == [True, False]
+    assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
+
+    # The proxy lost the file: it answers 409, and the provider sends it again.
+    sha256 = next(iter(requests[0]["files"].values()))["sha256"]
+    asset_repository = create_asset_repository(run_context)
+    await asset_repository.delete(
+        asset_repository.generate_cache_uri(f"chat_proxy/{sha256}")
+    )
+    requests.clear()
+
+    results = await run(
+        provider, messages, run_context=run_context, cost_recorder=cost_recorder
+    )
+
+    assert sent_data() == [False, True]
+    assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
+
+
+def test_rejects_mismatched_hash(app: FastAPI, run_context: RunContext) -> None:
+    request = ChatProxyRequest(
+        model_name="echo",
+        messages=[HumanMessage.create("hi")],
+        run_context=run_context,
+        files={
+            "a.png": ChatProxyFile(
+                mime_type="image/png", sha256="0" * 64, base64_data="AA=="
+            )
+        },
+    )
+
+    response = TestClient(app).post(
+        "/v1/chat",
+        content=request.model_dump_json(),
+        headers={"Authorization": "Bearer secret", "Content-Type": "application/json"},
+    )
+
+    assert response.status_code == 400, response.text
 
 
 async def test_mock_model(

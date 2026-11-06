@@ -161,6 +161,7 @@ from kiarina.agi.chat_proxy import (
     ChatProxyErrorInfo,
     ChatProxyEvent,
     ChatProxyFile,
+    ChatProxyMissingFilesError,
     ChatProxyModelInfo,
     ChatProxyRequest,
     ChatProxySettings,
@@ -181,6 +182,7 @@ async def collect_chat_proxy_files(
     messages: list[Message],
     *,
     run_context: RunContext,
+    known_hashes: Container[str] = (),
 ) -> dict[str, ChatProxyFile]: ...
 
 async def attach_chat_proxy_files(
@@ -209,7 +211,8 @@ class ChatProxyRequest(BaseModel):
 
 class ChatProxyFile(BaseModel):
     mime_type: str
-    base64_data: str
+    sha256: str
+    base64_data: str | None = None
 
 class ChatProxyEvent(BaseModel):
     type: Literal["chunk", "message", "cost", "error"]
@@ -235,6 +238,9 @@ class ChatProxyModelInfo(BaseModel):
 
 class ChatProxyError(Exception): ...
 
+class ChatProxyMissingFilesError(ChatProxyError):
+    hashes: list[str]
+
 settings_manager: SettingsManager[ChatProxySettings]
 ```
 
@@ -243,7 +249,7 @@ The chat proxy serves two endpoints, both requiring `Authorization: Bearer <toke
 | Endpoint | Response |
 | --- | --- |
 | `GET /v1/chat-models/{model_name}` | `ChatProxyModelInfo` |
-| `POST /v1/chat` with a `ChatProxyRequest` | NDJSON lines of `ChatProxyEvent`: chunks, the final message, then cost records, or an error |
+| `POST /v1/chat` with a `ChatProxyRequest` | NDJSON lines of `ChatProxyEvent`: chunks, the final message, then cost records, or an error. `409` with `{"missing": [<sha256>, ...]}` when a file sent without contents is not on the proxy |
 
 Run it with the `kiarina-chat-proxy` command (`pip install "kiarina-agi-text[chat-proxy]"` plus the extras of the chat providers it serves). Callers use the `proxy` chat provider (`pip install "kiarina-agi-text[chat-provider-proxy]"`):
 
@@ -258,7 +264,7 @@ ChatModelConfig(
 )
 ```
 
-`ProxyChatProviderSettings` (env prefix `KIARINA_AGI_CHAT_PROVIDER_IMPL_PROXY_`) has `base_url`, `model_name`, `token`, and `timeout`. The provider reads the chat model's capabilities from the proxy once. Media files are read where the caller runs and sent with the request; the proxy stores them in its asset repository. A media file the caller cannot read is sent as metadata only. Chat provider errors (`SafetyError`, `MaxTokenError`, `TokenOverflowError`) are raised again on the caller with their fields; other errors become `ChatProxyError`.
+`ProxyChatProviderSettings` (env prefix `KIARINA_AGI_CHAT_PROVIDER_IMPL_PROXY_`) has `base_url`, `model_name`, `token`, and `timeout`. The provider reads the chat model's capabilities from the proxy once. Media files are read where the caller runs and sent with their SHA-256; the proxy stores them in its asset repository under that hash. The provider sends a file's contents only until the proxy has taken them once, and sends them again if the proxy answers `409`. A media file the caller cannot read is sent as metadata only. Chat provider errors (`SafetyError`, `MaxTokenError`, `TokenOverflowError`) are raised again on the caller with their fields; other errors become `ChatProxyError`.
 
 ### `kiarina.agi.text_embedding_model`
 
