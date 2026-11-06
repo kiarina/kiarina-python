@@ -1372,7 +1372,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.37.0"
+version = "2.38.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1615,7 +1615,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-data"
-version = "2.37.0"
+version = "2.38.0"
 source = { editable = "packages/kiarina-agi-data" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1885,7 +1885,7 @@ provides-extras = ["all", "image-detection-provider-dfine", "image-detection-pro
 
 [[package]]
 name = "kiarina-agi-runner"
-version = "2.37.0"
+version = "2.38.0"
 source = { editable = "packages/kiarina-agi-runner" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1920,7 +1920,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-text"
-version = "2.37.0"
+version = "2.38.0"
 source = { editable = "packages/kiarina-agi-text" }
 dependencies = [
     { name = "kiarina-agi-base" },

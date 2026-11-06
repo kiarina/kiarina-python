@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.38.0] - 2026-11-06
+
 ### Changed (BREAKING)
 - **kiarina-agi-data**: Add `FileInfo.asset_hash`, the SHA-256 (hex) of the contents at `asset_uri`, and `with_asset(asset_uri, asset_hash)`. The two are set together or not at all: a FileInfo with only `asset_uri` no longer validates. `file_hash` stays the original file's hash, which differs from `asset_hash` for a resized image or a page range.
 - **kiarina-agi-runner**: Set `asset_hash` with `asset_uri` when the agent prepares a file.
