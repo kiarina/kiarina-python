@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.40.0] - 2026-11-07
+
+### Changed (BREAKING)
+- **kiarina-agi-image**: `opencv-python` is no longer a required dependency. It moves to the extras of the implementations that use it (`image-detection-provider-dfine`, `image-detection-provider-yunet`, `image-embedding-provider-qwen3-vl`, `image-embedding-provider-sface`, `image-embedding-provider-siglip2`, `image-segmentation-provider-birefnet`, `all`). `crop_align_faces` points to `image-embedding-provider-sface`.
+
+### Changed
+- **kiarina-lib-google**: Depend on `google-auth` directly instead of `google-api-python-client`, which nothing used. A project that imports `googleapiclient` must depend on `google-api-python-client` itself.
+
+### Removed (BREAKING)
+- **kiarina-agi-tool**: Remove `kiarina.agi.langchain_tool` (`LangChainTool`), which nothing used. `langchain` is no longer a dependency.
+
 ## [2.39.0] - 2026-11-07
 
 ### Changed

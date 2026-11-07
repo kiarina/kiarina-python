@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.40.0] - 2026-11-07
+
+### Changed (BREAKING)
+- `opencv-python` is no longer a required dependency. It moves to the extras of the implementations that use it: `image-detection-provider-dfine`, `image-detection-provider-yunet`, `image-embedding-provider-qwen3-vl`, `image-embedding-provider-sface`, `image-embedding-provider-siglip2`, `image-segmentation-provider-birefnet`, and `all`. `crop_align_faces` imports it when called and points to `image-embedding-provider-sface` (its aligned faces are SFace's input). `BiRefNetImageSegmentationProvider` imports it with onnxruntime, with the same install hint.
+
 ## [2.37.0] - 2026-11-06
 
 ### Removed

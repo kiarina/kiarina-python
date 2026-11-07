@@ -20,7 +20,6 @@
 | [kiarina-utils-common](../kiarina-utils-common/) | `>=2.3.0` | MIT |
 | [kiarina-utils-file](../kiarina-utils-file/) | `>=2.3.1` | MIT |
 | [NumPy](https://github.com/numpy/numpy) | `>=2.0,<3` | BSD-3-Clause |
-| [OpenCV](https://github.com/opencv/opencv-python) | `>=4.12.0,<6` | Apache-2.0 |
 | [Pillow](https://github.com/python-pillow/Pillow) | `>=12.3.0,<14` | HPND |
 | [Pydantic](https://github.com/pydantic/pydantic) | `>=2.11.7,<3` | MIT |
 | [pydantic-settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1,<3` | MIT |
@@ -36,6 +35,7 @@
 | kiarina-lib-openai | `image-generation-provider-openai` |
 | onnxruntime | `image-detection-provider-dfine`<br>`image-embedding-provider-siglip2`<br>`image-segmentation-provider-birefnet`<br>`ocr-provider-rapidocr` |
 | openai | `image-generation-provider-openai` |
+| opencv-python | `image-detection-provider-dfine`<br>`image-detection-provider-yunet`<br>`image-embedding-provider-qwen3-vl`<br>`image-embedding-provider-sface`<br>`image-embedding-provider-siglip2`<br>`image-segmentation-provider-birefnet` |
 | rapidocr | `ocr-provider-rapidocr` |
 
 The `all` Extra installs every optional dependency listed above.

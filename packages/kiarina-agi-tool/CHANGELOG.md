@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.40.0] - 2026-11-07
+
+### Removed (BREAKING)
+- Remove `kiarina.agi.langchain_tool` (`LangChainTool`, the adapter from a LangChain tool to the kiarina tool contract), which nothing used. `langchain` is no longer a dependency.
+
 ## [2.22.0] - 2026-08-14
 
 ### Fixed

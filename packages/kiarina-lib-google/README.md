@@ -11,7 +11,7 @@
 
 | Package | Version | License |
 | --- | --- | --- |
-| [Google API Python Client](https://github.com/googleapis/google-api-python-client) | `>=2.184.0` | [Apache-2.0](https://github.com/googleapis/google-api-python-client/blob/main/LICENSE) |
+| [Google Auth](https://github.com/googleapis/google-auth-library-python) | `>=2.62.0` | [Apache-2.0](https://github.com/googleapis/google-auth-library-python/blob/main/LICENSE) |
 | [Pydantic Settings](https://github.com/pydantic/pydantic-settings) | `>=2.10.1` | [MIT](https://github.com/pydantic/pydantic-settings/blob/main/LICENSE) |
 | [pydantic-settings-manager](https://github.com/kiarina/pydantic-settings-manager) | `>=3.2.0` | [MIT](https://github.com/kiarina/pydantic-settings-manager/blob/main/LICENSE) |
 

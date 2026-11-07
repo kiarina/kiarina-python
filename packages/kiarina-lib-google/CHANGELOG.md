@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.40.0] - 2026-11-07
+
+### Changed
+- Depend on `google-auth` directly instead of `google-api-python-client`, which nothing in the package used. A project that imports `googleapiclient` must depend on `google-api-python-client` itself.
+
 ## [2.8.0] - 2026-07-08
 
 ### Added

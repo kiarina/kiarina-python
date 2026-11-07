@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import cv2
 import numpy as np
 
 from kiarina.agi.cost_recorder import CostRecorder
@@ -16,11 +15,13 @@ from kiarina.utils.common import download_file
 from .._settings import BiRefNetImageSegmentationProviderSettings
 
 try:
+    import cv2
     import onnxruntime as ort  # type: ignore
 except ImportError as exc:
     raise ImportError(
-        "onnxruntime is required to use BiRefNetImageSegmentationProvider. "
-        "Install it with: "
+        "onnxruntime and opencv-python are required to use "
+        "BiRefNetImageSegmentationProvider. "
+        "Install them with: "
         "pip install 'kiarina-agi-image[image-segmentation-provider-birefnet]'"
     ) from exc
 

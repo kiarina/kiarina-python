@@ -1,6 +1,5 @@
 from typing import cast
 
-import cv2
 import numpy as np
 
 from kiarina.agi.image_detection_provider import DetectedObject
@@ -27,6 +26,15 @@ def crop_align_faces(
     detected_objects: list[DetectedObject],
     output_size: int,
 ) -> list[ImagePixels]:
+    try:
+        import cv2
+    except ImportError as exc:
+        raise ImportError(
+            "opencv-python is required to use crop_align_faces. "
+            "Install it with: "
+            "pip install 'kiarina-agi-image[image-embedding-provider-sface]'"
+        ) from exc
+
     pixels = np.asarray(pixels)
     height, width = pixels.shape[:2]
 
