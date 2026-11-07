@@ -60,6 +60,8 @@ class AssetRepository(Protocol):
 
     async def delete(self, uri: str) -> None: ...
 
+    async def touch(self, uri: str) -> None: ...
+
     async def generate_download_url(
         self,
         uri: str,

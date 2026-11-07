@@ -34,6 +34,15 @@ class ChatProxySettings(BaseSettings):
         title="Max Concurrency",
         description="Requests run at once. Later ones wait.",
     )
+    cache_ttl: int = Field(
+        default=86400,
+        ge=0,
+        title="Cache TTL",
+        description=(
+            "Seconds after their last use that files in the app's user cache "
+            "directory are deleted. Checked at startup and hourly. 0 keeps them."
+        ),
+    )
 
 
 settings_manager = SettingsManager(ChatProxySettings)

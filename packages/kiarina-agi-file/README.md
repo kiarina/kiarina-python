@@ -92,7 +92,7 @@ cached_file = await repository.set(uri, "text/plain", b"hello")
 loaded = await repository.get(uri)
 ```
 
-`get(..., ignore_cache=True)` skips reading the cache, retrieves the asset from the backend, and refreshes the cache. `delete()` removes the asset from both the backend and the cache.
+`get(..., ignore_cache=True)` skips reading the cache, retrieves the asset from the backend, and refreshes the cache. `delete()` removes the asset from both the backend and the cache. `touch()` marks the asset as just used, for a caller that expires assets by their last use: `local` sets the file's modification time to now, `gcs` does nothing (expire with a bucket lifecycle rule).
 
 ### Use an Asset Store Implementation
 
@@ -229,6 +229,8 @@ class LocalRepository:
 
     async def delete(self, file_path: str | os.PathLike[str]) -> None: ...
 
+    async def touch(self, file_path: str | os.PathLike[str]) -> None: ...
+
 class FilePathPolicy(BaseModel):
     restrict_to_repository_dirs: bool = False
     allowed_file_path_patterns: list[str] = [".*"]
@@ -347,6 +349,8 @@ class AssetRepository(Protocol):
     ) -> CachedFileBlob: ...
 
     async def delete(self, uri: str) -> None: ...
+
+    async def touch(self, uri: str) -> None: ...
 
     async def generate_download_url(
         self,

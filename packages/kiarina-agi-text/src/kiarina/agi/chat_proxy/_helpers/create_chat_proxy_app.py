@@ -1,4 +1,6 @@
 import asyncio
+import contextlib
+import logging
 import secrets
 from collections.abc import AsyncIterator
 from typing import Annotated
@@ -6,10 +8,12 @@ from typing import Annotated
 from kiarina.agi.chat_model import ChatModel, chat_model_registry
 from kiarina.agi.cost_recorder_impl.null import NullCostRecorder
 from kiarina.agi.message import Message
+from kiarina.utils.app import user_directory
 
 from .._exceptions.chat_proxy_error import ChatProxyError
 from .._exceptions.chat_proxy_missing_files_error import ChatProxyMissingFilesError
 from .._operations.attach_chat_proxy_files import attach_chat_proxy_files
+from .._operations.expire_chat_proxy_cache import expire_chat_proxy_cache
 from .._operations.find_missing_chat_proxy_files import find_missing_chat_proxy_files
 from .._schemas.chat_proxy_error_info import ChatProxyErrorInfo
 from .._schemas.chat_proxy_event import ChatProxyEvent
@@ -28,13 +32,35 @@ except ImportError as exc:
         "Install it with: pip install 'kiarina-agi-text[chat-proxy]'"
     ) from exc
 
+logger = logging.getLogger(__name__)
+
+_EXPIRE_INTERVAL_SECONDS = 3600
+
 
 def create_chat_proxy_app(settings: ChatProxySettings | None = None) -> FastAPI:
     if settings is None:
         settings = settings_manager.get_settings()
 
     semaphore = asyncio.Semaphore(settings.max_concurrency)
-    app = FastAPI(title="kiarina chat proxy")
+
+    @contextlib.asynccontextmanager
+    async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        task = (
+            asyncio.create_task(_expire_cache(settings.cache_ttl))
+            if settings.cache_ttl > 0
+            else None
+        )
+
+        try:
+            yield
+        finally:
+            if task is not None:
+                task.cancel()
+
+                with contextlib.suppress(asyncio.CancelledError):
+                    await task
+
+    app = FastAPI(title="kiarina chat proxy", lifespan=lifespan)
 
     def authorize(
         authorization: Annotated[str | None, Header()] = None,
@@ -103,6 +129,22 @@ def create_chat_proxy_app(settings: ChatProxySettings | None = None) -> FastAPI:
         )
 
     return app
+
+
+async def _expire_cache(ttl: int) -> None:
+    cache_dir = str(user_directory.get_user_cache_dir())
+
+    while True:
+        try:
+            deleted = await asyncio.to_thread(expire_chat_proxy_cache, cache_dir, ttl)
+
+            if deleted:
+                logger.info(f"Deleted {deleted} expired files from {cache_dir}")
+
+        except Exception:
+            logger.exception(f"Failed to expire files in {cache_dir}")
+
+        await asyncio.sleep(min(ttl, _EXPIRE_INTERVAL_SECONDS))
 
 
 async def _run_chat(

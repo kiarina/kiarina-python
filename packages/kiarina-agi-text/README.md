@@ -168,6 +168,8 @@ from kiarina.agi.chat_proxy import (
     attach_chat_proxy_files,
     collect_chat_proxy_files,
     create_chat_proxy_app,
+    expire_chat_proxy_cache,
+    find_missing_chat_proxy_files,
     run_chat_proxy,
     settings_manager,
 )
@@ -185,6 +187,14 @@ async def collect_chat_proxy_files(
     known_hashes: Container[str] = (),
 ) -> dict[str, ChatProxyFile]: ...
 
+async def find_missing_chat_proxy_files(
+    sha256s: list[str], *, run_context: RunContext
+) -> list[str]: ...
+
+def expire_chat_proxy_cache(
+    cache_dir: str | os.PathLike[str], ttl: int, *, now: float | None = None
+) -> int: ...
+
 async def attach_chat_proxy_files(
     messages: list[Message],
     files: dict[str, ChatProxyFile],
@@ -198,6 +208,7 @@ class ChatProxySettings(BaseSettings):  # env prefix: KIARINA_AGI_CHAT_PROXY_
     token: SecretStr | None = None
     allowed_models: list[str] | None = None
     max_concurrency: int = 4
+    cache_ttl: int = 86400
 
 class ChatProxyRequest(BaseModel):
     model_name: str
@@ -251,6 +262,8 @@ The chat proxy serves two endpoints, both requiring `Authorization: Bearer <toke
 | `GET /v1/chat-models/{model_name}` | `ChatProxyModelInfo` |
 | `POST /v1/files/missing` with a `ChatProxyMissingFilesRequest` | `ChatProxyMissingFiles`: the hashes the proxy does not have |
 | `POST /v1/chat` with a `ChatProxyRequest` | NDJSON lines of `ChatProxyEvent`: chunks, the final message, then cost records, or an error. `409` with `{"missing": [<sha256>, ...]}` when a file sent without contents is not on the proxy |
+
+The proxy keeps the files it receives in the app's user cache directory and deletes every file there not used for `cache_ttl` seconds (one day by default; `0` keeps them), at startup and hourly. Using a file, in a chat request or a `/v1/files/missing` check, touches it. A caller sends a deleted file again on its next request.
 
 Run it with the `kiarina-chat-proxy` command (`pip install "kiarina-agi-text[chat-proxy]"` plus the extras of the chat providers it serves). Callers use the `proxy` chat provider (`pip install "kiarina-agi-text[chat-provider-proxy]"`):
 

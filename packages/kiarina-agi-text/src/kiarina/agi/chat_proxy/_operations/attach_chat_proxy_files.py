@@ -42,7 +42,10 @@ async def attach_chat_proxy_files(
             await asset_repository.set(
                 asset_uri, file.mime_type, raw_data, only_not_exists=True
             )
-        elif not await asset_repository.exists(asset_uri):
+            await asset_repository.touch(asset_uri)
+        elif await asset_repository.exists(asset_uri):
+            await asset_repository.touch(asset_uri)
+        else:
             missing.append(file.sha256)
 
         assets[key] = (asset_uri, file.sha256)

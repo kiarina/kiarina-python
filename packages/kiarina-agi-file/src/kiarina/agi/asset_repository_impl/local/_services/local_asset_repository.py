@@ -34,5 +34,8 @@ class LocalAssetRepository(BaseAssetRepository):
     async def _delete(self, uri: str) -> None:
         await self.local_repository.delete(uri)
 
+    async def _touch(self, uri: str) -> None:
+        await self.local_repository.touch(uri)
+
     async def _generate_download_url(self, uri: str, *, expire_seconds: int) -> str:
         return f"file://{urlparse(uri).path}"

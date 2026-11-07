@@ -175,6 +175,13 @@ class LocalRepository:
         self.validate_file_path(file_path)
         await kfa.remove_file(file_path)
 
+    async def touch(self, file_path: str | os.PathLike[str]) -> None:
+        file_path = resolve_file_path(file_path)
+        self.validate_file_path(file_path)
+
+        if os.path.isfile(file_path):
+            os.utime(file_path)
+
     def _validate_generated_path(self, file_path: str) -> str:
         if not self.file_path_policy.restrict_to_repository_dirs:
             return file_path

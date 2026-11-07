@@ -1,8 +1,12 @@
+import asyncio
 import hashlib
 import json
+import os
+import time
 from collections.abc import AsyncIterator, Iterator
 from pathlib import Path
 from typing import Any, cast
+from urllib.parse import urlparse
 
 import httpx
 import pytest
@@ -39,6 +43,7 @@ from kiarina.agi.file_info import ImageFileInfo
 from kiarina.agi.message import AIMessage, AIMessageChunk, HumanMessage, Message
 from kiarina.agi.run_context import RunContext
 from kiarina.agi.tool_info import ToolInfo
+from kiarina.utils.app import user_directory
 
 
 class EchoChatProvider(BaseChatProvider):
@@ -287,6 +292,49 @@ async def test_files_sent_once(
     )
     assert sent() == [("/v1/files/missing", False), ("/v1/chat", True)]
     assert results[-1].to_text().splitlines()[0] == f"image:{image_file_info.file_size}"
+
+
+async def test_used_files_are_touched(
+    app: FastAPI,
+    run_context: RunContext,
+    cost_recorder: CostRecorder,
+    image_file_info: ImageFileInfo,
+) -> None:
+    """A file the proxy has is touched when used, so it expires only after its last use."""
+    raw_data = Path(image_file_info.uri_or_file_path).read_bytes()
+    asset_repository = create_asset_repository(run_context)
+    asset_uri = asset_repository.generate_cache_uri(
+        f"chat_proxy/{hashlib.sha256(raw_data).hexdigest()}"
+    )
+    await asset_repository.set(asset_uri, image_file_info.mime_type, raw_data)
+    # Recent enough that test_expires_cache_at_startup (TTL 60) keeps it.
+    used_at = time.time() - 30
+    os.utime(urlparse(asset_uri).path, (used_at, used_at))
+
+    await run(
+        create_provider(app),
+        [HumanMessage.create("hi", files=[image_file_info])],
+        run_context=run_context,
+        cost_recorder=cost_recorder,
+    )
+
+    assert os.path.getmtime(urlparse(asset_uri).path) > used_at
+
+
+async def test_expires_cache_at_startup() -> None:
+    old = Path(user_directory.get_user_cache_dir()) / "expire-at-startup" / "old"
+    old.parent.mkdir(parents=True, exist_ok=True)
+    old.write_bytes(b"x")
+    os.utime(old, (0, 0))
+    app = create_chat_proxy_app(ChatProxySettings(cache_ttl=60))
+
+    with TestClient(app):
+        for _ in range(50):
+            if not old.exists():
+                break
+            await asyncio.sleep(0.05)
+
+    assert not old.exists()
 
 
 async def test_no_files_no_ask(

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.41.0] - 2026-11-07
+
+### Added
+- The chat proxy deletes the files in its app's user cache directory not used for `cache_ttl` seconds (one day by default; `0` keeps them), at startup and hourly. `/v1/files/missing` and `/v1/chat` touch the files they find. `expire_chat_proxy_cache()` does one sweep.
+
+### Changed
+- Require `kiarina-agi-file>=2.41.0` for `AssetRepository.touch()`.
+
 ## [2.39.0] - 2026-11-07
 
 ### Changed

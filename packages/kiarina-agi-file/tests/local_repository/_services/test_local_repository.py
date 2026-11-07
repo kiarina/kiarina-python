@@ -102,6 +102,21 @@ async def test_crud(local_repository: LocalRepository) -> None:
     assert file_blob.raw_text == "test"  # not test2
 
 
+async def test_touch(local_repository: LocalRepository) -> None:
+    file_path = local_repository.generate_cache_path("hello/test_touch.txt")
+    await local_repository.set(file_path, "text/plain", b"test")
+    os.utime(file_path, (0, 0))
+
+    await local_repository.touch(file_path)
+
+    assert os.path.getmtime(file_path) > 0
+
+    # touch: not exists
+    await local_repository.delete(file_path)
+    await local_repository.touch(file_path)
+    assert not await local_repository.exists(file_path)
+
+
 def test_repositories_reject_another_run_context_directory(
     tmp_path: os.PathLike[str],
     run_context: RunContext,

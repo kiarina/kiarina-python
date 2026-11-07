@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.41.0] - 2026-11-07
+
+### Added
+- `AssetRepository.touch()` marks an asset as just used. `local` sets the file's modification time to now; other stores do nothing. `LocalRepository.touch()` does the same for a file.
+
 ## [2.32.0] - 2026-09-20
 
 ### Changed

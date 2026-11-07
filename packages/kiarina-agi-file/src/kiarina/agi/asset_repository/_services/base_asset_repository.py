@@ -187,6 +187,10 @@ class BaseAssetRepository(AssetRepository):
         await self._delete(uri)
         await self.asset_cache.delete(uri)
 
+    async def touch(self, uri: str) -> None:
+        self.validate_uri(uri)
+        await self._touch(uri)
+
     async def generate_download_url(
         self,
         uri: str,
@@ -211,6 +215,10 @@ class BaseAssetRepository(AssetRepository):
 
     async def _delete(self, uri: str) -> None:
         raise NotImplementedError("override me")
+
+    async def _touch(self, uri: str) -> None:
+        # Stores that expire assets by their own rules (a GCS lifecycle) need nothing.
+        return None
 
     async def _generate_download_url(self, uri: str, *, expire_seconds: int) -> str:
         raise NotImplementedError("override me")

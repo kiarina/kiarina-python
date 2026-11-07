@@ -1,3 +1,6 @@
+import os
+from urllib.parse import urlparse
+
 import pytest
 
 from kiarina.agi.asset_repository import URIPolicy
@@ -19,3 +22,14 @@ def asset_repository(run_context: RunContext) -> LocalAssetRepository:
 
 def test_template_variables(asset_repository: LocalAssetRepository) -> None:
     print("Template Variables:", asset_repository.template_variables)
+
+
+async def test_touch(asset_repository: LocalAssetRepository) -> None:
+    uri = asset_repository.generate_cache_uri("test_touch.txt")
+    await asset_repository.set(uri, "text/plain", b"test")
+    file_path = urlparse(uri).path
+    os.utime(file_path, (0, 0))
+
+    await asset_repository.touch(uri)
+
+    assert os.path.getmtime(file_path) > 0

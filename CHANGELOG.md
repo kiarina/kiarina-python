@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.41.0] - 2026-11-07
+
+### Added
+- **kiarina-agi-file**: `AssetRepository.touch()` marks an asset as just used. `local` sets the file's modification time to now; other stores do nothing. `LocalRepository.touch()` does the same for a file.
+- **kiarina-agi-text**: The chat proxy deletes the files in its cache not used for `cache_ttl` seconds (one day by default; `0` keeps them), at startup and hourly. The files it uses are touched. `expire_chat_proxy_cache()` does one sweep.
+
 ## [2.40.0] - 2026-11-07
 
 ### Changed (BREAKING)
