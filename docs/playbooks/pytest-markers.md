@@ -15,6 +15,8 @@ mise run test <package> --costly
 KIARINA_TEST_COSTLY=1 mise run test <package>
 ```
 
+Run costly tests one package at a time. A single pytest run over test paths from several packages fails at collection with `ImportPathMismatchError`, because each package has its own `tests/conftest.py`.
+
 ### downloads_model
 
 Use this marker for pytest tests that download heavy files such as models.

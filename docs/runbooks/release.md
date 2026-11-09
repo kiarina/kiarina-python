@@ -14,6 +14,8 @@ Before updating versions, add release details to the `Unreleased` section of:
 - `packages/kiarina/CHANGELOG.md`: Same summary for the `kiarina` meta-package
 - `packages/<package-name>/CHANGELOG.md`: Detailed changes for each changed package
 
+The bump tasks select packages by their own `Unreleased` section, not by the root summary. A package whose change appears only in the root and meta changelogs is not released, and the meta-package keeps its old lower bound. Before bumping, check that every package named in the root summary has its own entry (v2.42.0 nearly shipped without `kiarina-agi-data-builder`).
+
 ```sh
 # Update the root, kiarina, and packages with unreleased changes
 mise run pyproject:bump-version 2.2.0
