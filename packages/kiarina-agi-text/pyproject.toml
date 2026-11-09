@@ -36,12 +36,12 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "anthropic[vertex]>=0.84.0,<2",
+    "anthropic[vertex]>=2.6.0,<3",
     "claude-agent-sdk>=0.2.164",
-    "google-genai>=1.65.0,<3",
+    "google-genai>=3.0.0,<4",
     "httpx>=0.28.1,<1",
     "kiarina-lib-anthropic>=2.3.1",
-    "kiarina-lib-google>=2.4.0",
+    "kiarina-lib-google>=2.42.0",
     "kiarina-lib-openai>=2.3.1",
     "numpy>=2.0",
     "openai>=2.0.1,<4",
@@ -50,13 +50,13 @@ all = [
     "ulid-py>=1.1.0",
 ]
 chat-provider-anthropic = [
-    "anthropic>=0.84.0,<2",
+    "anthropic>=2.6.0,<3",
     "kiarina-lib-anthropic>=2.3.1",
 ]
 chat-provider-anthropic-vertex = [
-    "anthropic[vertex]>=0.84.0,<2",
+    "anthropic[vertex]>=2.6.0,<3",
     "kiarina-lib-anthropic>=2.3.1",
-    "kiarina-lib-google>=2.4.0",
+    "kiarina-lib-google>=2.42.0",
 ]
 chat-provider-claude-code = [
     "claude-agent-sdk>=0.2.164",
@@ -65,8 +65,8 @@ chat-provider-codex = [
     "openai-codex-cli-bin>=0.160.1",
 ]
 chat-provider-google = [
-    "google-genai>=1.65.0,<3",
-    "kiarina-lib-google>=2.4.0",
+    "google-genai>=3.0.0,<4",
+    "kiarina-lib-google>=2.42.0",
 ]
 chat-provider-openai = [
     "kiarina-lib-openai>=2.3.1",
@@ -83,8 +83,8 @@ chat-provider-mock = [
     "ulid-py>=1.1.0",
 ]
 text-embedding-provider-google = [
-    "google-genai>=1.65.0,<3",
-    "kiarina-lib-google>=2.4.0",
+    "google-genai>=3.0.0,<4",
+    "kiarina-lib-google>=2.42.0",
     "numpy>=2.0",
 ]
 text-embedding-provider-mock = [

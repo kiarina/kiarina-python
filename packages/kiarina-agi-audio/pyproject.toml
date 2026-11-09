@@ -34,9 +34,9 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "ai-edge-litert>=2.1.4,<3",
-    "google-genai>=1.65.0,<3",
+    "google-genai>=3.0.0,<4",
     "imageio-ffmpeg>=0.6.0,<1",
-    "kiarina-lib-google>=2.4.0",
+    "kiarina-lib-google>=2.42.0",
     "kiarina-lib-openai>=2.3.1",
     "onnxruntime>=1.25.1",
     "openai>=2.0.1,<4",
@@ -44,7 +44,7 @@ all = [
     "soundfile>=0.13.1,<1",
     "tiktoken>=0.13.0",
 ]
-asr-provider-google = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.4.0"]
+asr-provider-google = ["google-genai>=3.0.0,<4", "kiarina-lib-google>=2.42.0"]
 asr-provider-openai = ["kiarina-lib-openai>=2.3.1", "openai>=2.0.1,<4"]
 audio-embedding-provider-clap-onnx = ["onnxruntime>=1.25.1"]
 audio-embedding-provider-ecapa-tdnn-onnx = ["onnxruntime>=1.25.1"]
@@ -53,9 +53,9 @@ audio-source-mic = ["sounddevice>=0.5.2,<1"]
 audio-tagging-provider-yamnet = ["ai-edge-litert>=2.1.4,<3"]
 scd-provider-pyannote = ["onnxruntime>=1.25.1"]
 tts-provider-google = [
-    "google-genai>=1.65.0,<3",
+    "google-genai>=3.0.0,<4",
     "imageio-ffmpeg>=0.6.0,<1",
-    "kiarina-lib-google>=2.4.0",
+    "kiarina-lib-google>=2.42.0",
 ]
 tts-provider-mock = [
     "imageio-ffmpeg>=0.6.0,<1",

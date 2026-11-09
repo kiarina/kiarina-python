@@ -148,7 +148,8 @@ class _VertexToAnthropicRelay:
         import httpx2
 
         body = json.loads(request.content)
-        assert body.pop("anthropic_version") == "vertex-2023-10-16"
+        anthropic_version = body.pop("anthropic_version")
+        assert anthropic_version == "2026-10-21"
 
         match = re.search(
             r"/models/([^/:]+):(rawPredict|streamRawPredict)$", request.url.path
@@ -170,7 +171,10 @@ class _VertexToAnthropicRelay:
                 "POST",
                 url,
                 json=body,
-                headers={"x-api-key": self.api_key, "anthropic-version": "2023-06-01"},
+                headers={
+                    "x-api-key": self.api_key,
+                    "anthropic-version": anthropic_version,
+                },
             ),
             stream=True,
         )
@@ -198,7 +202,9 @@ async def test_relay_to_anthropic_api(
     assert api_key is not None
 
     relay = _VertexToAnthropicRelay(api_key.get_secret_value())
-    provider = _create_provider(max_output_tokens=200)
+    provider = _create_provider(
+        model_name="claude-haiku-4-5@20251001", max_output_tokens=200
+    )
     provider._client = AsyncAnthropicVertex(
         region="us-east5",
         project_id="relay",

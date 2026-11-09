@@ -71,8 +71,6 @@ class AnthropicChatProviderSettings(ChatCapabilities, BaseSettings):
         description="Multiplier for output prices above the threshold.",
     )
 
-    temperature: float | None = None
-
     parallel_tool_calls: bool | None = False
 
     timeout: float | None = 3_600.0

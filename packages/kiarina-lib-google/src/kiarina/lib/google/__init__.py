@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._helpers.get_cloud_options import get_cloud_options
     from ._helpers.get_credentials import get_credentials
+    from ._helpers.get_genai_http_options import get_genai_http_options
     from ._helpers.get_genai_options import get_genai_options
     from ._helpers.get_self_signed_jwt import get_self_signed_jwt
     from ._settings import GoogleSettings, settings_manager
@@ -23,6 +24,7 @@ __all__ = [
     # ._helpers
     "get_cloud_options",
     "get_credentials",
+    "get_genai_http_options",
     "get_genai_options",
     "get_self_signed_jwt",
     # ._settings
@@ -50,6 +52,7 @@ def __getattr__(name: str) -> object:
         # ._helpers
         "get_cloud_options": "._helpers.get_cloud_options",
         "get_credentials": "._helpers.get_credentials",
+        "get_genai_http_options": "._helpers.get_genai_http_options",
         "get_genai_options": "._helpers.get_genai_options",
         "get_self_signed_jwt": "._helpers.get_self_signed_jwt",
         # ._settings

@@ -39,12 +39,16 @@ class GoogleTTSProvider(BaseTTSProvider):
     @property
     def client(self) -> genai.Client:
         if self._client is None:
+            key = self.settings.google_auth_settings_key
+            options = kiarina.lib.google.get_genai_options(key)
             self._client = genai.Client(
-                **kiarina.lib.google.get_genai_options(
-                    self.settings.google_auth_settings_key
-                ),
+                **options,
                 http_options=types.HttpOptions(
-                    timeout=self.settings.timeout_milliseconds,
+                    **kiarina.lib.google.get_genai_http_options(
+                        key,
+                        client_options=options,
+                        timeout=self.settings.timeout_milliseconds,
+                    )
                 ),
             )
 

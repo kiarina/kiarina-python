@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+- **kiarina-agi-text**: Require anthropic 2 (`anthropic>=2.6.0,<3`), which sends API version `2026-10-21`. The `anthropic` and `anthropic_vertex` chat providers drop the `temperature` setting, which that API version rejects with `400`; a configured value is ignored.
+
+### Changed
+- **kiarina-agi-text**, **kiarina-agi-audio**, **kiarina-agi-image**, **kiarina-agi-video**: Require google-genai 3 (`google-genai>=3.0.0,<4`). The Google providers keep the Gemini Developer API on `v1beta`.
+- **kiarina-lib-google**: Add `get_genai_http_options()` and `GoogleSettings.gemini_api_version` (`v1beta` by default), which pin the Gemini Developer API version of Google Gen AI clients. Vertex AI clients keep the SDK default.
+
 ## [2.41.0] - 2026-11-07
 
 ### Added

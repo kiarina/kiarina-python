@@ -259,10 +259,16 @@ This pattern lets the service settings select only the authentication configurat
 ```python
 from google import genai
 
-from kiarina.lib.google import get_genai_options
+from kiarina.lib.google import get_genai_http_options, get_genai_options
 
-client = genai.Client(**get_genai_options("gemini"))
+options = get_genai_options("gemini")
+client = genai.Client(
+    **options,
+    http_options=get_genai_http_options("gemini", client_options=options),
+)
 ```
+
+`get_genai_http_options` pins the Gemini Developer API to `gemini_api_version` (`v1beta` by default). google-genai 3 defaults the Developer API to `v1`, which lacks some model aliases and preview features. Vertex AI clients keep the SDK default.
 
 Set `vertexai=True` with `api_key` to use Vertex AI Express Mode. In this mode, `project` and `location` are not included in the options, matching the current Express Mode behavior.
 
@@ -306,6 +312,7 @@ from kiarina.lib.google import (
     SelfSignedJWT,
     get_credentials,
     get_default_credentials,
+    get_genai_http_options,
     get_genai_options,
     get_self_signed_jwt,
     get_service_account_credentials,
@@ -345,6 +352,20 @@ def get_genai_options(
 ```
 
 Generate options to pass to Google Gen AI clients. When `vertexai=True` and `api_key` is configured, this returns only `{"vertexai": True, "api_key": ...}` for Express Mode. `vertexai=False` uses Gemini Developer API mode. When `vertexai=None`, `type="api_key"` uses Gemini Developer API mode and all other types use Vertex AI credentials mode.
+
+#### `get_genai_http_options`
+
+```python
+def get_genai_http_options(
+    settings_key: str | None = None,
+    *,
+    settings: GoogleSettings | None = None,
+    client_options: Mapping[str, Any],
+    timeout: int | None = None,
+) -> dict[str, Any]: ...
+```
+
+Generate `http_options` for Google Gen AI clients. `client_options` are the options passed to the same client. When they do not select Vertex AI (`vertexai`, or the `GOOGLE_GENAI_USE_ENTERPRISE` and `GOOGLE_GENAI_USE_VERTEXAI` variables when `vertexai` is unset), the result includes `api_version` from `gemini_api_version`. `timeout` is in milliseconds.
 
 #### `get_self_signed_jwt`
 
@@ -426,6 +447,7 @@ class GoogleSettings(BaseSettings):
     api_key: SecretStr | None = None
     vertexai: bool | None = None
     location: str | None = None
+    gemini_api_version: str | None = "v1beta"
 
     def get_service_account_data(self) -> dict[str, Any] | None: ...
 
@@ -453,10 +475,11 @@ An authentication settings model that supports environment variables with the `K
 | `api_key` | Google API key |
 | `vertexai` | Whether Google Gen AI clients use Vertex AI |
 | `location` | Google Cloud location for Google Gen AI Vertex AI clients |
+| `gemini_api_version` | API version for Google Gen AI clients on the Gemini Developer API (`None` uses the SDK default) |
 
 `get_service_account_data`, `get_client_secret_data`, and `get_authorized_user_data` convert their corresponding JSON strings to dictionaries. They return `None` when no value is configured and raise `json.JSONDecodeError` for invalid JSON.
 
-`get_credentials` uses `type`, `impersonate_service_account`, `scopes`, `service_account_file`, `service_account_data`, `authorized_user_file`, and `authorized_user_data` to create credentials. `get_genai_options` also uses `type`, `api_key`, `vertexai`, `project_id`, and `location`. The remaining fields can retain related values for services that share this settings model.
+`get_credentials` uses `type`, `impersonate_service_account`, `scopes`, `service_account_file`, `service_account_data`, `authorized_user_file`, and `authorized_user_data` to create credentials. `get_genai_options` also uses `type`, `api_key`, `vertexai`, `project_id`, and `location`, and `get_genai_http_options` uses `gemini_api_version`. The remaining fields can retain related values for services that share this settings model.
 
 `type="api_key"` and `api_key` can securely retain an API key in settings, but `get_credentials` does not convert API keys into Google credentials and raises `ValueError`.
 

@@ -77,7 +77,7 @@ Checked on 2026-10-08. Recheck when a request fails in a way these notes do not 
 
 ### Anthropic (`anthropic`, `anthropic_vertex`)
 
-- Anthropic SDK 1.x does not accept `temperature` as a keyword, so it is sent in `extra_body`.
+- API version `2026-10-21` (anthropic SDK 2) rejects `temperature`, `top_p`, and `top_k` with `400`, even at their defaults, so the providers have no sampling settings.
 - `usage.input_tokens` excludes cache reads and cache writes. Cache writes are split into 5-minute and 1-hour TTLs.
 - Claude Haiku 5.5 prices a request whose prompt (uncached input, cache writes, and cache reads) is over 100K tokens at 5x, for all of the request. `extended_cost_threshold_tokens` and the two `extended_*_cost_multiplier` settings record it, as the OpenAI provider's settings of the same names do. They are separate from `context_1m_*`, which also sends the 1M-context beta header of earlier models.
 - A refusal is `stop_reason: "refusal"`. `model_context_window_exceeded` stops the output like `max_tokens`.
@@ -100,6 +100,7 @@ Checked on 2026-10-08. Recheck when a request fails in a way these notes do not 
 - Function calls arrive whole in one stream chunk. Usage in a stream is cumulative, so the last chunk holds the total.
 - Thought tokens are billed as output.
 - `temperature` is deprecated for Gemini 3 and ignored.
+- google-genai 3 defaults the Gemini Developer API to `v1`, which lacks some model aliases and preview features. The Google providers pin it to `v1beta` through `GoogleSettings.gemini_api_version`. Vertex AI keeps the SDK default (`v1beta1`).
 
 ### Subscription Runtimes (`codex`, `claude_code`)
 

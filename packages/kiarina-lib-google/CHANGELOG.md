@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `get_genai_http_options()` builds `http_options` for Google Gen AI clients. Unless the client uses Vertex AI, it sets `api_version` from the new `GoogleSettings.gemini_api_version` (`v1beta` by default; `None` uses the SDK default).
+
 ## [2.40.0] - 2026-11-07
 
 ### Changed

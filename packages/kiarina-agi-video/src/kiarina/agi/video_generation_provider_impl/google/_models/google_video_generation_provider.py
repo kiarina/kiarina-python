@@ -63,10 +63,15 @@ class GoogleVideoGenerationProvider(BaseVideoGenerationProvider):
     @property
     def client(self) -> genai.Client:
         if self._client is None:
+            options: dict[str, Any] = {"credentials": self.credentials}
             self._client = genai.Client(
-                credentials=self.credentials,
+                **options,
                 http_options=types.HttpOptions(
-                    timeout=self.settings.timeout_milliseconds
+                    **kiarina.lib.google.get_genai_http_options(
+                        settings=self.google_auth_settings,
+                        client_options=options,
+                        timeout=self.settings.timeout_milliseconds,
+                    )
                 ),
             )
 

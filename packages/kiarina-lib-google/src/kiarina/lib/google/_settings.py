@@ -125,6 +125,15 @@ class GoogleSettings(BaseSettings):
         description="Google Cloud location for Google Gen AI Vertex AI clients.",
     )
 
+    gemini_api_version: str | None = Field(
+        default="v1beta",
+        title="Gemini API Version",
+        description=(
+            "API version for Google Gen AI clients on the Gemini Developer API. "
+            "Vertex AI clients keep the SDK default. None uses the SDK default."
+        ),
+    )
+
     # --------------------------------------------------
     # Validators
     # --------------------------------------------------

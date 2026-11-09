@@ -176,7 +176,6 @@ mise run test-assets:download
 
 ### 相談待ち（合意してから着手する）
 
-- [Move to anthropic 2 and google-genai 3](tasks/anthropic-2-and-google-genai-3.md) — the Anthropic `temperature` setting and the Gemini API version need a decision
 - [Make structured output reliable on models without forced tool choice](tasks/structured-output-via-json-output.md)
 - [Carry file contents inline in FileInfo for agents whose files live on remote nodes](tasks/file-info-inline-transfer.md)
 

@@ -34,9 +34,9 @@ dependencies = [
 
 [project.optional-dependencies]
 all = [
-    "google-genai>=1.65.0,<3",
+    "google-genai>=3.0.0,<4",
     "httpx>=0.28.1,<1",
-    "kiarina-lib-google>=2.4.0",
+    "kiarina-lib-google>=2.42.0",
     "kiarina-lib-openai>=2.3.1",
     "onnxruntime>=1.25.1",
     "openai>=2.0.1,<4",
@@ -45,11 +45,11 @@ all = [
 ]
 image-detection-provider-dfine = ["onnxruntime>=1.25.1", "opencv-python>=4.12.0,<6"]
 image-detection-provider-yunet = ["opencv-python>=4.12.0,<6"]
-image-embedding-provider-gemini = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.4.0"]
+image-embedding-provider-gemini = ["google-genai>=3.0.0,<4", "kiarina-lib-google>=2.42.0"]
 image-embedding-provider-qwen3-vl = ["httpx>=0.28.1,<1", "opencv-python>=4.12.0,<6"]
 image-embedding-provider-sface = ["opencv-python>=4.12.0,<6"]
 image-embedding-provider-siglip2 = ["onnxruntime>=1.25.1", "opencv-python>=4.12.0,<6"]
-image-generation-provider-google = ["google-genai>=1.65.0,<3", "kiarina-lib-google>=2.4.0"]
+image-generation-provider-google = ["google-genai>=3.0.0,<4", "kiarina-lib-google>=2.42.0"]
 image-generation-provider-openai = ["httpx>=0.28.1,<1", "kiarina-lib-openai>=2.3.1", "openai>=2.0.1,<4"]
 image-generation-provider-kiapi = ["httpx>=0.28.1,<1"]
 image-segmentation-provider-birefnet = ["onnxruntime>=1.25.1", "opencv-python>=4.12.0,<6"]

@@ -119,7 +119,7 @@ async def test_create_request(ctx: ChatProviderContext) -> None:
 async def test_create_request_with_options(
     ctx: ChatProviderContext, tool_infos: list[ToolInfo]
 ) -> None:
-    provider = _create_provider(temperature=None, context_1m_enabled=True)
+    provider = _create_provider(context_1m_enabled=True)
     ctx.messages.insert(0, SystemMessage.create(""))
     ctx.tool_infos = tool_infos
     ctx.tool_choice = "any"

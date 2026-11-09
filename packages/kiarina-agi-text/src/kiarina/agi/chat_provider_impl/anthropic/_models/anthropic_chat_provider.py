@@ -172,10 +172,6 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
         if anthropic_request.system is not None:
             request["system"] = anthropic_request.system
 
-        if self.settings.temperature is not None:
-            # NOTE: Anthropic SDK 1.x does not accept `temperature` as a keyword.
-            request["extra_body"] = {"temperature": self.settings.temperature}
-
         if self.settings.context_1m_enabled:
             request["extra_headers"] = {"anthropic-beta": "context-1m-2025-08-07"}
 
