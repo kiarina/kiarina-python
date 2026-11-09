@@ -1326,7 +1326,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.41.0"
+version = "2.42.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1410,7 +1410,7 @@ provides-extras = ["all"]
 
 [[package]]
 name = "kiarina-agi-audio"
-version = "2.28.0"
+version = "2.42.0"
 source = { editable = "packages/kiarina-agi-audio" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1596,7 +1596,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-data-builder"
-version = "2.37.0"
+version = "2.42.0"
 source = { editable = "packages/kiarina-agi-data-builder" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1739,7 +1739,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-image"
-version = "2.40.0"
+version = "2.42.0"
 source = { editable = "packages/kiarina-agi-image" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -1890,7 +1890,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-text"
-version = "2.41.0"
+version = "2.42.0"
 source = { editable = "packages/kiarina-agi-text" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -2043,7 +2043,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-video"
-version = "2.28.0"
+version = "2.42.0"
 source = { editable = "packages/kiarina-agi-video" }
 dependencies = [
     { name = "kiarina-agi-base" },
@@ -2314,7 +2314,7 @@ dev = [
 
 [[package]]
 name = "kiarina-lib-google"
-version = "2.40.0"
+version = "2.42.0"
 source = { editable = "packages/kiarina-lib-google" }
 dependencies = [
     { name = "google-auth" },

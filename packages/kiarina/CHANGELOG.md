@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.42.0] - 2026-11-09
+
 ### Changed (BREAKING)
 - **kiarina-agi-text**: Require anthropic 2 (`anthropic>=2.6.0,<3`), which sends API version `2026-10-21`. The `anthropic` and `anthropic_vertex` chat providers drop the `temperature` setting, which that API version rejects with `400`; a configured value is ignored.
 

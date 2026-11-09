@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.42.0] - 2026-11-09
+
+### Changed
+
+- Allow `pypdf` 7 (`pypdf>=6.7.4,<8`).
+
 ## [2.37.0] - 2026-11-06
 
 ### Changed

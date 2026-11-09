@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.42.0] - 2026-11-09
+
 ### Changed
 - Require google-genai 3 (`google-genai>=3.0.0,<4`) and kiarina-lib-google 2.42.0. The Google video generation providers keep the Gemini Developer API on `v1beta` (google-genai 3 defaults to `v1`).
 
