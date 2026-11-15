@@ -2,6 +2,7 @@ import json
 import textwrap
 import traceback
 from collections.abc import AsyncIterator
+from typing import Any
 
 from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.message import AIMessage, AIMessageChunk, Message
@@ -100,6 +101,7 @@ def _create_success_request_log_entry(
         else "<none>",
         "tool_choice": ctx.tool_choice or "<none>",
         "tool_call": "yes" if ai_message.tool_calls else "no",
+        **_cost_metadata(ctx),
     }
 
     content = (
@@ -132,6 +134,7 @@ def _create_error_request_log_entry(
         else "<none>",
         "tool_choice": ctx.tool_choice or "<none>",
         "error_type": type(error).__name__,
+        **_cost_metadata(ctx),
     }
 
     content = (
@@ -146,6 +149,18 @@ def _create_error_request_log_entry(
         content=content,
         metadata=metadata,
     )
+
+
+def _cost_metadata(ctx: ChatProviderContext) -> dict[str, Any]:
+    if ctx.cost_record is None:
+        return {}
+
+    return {
+        "cost": {
+            "microdollars": ctx.cost_record.microdollars,
+            **ctx.cost_record.metadata,
+        }
+    }
 
 
 def _format_tool_infos(tool_infos: list[ToolInfo]) -> str:

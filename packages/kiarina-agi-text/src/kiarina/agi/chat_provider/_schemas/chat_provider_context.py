@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Self
 
+from kiarina.agi.cost_record import CostRecord
 from kiarina.agi.cost_recorder import CostRecorder
 from kiarina.agi.cost_recorder_impl.null import NullCostRecorder
 from kiarina.agi.message import Message
@@ -20,6 +21,7 @@ class ChatProviderContext:
     capabilities: ChatCapabilities
     cost_recorder: CostRecorder
     run_context: RunContext
+    cost_record: CostRecord | None = None
 
     @classmethod
     def create(
@@ -44,3 +46,10 @@ class ChatProviderContext:
             cost_recorder=cost_recorder or NullCostRecorder(),
             run_context=run_context,
         )
+
+    def add_cost_record(self, cost_record: CostRecord) -> None:
+        if self.cost_record is not None:
+            raise RuntimeError("A chat provider call records one cost")
+
+        self.cost_record = cost_record
+        self.cost_recorder.add(cost_record)

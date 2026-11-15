@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `ChatProviderContext.cost_record` and `add_cost_record()`: a chat provider records the cost of one call there, which also adds it to the cost recorder. A second record raises `RuntimeError`. All chat providers record cost this way.
+- The request log of a chat provider call carries `cost` (`microdollars` and the cost record's metadata, such as the token counts) when the call recorded one, on success and on error.
+
 ## [2.42.0] - 2026-11-09
 
 ### Changed (BREAKING)

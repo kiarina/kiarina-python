@@ -506,7 +506,7 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
         self, ctx: ChatProviderContext, result: CodexChatResult
     ) -> AIMessage:
         if result.usage:
-            ctx.cost_recorder.add(self._get_cost_record(result.usage))
+            ctx.add_cost_record(self._get_cost_record(result.usage))
 
         return result.ai_message
 

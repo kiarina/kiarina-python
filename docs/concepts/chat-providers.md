@@ -6,7 +6,7 @@ How the `kiarina-agi-text` chat providers are built, and the vendor behavior the
 
 | Layer | Responsibility |
 | --- | --- |
-| `kiarina.agi.chat_provider` | `ChatProvider` contract, `BaseChatProvider` (request logging), `ChatCapabilities`, and the errors `TokenOverflowError`, `MaxTokenError`, and `SafetyError` |
+| `kiarina.agi.chat_provider` | `ChatProvider` contract, `BaseChatProvider` (request logging, with the call's cost), `ChatCapabilities`, and the errors `TokenOverflowError`, `MaxTokenError`, and `SafetyError` |
 | `kiarina.agi.chat_content` | Provider-independent content conversion: file bundles, metadata XML, merging text files, moving media a tool message cannot include into a following human turn, `cache_control`, and the `<messages>` XML transcript for runtimes that take one prompt |
 | `kiarina.agi.chat_provider_impl.<name>` | One target each: request and response conversion in `_operations`, and logging, cost, and error mapping in the provider model |
 
@@ -22,7 +22,7 @@ Providers call the vendor SDKs directly. There is no LangChain layer.
 - Register the factory in `ChatProviderSettings.presets`.
 - The provider is also the `MediaConverter`, returning the vendor's content part for each media type, or `None` to send only the file metadata.
 - Map the vendor's stop reasons to `SafetyError` and `MaxTokenError` (`SafetyError` takes an optional `category` and `request_id` when the vendor gives them), and parse the vendor's context overflow error text into `TokenOverflowError`.
-- Record cost from the vendor's usage. Check whether the vendor counts cached tokens inside the input token total.
+- Record cost from the vendor's usage with `ctx.add_cost_record()`, once per call. It keeps the record on the context, where `BaseChatProvider` puts it in the request log as `cost`, and adds it to the cost recorder. Do not add to `ctx.cost_recorder` directly: the call's request log would miss it. Check whether the vendor counts cached tokens inside the input token total.
 - Streaming yields `AIMessageChunk` items, then the final `AIMessage`. Tool call chunks and the final tool calls must share ids.
 
 ## Provider State

@@ -145,7 +145,7 @@ async def _read_events(
             final = event.message
             yield final
         elif event.type == "cost" and event.cost_record is not None:
-            ctx.cost_recorder.add(event.cost_record)
+            ctx.add_cost_record(event.cost_record)
         elif event.type == "error" and event.error is not None:
             raise event.error.to_exception()
 

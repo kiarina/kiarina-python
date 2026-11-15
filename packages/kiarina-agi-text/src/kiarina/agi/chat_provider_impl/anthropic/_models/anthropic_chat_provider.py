@@ -270,7 +270,7 @@ class AnthropicChatProvider(BaseChatProvider, MediaConverter):
         self, ctx: ChatProviderContext, result: AnthropicChatResult
     ) -> AIMessage:
         if result.usage:
-            ctx.cost_recorder.add(self._get_cost_record(result.usage))
+            ctx.add_cost_record(self._get_cost_record(result.usage))
 
         if result.stop_reason == "refusal":
             raise SafetyError()

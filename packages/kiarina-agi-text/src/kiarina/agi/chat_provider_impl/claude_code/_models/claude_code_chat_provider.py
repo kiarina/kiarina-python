@@ -278,7 +278,7 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
         self, ctx: ChatProviderContext, result: ClaudeCodeChatResult
     ) -> AIMessage:
         if result.usage:
-            ctx.cost_recorder.add(self._get_cost_record(result))
+            ctx.add_cost_record(self._get_cost_record(result))
 
         if result.stop_reason == "refusal":
             raise SafetyError()
