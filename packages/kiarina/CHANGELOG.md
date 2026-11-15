@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.43.0] - 2026-11-16
+
 ### Added
 - **kiarina-agi-text**: `ChatProviderContext.cost_record` and `add_cost_record()` keep the cost of one chat provider call. The request log of the call carries it as `cost` (`microdollars` and the token counts).
 
