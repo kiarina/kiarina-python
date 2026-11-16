@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.44.0] - 2026-11-16
+
 ### Added
 - `OpenAITokenPricing`: OpenAI's per-token API pricing and its `compute_cost()`. The `openai` and `codex` provider settings take it.
 
