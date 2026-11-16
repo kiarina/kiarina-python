@@ -4,11 +4,11 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsKey, SettingsManager
 
-from kiarina.agi.chat_provider import ChatCapabilities
+from kiarina.agi.chat_provider import ChatCapabilities, OpenAITokenPricing
 from kiarina.agi.file_info import FileType
 
 
-class OpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
+class OpenAIChatProviderSettings(ChatCapabilities, OpenAITokenPricing, BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="KIARINA_AGI_CHAT_PROVIDER_IMPL_OPENAI_",
         extra="ignore",
@@ -33,35 +33,20 @@ class OpenAIChatProviderSettings(ChatCapabilities, BaseSettings):
         "pdf": True,
     }
 
+    # The pricing of the default model.
     input_cost_microdollars_per_1k_tokens: int = 2_000
 
     cached_input_cost_microdollars_per_1k_tokens: int = 100
 
     output_cost_microdollars_per_1k_tokens: int = 10_000
 
-    cache_write_cost_multiplier: float = Field(
-        default=1.25,
-        title="Cache Write Cost Multiplier",
-        description="Multiplier applied to uncached input pricing for cache writes.",
-    )
+    cache_write_cost_multiplier: float = 1.25
 
-    extended_cost_threshold_tokens: int | None = Field(
-        default=272_000,
-        title="Extended Cost Threshold Tokens",
-        description="Input token threshold above which extended pricing applies.",
-    )
+    extended_cost_threshold_tokens: int | None = 272_000
 
-    extended_input_cost_multiplier: float = Field(
-        default=2.0,
-        title="Extended Input Cost Multiplier",
-        description="Input cost multiplier applied above the extended cost threshold.",
-    )
+    extended_input_cost_multiplier: float = 2.0
 
-    extended_output_cost_multiplier: float = Field(
-        default=1.5,
-        title="Extended Output Cost Multiplier",
-        description="Output cost multiplier applied above the extended cost threshold.",
-    )
+    extended_output_cost_multiplier: float = 1.5
 
     temperature: float | None = Field(
         default=1.0,

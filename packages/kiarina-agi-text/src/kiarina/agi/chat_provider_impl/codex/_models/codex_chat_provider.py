@@ -511,19 +511,29 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
         return result.ai_message
 
     def _get_cost_record(self, usage: dict[str, Any]) -> CostRecord:
-        """A subscription is not billed per request, so the cost is 0."""
+        """What the call would cost on the OpenAI API: the subscription is not billed per request."""
         cached_input_tokens = usage.get("cachedInputTokens") or 0
+        cache_write_tokens = usage.get("cacheWriteInputTokens") or 0
+        input_tokens = (
+            (usage.get("inputTokens") or 0) - cached_input_tokens - cache_write_tokens
+        )
+        output_tokens = usage.get("outputTokens") or 0
 
         return CostRecord(
-            microdollars=0,
+            microdollars=self.settings.compute_cost(
+                input_tokens=input_tokens,
+                cache_write_tokens=cache_write_tokens,
+                cached_input_tokens=cached_input_tokens,
+                output_tokens=output_tokens,
+            ),
             kind="chat",
             source=self.name,
             metadata={
                 "model_name": self.settings.model_name,
-                "input_tokens": (usage.get("inputTokens") or 0) - cached_input_tokens,
+                "input_tokens": input_tokens,
                 "cached_input_tokens": cached_input_tokens,
-                "cache_write_tokens": usage.get("cacheWriteInputTokens") or 0,
-                "output_tokens": usage.get("outputTokens") or 0,
+                "cache_write_tokens": cache_write_tokens,
+                "output_tokens": output_tokens,
                 "reasoning_output_tokens": usage.get("reasoningOutputTokens") or 0,
             },
         )

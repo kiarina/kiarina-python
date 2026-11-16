@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `OpenAITokenPricing`: OpenAI's per-token API pricing and its `compute_cost()`. The `openai` and `codex` provider settings take it.
+
+### Changed
+- The `codex` chat provider records what a call would cost on the OpenAI API as its cost (`microdollars`), priced with its settings. The `codex-*` presets carry the pricing of the same model's `openai` preset.
+- The `claude_code` chat provider records the cost Claude Code reports (`total_cost_usd`) as its cost (`microdollars`), in place of the `api_cost_microdollars` metadata.
+
 ## [2.43.0] - 2026-11-16
 
 ### Added

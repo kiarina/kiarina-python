@@ -1,4 +1,3 @@
-import math
 import re
 from collections.abc import AsyncIterator
 
@@ -182,27 +181,11 @@ class OpenAIChatProvider(BaseChatProvider):
             usage.prompt_tokens - usage.cached_input_tokens - usage.cache_write_tokens
         )
 
-        input_cost = self.settings.input_cost_microdollars_per_1k_tokens
-        cached_input_cost = self.settings.cached_input_cost_microdollars_per_1k_tokens
-        output_cost = self.settings.output_cost_microdollars_per_1k_tokens
-
-        input_multiplier = 1.0
-        output_multiplier = 1.0
-        threshold = self.settings.extended_cost_threshold_tokens
-
-        if threshold is not None and usage.prompt_tokens > threshold:
-            input_multiplier = self.settings.extended_input_cost_multiplier
-            output_multiplier = self.settings.extended_output_cost_multiplier
-
-        cost = math.ceil(
-            input_cost * input_multiplier * input_tokens / 1_000
-            + input_cost
-            * self.settings.cache_write_cost_multiplier
-            * input_multiplier
-            * usage.cache_write_tokens
-            / 1_000
-            + cached_input_cost * input_multiplier * usage.cached_input_tokens / 1_000
-            + output_cost * output_multiplier * usage.output_tokens / 1_000
+        cost = self.settings.compute_cost(
+            input_tokens=input_tokens,
+            cache_write_tokens=usage.cache_write_tokens,
+            cached_input_tokens=usage.cached_input_tokens,
+            output_tokens=usage.output_tokens,
         )
 
         return CostRecord(

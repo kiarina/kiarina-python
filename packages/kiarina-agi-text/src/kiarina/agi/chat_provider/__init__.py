@@ -11,6 +11,7 @@ from ._operations.compute_message_hashes import compute_message_hashes
 from ._schemas.chat_capabilities import ChatCapabilities
 from ._schemas.chat_provider_context import ChatProviderContext
 from ._schemas.chat_provider_state import ChatProviderState
+from ._schemas.openai_token_pricing import OpenAITokenPricing
 from ._settings import ChatProviderSettings, settings_manager
 from ._types.chat_provider import ChatProvider
 from ._types.chat_provider_name import ChatProviderName
@@ -36,6 +37,7 @@ __all__ = [
     "ChatCapabilities",
     "ChatProviderContext",
     "ChatProviderState",
+    "OpenAITokenPricing",
     # ._settings
     "ChatProviderSettings",
     "settings_manager",

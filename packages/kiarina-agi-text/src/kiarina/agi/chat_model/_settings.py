@@ -481,13 +481,21 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # codex
             # --------------------------------------------------
-            # Runs Codex with its local login (a ChatGPT subscription), so it
-            # records no cost. The context window is the subscription's, and the
-            # reasoning effort is Codex's default for each model.
+            # Runs Codex with its local login (a ChatGPT subscription). It records
+            # what a call would cost on the OpenAI API. The context window is the
+            # subscription's, and the reasoning effort is Codex's default for each
+            # model.
             "codex-gpt-6-astra": ChatModelConfig(
                 provider_name="codex",
                 provider_config={
                     "model_name": "gpt-6-astra",
+                    "input_cost_microdollars_per_1k_tokens": 10_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 1_000,
+                    "output_cost_microdollars_per_1k_tokens": 50_000,
+                    "cache_write_cost_multiplier": 1.25,
+                    "extended_cost_threshold_tokens": 272_000,
+                    "extended_input_cost_multiplier": 2.0,
+                    "extended_output_cost_multiplier": 1.5,
                     "reasoning_effort": "medium",
                     "context_window": 272_000,
                     "token_count_limit": 240_000,
@@ -500,6 +508,13 @@ class ChatModelSettings(BaseSettings):
                 provider_name="codex",
                 provider_config={
                     "model_name": "gpt-6.1-sol",
+                    "input_cost_microdollars_per_1k_tokens": 2_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 100,
+                    "output_cost_microdollars_per_1k_tokens": 10_000,
+                    "cache_write_cost_multiplier": 1.25,
+                    "extended_cost_threshold_tokens": 272_000,
+                    "extended_input_cost_multiplier": 2.0,
+                    "extended_output_cost_multiplier": 1.5,
                     "reasoning_effort": "low",
                     "context_window": 500_000,
                     "token_count_limit": 440_000,
@@ -512,6 +527,13 @@ class ChatModelSettings(BaseSettings):
                 provider_name="codex",
                 provider_config={
                     "model_name": "gpt-6.1-terra",
+                    "input_cost_microdollars_per_1k_tokens": 1_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 50,
+                    "output_cost_microdollars_per_1k_tokens": 5_000,
+                    "cache_write_cost_multiplier": 1.25,
+                    "extended_cost_threshold_tokens": 272_000,
+                    "extended_input_cost_multiplier": 2.0,
+                    "extended_output_cost_multiplier": 1.5,
                     "reasoning_effort": "low",
                     "context_window": 500_000,
                     "token_count_limit": 440_000,
@@ -524,6 +546,13 @@ class ChatModelSettings(BaseSettings):
                 provider_name="codex",
                 provider_config={
                     "model_name": "gpt-6-luna",
+                    "input_cost_microdollars_per_1k_tokens": 100,
+                    "cached_input_cost_microdollars_per_1k_tokens": 10,
+                    "output_cost_microdollars_per_1k_tokens": 500,
+                    "cache_write_cost_multiplier": 1.25,
+                    "extended_cost_threshold_tokens": 272_000,
+                    "extended_input_cost_multiplier": 2.0,
+                    "extended_output_cost_multiplier": 1.5,
                     "reasoning_effort": "medium",
                     "context_window": 272_000,
                     "token_count_limit": 240_000,
@@ -535,8 +564,8 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # claude_code
             # --------------------------------------------------
-            # Runs Claude Code with its local login (a Claude subscription), so it
-            # records no cost.
+            # Runs Claude Code with its local login (a Claude subscription). It
+            # records what a call would cost on the API, as Claude Code reports it.
             "claude-code-sonnet-5-5": ChatModelConfig(
                 provider_name="claude_code",
                 provider_config={

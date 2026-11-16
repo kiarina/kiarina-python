@@ -289,7 +289,10 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
         return result.ai_message
 
     def _get_cost_record(self, result: ClaudeCodeChatResult) -> CostRecord:
-        """A subscription is not billed per request, so the cost is 0."""
+        """
+        What the call would cost on the API, as Claude Code reports it: the
+        subscription is not billed per request.
+        """
         usage = result.usage
         metadata: dict[str, Any] = {
             "model_name": self.settings.model_name,
@@ -298,14 +301,14 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
             "cached_input_tokens": usage.get("cache_read_input_tokens", 0),
             "output_tokens": usage.get("output_tokens", 0),
         }
-
-        if result.total_cost_usd is not None:
-            metadata["api_cost_microdollars"] = math.ceil(
-                result.total_cost_usd * 1_000_000
-            )
+        microdollars = (
+            math.ceil(result.total_cost_usd * 1_000_000)
+            if result.total_cost_usd is not None
+            else 0
+        )
 
         return CostRecord(
-            microdollars=0, kind="chat", source=self.name, metadata=metadata
+            microdollars=microdollars, kind="chat", source=self.name, metadata=metadata
         )
 
 

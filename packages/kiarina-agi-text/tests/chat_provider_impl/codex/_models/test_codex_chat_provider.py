@@ -288,7 +288,8 @@ async def test_run_tool_call(
     }
 
     [record] = recorder.records
-    assert record.microdollars == 0
+    # At GPT-6.1 Sol's API pricing: 60 input, 40 cached, 10 output tokens.
+    assert record.microdollars == 120 + 4 + 100
     assert record.metadata == {
         "model_name": "gpt-6.1-sol",
         "input_tokens": 60,

@@ -258,14 +258,13 @@ async def test_run_tool_call(
     assert fake.calls[0]["options"].system_prompt.startswith("Be brief.\n\n")
 
     [record] = recorder.records
-    assert record.microdollars == 0
+    assert record.microdollars == 12_300
     assert record.metadata == {
         "model_name": "claude-sonnet-5-5",
         "input_tokens": 10,
         "cache_write_tokens": 20,
         "cached_input_tokens": 30,
         "output_tokens": 5,
-        "api_cost_microdollars": 12_300,
     }
 
 

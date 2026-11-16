@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **kiarina-agi-text**: The `codex` and `claude_code` chat providers record what a call would cost on the API as its cost (`microdollars`), so the cost logic runs as it would with an API provider. Codex prices its tokens with the new `OpenAITokenPricing`, shared with the `openai` provider.
+
 ## [2.43.0] - 2026-11-16
 
 ### Added

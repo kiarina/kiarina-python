@@ -3,14 +3,17 @@ from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_settings_manager import SettingsManager
 
-from kiarina.agi.chat_provider import ChatCapabilities
+from kiarina.agi.chat_provider import ChatCapabilities, OpenAITokenPricing
 from kiarina.agi.file_info import FileType
 
 
-class CodexChatProviderSettings(ChatCapabilities, BaseSettings):
+class CodexChatProviderSettings(ChatCapabilities, OpenAITokenPricing, BaseSettings):
     """
     Runs `codex app-server` with its own login (a ChatGPT subscription), one new
     process and thread per request.
+
+    The subscription is not billed per request, but a call records what it would
+    cost on the OpenAI API with the pricing, so the cost can be tried as if it were.
     """
 
     model_config = SettingsConfigDict(
@@ -38,6 +41,21 @@ class CodexChatProviderSettings(ChatCapabilities, BaseSettings):
     output_enabled: dict[FileType, bool] = {
         "image": True,
     }
+
+    # The API pricing of the default model.
+    input_cost_microdollars_per_1k_tokens: int = 2_000
+
+    cached_input_cost_microdollars_per_1k_tokens: int = 100
+
+    output_cost_microdollars_per_1k_tokens: int = 10_000
+
+    cache_write_cost_multiplier: float = 1.25
+
+    extended_cost_threshold_tokens: int | None = 272_000
+
+    extended_input_cost_multiplier: float = 2.0
+
+    extended_output_cost_multiplier: float = 1.5
 
     timeout: float | None = 600.0
 
