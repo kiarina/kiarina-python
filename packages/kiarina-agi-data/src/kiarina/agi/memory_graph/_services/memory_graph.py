@@ -1,8 +1,7 @@
-import time
-
 import numpy as np
 from pydantic import BaseModel, Field
 
+from kiarina.agi.clock import get_clock
 from kiarina.agi.embedding import Embedding, search_embeddings
 from kiarina.agi.memory import Memory, MemoryID, MemoryType
 
@@ -57,7 +56,7 @@ class MemoryGraph(BaseModel):
         bidirectional: bool = True,
         remaining_time: float = 0,
     ) -> None:
-        now = time.time()
+        now = get_clock().now().timestamp()
         self._connect(source_id, target_id, remaining_time, now)
 
         if bidirectional:
@@ -83,7 +82,7 @@ class MemoryGraph(BaseModel):
         bidirectional: bool = True,
         acceleration_time: float = 0,
     ) -> None:
-        now = time.time()
+        now = get_clock().now().timestamp()
         self._forget(source_id, target_id, acceleration_time, now)
 
         if bidirectional:
@@ -174,7 +173,7 @@ class MemoryGraph(BaseModel):
         offset: int = 0,
         limit: int = 0,
     ) -> list[MemoryID]:
-        now = time.time()
+        now = get_clock().now().timestamp()
         visited = {id}
         current_level = {id}
 

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **kiarina-agi-base**: `kiarina.agi.clock` gives one process-wide clock. `get_clock()` returns the system clock until `set_clock()` sets another (a simulated time); `set_clock(None)` goes back to the system clock.
+
+### Changed
+- **kiarina-agi-data**: `MemoryGraph` reads the time from `get_clock()` when it connects, forgets and finds adjacent memories, so decaying connections follow a replaced clock. It needs the `kiarina-agi-base` with `kiarina.agi.clock`.
+
 ## [2.44.0] - 2026-11-16
 
 ### Changed

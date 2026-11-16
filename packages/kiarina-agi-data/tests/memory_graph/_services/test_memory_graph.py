@@ -1,9 +1,27 @@
-from datetime import UTC
+from collections.abc import Iterator
+from datetime import UTC, datetime
 
 import pytest
 
+from kiarina.agi.clock import set_clock
 from kiarina.agi.memory import Memory
 from kiarina.agi.memory_graph import MemoryGraph
+
+
+class SecondsClock:
+    def __init__(self) -> None:
+        self.seconds = 0.0
+
+    def now(self) -> datetime:
+        return datetime.fromtimestamp(self.seconds, UTC)
+
+
+@pytest.fixture
+def clock() -> Iterator[SecondsClock]:
+    clock = SecondsClock()
+    set_clock(clock)
+    yield clock
+    set_clock(None)
 
 
 @pytest.fixture
@@ -55,9 +73,9 @@ def test_delete_removes_node_and_all_connected_edges(graph: MemoryGraph) -> None
 
 
 def test_connect_is_bidirectional_by_default(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    graph: MemoryGraph, clock: SecondsClock
 ) -> None:
-    monkeypatch.setattr("time.time", lambda: 100.0)
+    clock.seconds = 100.0
 
     graph.connect("m1", "m2", remaining_time=10)
 
@@ -71,9 +89,9 @@ def test_connect_can_be_unidirectional(graph: MemoryGraph) -> None:
 
 
 def test_connect_promotes_an_existing_edge_to_permanent(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    graph: MemoryGraph, clock: SecondsClock
 ) -> None:
-    monkeypatch.setattr("time.time", lambda: 100.0)
+    clock.seconds = 100.0
     graph.connect("m1", "m2", remaining_time=10)
 
     graph.connect("m1", "m2")
@@ -83,13 +101,12 @@ def test_connect_promotes_an_existing_edge_to_permanent(
 
 
 def test_connect_extends_an_existing_decaying_edge(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    graph: MemoryGraph, clock: SecondsClock
 ) -> None:
-    now = 100.0
-    monkeypatch.setattr("time.time", lambda: now)
+    clock.seconds = 100.0
     graph.connect("m1", "m2", remaining_time=10)
 
-    now = 105.0
+    clock.seconds = 105.0
     graph.connect("m1", "m2", remaining_time=10)
 
     assert graph.edges["m1"]["m2"] == 120.0
@@ -97,10 +114,10 @@ def test_connect_extends_an_existing_decaying_edge(
 
 
 def test_connect_does_not_change_a_permanent_edge(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    graph: MemoryGraph, clock: SecondsClock
 ) -> None:
     graph.connect("m1", "m2")
-    monkeypatch.setattr("time.time", lambda: 100.0)
+    clock.seconds = 100.0
 
     graph.connect("m1", "m2", remaining_time=10)
 
@@ -124,10 +141,8 @@ def test_disconnect_can_be_unidirectional(graph: MemoryGraph) -> None:
     assert graph.edges == {"m2": {"m1": 0}}
 
 
-def test_forget_accelerates_decay(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    monkeypatch.setattr("time.time", lambda: 100.0)
+def test_forget_accelerates_decay(graph: MemoryGraph, clock: SecondsClock) -> None:
+    clock.seconds = 100.0
     graph.connect("m1", "m2", remaining_time=20)
 
     graph.forget("m1", "m2", acceleration_time=5)
@@ -137,9 +152,9 @@ def test_forget_accelerates_decay(
 
 
 def test_forget_removes_an_expired_edge(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    graph: MemoryGraph, clock: SecondsClock
 ) -> None:
-    monkeypatch.setattr("time.time", lambda: 100.0)
+    clock.seconds = 100.0
     graph.connect("m1", "m2", remaining_time=10)
 
     graph.forget("m1", "m2", acceleration_time=10)
@@ -148,10 +163,10 @@ def test_forget_removes_an_expired_edge(
 
 
 def test_forget_does_not_change_a_permanent_edge(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    graph: MemoryGraph, clock: SecondsClock
 ) -> None:
     graph.connect("m1", "m2")
-    monkeypatch.setattr("time.time", lambda: 100.0)
+    clock.seconds = 100.0
 
     graph.forget("m1", "m2", acceleration_time=10)
 
@@ -185,15 +200,14 @@ def test_find_adjacent_ids_filters_memory_type(graph: MemoryGraph) -> None:
 
 
 def test_find_adjacent_ids_excludes_expired_edges(
-    graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    graph: MemoryGraph, clock: SecondsClock
 ) -> None:
     graph.mset([create_memory("m1"), create_memory("m2"), create_memory("m3")])
-    now = 100.0
-    monkeypatch.setattr("time.time", lambda: now)
+    clock.seconds = 100.0
     graph.connect("m1", "m2", remaining_time=10)
     graph.connect("m1", "m3")
 
-    now = 110.0
+    clock.seconds = 110.0
 
     assert graph.find_adjacent_ids("m1") == ["m3"]
 
@@ -321,9 +335,9 @@ def test_search_ids_intersects_type_and_ids_before_top_k(
 
 
 def test_adjacent_ids_feed_search_without_expanding_empty_scope(
-    vector_graph: MemoryGraph, monkeypatch: pytest.MonkeyPatch
+    vector_graph: MemoryGraph, clock: SecondsClock
 ) -> None:
-    monkeypatch.setattr("time.time", lambda: 100.0)
+    clock.seconds = 100.0
     vector_graph.connect("emotion", "c", bidirectional=False)
     vector_graph.connect("emotion", "e", bidirectional=False)
     vector_graph.edges["emotion"]["a"] = 99.0

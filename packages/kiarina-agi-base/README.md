@@ -41,6 +41,8 @@ pip install kiarina-agi-base
   Write successful and failed request content to the console or local Markdown files.
 - **Token estimation**
   Estimate token counts for text, images, audio, video, and PDFs.
+- **Clock**
+  Read the current time from one replaceable clock, so a simulation can move it.
 - **Formatting and media types**
   Format console output, costs, and file references, and annotate image arrays.
 
@@ -144,6 +146,28 @@ from kiarina.agi.token_utils import (
 text_tokens = calc_text_token("Hello, world!")
 image_tokens = calc_image_token(ImageSize(width=1024, height=768))
 ```
+
+### Clock
+
+`get_clock()` returns the system clock until another one is set. Set a clock that follows a simulated time, and `None` to go back to the system clock.
+
+```python
+from datetime import UTC, datetime
+
+from kiarina.agi.clock import get_clock, set_clock
+
+
+class FixedClock:
+    def now(self) -> datetime:
+        return datetime(2026, 1, 1, tzinfo=UTC)
+
+
+set_clock(FixedClock())
+now = get_clock().now()
+set_clock(None)
+```
+
+The clock is process-wide. Only the code that reads it follows a replaced clock: `MemoryGraph` in `kiarina-agi-data` does.
 
 ## API Reference
 
@@ -749,6 +773,45 @@ ConsoleColor = Literal[
     "white",
 ]
 ```
+
+### `kiarina.agi.clock`
+
+```python
+from kiarina.agi.clock import (
+    Clock,
+    SystemClock,
+    get_clock,
+    set_clock,
+)
+```
+
+#### `Clock`
+
+```python
+@runtime_checkable
+class Clock(Protocol):
+    def now(self) -> datetime: ...
+```
+
+A source of the current time. `now()` returns a timezone-aware datetime.
+
+#### `SystemClock`
+
+```python
+class SystemClock:
+    def now(self) -> datetime: ...
+```
+
+Returns `datetime.now(UTC)`.
+
+#### `get_clock` / `set_clock`
+
+```python
+def get_clock() -> Clock: ...
+def set_clock(clock: Clock | None) -> None: ...
+```
+
+`get_clock()` returns the process-wide clock, creating a `SystemClock` on the first call. `set_clock()` replaces it; `None` goes back to a new `SystemClock`.
 
 ### `kiarina.agi.cost_utils`
 
