@@ -11,7 +11,7 @@
 
 | Package | Version | License |
 | --- | --- | --- |
-| [kiarina-agi-base](../kiarina-agi-base/) | `>=2.5.0` | MIT |
+| [kiarina-agi-base](../kiarina-agi-base/) | `>=2.45.0` | MIT |
 | [kiarina-agi-file](../kiarina-agi-file/) | `>=2.5.0` | MIT |
 | [kiarina-utils-common](../kiarina-utils-common/) | `>=2.3.0` | MIT |
 | [kiarina-utils-file](../kiarina-utils-file/) | `>=2.3.1` | MIT |

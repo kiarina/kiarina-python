@@ -1328,7 +1328,7 @@ wheels = [
 
 [[package]]
 name = "kiarina"
-version = "2.44.0"
+version = "2.45.0"
 source = { editable = "packages/kiarina" }
 dependencies = [
     { name = "kiarina-agi-audio" },
@@ -1534,7 +1534,7 @@ provides-extras = ["all", "asr-provider-google", "asr-provider-openai", "audio-e
 
 [[package]]
 name = "kiarina-agi-base"
-version = "2.34.0"
+version = "2.45.0"
 source = { editable = "packages/kiarina-agi-base" }
 dependencies = [
     { name = "jaxtyping" },
@@ -1571,7 +1571,7 @@ requires-dist = [
 
 [[package]]
 name = "kiarina-agi-data"
-version = "2.38.0"
+version = "2.45.0"
 source = { editable = "packages/kiarina-agi-data" }
 dependencies = [
     { name = "jaxtyping" },

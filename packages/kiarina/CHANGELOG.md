@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.45.0] - 2026-11-17
+
 ### Added
 - **kiarina-agi-base**: `kiarina.agi.clock` gives one process-wide clock. `get_clock()` returns the system clock until `set_clock()` sets another (a simulated time); `set_clock(None)` goes back to the system clock.
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.45.0] - 2026-11-17
+
 ### Added
 - `kiarina.agi.clock`: the `Clock` protocol, `SystemClock`, and the process-wide `get_clock()` and `set_clock()`. `get_clock()` creates a `SystemClock` on the first call; `set_clock(None)` goes back to it.
 

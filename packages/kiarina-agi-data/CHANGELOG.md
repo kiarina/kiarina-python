@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.45.0] - 2026-11-17
+
 ### Changed
 - `MemoryGraph.connect()`, `forget()` and `find_adjacent_ids()` read the time from `kiarina.agi.clock.get_clock()` instead of `time.time()`, so decaying connections follow a replaced clock. Requires the `kiarina-agi-base` release with `kiarina.agi.clock`.
 
