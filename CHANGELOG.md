@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.46.0] - 2026-11-18
+
+### Added
+- **kiarina-agi-text**: Add one chat model alias per model line that points to its latest preset: `gpt-astra`, `gpt-sol`, `gpt-terra`, `gpt-luna`, `claude-fable`, `claude-opus`, `claude-sonnet`, `claude-haiku`, the same four with `vclaude-`, `gemini-argon`, `gemini-flash`, `gemini-flash-lite`, `codex-gpt-astra`, `codex-gpt-sol`, `codex-gpt-terra`, `codex-gpt-luna`, and `claude-code-fable`, `claude-code-opus`, `claude-code-sonnet`, `claude-code-haiku`.
+
+### Changed
+- **kiarina-agi-text**: Update the chat model presets to GPT-6.2 Astra and Sol (`gpt-6.2-astra`, `gpt-6.2-sol`, `codex-gpt-6.2-astra`, `codex-gpt-6.2-sol`) and Claude Fable 5.2 (`claude-fable-5-2`, `vclaude-fable-5-2`, `claude-code-fable-5-2`), and remove the GPT-6 Astra, GPT-6.1 Sol, and Fable 5.1 presets. The `llm`, `vlm`, `openai`, and `codex` aliases and the `openai` and `codex` provider defaults move to GPT-6.2 Sol.
+- **kiarina-agi-text**: The `codex` chat provider takes a model missing from `~/.codex/models_cache.json` from `codex debug models` of the Codex it runs, since an older Codex on the same machine can leave newer models out of the cache.
+
+### Fixed
+- **kiarina-agi-text**: The `anthropic` chat provider does not force a tool choice on Claude Fable 5.2, which rejects it.
+
 ## [2.45.0] - 2026-11-17
 
 ### Added
