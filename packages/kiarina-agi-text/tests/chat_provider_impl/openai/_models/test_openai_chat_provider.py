@@ -247,7 +247,7 @@ def test_get_cost_record_extended_pricing(
 
     assert cost_record.microdollars == expected_microdollars
     assert cost_record.metadata == {
-        "model_name": "gpt-6.1-sol",
+        "model_name": "gpt-6.2-sol",
         "input_tokens": prompt_tokens - 2_000,
         "cache_write_tokens": 1_000,
         "cached_input_tokens": 1_000,

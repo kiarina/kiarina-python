@@ -16,7 +16,7 @@ class OpenAIChatProviderSettings(ChatCapabilities, OpenAITokenPricing, BaseSetti
 
     openai_settings_key: SettingsKey | None = None
 
-    model_name: str = "gpt-6.1-sol"
+    model_name: str = "gpt-6.2-sol"
 
     max_output_tokens: int = 128_000
 

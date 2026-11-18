@@ -50,6 +50,8 @@ Keep an older model when it retains a distinct role such as lower price, lower l
 
 Assign aliases only to stable presets intended for normal use. Ensure no alias refers to a removed preset.
 
+Each model line has an alias that points to its latest preset (`gpt-sol`, `claude-opus`, `vclaude-opus`, `gemini-flash`, `codex-gpt-sol`, `claude-code-opus`, and so on). Move the line's alias to a new version when it replaces the old one, so callers that name the line follow without changes.
+
 ### 3. Update settings
 
 Register the model-specific values in `ChatModelSettings.presets`.
@@ -134,13 +136,14 @@ Before completion, confirm that:
 
 ## Current Preset Set
 
-Checked on 2026-10-28.
+Checked on 2026-11-18.
 
-- OpenAI: GPT-6 Astra (top tier), GPT-6.1 Sol (`llm`, `vlm`, and `openai` aliases), GPT-6.1 Terra (between Sol and Luna), and GPT-6 Luna (lowest cost). GPT-6 Luna replaced GPT-5.4 Mini and Nano. `gpt-6-sol` is the earlier Sol and is not a preset.
-- Anthropic: Claude Sonnet 5.5 (`anthropic` alias), Opus 5.5, Fable 5.1 (hidden), and Haiku 5.5 (lower cost; it replaced Haiku 4.5), each also as a hidden `vclaude-*` preset on the `global` location. Haiku 5.5 is priced 5x for a prompt over 100K tokens (cache reads and writes included), set with `extended_cost_threshold_tokens`; the other presets set it to `None`.
+- OpenAI: GPT-6.2 Astra (top tier), GPT-6.2 Sol (`llm`, `vlm`, and `openai` aliases), GPT-6.1 Terra (between Sol and Luna), and GPT-6 Luna (lowest cost). GPT-6.2 Astra and Sol replaced GPT-6 Astra and GPT-6.1 Sol at the same or lower price. GPT-6 Luna replaced GPT-5.4 Mini and Nano.
+- Anthropic: Claude Sonnet 5.5 (`anthropic` alias), Opus 5.5, Fable 5.2 (hidden; it replaced Fable 5.1 at a lower price), and Haiku 5.5 (lower cost; it replaced Haiku 4.5), each also as a hidden `vclaude-*` preset on the `global` location. Haiku 5.5 is priced 5x for a prompt over 100K tokens (cache reads and writes included), set with `extended_cost_threshold_tokens`; the other presets set it to `None`.
 - Google: Gemini 4 Argon (top tier), Gemini 3.8 Flash (`google` and `omni` aliases), and Gemini 3.5 Flash-Lite (lower cost). Argon and 3.8 Flash have introductory prices until the end of November and December 2026; the presets use the regular prices after them. Gemini 3.6 Flash is an earlier Flash at the same price and is not a preset.
 - local: Qwen3.8-Flash-Next with and without thinking (`local` alias), Qwen3.8-27B, and Qwen3-Omni on kiapi, at zero cost.
-- Subscriptions, all shown, at zero cost (they use the subscription quota instead, and need the local Codex and Claude Code logins): `codex-gpt-6-astra`, `codex-gpt-6.1-sol`, `codex-gpt-6.1-terra`, and `codex-gpt-6-luna` (Codex, with Codex's default reasoning effort for each; `codex` alias on GPT-6.1 Sol), then `claude-code-sonnet-5-5`, `claude-code-opus-5-5`, `claude-code-fable-5-1`, and `claude-code-haiku-5-5` (Claude Code; `claude_code` alias on Opus 5.5). They mirror the API presets of the same models. Their context windows are the subscription's, not the API's: Codex's model list (`~/.codex/models_cache.json`) gives GPT-6.1 Sol and Terra 500K and the other GPT-6 models 272K.
-- Provider defaults (the settings of a provider used without a preset) follow one current model each: `openai` GPT-6.1 Sol (its endpoint and temperature defaults stay, since the local presets rely on them), `anthropic` and `anthropic_vertex` Haiku 5.5 (`global`), `google` Gemini 4 Argon, `codex` GPT-6.1 Sol, and `claude_code` Sonnet 5.5.
+- Subscriptions, all shown, at zero cost (they use the subscription quota instead, and need the local Codex and Claude Code logins): `codex-gpt-6.2-astra`, `codex-gpt-6.2-sol`, `codex-gpt-6.1-terra`, and `codex-gpt-6-luna` (Codex, with Codex's default reasoning effort for each; `codex` alias on GPT-6.2 Sol), then `claude-code-sonnet-5-5`, `claude-code-opus-5-5`, `claude-code-fable-5-2`, and `claude-code-haiku-5-5` (Claude Code; `claude_code` alias on Opus 5.5). They mirror the API presets of the same models. Their context windows are the subscription's, not the API's: Codex's model list (`codex debug models`) gives GPT-6.2 Sol and GPT-6.1 Terra 500K and the other GPT-6 models 272K.
+- Provider defaults (the settings of a provider used without a preset) follow one current model each: `openai` GPT-6.2 Sol (its endpoint and temperature defaults stay, since the local presets rely on them), `anthropic` and `anthropic_vertex` Haiku 5.5 (`global`), `google` Gemini 4 Argon, `codex` GPT-6.2 Sol, and `claude_code` Sonnet 5.5.
+- GPT-6.2 Sol and Astra fail `test_tool_infos_parallel` on the API too: asked for the weather and the news with no place, they call only `get_news` (GPT-6.1 Sol called both). Read it as the model's judgment.
 - The addition-only helper tests fail `test_tool_infos_not_parallel` on every `claude-code-*` preset (the forced tool choice is only an instruction, and the model calls both tools) and `test_tool_infos_parallel` on every `codex-*` preset (Codex calls one tool per turn). Read these two as provider behavior, not a model incompatibility.
 - Prices are list prices. Temporary promotional prices are not used.

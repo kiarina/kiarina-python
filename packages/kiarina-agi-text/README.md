@@ -153,6 +153,8 @@ settings_manager: SettingsManager[ChatModelSettings]
 
 `ChatModelSettings` is a Pydantic settings class with `default`, `aliases`, `presets`, and `customs` fields.
 
+The default aliases include one per model line, such as `gpt-sol`, `claude-opus`, `codex-gpt-sol`, and `claude-code-opus`, which point to the latest preset of that line. A chat model resolved from an alias is named after the preset.
+
 ### `kiarina.agi.chat_proxy`
 
 ```python

@@ -1,6 +1,8 @@
 import asyncio
+import json
 import logging
 import os
+import subprocess
 import tempfile
 from collections.abc import AsyncIterator
 from pathlib import Path
@@ -165,11 +167,22 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
 
     def create_session(self, tmp: Path) -> CodexAppServerSession:
         codex_home = self.codex_home
+        codex_bin = self.settings.codex_bin or str(codex_cli_bin.bundled_codex_path())
+        env = {**os.environ, **self.settings.env}
+
+        if self.settings.codex_bin is None and (
+            path_dir := codex_cli_bin.bundled_path_dir()
+        ):
+            env["PATH"] = os.pathsep.join([str(path_dir), env.get("PATH", "")])
+
         catalog_path = create_model_catalog(
-            codex_home, self.settings.model_name, tmp / "models.json"
+            codex_home,
+            self.settings.model_name,
+            tmp / "models.json",
+            list_models=lambda: self._list_models(codex_bin, codex_home, env),
         )
 
-        args = [self.settings.codex_bin or str(codex_cli_bin.bundled_codex_path())]
+        args = [codex_bin]
 
         for override in [
             *create_config_overrides(codex_home, catalog_path),
@@ -179,18 +192,25 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
 
         args += ["app-server", "--listen", "stdio://"]
 
-        env = {**os.environ, **self.settings.env}
-
-        if self.settings.codex_bin is None and (
-            path_dir := codex_cli_bin.bundled_path_dir()
-        ):
-            env["PATH"] = os.pathsep.join([str(path_dir), env.get("PATH", "")])
-
         return CodexAppServerSession(args, env=env, cwd=str(tmp))
 
     # --------------------------------------------------
     # Private Methods
     # --------------------------------------------------
+
+    def _list_models(
+        self, codex_bin: str, codex_home: Path, env: dict[str, str]
+    ) -> list[dict[str, Any]]:
+        result = subprocess.run(
+            [codex_bin, "debug", "models"],
+            env={**env, "CODEX_HOME": str(codex_home)},
+            capture_output=True,
+            text=True,
+            timeout=60,
+            check=True,
+        )
+        models: list[dict[str, Any]] = json.loads(result.stdout).get("models", [])
+        return models
 
     async def _convert(
         self,

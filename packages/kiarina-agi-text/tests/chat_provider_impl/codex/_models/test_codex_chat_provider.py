@@ -217,7 +217,7 @@ def test_to_image_content(image_file_blob: FileBlob) -> None:
 
 def test_create_session(tmp_path: Path) -> None:
     (tmp_path / "models_cache.json").write_text(
-        json.dumps({"models": [{"slug": "gpt-6.1-sol"}]})
+        json.dumps({"models": [{"slug": "gpt-6.2-sol"}]})
     )
     provider = CodexChatProvider(
         CodexChatProviderSettings(
@@ -288,10 +288,10 @@ async def test_run_tool_call(
     }
 
     [record] = recorder.records
-    # At GPT-6.1 Sol's API pricing: 60 input, 40 cached, 10 output tokens.
+    # At GPT-6.2 Sol's API pricing: 60 input, 40 cached, 10 output tokens.
     assert record.microdollars == 120 + 4 + 100
     assert record.metadata == {
-        "model_name": "gpt-6.1-sol",
+        "model_name": "gpt-6.2-sol",
         "input_tokens": 60,
         "cached_input_tokens": 40,
         "cache_write_tokens": 0,

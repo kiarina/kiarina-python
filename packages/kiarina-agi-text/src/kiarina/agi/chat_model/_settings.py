@@ -19,16 +19,40 @@ class ChatModelSettings(BaseSettings):
     aliases: dict[ChatModelAlias, ChatModelName] = Field(
         default_factory=lambda: {
             # modalities
-            "llm": "gpt-6.1-sol",
-            "vlm": "gpt-6.1-sol",
+            "llm": "gpt-6.2-sol",
+            "vlm": "gpt-6.2-sol",
             "omni": "gemini-3.8-flash",
             # providers
             "local": "qwen3.8-flash-next-fast",
-            "openai": "gpt-6.1-sol",
+            "openai": "gpt-6.2-sol",
             "anthropic": "claude-sonnet-5-5",
             "google": "gemini-3.8-flash",
-            "codex": "codex-gpt-6.1-sol",
+            "codex": "codex-gpt-6.2-sol",
             "claude_code": "claude-code-opus-5-5",
+            # model lines: the latest version of each line
+            "gpt-astra": "gpt-6.2-astra",
+            "gpt-sol": "gpt-6.2-sol",
+            "gpt-terra": "gpt-6.1-terra",
+            "gpt-luna": "gpt-6-luna",
+            "claude-fable": "claude-fable-5-2",
+            "claude-opus": "claude-opus-5-5",
+            "claude-sonnet": "claude-sonnet-5-5",
+            "claude-haiku": "claude-haiku-5-5",
+            "vclaude-fable": "vclaude-fable-5-2",
+            "vclaude-opus": "vclaude-opus-5-5",
+            "vclaude-sonnet": "vclaude-sonnet-5-5",
+            "vclaude-haiku": "vclaude-haiku-5-5",
+            "gemini-argon": "gemini-4-argon",
+            "gemini-flash": "gemini-3.8-flash",
+            "gemini-flash-lite": "gemini-3.5-flash-lite",
+            "codex-gpt-astra": "codex-gpt-6.2-astra",
+            "codex-gpt-sol": "codex-gpt-6.2-sol",
+            "codex-gpt-terra": "codex-gpt-6.1-terra",
+            "codex-gpt-luna": "codex-gpt-6-luna",
+            "claude-code-fable": "claude-code-fable-5-2",
+            "claude-code-opus": "claude-code-opus-5-5",
+            "claude-code-sonnet": "claude-code-sonnet-5-5",
+            "claude-code-haiku": "claude-code-haiku-5-5",
         }
     )
 
@@ -129,15 +153,15 @@ class ChatModelSettings(BaseSettings):
             # --------------------------------------------------
             # openai
             # --------------------------------------------------
-            "gpt-6-astra": ChatModelConfig(
+            "gpt-6.2-astra": ChatModelConfig(
                 provider_name="openai",
                 provider_config={
-                    "model_name": "gpt-6-astra",
+                    "model_name": "gpt-6.2-astra",
                     "context_window": 1_050_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 10_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 1_000,
-                    "output_cost_microdollars_per_1k_tokens": 50_000,
+                    "input_cost_microdollars_per_1k_tokens": 8_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 400,
+                    "output_cost_microdollars_per_1k_tokens": 40_000,
                     "cache_write_cost_multiplier": 1.25,
                     "extended_cost_threshold_tokens": 272_000,
                     "extended_input_cost_multiplier": 2.0,
@@ -150,10 +174,10 @@ class ChatModelSettings(BaseSettings):
                     "input_enabled": {"image": True, "pdf": True},
                 },
             ),
-            "gpt-6.1-sol": ChatModelConfig(
+            "gpt-6.2-sol": ChatModelConfig(
                 provider_name="openai",
                 provider_config={
-                    "model_name": "gpt-6.1-sol",
+                    "model_name": "gpt-6.2-sol",
                     "context_window": 1_050_000,
                     "max_output_tokens": 128_000,
                     "input_cost_microdollars_per_1k_tokens": 2_000,
@@ -257,17 +281,17 @@ class ChatModelSettings(BaseSettings):
                 },
                 token_scale_factor=0.7,
             ),
-            "claude-fable-5-1": ChatModelConfig(
+            "claude-fable-5-2": ChatModelConfig(
                 provider_name="anthropic",
                 provider_config={
-                    "model_name": "claude-fable-5-1",
+                    "model_name": "claude-fable-5-2",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 10_000,
-                    "cache_write_5m_cost_microdollars_per_1k_tokens": 12_500,
-                    "cache_write_1h_cost_microdollars_per_1k_tokens": 20_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 250,
-                    "output_cost_microdollars_per_1k_tokens": 50_000,
+                    "input_cost_microdollars_per_1k_tokens": 8_000,
+                    "cache_write_5m_cost_microdollars_per_1k_tokens": 10_000,
+                    "cache_write_1h_cost_microdollars_per_1k_tokens": 16_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 200,
+                    "output_cost_microdollars_per_1k_tokens": 40_000,
                     "temperature": None,
                     "context_1m_enabled": False,
                     "extended_cost_threshold_tokens": None,
@@ -354,17 +378,17 @@ class ChatModelSettings(BaseSettings):
                 token_scale_factor=0.7,
                 visible=False,
             ),
-            "vclaude-fable-5-1": ChatModelConfig(
+            "vclaude-fable-5-2": ChatModelConfig(
                 provider_name="anthropic_vertex",
                 provider_config={
-                    "model_name": "claude-fable-5-1",
+                    "model_name": "claude-fable-5-2",
                     "context_window": 1_000_000,
                     "max_output_tokens": 128_000,
-                    "input_cost_microdollars_per_1k_tokens": 10_000,
-                    "cache_write_5m_cost_microdollars_per_1k_tokens": 12_500,
-                    "cache_write_1h_cost_microdollars_per_1k_tokens": 20_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 250,
-                    "output_cost_microdollars_per_1k_tokens": 50_000,
+                    "input_cost_microdollars_per_1k_tokens": 8_000,
+                    "cache_write_5m_cost_microdollars_per_1k_tokens": 10_000,
+                    "cache_write_1h_cost_microdollars_per_1k_tokens": 16_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 200,
+                    "output_cost_microdollars_per_1k_tokens": 40_000,
                     "temperature": None,
                     "context_1m_enabled": False,
                     "extended_cost_threshold_tokens": None,
@@ -485,18 +509,18 @@ class ChatModelSettings(BaseSettings):
             # what a call would cost on the OpenAI API. The context window is the
             # subscription's, and the reasoning effort is Codex's default for each
             # model.
-            "codex-gpt-6-astra": ChatModelConfig(
+            "codex-gpt-6.2-astra": ChatModelConfig(
                 provider_name="codex",
                 provider_config={
-                    "model_name": "gpt-6-astra",
-                    "input_cost_microdollars_per_1k_tokens": 10_000,
-                    "cached_input_cost_microdollars_per_1k_tokens": 1_000,
-                    "output_cost_microdollars_per_1k_tokens": 50_000,
+                    "model_name": "gpt-6.2-astra",
+                    "input_cost_microdollars_per_1k_tokens": 8_000,
+                    "cached_input_cost_microdollars_per_1k_tokens": 400,
+                    "output_cost_microdollars_per_1k_tokens": 40_000,
                     "cache_write_cost_multiplier": 1.25,
                     "extended_cost_threshold_tokens": 272_000,
                     "extended_input_cost_multiplier": 2.0,
                     "extended_output_cost_multiplier": 1.5,
-                    "reasoning_effort": "medium",
+                    "reasoning_effort": "low",
                     "context_window": 272_000,
                     "token_count_limit": 240_000,
                     "image_file_count_limit": 100,
@@ -504,10 +528,10 @@ class ChatModelSettings(BaseSettings):
                     "output_enabled": {"image": True},
                 },
             ),
-            "codex-gpt-6.1-sol": ChatModelConfig(
+            "codex-gpt-6.2-sol": ChatModelConfig(
                 provider_name="codex",
                 provider_config={
-                    "model_name": "gpt-6.1-sol",
+                    "model_name": "gpt-6.2-sol",
                     "input_cost_microdollars_per_1k_tokens": 2_000,
                     "cached_input_cost_microdollars_per_1k_tokens": 100,
                     "output_cost_microdollars_per_1k_tokens": 10_000,
@@ -592,10 +616,10 @@ class ChatModelSettings(BaseSettings):
                 },
                 token_scale_factor=0.7,
             ),
-            "claude-code-fable-5-1": ChatModelConfig(
+            "claude-code-fable-5-2": ChatModelConfig(
                 provider_name="claude_code",
                 provider_config={
-                    "model_name": "claude-fable-5-1",
+                    "model_name": "claude-fable-5-2",
                     "context_window": 1_000_000,
                     "token_count_limit": 872_000,
                     "image_file_count_limit": 100,

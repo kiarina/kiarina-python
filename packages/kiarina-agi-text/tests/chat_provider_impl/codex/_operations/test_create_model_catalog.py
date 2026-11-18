@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -42,3 +43,26 @@ def test_create_model_catalog_errors(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="has no gpt-test"):
         create_model_catalog(tmp_path, "gpt-test", tmp_path / "models.json")
+
+
+def test_create_model_catalog_list_models(tmp_path: Path) -> None:
+    def list_models() -> list[dict[str, Any]]:
+        return [{"slug": "gpt-test", "tool_mode": "code_mode_only"}]
+
+    path = create_model_catalog(
+        tmp_path, "gpt-test", tmp_path / "models.json", list_models=list_models
+    )
+    [entry] = json.loads(path.read_text())["models"]
+    assert entry["slug"] == "gpt-test"
+    assert entry["tool_mode"] is None
+
+    (tmp_path / "models_cache.json").write_text(json.dumps({"models": []}))
+    path = create_model_catalog(
+        tmp_path, "gpt-test", tmp_path / "models.json", list_models=list_models
+    )
+    assert json.loads(path.read_text())["models"][0]["slug"] == "gpt-test"
+
+    with pytest.raises(ValueError, match="has no gpt-other"):
+        create_model_catalog(
+            tmp_path, "gpt-other", tmp_path / "models.json", list_models=list_models
+        )

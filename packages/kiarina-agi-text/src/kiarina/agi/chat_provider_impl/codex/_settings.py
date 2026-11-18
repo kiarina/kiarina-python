@@ -21,7 +21,7 @@ class CodexChatProviderSettings(ChatCapabilities, OpenAITokenPricing, BaseSettin
         extra="ignore",
     )
 
-    model_name: str = "gpt-6.1-sol"
+    model_name: str = "gpt-6.2-sol"
 
     reasoning_effort: (
         Literal["none", "minimal", "low", "medium", "high", "xhigh", "max"] | None

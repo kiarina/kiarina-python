@@ -7,4 +7,4 @@ def test_create_codex_chat_provider() -> None:
     provider = create_codex_chat_provider(reasoning_effort="medium")
 
     assert provider.settings.reasoning_effort == "medium"
-    assert str(provider) == "CodexChatProvider(gpt-6.1-sol, medium)"
+    assert str(provider) == "CodexChatProvider(gpt-6.2-sol, medium)"
