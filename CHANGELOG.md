@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.46.1] - 2026-11-18
+
+### Changed
+- **kiarina-agi-text**: Require the bundled Codex `openai-codex-cli-bin>=0.170.0` and Claude Code `claude-agent-sdk>=0.2.184`. Codex 0.163.0 listed GPT-6.2 Sol, but the server refused it with `model_not_found` for a ChatGPT account.
+
 ## [2.46.0] - 2026-11-18
 
 ### Added

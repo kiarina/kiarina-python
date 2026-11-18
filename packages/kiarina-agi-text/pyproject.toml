@@ -1,6 +1,6 @@
 [project]
 name = "kiarina-agi-text"
-version = "2.46.0"
+version = "2.46.1"
 description = "Chat and text embedding abstractions for AI agents"
 readme = "README.md"
 license = "MIT"
@@ -37,7 +37,7 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "anthropic[vertex]>=2.6.0,<3",
-    "claude-agent-sdk>=0.2.164",
+    "claude-agent-sdk>=0.2.184",
     "google-genai>=3.0.0,<4",
     "httpx>=0.28.1,<1",
     "kiarina-lib-anthropic>=2.3.1",
@@ -45,7 +45,7 @@ all = [
     "kiarina-lib-openai>=2.3.1",
     "numpy>=2.0",
     "openai>=2.0.1,<4",
-    "openai-codex-cli-bin>=0.160.1",
+    "openai-codex-cli-bin>=0.170.0",
     "tiktoken>=0.13.0",
     "ulid-py>=1.1.0",
 ]
@@ -59,10 +59,10 @@ chat-provider-anthropic-vertex = [
     "kiarina-lib-google>=2.42.0",
 ]
 chat-provider-claude-code = [
-    "claude-agent-sdk>=0.2.164",
+    "claude-agent-sdk>=0.2.184",
 ]
 chat-provider-codex = [
-    "openai-codex-cli-bin>=0.160.1",
+    "openai-codex-cli-bin>=0.170.0",
 ]
 chat-provider-google = [
     "google-genai>=3.0.0,<4",
