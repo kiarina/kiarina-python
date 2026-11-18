@@ -88,6 +88,14 @@ Verify API compatibility for new presets through the addition-only API tests. Wh
 
 ### 5. Run addition-only API tests
 
+For a new `codex-*` preset, first check that the bundled Codex (`openai-codex-cli-bin`) lists the model, and take the context window and default reasoning effort from that list. Raise the package's floor when it does not list the model.
+
+```bash
+.venv/lib/python3.12/site-packages/codex_cli_bin/bin/codex debug models | jq '.models[] | {slug, context_window, default_reasoning_level}'
+```
+
+For a Claude model, check once whether it accepts forced tool choice (`test_info_any`) and add it to `NO_FORCED_TOOL_CHOICE_MODEL_PREFIXES` when it answers 400.
+
 Run the costly chat model helper tests for each new preset only when adding that preset. Do not run them for price-only changes or routine regression tests.
 
 For high-priced presets (such as GPT-6 Astra or Claude Fable), do not run the helper tests. Send one request with a few output tokens to confirm the model ID and settings are accepted, and test behavior with a cheaper model of the same provider and provider path.

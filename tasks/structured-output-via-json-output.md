@@ -5,7 +5,7 @@
 `kiarina-agi-runner` structured output (`generate_model`, `generate_dict`, `select_option`)
 forces a tool call with `tool_choice="any"` and reads the value from the tool arguments.
 
-Claude Sonnet 5.5, Opus 5.5, and Fable 5.1 reject forced tool choice with a 400, and the
+Claude Sonnet 5.5, Opus 5.5, Fable 5.1, and Fable 5.2 reject forced tool choice with a 400, and the
 Anthropic API has no replacement that guarantees a tool call. The `anthropic` provider falls
 back to `auto` and asks for a tool call in the last user turn
 (`append_tool_choice_instruction`). The model usually complies, but nothing guarantees it.

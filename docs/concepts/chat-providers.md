@@ -72,8 +72,8 @@ Checked on 2026-10-08. Recheck when a request fails in a way these notes do not 
 - Responses API requests use `store=False`, so reasoning is kept only by asking for `include=["reasoning.encrypted_content"]`. The encrypted reasoning items are kept as provider state and sent back before their message's items (`carry_reasoning`). A model that does not reason on a request, such as GPT-6 Luna on an easy tool call, returns none.
 - Chat Completions serves OpenAI-compatible local servers such as kiapi. `extra_body` passes server-specific options.
 - A single message string is limited to 10,485,760 characters, which a huge prompt hits before the token limit.
-- GPT-6 Astra rejects a custom `temperature`. Set `temperature` to `None` to omit it.
-- GPT-6 Astra and GPT-6.1 Sol call tools only through the Responses API.
+- GPT-6 Astra rejects a custom `temperature`. Set `temperature` to `None` to omit it (the GPT-6.2 Astra preset omits it too).
+- GPT-6 Astra and GPT-6.1 Sol call tools only through the Responses API, so the GPT-6 presets use it. GPT-6.2 was checked only through it.
 
 ### Anthropic (`anthropic`, `anthropic_vertex`)
 
@@ -81,7 +81,7 @@ Checked on 2026-10-08. Recheck when a request fails in a way these notes do not 
 - `usage.input_tokens` excludes cache reads and cache writes. Cache writes are split into 5-minute and 1-hour TTLs.
 - Claude Haiku 5.5 prices a request whose prompt (uncached input, cache writes, and cache reads) is over 100K tokens at 5x, for all of the request. `extended_cost_threshold_tokens` and the two `extended_*_cost_multiplier` settings record it, as the OpenAI provider's settings of the same names do. They are separate from `context_1m_*`, which also sends the 1M-context beta header of earlier models.
 - A refusal is `stop_reason: "refusal"`. `model_context_window_exceeded` stops the output like `max_tokens`.
-- Claude Sonnet 5.5, Opus 5.5, and Fable 5.1 reject `tool_choice` of type `any` or `tool`, and nothing replaces it. The provider sends `auto` and asks for a tool call in the last user turn.
+- Claude Sonnet 5.5, Opus 5.5, Fable 5.1, and Fable 5.2 reject `tool_choice` of type `any` or `tool`, and nothing replaces it. The provider sends `auto` and asks for a tool call in the last user turn.
 - Thinking blocks (`thinking`, `redacted_thinking`) are kept as provider state and sent back unchanged at the start of their turn. The 5.5 models think adaptively, with `display: "omitted"` by default: a block has an empty `thinking` field and a signature that carries the encrypted thinking. On an easy request the model may not think, and no block comes back. Modified blocks are rejected with `400`.
 - The SDK uses `httpx2`. A custom `http_client` must be an `httpx2` client.
 - Token counting never retries, because a failed count only skips the overflow check.
