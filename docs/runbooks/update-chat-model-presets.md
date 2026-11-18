@@ -88,7 +88,9 @@ Verify API compatibility for new presets through the addition-only API tests. Wh
 
 ### 5. Run addition-only API tests
 
-For a new `codex-*` preset, first check that the bundled Codex (`openai-codex-cli-bin`) lists the model, and take the context window and default reasoning effort from that list. Raise the package's floor when it does not list the model.
+With every model update, raise the floors of the bundled CLIs in `kiarina-agi-text` to their latest releases: `openai-codex-cli-bin` (Codex) and `claude-agent-sdk` (Claude Code), and upgrade them in `uv.lock` (`uv lock --upgrade-package openai-codex-cli-bin --upgrade-package claude-agent-sdk`). An older bundled CLI can list a new model and still be refused: Codex 0.163.0 listed GPT-6.2 Sol, but the server answered `model_not_found` ("not supported when using Codex with a ChatGPT account"), and 0.170.0 was accepted. The subscription presets run the bundled CLI unless `codex_bin` or `cli_path` is set, so the Codex or Claude Code installed on the machine does not prove that a preset works.
+
+For a new `codex-*` preset, check that the bundled Codex lists the model, and take the context window and default reasoning effort from that list.
 
 ```bash
 .venv/lib/python3.12/site-packages/codex_cli_bin/bin/codex debug models | jq '.models[] | {slug, context_window, default_reasoning_level}'
@@ -141,6 +143,9 @@ Before completion, confirm that:
 - public APIs and settings schemas have no unnecessary changes
 - addition-only API tests succeeded for every new preset
 - package tests and `make` succeeded
+- the floors of `openai-codex-cli-bin` and `claude-agent-sdk` are their latest releases, and `uv.lock` resolves them
+
+An application that uses the subscription presets pins the bundled CLIs in its own lockfile, so a raised floor reaches it only when it upgrades them. Upgrade both packages in the application's lockfile together with the `kiarina-agi-text` upgrade and redeploy it.
 
 ## Current Preset Set
 
