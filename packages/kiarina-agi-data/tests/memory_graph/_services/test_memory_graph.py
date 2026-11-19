@@ -5,7 +5,7 @@ import pytest
 
 from kiarina.agi.clock import set_clock
 from kiarina.agi.memory import Memory
-from kiarina.agi.memory_graph import MemoryGraph
+from kiarina.agi.memory_graph import MemoryGraph, MemorySearchHit
 
 
 class SecondsClock:
@@ -304,16 +304,14 @@ def test_search_ids_ranks_cosine_with_stable_ties_and_no_mutation(
     vector_graph: MemoryGraph,
 ) -> None:
     before = vector_graph.model_dump_json()
-    assert vector_graph.search_ids([1.0, 0.0]) == ["a", "b", "d"]
-    assert vector_graph.search_ids([1.0, 0.0], k=20) == ["a", "b", "d", "c", "e"]
-    assert vector_graph.search_ids([1.0, 0.0], k=20, min_score=0) == [
-        "a",
-        "b",
-        "d",
-        "c",
-    ]
-    assert vector_graph.search_ids([1.0, 0.0], min_score=1) == ["a", "b"]
-    assert vector_graph.search_ids([1.0, 0.0], memory_type="identity") == ["d"]
+    hits = vector_graph.search_ids([1.0, 0.0], k=20)
+    assert all(isinstance(hit, MemorySearchHit) for hit in hits)
+    assert [hit.id for hit in hits] == ["a", "b", "d", "c", "e"]
+    assert [hit.score for hit in hits] == pytest.approx([1, 1, 2**-0.5, 0, -1])
+    assert vector_graph.search_ids([1.0, 0.0]) == hits[:3]
+    assert vector_graph.search_ids([1.0, 0.0], k=20, min_score=0) == hits[:4]
+    assert vector_graph.search_ids([1.0, 0.0], min_score=1) == hits[:2]
+    assert vector_graph.search_ids([1.0, 0.0], memory_type="identity") == [hits[2]]
     assert vector_graph.model_dump_json() == before
 
 
@@ -322,10 +320,10 @@ def test_search_ids_intersects_type_and_ids_before_top_k(
 ) -> None:
     assert vector_graph.search_ids(
         [1.0, 0.0], ids=["c", "d", "e"], memory_type="episode", k=1
-    ) == ["c"]
+    ) == [MemorySearchHit(id="c", score=0.0)]
     assert vector_graph.search_ids([1.0, 0.0], ids=["b", "a", "b", "missing"]) == [
-        "a",
-        "b",
+        MemorySearchHit(id="a", score=1.0),
+        MemorySearchHit(id="b", score=1.0),
     ]
     assert vector_graph.search_ids([1.0, 0.0], ids=[]) == []
     assert vector_graph.search_ids([1.0, 0.0], ids=["missing"]) == []
@@ -343,7 +341,7 @@ def test_adjacent_ids_feed_search_without_expanding_empty_scope(
     vector_graph.edges["emotion"]["a"] = 99.0
     assert vector_graph.search_ids(
         [1.0, 0.0], ids=vector_graph.find_adjacent_ids("emotion"), k=1
-    ) == ["c"]
+    ) == [MemorySearchHit(id="c", score=0.0)]
     assert (
         vector_graph.search_ids(
             [1.0, 0.0], ids=vector_graph.find_adjacent_ids("unknown")
@@ -369,8 +367,12 @@ def test_search_ids_validates_only_selected_candidate_vectors(
     vector_graph: MemoryGraph, vector: list[float]
 ) -> None:
     vector_graph.set(Memory(id="invalid", type="invalid", vector=vector))
-    assert vector_graph.search_ids([1.0, 0.0], memory_type="episode", k=1) == ["a"]
-    assert vector_graph.search_ids([1.0, 0.0], ids=["a"], k=1) == ["a"]
+    assert vector_graph.search_ids([1.0, 0.0], memory_type="episode", k=1) == [
+        MemorySearchHit(id="a", score=1.0)
+    ]
+    assert vector_graph.search_ids([1.0, 0.0], ids=["a"], k=1) == [
+        MemorySearchHit(id="a", score=1.0)
+    ]
     with pytest.raises(ValueError, match="invalid"):
         vector_graph.search_ids([1.0, 0.0], ids=["invalid"])
 

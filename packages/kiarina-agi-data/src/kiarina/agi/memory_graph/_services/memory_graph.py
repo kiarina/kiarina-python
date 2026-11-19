@@ -6,6 +6,7 @@ from kiarina.agi.embedding import Embedding, search_embeddings
 from kiarina.agi.memory import Memory, MemoryID, MemoryType
 
 from .._types.decay_time import DecayTime
+from .._views.memory_search_hit import MemorySearchHit
 
 
 class MemoryGraph(BaseModel):
@@ -116,7 +117,7 @@ class MemoryGraph(BaseModel):
         memory_type: MemoryType | None = None,
         ids: list[MemoryID] | None = None,
         min_score: float | None = None,
-    ) -> list[MemoryID]:
+    ) -> list[MemorySearchHit]:
         if k < 1:
             raise ValueError("k must be positive")
         if min_score is not None and not -1 <= min_score <= 1:
@@ -158,7 +159,7 @@ class MemoryGraph(BaseModel):
                 )
             )
         return [
-            MemoryID(hit.embedding.id)
+            MemorySearchHit(id=hit.embedding.id, score=hit.score)
             for hit in search_embeddings(
                 query, candidates, top_k=k, min_score=min_score
             )

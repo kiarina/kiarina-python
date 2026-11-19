@@ -771,9 +771,14 @@ class Memory:
 ### `kiarina.agi.memory_graph`
 
 ```python
-from kiarina.agi.memory_graph import DecayTime, MemoryGraph
+from kiarina.agi.memory_graph import DecayTime, MemoryGraph, MemorySearchHit
 
 DecayTime: TypeAlias = float
+
+
+class MemorySearchHit:
+    id: MemoryID
+    score: float
 
 
 class MemoryGraph:
@@ -825,7 +830,7 @@ class MemoryGraph:
         memory_type: MemoryType | None = None,
         ids: list[MemoryID] | None = None,
         min_score: float | None = None,
-    ) -> list[MemoryID]: ...
+    ) -> list[MemorySearchHit]: ...
     def find_adjacent_ids(
         self,
         id: MemoryID,
@@ -841,7 +846,7 @@ class MemoryGraph:
 Type filtering precedes pagination. `offset` and `limit` must be nonnegative;
 `limit=0` means all remaining matches. Enumeration includes memories without vectors.
 
-`search_ids` returns up to `k` IDs by descending cosine similarity, with ascending
+`search_ids` returns up to `k` hits with a memory ID and its cosine similarity score, ordered by descending score and ascending
 ID for ties. It delegates scoring to `search_embeddings`. `ids=None` searches all
 nodes; `ids=[]` searches none. Duplicate IDs are deduplicated and absent IDs ignored.
 Type and ID restrictions are intersected before ranking. Missing/empty vectors are
@@ -857,8 +862,8 @@ operations with the same parameter and ordering semantics.
 
 ```python
 ids = graph.find_adjacent_ids(emotion_id)
-matched_ids = graph.search_ids(query_vector, ids=ids, k=2)
-memories = graph.mget(matched_ids)
+hits = graph.search_ids(query_vector, ids=ids, k=2)
+memories = graph.mget([hit.id for hit in hits])
 ```
 
 ### `kiarina.agi.message`
