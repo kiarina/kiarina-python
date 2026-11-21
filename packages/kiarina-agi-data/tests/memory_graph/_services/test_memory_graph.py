@@ -199,6 +199,25 @@ def test_find_adjacent_ids_filters_memory_type(graph: MemoryGraph) -> None:
     assert graph.find_adjacent_ids("m1", memory_type="entity") == ["m2"]
 
 
+def test_find_adjacent_ids_traverses_other_types_before_filtering(
+    graph: MemoryGraph,
+) -> None:
+    graph.mset(
+        [
+            create_memory("project", memory_type="project"),
+            create_memory("promise", memory_type="prospect"),
+            create_memory("experience", memory_type="episode"),
+        ]
+    )
+    graph.connect("project", "promise")
+    graph.connect("promise", "experience")
+
+    assert graph.find_adjacent_ids("project", depth=1, memory_type="episode") == []
+    assert graph.find_adjacent_ids(
+        "project", depth=2, memory_type="episode", limit=1
+    ) == ["experience"]
+
+
 def test_find_adjacent_ids_excludes_expired_edges(
     graph: MemoryGraph, clock: SecondsClock
 ) -> None:

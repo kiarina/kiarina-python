@@ -854,6 +854,11 @@ skipped. `k` must be positive and optional `min_score` is inclusive and in [-1, 
 An empty, zero, non-finite or non-1D query, or an invalid/nonmatching candidate
 vector, raises `ValueError`. Neither method activates memories or changes the graph.
 
+`find_adjacent_ids` follows active edges up to `depth` hops. The starting ID is
+excluded. Intermediate nodes can have any type. The `memory_type` filter applies
+to the returned nodes before pagination. Results are sorted by descending active
+outgoing edge count, then ascending ID.
+
 Callers ensure that query and candidate vectors belong to compatible embedding
 spaces, including migrations when a model changes. Equal dimensions do not prove
 compatibility. MemoryGraph does not interpret model names or embedding hashes.

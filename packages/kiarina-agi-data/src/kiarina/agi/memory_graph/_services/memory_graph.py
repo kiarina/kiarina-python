@@ -189,12 +189,7 @@ class MemoryGraph(BaseModel):
                     if target_id in visited:
                         continue
 
-                    memory = self.nodes.get(target_id)
-
-                    if memory is None:
-                        continue
-
-                    if memory_type is not None and memory.type != memory_type:
+                    if target_id not in self.nodes:
                         continue
 
                     next_level.add(target_id)
@@ -206,6 +201,8 @@ class MemoryGraph(BaseModel):
                 break
 
         visited.discard(id)
+        if memory_type is not None:
+            visited = {i for i in visited if self.nodes[i].type == memory_type}
         sorted_ids = sorted(
             visited,
             key=lambda memory_id: (-self._count_edges(memory_id, now), memory_id),

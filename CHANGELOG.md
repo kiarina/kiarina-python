@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed (BREAKING)
+- **kiarina-agi-data**: `MemoryGraph.find_adjacent_ids()` now filters the returned nodes by `memory_type`. Multi-hop searches can reach matches through intermediate nodes of other types.
 - **kiarina-agi-data**: `MemoryGraph.search_ids()` now returns `MemorySearchHit` objects containing the memory ID and its cosine similarity score. Use `hit.id` where an ID is needed.
 
 ## [2.46.1] - 2026-11-18
