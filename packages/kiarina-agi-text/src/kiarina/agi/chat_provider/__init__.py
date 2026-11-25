@@ -2,6 +2,7 @@ from ._constants.chat_provider_state_key import CHAT_PROVIDER_STATE_KEY
 from ._exceptions.max_token_error import MaxTokenError
 from ._exceptions.safety_error import SafetyError
 from ._exceptions.token_overflow_error import TokenOverflowError
+from ._exceptions.usage_limit_error import UsageLimitError
 from ._helpers.collect_message_states import collect_message_states
 from ._helpers.find_chat_provider_state import find_chat_provider_state
 from ._instances.chat_provider_registry import chat_provider_registry
@@ -23,6 +24,7 @@ __all__ = [
     "MaxTokenError",
     "SafetyError",
     "TokenOverflowError",
+    "UsageLimitError",
     # ._helpers
     "collect_message_states",
     "find_chat_provider_state",

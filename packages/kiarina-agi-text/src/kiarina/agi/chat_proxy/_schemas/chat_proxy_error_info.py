@@ -1,8 +1,14 @@
+from datetime import datetime
 from typing import Literal, Self
 
 from pydantic import BaseModel, Field
 
-from kiarina.agi.chat_provider import MaxTokenError, SafetyError, TokenOverflowError
+from kiarina.agi.chat_provider import (
+    MaxTokenError,
+    SafetyError,
+    TokenOverflowError,
+    UsageLimitError,
+)
 
 from .._exceptions.chat_proxy_error import ChatProxyError
 
@@ -10,8 +16,8 @@ from .._exceptions.chat_proxy_error import ChatProxyError
 class ChatProxyErrorInfo(BaseModel):
     """An error raised on the chat proxy, carried back to be raised again by the caller."""
 
-    kind: Literal["safety", "max_token", "token_overflow", "other"] = Field(
-        title="Kind", description="Which chat provider error it was."
+    kind: Literal["safety", "max_token", "token_overflow", "usage_limit", "other"] = (
+        Field(title="Kind", description="Which chat provider error it was.")
     )
     error_type: str = Field(
         title="Error Type", description="The exception's class name."
@@ -30,6 +36,15 @@ class ChatProxyErrorInfo(BaseModel):
     )
     limit: int | None = Field(
         default=None, title="Limit", description="`TokenOverflowError.limit`."
+    )
+    limit_kind: Literal["rate_limit", "usage_limit"] | None = Field(
+        default=None, title="Limit Kind", description="`UsageLimitError.kind`."
+    )
+    window: str | None = Field(
+        default=None, title="Window", description="`UsageLimitError.window`."
+    )
+    resets_at: datetime | None = Field(
+        default=None, title="Resets At", description="`UsageLimitError.resets_at`."
     )
 
     @classmethod
@@ -58,6 +73,16 @@ class ChatProxyErrorInfo(BaseModel):
                 limit=error.limit,
             )
 
+        if isinstance(error, UsageLimitError):
+            return cls(
+                kind="usage_limit",
+                error_type=error_type,
+                message=message,
+                limit_kind=error.kind,
+                window=error.window,
+                resets_at=error.resets_at,
+            )
+
         return cls(kind="other", error_type=error_type, message=message)
 
     def to_exception(self) -> Exception:
@@ -71,5 +96,13 @@ class ChatProxyErrorInfo(BaseModel):
 
         if self.kind == "token_overflow":
             return TokenOverflowError(self.token_count or 0, limit=self.limit)
+
+        if self.kind == "usage_limit":
+            return UsageLimitError(
+                self.message,
+                kind=self.limit_kind,
+                window=self.window,
+                resets_at=self.resets_at,
+            )
 
         return ChatProxyError(f"{self.error_type}: {self.message}")

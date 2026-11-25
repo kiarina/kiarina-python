@@ -155,6 +155,49 @@ settings_manager: SettingsManager[ChatModelSettings]
 
 The default aliases include one per model line, such as `gpt-sol`, `claude-opus`, `codex-gpt-sol`, and `claude-code-opus`, which point to the latest preset of that line. A chat model resolved from an alias is named after the preset. An alias names a preset, not another alias, and `aliases` given in settings replace the default ones.
 
+### `kiarina.agi.chat_provider`
+
+The errors a chat model call raises, whichever provider serves it:
+
+```python
+from kiarina.agi.chat_provider import (
+    MaxTokenError,
+    SafetyError,
+    TokenOverflowError,
+    UsageLimitError,
+)
+```
+
+```python
+class TokenOverflowError(Exception):
+    token_count: int
+    limit: int | None
+
+class MaxTokenError(Exception): ...
+
+class SafetyError(Exception):
+    category: str | None
+    request_id: str | None
+
+class UsageLimitError(RuntimeError):
+    kind: Literal["rate_limit", "usage_limit"] | None
+    window: str | None
+    resets_at: datetime | None
+```
+
+`UsageLimitError` means the account behind the provider hit a limit of its plan, so the same request fails until the limit resets. The `codex` and `claude_code` providers raise it; before, the failure was a plain `RuntimeError`, which it still is.
+
+- `kind`: `rate_limit` for too many requests in a short time, `usage_limit` for a used-up allowance of the plan, `None` when the runtime did not say which.
+- `window`: the used-up window, such as `five_hour` or `seven_day`, when known.
+- `resets_at`: when the limit resets, timezone-aware, when the runtime reported it. Without it, retry after a pause of your choosing.
+
+```python
+try:
+    ai_message = await invoke_chat(messages, ...)
+except UsageLimitError as e:
+    wait_until = e.resets_at  # None: not reported
+```
+
 ### `kiarina.agi.chat_proxy`
 
 ```python
@@ -234,13 +277,16 @@ class ChatProxyEvent(BaseModel):
     error: ChatProxyErrorInfo | None = None
 
 class ChatProxyErrorInfo(BaseModel):
-    kind: Literal["safety", "max_token", "token_overflow", "other"]
+    kind: Literal["safety", "max_token", "token_overflow", "usage_limit", "other"]
     error_type: str
     message: str
     category: str | None = None
     request_id: str | None = None
     token_count: int | None = None
     limit: int | None = None
+    limit_kind: Literal["rate_limit", "usage_limit"] | None = None
+    window: str | None = None
+    resets_at: datetime | None = None
     @classmethod
     def from_exception(cls, error: BaseException) -> Self: ...
     def to_exception(self) -> Exception: ...
@@ -280,7 +326,7 @@ ChatModelConfig(
 )
 ```
 
-`ProxyChatProviderSettings` (env prefix `KIARINA_AGI_CHAT_PROVIDER_IMPL_PROXY_`) has `base_url`, `model_name`, `token`, and `timeout`. The provider reads the chat model's capabilities from the proxy once. Media files are read where the caller runs and sent with their SHA-256; the proxy stores them in its asset repository under that hash. Before a request with files, the provider asks the proxy which hashes it lacks and sends contents only for those; it remembers nothing itself, so the proxy may purge its copies at any time. A `409` from the chat request (the proxy lost a file after the check) raises `ChatProxyError`. A media file the caller cannot read is sent as metadata only. Chat provider errors (`SafetyError`, `MaxTokenError`, `TokenOverflowError`) are raised again on the caller with their fields; other errors become `ChatProxyError`.
+`ProxyChatProviderSettings` (env prefix `KIARINA_AGI_CHAT_PROVIDER_IMPL_PROXY_`) has `base_url`, `model_name`, `token`, and `timeout`. The provider reads the chat model's capabilities from the proxy once. Media files are read where the caller runs and sent with their SHA-256; the proxy stores them in its asset repository under that hash. Before a request with files, the provider asks the proxy which hashes it lacks and sends contents only for those; it remembers nothing itself, so the proxy may purge its copies at any time. A `409` from the chat request (the proxy lost a file after the check) raises `ChatProxyError`. A media file the caller cannot read is sent as metadata only. Chat provider errors (`SafetyError`, `MaxTokenError`, `TokenOverflowError`, `UsageLimitError`) are raised again on the caller with their fields; other errors become `ChatProxyError`. A proxy and a caller of different versions do not share the `usage_limit` kind: update both.
 
 ### `kiarina.agi.text_embedding_model`
 

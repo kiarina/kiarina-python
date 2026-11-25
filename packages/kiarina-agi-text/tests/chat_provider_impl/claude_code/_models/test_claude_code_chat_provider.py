@@ -1,10 +1,13 @@
 from collections.abc import AsyncIterator
+from datetime import UTC, datetime
 from typing import Any
 
 import claude_agent_sdk
 import pytest
 from claude_agent_sdk import (
     AssistantMessage,
+    RateLimitEvent,
+    RateLimitInfo,
     ResultError,
     ResultMessage,
     StreamEvent,
@@ -12,7 +15,12 @@ from claude_agent_sdk import (
     ToolUseBlock,
 )
 
-from kiarina.agi.chat_provider import MaxTokenError, SafetyError, TokenOverflowError
+from kiarina.agi.chat_provider import (
+    MaxTokenError,
+    SafetyError,
+    TokenOverflowError,
+    UsageLimitError,
+)
 from kiarina.agi.chat_provider_impl.claude_code import (
     ClaudeCodeChatProvider,
     ClaudeCodeChatProviderSettings,
@@ -426,6 +434,135 @@ async def test_run_safeguard_block(
     assert str(exc_info.value) == message
     assert exc_info.value.category == category
     assert exc_info.value.request_id == request_id
+
+
+_LIMIT_MESSAGE = "You've hit your session limit · resets 3pm"
+
+
+def _limit_event(**info: Any) -> RateLimitEvent:
+    return RateLimitEvent(
+        rate_limit_info=RateLimitInfo(**{"status": "rejected"} | info),
+        uuid="u",
+        session_id="s",
+    )
+
+
+def _limit_assistant(error: str | None = "rate_limit") -> AssistantMessage:
+    return AssistantMessage(
+        content=[TextBlock(text=_LIMIT_MESSAGE)],
+        model="<synthetic>",
+        error=error,  # type: ignore[arg-type]
+    )
+
+
+@pytest.mark.parametrize(
+    ("messages", "result", "expected"),
+    [
+        # The assistant message's error, with the event that names the window.
+        (
+            [
+                _limit_event(resets_at=1_800_000_000, rate_limit_type="five_hour"),
+                _limit_assistant(),
+            ],
+            {},
+            ("usage_limit", "five_hour", 1_800_000_000),
+        ),
+        # The event alone, with no overage to fall back on.
+        (
+            [
+                _limit_event(
+                    resets_at=1_800_000_000,
+                    rate_limit_type="seven_day",
+                    overage_status="rejected",
+                )
+            ],
+            {},
+            ("usage_limit", "seven_day", 1_800_000_000),
+        ),
+        (
+            [
+                _limit_event(
+                    resets_at=1_800_000_000,
+                    rate_limit_type="overage",
+                    overage_resets_at=1_800_500_000,
+                )
+            ],
+            {"api_error_status": 429},
+            ("usage_limit", "overage", 1_800_500_000),
+        ),
+        ([_limit_event()], {}, ("usage_limit", None, None)),
+        # A limit with no rejected event: the vendor did not say which.
+        ([_limit_assistant()], {}, (None, None, None)),
+        ([], {"api_error_status": 429}, (None, None, None)),
+        (
+            [_limit_event(status="allowed", resets_at=1_800_000_000)],
+            {"api_error_status": 429},
+            (None, None, None),
+        ),
+    ],
+)
+async def test_run_usage_limit(
+    monkeypatch: pytest.MonkeyPatch,
+    messages: list[Any],
+    result: dict[str, Any],
+    expected: tuple[str | None, str | None, int | None],
+    run_context: RunContext,
+) -> None:
+    result_message = _result_message(subtype="success", result=_LIMIT_MESSAGE, **result)
+    monkeypatch.setattr(
+        claude_agent_sdk,
+        "query",
+        _FakeQuery([*messages, result_message], error=ResultError(_LIMIT_MESSAGE)),
+    )
+
+    with pytest.raises(UsageLimitError) as exc_info:
+        await _run(
+            _create_provider(),
+            cost_recorder=_Recorder(),  # type: ignore[arg-type]
+            run_context=run_context,
+        )
+
+    kind, window, resets_at = expected
+    error = exc_info.value
+    assert str(error) == f"Claude Code failed (success): {_LIMIT_MESSAGE}"
+    assert (error.kind, error.window) == (kind, window)
+    assert error.resets_at == (
+        datetime.fromtimestamp(resets_at, tz=UTC) if resets_at else None
+    )
+
+
+@pytest.mark.parametrize(
+    ("messages", "result"),
+    [
+        # The text alone does not make it a limit.
+        ([], {}),
+        ([_limit_assistant(error="server_error")], {"api_error_status": 529}),
+        # The plan's window is used up, but overage still serves requests.
+        ([_limit_event(overage_status="allowed")], {"api_error_status": 500}),
+        ([_limit_event(status="allowed_warning")], {}),
+    ],
+)
+async def test_run_not_a_usage_limit(
+    monkeypatch: pytest.MonkeyPatch,
+    messages: list[Any],
+    result: dict[str, Any],
+    run_context: RunContext,
+) -> None:
+    result_message = _result_message(subtype="success", result=_LIMIT_MESSAGE, **result)
+    monkeypatch.setattr(
+        claude_agent_sdk,
+        "query",
+        _FakeQuery([*messages, result_message], error=ResultError(_LIMIT_MESSAGE)),
+    )
+
+    with pytest.raises(RuntimeError) as exc_info:
+        await _run(
+            _create_provider(),
+            cost_recorder=_Recorder(),  # type: ignore[arg-type]
+            run_context=run_context,
+        )
+
+    assert type(exc_info.value) is RuntimeError
 
 
 async def test_run_errors(

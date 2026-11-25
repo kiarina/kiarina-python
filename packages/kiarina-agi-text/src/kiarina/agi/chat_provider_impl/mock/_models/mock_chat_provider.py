@@ -11,6 +11,7 @@ from kiarina.agi.chat_provider import (
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
+    UsageLimitError,
 )
 from kiarina.agi.message import (
     AIMessage,
@@ -136,6 +137,8 @@ def check_error_simulation(messages: list[Message]) -> None:
     elif info.get("type") == "max_token_error":
         raise MaxTokenError("Mock max token error")
 
+    elif info.get("type") == "usage_limit_error":
+        raise UsageLimitError("Mock usage limit error", kind="usage_limit")
     elif info.get("type") == "unknown_error":
         raise RuntimeError("Mock unknown error")
 

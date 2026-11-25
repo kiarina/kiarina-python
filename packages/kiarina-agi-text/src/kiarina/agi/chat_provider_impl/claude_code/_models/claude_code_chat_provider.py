@@ -27,6 +27,7 @@ from .._operations.from_claude_agent_sdk_messages import (
     from_claude_agent_sdk_messages,
 )
 from .._operations.to_sdk_mcp_tools import to_sdk_mcp_tools
+from .._operations.to_usage_limit_error import to_usage_limit_error
 from .._schemas.claude_code_chat_result import ClaudeCodeChatResult
 from .._settings import ClaudeCodeChatProviderSettings
 
@@ -35,6 +36,8 @@ try:
     from claude_agent_sdk import (
         AssistantMessage,
         ClaudeAgentOptions,
+        RateLimitEvent,
+        RateLimitInfo,
         ResultError,
         ResultMessage,
         StreamEvent,
@@ -218,6 +221,8 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
     ) -> AsyncIterator[AIMessageChunk | ClaudeCodeChatResult]:
         content_blocks: list[Any] = []
         result_message: ResultMessage | None = None
+        assistant_errors: list[str] = []
+        rate_limit_info: RateLimitInfo | None = None
 
         async def prompt() -> AsyncIterator[dict[str, Any]]:
             yield {
@@ -238,6 +243,11 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
                             yield chunk
                     elif isinstance(message, AssistantMessage):
                         content_blocks.extend(message.content)
+
+                        if message.error:
+                            assistant_errors.append(message.error)
+                    elif isinstance(message, RateLimitEvent):
+                        rate_limit_info = message.rate_limit_info
                     elif isinstance(message, ResultMessage):
                         result_message = message
         except ResultError as e:
@@ -266,9 +276,17 @@ class ClaudeCodeChatProvider(BaseChatProvider, MediaConverter):
                     request_id=_extract_request_id(message_text),
                 ) from error
 
-            raise RuntimeError(
-                f"Claude Code failed ({result_message.subtype}): {message_text}"
-            ) from error
+            failure = f"Claude Code failed ({result_message.subtype}): {message_text}"
+
+            if limit_error := to_usage_limit_error(
+                failure,
+                result_message,
+                assistant_errors=assistant_errors,
+                rate_limit_info=rate_limit_info,
+            ):
+                raise limit_error from error
+
+            raise RuntimeError(failure) from error
 
         yield from_claude_agent_sdk_messages(
             content_blocks, result_message, parallel_tool_calls=parallel_tool_calls

@@ -19,6 +19,7 @@ class ChatProvider(Protocol):
         MaxTokenError: If the request exceeds the model's maximum token limit.
         SafetyError: If the model determines the content is unsafe.
         TokenOverflowError: If the response exceeds the model's maximum token limit.
+        UsageLimitError: If the account hit a rate limit or usage limit of its plan.
     """
 
     name: ChatProviderName

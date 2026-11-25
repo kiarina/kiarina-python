@@ -4,6 +4,7 @@ import json
 import os
 import time
 from collections.abc import AsyncIterator, Iterator
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import urlparse
@@ -23,6 +24,7 @@ from kiarina.agi.chat_provider import (
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
+    UsageLimitError,
     chat_provider_registry,
 )
 from kiarina.agi.chat_provider_impl.proxy import (
@@ -104,6 +106,12 @@ ERRORS: dict[str, Exception] = {
     "raise-safety": SafetyError("unsafe", category="violence", request_id="req_1"),
     "raise-max-token": MaxTokenError("too long"),
     "raise-overflow": TokenOverflowError(300, limit=200),
+    "raise-usage-limit": UsageLimitError(
+        "limit reached",
+        kind="usage_limit",
+        window="five_hour",
+        resets_at=datetime(2026, 1, 2, 3, 4, tzinfo=UTC),
+    ),
     "raise-other": RuntimeError("boom"),
 }
 
@@ -470,9 +478,7 @@ async def test_errors(
 ) -> None:
     provider = create_provider(app, model_name)
     expected = ERRORS[model_name]
-    expected_type = (
-        ChatProxyError if isinstance(expected, RuntimeError) else type(expected)
-    )
+    expected_type = ChatProxyError if type(expected) is RuntimeError else type(expected)
 
     with pytest.raises(expected_type) as excinfo:
         await run(
@@ -488,6 +494,14 @@ async def test_errors(
         assert (error.category, error.request_id) == ("violence", "req_1")
     elif isinstance(error, TokenOverflowError):
         assert (error.token_count, error.limit) == (300, 200)
+    elif isinstance(error, UsageLimitError):
+        assert isinstance(expected, UsageLimitError)
+        assert str(error) == "limit reached"
+        assert (error.kind, error.window, error.resets_at) == (
+            expected.kind,
+            expected.window,
+            expected.resets_at,
+        )
     elif isinstance(error, ChatProxyError):
         assert str(error) == "RuntimeError: boom"
 

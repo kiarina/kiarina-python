@@ -1,12 +1,17 @@
 import json
 import os
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from kiarina.agi.chat_provider import ChatProviderState, TokenOverflowError
+from kiarina.agi.chat_provider import (
+    ChatProviderState,
+    TokenOverflowError,
+    UsageLimitError,
+)
 from kiarina.agi.chat_provider_impl.codex import (
     CodexChatProvider,
     CodexChatProviderSettings,
@@ -36,6 +41,7 @@ _FAKE_APP_SERVER = """
 import json, sys
 
 phases = json.load(open(sys.argv[1]))
+rate_limits = json.load(open(sys.argv[3])) if len(sys.argv) > 3 else {}
 log = open(sys.argv[2], "a")
 turns = 0
 
@@ -64,6 +70,8 @@ for line in sys.stdin:
         turns += 1
         send({"id": message["id"], "result": {"turn": {"id": f"turn_{turns}"}}})
         next_phase()
+    elif message["method"] == "account/rateLimits/read":
+        send({"id": message["id"], "result": rate_limits})
     else:
         send({"id": message["id"], "result": {}})
 """
@@ -141,6 +149,7 @@ def _create_provider(
     events: list[Any] | None = None,
     *,
     phases: list[list[Any]] | None = None,
+    rate_limits: dict[str, Any] | None = None,
     **kwargs: Any,
 ) -> CodexChatProvider:
     """A provider whose app-server sends a phase on each turn start and reply."""
@@ -149,10 +158,17 @@ def _create_provider(
     events_path = tmp_path / "events.json"
     events_path.write_text(json.dumps(phases if phases is not None else [events]))
 
+    args = [str(script), str(events_path), str(tmp_path / "log.jsonl")]
+
+    if rate_limits is not None:
+        rate_limits_path = tmp_path / "rate_limits.json"
+        rate_limits_path.write_text(json.dumps(rate_limits))
+        args.append(str(rate_limits_path))
+
     provider = CodexChatProvider(CodexChatProviderSettings(**kwargs))
     provider.name = "codex"
     provider.create_session = lambda tmp: CodexAppServerSession(  # type: ignore[method-assign]
-        [sys.executable, str(script), str(events_path), str(tmp_path / "log.jsonl")],
+        [sys.executable, *args],
         env=dict(os.environ),
         cwd=str(tmp),
     )
@@ -359,6 +375,94 @@ async def test_run_errors(
 
     with pytest.raises(error_type, match=match):
         await _run(provider, run_context)
+
+
+_USAGE_LIMIT_ERROR = {
+    "message": "You've hit your usage limit. Try again at 3:04 PM.",
+    "codexErrorInfo": "usageLimitExceeded",
+}
+
+_FIVE_HOUR = {"usedPercent": 100, "windowDurationMins": 300, "resetsAt": 1_800_000_000}
+
+
+def _limit_update(**snapshot: Any) -> dict[str, Any]:
+    return {"method": "account/rateLimits/updated", "params": {"rateLimits": snapshot}}
+
+
+@pytest.mark.parametrize(
+    ("events", "rate_limits", "expected"),
+    [
+        # The updates are sparse: the second one keeps the first one's window.
+        (
+            [
+                _limit_update(limitId="codex", primary=_FIVE_HOUR),
+                _limit_update(limitId="codex", primary=None, planType="plus"),
+                {
+                    "method": "error",
+                    "params": {"willRetry": False, "error": _USAGE_LIMIT_ERROR},
+                },
+            ],
+            None,
+            ("usage_limit", "five_hour", 1_800_000_000),
+        ),
+        # No update named a used-up window, so the provider asks.
+        (
+            [
+                _limit_update(limitId="codex", primary={"usedPercent": 99}),
+                {
+                    "method": "turn/completed",
+                    "params": {"turn": {"error": _USAGE_LIMIT_ERROR}},
+                },
+            ],
+            {
+                "rateLimits": {"limitId": "codex", "primary": {"usedPercent": 99}},
+                "rateLimitsByLimitId": {
+                    "codex": {"limitId": "codex", "secondary": _FIVE_HOUR}
+                },
+            },
+            ("usage_limit", "five_hour", 1_800_000_000),
+        ),
+        (
+            [{"method": "error", "params": {"error": _USAGE_LIMIT_ERROR}}],
+            None,
+            ("usage_limit", None, None),
+        ),
+        (
+            [
+                _limit_update(primary=_FIVE_HOUR),
+                {
+                    "method": "error",
+                    "params": {
+                        "error": {
+                            "message": "Rate limit reached.",
+                            "codexErrorInfo": "rateLimitExceeded",
+                        }
+                    },
+                },
+            ],
+            None,
+            ("rate_limit", None, None),
+        ),
+    ],
+)
+async def test_run_usage_limit(
+    tmp_path: Path,
+    events: list[Any],
+    rate_limits: dict[str, Any] | None,
+    expected: tuple[str, str | None, int | None],
+    run_context: RunContext,
+) -> None:
+    provider = _create_provider(tmp_path, events, rate_limits=rate_limits)
+
+    with pytest.raises(UsageLimitError, match="Codex failed: ") as exc_info:
+        await _run(provider, run_context)
+
+    kind, window, resets_at = expected
+    error = exc_info.value
+    assert (error.kind, error.window) == (kind, window)
+    assert error.resets_at == (
+        datetime.fromtimestamp(resets_at, tz=UTC) if resets_at else None
+    )
 
 
 # --------------------------------------------------
@@ -572,6 +676,41 @@ async def test_thread_reuse_after_failure(
     assert second.tool_calls[0].id == "call_1"
     methods = [line.get("method") for line in _read_lines(tmp_path)]
     assert methods.count("thread/start") == 2
+
+
+async def test_thread_reuse_usage_limit(
+    tmp_path: Path, run_context: RunContext
+) -> None:
+    phases = _reuse_phases()
+    phases[1] = [
+        _turn_event("error", "turn_1", willRetry=False, error=_USAGE_LIMIT_ERROR)
+    ]
+    # The update arrives while the provider waits for the first turn to end.
+    phases[2] = [
+        {"method": "turn/completed", "params": {"turn": {"id": "turn_1"}}},
+        _limit_update(primary=_FIVE_HOUR),
+        {"method": "turn/completed", "params": {"turn": {"id": "turn_1"}}},
+    ]
+    provider = _create_provider(tmp_path, phases=phases)
+    messages: list[Any] = [HumanMessage.create("Weather?")]
+    first = await _run_messages(provider, messages, run_context)
+
+    # A new thread would hit the same limit, so none starts.
+    with pytest.raises(UsageLimitError):
+        await _run_messages(
+            provider,
+            [
+                *messages,
+                first,
+                ToolMessage.create(
+                    "sunny", tool_name="get_weather", tool_call_id="call_1"
+                ),
+            ],
+            run_context,
+        )
+
+    methods = [line.get("method") for line in _read_lines(tmp_path)]
+    assert methods.count("thread/start") == 1
 
 
 @pytest.mark.parametrize(

@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import json
 import logging
 import os
@@ -16,6 +17,7 @@ from kiarina.agi.chat_provider import (
     ChatProviderContext,
     ChatProviderState,
     TokenOverflowError,
+    UsageLimitError,
     compute_history_hash,
     find_chat_provider_state,
 )
@@ -31,6 +33,7 @@ from .._operations.create_model_catalog import create_model_catalog
 from .._operations.from_raw_response_items import from_raw_response_items
 from .._operations.to_dynamic_tools import to_dynamic_tools
 from .._operations.to_thread_items import to_thread_items
+from .._operations.to_usage_limit_error import to_usage_limit_error
 from .._schemas.codex_chat_result import CodexChatResult
 from .._schemas.codex_request import CodexRequest
 from .._settings import CodexChatProviderSettings
@@ -51,6 +54,8 @@ _CLIENT_INFO = {"name": "kiarina-agi-text", "title": "kiarina-agi-text", "versio
 
 _DEFAULT_INSTRUCTIONS = "You are a helpful assistant."
 """Without base instructions, Codex would send its own."""
+
+_RATE_LIMITS_READ_TIMEOUT = 5.0
 
 
 class CodexChatProvider(BaseChatProvider, MediaConverter):
@@ -253,10 +258,11 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
                         yield item
 
                     return
-                except Exception:
+                except Exception as e:
                     await live.close()
 
-                    if yielded:
+                    # NOTE: A new thread would hit the same limit.
+                    if yielded or isinstance(e, UsageLimitError):
                         raise
 
                     logger.info(
@@ -421,6 +427,8 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
 
             if method == "turn/completed" and _event_turn_id(params) == live.turn_id:
                 live.turn_completed = True
+            elif method == "account/rateLimits/updated":
+                _merge_rate_limits(live, params.get("rateLimits"))
             elif method == "_closed":
                 raise RuntimeError("codex app-server exited.")
 
@@ -472,14 +480,18 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
                 yield result, live
                 return
 
+            elif method == "account/rateLimits/updated":
+                _merge_rate_limits(live, params.get("rateLimits"))
+
             elif method == "error" and not params.get("willRetry"):
-                self._raise_turn_error(params.get("error") or {})
+                await self._raise_turn_error(live, params.get("error") or {})
 
             elif method == "turn/completed":
                 live.turn_completed = True
-                self._raise_turn_error(
+                await self._raise_turn_error(
+                    live,
                     (params.get("turn") or {}).get("error")
-                    or {"message": "The turn ended without a response."}
+                    or {"message": "The turn ended without a response."},
                 )
 
             elif method == "_closed":
@@ -515,12 +527,39 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
             max_count=self.settings.max_live_threads,
         )
 
-    def _raise_turn_error(self, error: dict[str, Any]) -> None:
+    async def _raise_turn_error(self, live: LiveThread, error: dict[str, Any]) -> None:
         if error.get("codexErrorInfo") == "contextWindowExceeded":
             # NOTE: The error has no token count.
             raise TokenOverflowError(self.settings.context_window)
 
-        raise RuntimeError(f"Codex failed: {error.get('message') or error}")
+        message = f"Codex failed: {error.get('message') or error}"
+
+        if limit_error := to_usage_limit_error(
+            message, error, list(live.rate_limits.values())
+        ):
+            if limit_error.kind == "usage_limit" and limit_error.resets_at is None:
+                await self._read_rate_limits(live)
+                limit_error = (
+                    to_usage_limit_error(
+                        message, error, list(live.rate_limits.values())
+                    )
+                    or limit_error
+                )
+
+            raise limit_error
+
+        raise RuntimeError(message)
+
+    async def _read_rate_limits(self, live: LiveThread) -> None:
+        """Ask for the account's rate limits, for when no update has named a used-up window."""
+        with contextlib.suppress(Exception):
+            async with asyncio.timeout(_RATE_LIMITS_READ_TIMEOUT):
+                result = await live.session.request("account/rateLimits/read", None)
+
+            _merge_rate_limits(live, result.get("rateLimits"))
+
+            for snapshot in (result.get("rateLimitsByLimitId") or {}).values():
+                _merge_rate_limits(live, snapshot)
 
     def _handle_result(
         self, ctx: ChatProviderContext, result: CodexChatResult
@@ -574,6 +613,15 @@ def _to_tool_call_chunk(item: dict[str, Any], *, index: int) -> AIMessageChunk:
             )
         ],
     )
+
+
+def _merge_rate_limits(live: LiveThread, snapshot: Any) -> None:
+    """Updates are sparse: a missing value does not clear an earlier one."""
+    if not isinstance(snapshot, dict):
+        return
+
+    known = live.rate_limits.setdefault(str(snapshot.get("limitId") or ""), {})
+    known.update({k: v for k, v in snapshot.items() if v is not None})
 
 
 def _hash_history(thread_header: dict[str, Any], items: list[dict[str, Any]]) -> str:

@@ -6,6 +6,7 @@ from kiarina.agi.chat_provider import (
     MaxTokenError,
     SafetyError,
     TokenOverflowError,
+    UsageLimitError,
 )
 from kiarina.agi.chat_provider_impl.mock import (
     MockChatProvider,
@@ -96,6 +97,14 @@ async def test_check_error_simulation(
     with pytest.raises(MaxTokenError):
         async for _ in provider.run(
             [HumanMessage.create(json.dumps({"type": "max_token_error"}))],
+            cost_recorder=cost_recorder,
+            run_context=run_context,
+        ):
+            pass
+
+    with pytest.raises(UsageLimitError):
+        async for _ in provider.run(
+            [HumanMessage.create(json.dumps({"type": "usage_limit_error"}))],
             cost_recorder=cost_recorder,
             run_context=run_context,
         ):

@@ -37,6 +37,9 @@ class LiveThread:
     next_items: list[dict[str, Any]] = field(default_factory=list)
     """Items to inject before the next turn, when the last turn completed."""
 
+    rate_limits: dict[str, dict[str, Any]] = field(default_factory=dict)
+    """The account's rate limit snapshots the process has sent, by limit id."""
+
     history_hash: str = ""
     """The history hash of the AI message this thread can continue from."""
 
