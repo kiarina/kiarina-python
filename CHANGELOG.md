@@ -12,9 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **kiarina-agi-text**: `UsageLimitError` (`kiarina.agi.chat_provider`), raised when the account behind a provider hit a rate limit or a usage limit of its plan. It carries `kind` (`rate_limit` or `usage_limit`), `window` (such as `five_hour`), and `resets_at`, each `None` when the vendor did not report it. It extends `RuntimeError`.
 - **kiarina-agi-text**: The chat proxy carries `UsageLimitError` to the caller with its fields (`ChatProxyErrorInfo` kind `usage_limit`). Update the proxy and its callers together. The `mock` chat provider raises it for `{"type": "usage_limit_error"}`.
+- **kiarina-agi-text**: `CodexChatProvider.codex_bin`, the path of the Codex the provider runs, so a caller can check it (for example with `--version`).
 
 ### Changed
 - **kiarina-agi-text**: The `codex` and `claude_code` chat providers raise `UsageLimitError` instead of a plain `RuntimeError` when the subscription's limit is reached, with the same message. Codex is detected by `codexErrorInfo` (`usageLimitExceeded`, `rateLimitExceeded`) and takes the reset time from the account's rate limit snapshots; Claude Code by the assistant message's `rate_limit` error, a `429` result, or a rejected rate limit event. A `codex` thread that hits a limit no longer retries on a new thread.
+- **kiarina-agi-text**: The `codex` chat provider works without `openai-codex-cli-bin`. It runs, in order, `codex_bin` of its settings, the bundled Codex when the package is installed, and `codex` on `PATH`; before, it could not be imported without the package. With the package installed, it runs the same Codex as before. The `chat-provider-codex` and `all` extras still install the bundled Codex; leave them out to use the one on the machine. When no Codex is found, creating a session raises `FileNotFoundError` that names the three ways to provide one.
 
 ### Changed (BREAKING)
 - **kiarina-agi-data**: `MemoryGraph.find_adjacent_ids()` now filters the returned nodes by `memory_type`. Multi-hop searches can reach matches through intermediate nodes of other types.

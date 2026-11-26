@@ -28,7 +28,7 @@
 | Package | Version | License | Extras |
 | --- | --- | --- | --- |
 | [anthropic](https://github.com/anthropics/anthropic-sdk-python) | `>=2.6.0,<3` | [MIT](https://github.com/anthropics/anthropic-sdk-python/blob/main/LICENSE) | `chat-provider-anthropic`<br>`chat-provider-anthropic-vertex` |
-| [claude-agent-sdk](https://github.com/anthropics/claude-agent-sdk-python) | `>=0.2.164` | [MIT](https://github.com/anthropics/claude-agent-sdk-python/blob/main/LICENSE) | `chat-provider-claude-code` |
+| [claude-agent-sdk](https://github.com/anthropics/claude-agent-sdk-python) | `>=0.2.184` | [MIT](https://github.com/anthropics/claude-agent-sdk-python/blob/main/LICENSE) | `chat-provider-claude-code` |
 | [FastAPI](https://github.com/fastapi/fastapi) | `>=0.162.0,<1` | [MIT](https://github.com/fastapi/fastapi/blob/master/LICENSE) | `chat-proxy` |
 | [google-genai](https://github.com/googleapis/python-genai) | `>=3.0.0,<4` | [Apache-2.0](https://github.com/googleapis/python-genai/blob/main/LICENSE) | `chat-provider-google`<br>`text-embedding-provider-google` |
 | [HTTPX](https://github.com/encode/httpx) | `>=0.28.1,<1` | [BSD-3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) | `chat-provider-proxy` |
@@ -37,12 +37,14 @@
 | [kiarina-lib-openai](https://pypi.org/project/kiarina-lib-openai/) | `>=2.3.1` | [MIT](https://github.com/kiarina/kiarina-python/blob/main/LICENSE) | `chat-provider-openai`<br>`text-embedding-provider-openai` |
 | [NumPy](https://github.com/numpy/numpy) | `>=2.0` | [BSD-3-Clause](https://github.com/numpy/numpy/blob/main/LICENSE.txt) | `text-embedding-provider-google`<br>`text-embedding-provider-mock`<br>`text-embedding-provider-openai` |
 | [openai](https://github.com/openai/openai-python) | `>=2.0.1,<4` | [Apache-2.0](https://github.com/openai/openai-python/blob/main/LICENSE) | `chat-provider-openai`<br>`text-embedding-provider-openai` |
-| [openai-codex-cli-bin](https://github.com/openai/codex) | `>=0.160.1` | [Apache-2.0](https://github.com/openai/codex/blob/main/LICENSE) | `chat-provider-codex` |
+| [openai-codex-cli-bin](https://github.com/openai/codex) | `>=0.170.0` | [Apache-2.0](https://github.com/openai/codex/blob/main/LICENSE) | `chat-provider-codex` |
 | [tiktoken](https://github.com/openai/tiktoken) | `>=0.13.0` | [MIT](https://github.com/openai/tiktoken/blob/main/LICENSE) | `text-embedding-provider-openai` |
 | [ulid-py](https://github.com/ahawker/ulid) | `>=1.1.0` | [Apache-2.0](https://github.com/ahawker/ulid/blob/master/LICENSE) | `chat-provider-mock` |
 | [Uvicorn](https://github.com/encode/uvicorn) | `>=0.54.0,<1` | [BSD-3-Clause](https://github.com/encode/uvicorn/blob/master/LICENSE.md) | `chat-proxy` |
 
 The `all` Extra installs every optional dependency listed above except those of `chat-proxy`, so apps that use chat models do not get a web server.
+
+`openai-codex-cli-bin` holds Codex itself (about 400 MB installed). The `codex` chat provider works without it: it runs, in order, the Codex that `codex_bin` of its settings points to, the bundled one when `openai-codex-cli-bin` is installed, and `codex` on `PATH`. To use the Codex installed on the machine, leave out the `chat-provider-codex` and `all` Extras and list the other Extras you need. `CodexChatProvider.codex_bin` returns the path it runs, so the caller can check it, for example with `--version`. The provider does not check the version.
 
 ## Installation
 

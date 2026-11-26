@@ -73,7 +73,10 @@ class CodexChatProviderSettings(ChatCapabilities, OpenAITokenPricing, BaseSettin
     """Kept threads per process. The oldest is stopped beyond this."""
 
     codex_bin: str | None = None
-    """Codex to run. The one bundled in `openai-codex-cli-bin` when unset."""
+    """
+    Codex to run. When unset, the one bundled in `openai-codex-cli-bin` if that is
+    installed, or else `codex` on `PATH`.
+    """
 
     codex_home: str | None = None
     """Codex's home with the login and model list. `CODEX_HOME` or `~/.codex` when unset."""

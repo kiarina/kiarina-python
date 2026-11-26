@@ -30,6 +30,7 @@ from kiarina.utils.mime import MIMEBlob
 from .._instances.live_thread_pool import live_thread_pool
 from .._operations.create_config_overrides import create_config_overrides
 from .._operations.create_model_catalog import create_model_catalog
+from .._operations.find_codex_bin import find_codex_bin
 from .._operations.from_raw_response_items import from_raw_response_items
 from .._operations.to_dynamic_tools import to_dynamic_tools
 from .._operations.to_thread_items import to_thread_items
@@ -39,14 +40,6 @@ from .._schemas.codex_request import CodexRequest
 from .._settings import CodexChatProviderSettings
 from .codex_app_server_session import CodexAppServerSession
 from .live_thread import LiveThread
-
-try:
-    import codex_cli_bin  # type: ignore[import-untyped]
-except ImportError as exc:
-    raise ImportError(
-        "openai-codex-cli-bin is required to use CodexChatProvider. "
-        "Install it with: pip install 'kiarina-agi-text[chat-provider-codex]'"
-    ) from exc
 
 logger = logging.getLogger(__name__)
 
@@ -101,6 +94,11 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
     def codex_home(self) -> Path:
         home = self.settings.codex_home or os.environ.get("CODEX_HOME")
         return Path(home).expanduser() if home else Path.home() / ".codex"
+
+    @property
+    def codex_bin(self) -> str:
+        env = {**os.environ, **self.settings.env}
+        return find_codex_bin(self.settings.codex_bin, env)[0]
 
     # --------------------------------------------------
     # Methods (ChatProvider)
@@ -172,12 +170,10 @@ class CodexChatProvider(BaseChatProvider, MediaConverter):
 
     def create_session(self, tmp: Path) -> CodexAppServerSession:
         codex_home = self.codex_home
-        codex_bin = self.settings.codex_bin or str(codex_cli_bin.bundled_codex_path())
         env = {**os.environ, **self.settings.env}
+        codex_bin, path_dir = find_codex_bin(self.settings.codex_bin, env)
 
-        if self.settings.codex_bin is None and (
-            path_dir := codex_cli_bin.bundled_path_dir()
-        ):
+        if path_dir:
             env["PATH"] = os.pathsep.join([str(path_dir), env.get("PATH", "")])
 
         catalog_path = create_model_catalog(
